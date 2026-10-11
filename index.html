@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -117,7 +118,7 @@
             gap: 6px;
         }
 
-        /* Quick Add Form - Clean Mobile Layout */
+        /* Quick Add Form */
         .add-form {
             display: flex;
             flex-direction: column;
@@ -224,7 +225,7 @@
             color: var(--muted);
         }
 
-        /* Horizontally Scrollable Calendar Container */
+        /* Calendar */
         .calendar-wrapper {
             width: 100%;
             overflow-x: auto;
@@ -464,10 +465,10 @@
         <!-- Section 1: Dynamic Summary -->
         <section class="card">
             <div class="card-header">
-                <div class="card-title">Upcoming Summary</div>
+                <div class="card-title" id="summary-title-text">Upcoming Summary (This Week)</div>
                 <div class="toggle-box">
-                    <button class="toggle-btn active" id="btn-week" onclick="setSummary('week')">Week</button>
-                    <button class="toggle-btn" id="btn-month" onclick="setSummary('month')">Month</button>
+                    <button class="toggle-btn active" id="btn-week" onclick="setSummaryRange('week')">Week</button>
+                    <button class="toggle-btn" id="btn-month" onclick="setSummaryRange('month')">Month</button>
                 </div>
             </div>
 
@@ -494,8 +495,8 @@
         <!-- Section 2: Shared Calendar -->
         <section class="card">
             <div class="card-header">
-                <div class="card-title">Shared Calendar</div>
-                <span style="font-size:0.75rem; color:var(--muted);">October 2026</span>
+                <div class="card-title" id="calendar-title-label">Shared Calendar (Week View)</div>
+                <span style="font-size:0.75rem; color:var(--muted);" id="calendar-date-subtitle">October 2026</span>
             </div>
 
             <div class="calendar-wrapper">
@@ -543,6 +544,8 @@
     </div>
 
     <script>
+        let currentRange = 'week'; // Default to week view
+
         let events = {
             "2026-10-10": [{ title: "Football Training", color: "bg-leo", time: "10:00 AM", who: "Leo" }],
             "2026-10-15": [{ title: "Dentist Appt", color: "bg-mom", time: "02:15 PM", who: "Mom" }],
@@ -657,75 +660,99 @@
                 <div class="day-header">Sun</div>
             `;
 
-            for (let empty = 0; empty < 3; empty++) {
-                const emptyCell = document.createElement('div');
-                emptyCell.className = 'day-cell empty';
-                grid.appendChild(emptyCell);
-            }
-
-            for (let i = 1; i <= 31; i++) {
-                const dayKey = `2026-10-${i < 10 ? '0' + i : i}`;
-                const cell = document.createElement('div');
-                cell.className = 'day-cell';
-
-                let html = `<div class="day-num">${i}</div>`;
-                if (events[dayKey]) {
-                    events[dayKey].forEach(e => {
-                        html += `<div class="event-pill ${e.color}">${e.title}</div>`;
-                    });
+            if (currentRange === 'week') {
+                document.getElementById('calendar-title-label').textContent = 'Shared Calendar (This Week)';
+                document.getElementById('calendar-date-subtitle').textContent = 'Oct 12 – Oct 18, 2026';
+                
+                // Render current week days: Monday Oct 12 to Sunday Oct 18, 2026
+                for (let i = 12; i <= 18; i++) {
+                    renderDayCell(i);
                 }
-                cell.innerHTML = html;
+            } else {
+                document.getElementById('calendar-title-label').textContent = 'Shared Calendar (Full Month)';
+                document.getElementById('calendar-date-subtitle').textContent = 'October 2026';
 
-                cell.addEventListener('mouseenter', (ev) => {
-                    const tooltip = document.getElementById('hover-tooltip');
-                    document.getElementById('tt-date').textContent = `October ${i}, 2026`;
-                    const dayEvs = events[dayKey];
-                    if (dayEvs && dayEvs.length) {
-                        document.getElementById('tt-body').innerHTML = dayEvs.map(e => `
-                            <div class="tooltip-line">
-                                <span class="dot ${e.color}"></span>
-                                <strong>${e.who}:</strong> ${e.title} (${e.time})
-                            </div>
-                        `).join('');
-                    } else {
-                        document.getElementById('tt-body').innerHTML = `<span style="color:var(--muted); font-size:0.75rem;">No activities</span>`;
-                    }
-                    tooltip.style.display = 'block';
-                    tooltip.style.left = (ev.pageX + 10) + 'px';
-                    tooltip.style.top = (ev.pageY + 10) + 'px';
-                });
+                // October 1, 2026 starts on Thursday (3 empty cells for Mon, Tue, Wed)
+                for (let empty = 0; empty < 3; empty++) {
+                    const emptyCell = document.createElement('div');
+                    emptyCell.className = 'day-cell empty';
+                    grid.appendChild(emptyCell);
+                }
 
-                cell.addEventListener('mousemove', (ev) => {
-                    const tooltip = document.getElementById('hover-tooltip');
-                    tooltip.style.left = (ev.pageX + 10) + 'px';
-                    tooltip.style.top = (ev.pageY + 10) + 'px';
-                });
-
-                cell.addEventListener('mouseleave', () => {
-                    document.getElementById('hover-tooltip').style.display = 'none';
-                });
-
-                grid.appendChild(cell);
+                for (let i = 1; i <= 31; i++) {
+                    renderDayCell(i);
+                }
             }
         }
 
-        function setSummary(mode) {
+        function renderDayCell(i) {
+            const dayKey = `2026-10-${i < 10 ? '0' + i : i}`;
+            const cell = document.createElement('div');
+            cell.className = 'day-cell';
+
+            let html = `<div class="day-num">${i}</div>`;
+            if (events[dayKey]) {
+                events[dayKey].forEach(e => {
+                    html += `<div class="event-pill ${e.color}">${e.title}</div>`;
+                });
+            }
+            cell.innerHTML = html;
+
+            cell.addEventListener('mouseenter', (ev) => {
+                const tooltip = document.getElementById('hover-tooltip');
+                document.getElementById('tt-date').textContent = `October ${i}, 2026`;
+                const dayEvs = events[dayKey];
+                if (dayEvs && dayEvs.length) {
+                    document.getElementById('tt-body').innerHTML = dayEvs.map(e => `
+                        <div class="tooltip-line">
+                            <span class="dot ${e.color}"></span>
+                            <strong>${e.who}:</strong> ${e.title} (${e.time})
+                        </div>
+                    `).join('');
+                } else {
+                    document.getElementById('tt-body').innerHTML = `<span style="color:var(--muted); font-size:0.75rem;">No activities</span>`;
+                }
+                tooltip.style.display = 'block';
+                tooltip.style.left = (ev.pageX + 10) + 'px';
+                tooltip.style.top = (ev.pageY + 10) + 'px';
+            });
+
+            cell.addEventListener('mousemove', (ev) => {
+                const tooltip = document.getElementById('hover-tooltip');
+                tooltip.style.left = (ev.pageX + 10) + 'px';
+                tooltip.style.top = (ev.pageY + 10) + 'px';
+            });
+
+            cell.addEventListener('mouseleave', () => {
+                document.getElementById('hover-tooltip').style.display = 'none';
+            });
+
+            document.getElementById('calendar-grid').appendChild(cell);
+        }
+
+        function setSummaryRange(mode) {
+            currentRange = mode;
             document.getElementById('btn-week').classList.toggle('active', mode === 'week');
             document.getElementById('btn-month').classList.toggle('active', mode === 'month');
 
             if (mode === 'week') {
+                document.getElementById('summary-title-text').textContent = 'Upcoming Summary (This Week)';
                 document.getElementById('num-events').textContent = '3';
                 document.getElementById('num-tasks').textContent = todosData.length;
                 document.getElementById('num-trips').textContent = '1';
                 document.getElementById('summary-desc').textContent = 'Week ahead: 3 scheduled activities including Football Training and Family Movie Night.';
             } else {
+                document.getElementById('summary-title-text').textContent = 'Upcoming Summary (This Month)';
                 document.getElementById('num-events').textContent = '12';
                 document.getElementById('num-tasks').textContent = todosData.length;
                 document.getElementById('num-trips').textContent = '3';
                 document.getElementById('summary-desc').textContent = 'Month ahead: 12 events scheduled including Half-Term trip to Yorkshire and 3 family days out.';
             }
+
+            renderCalendar();
         }
 
+        // Initial Renders
         renderCalendar();
         switchCategory('cinema', document.querySelector('.cat-tab'));
         renderTodos();
