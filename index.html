@@ -368,6 +368,11 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .list-card:hover {
+            border-color: var(--accent);
         }
 
         .list-info h5 {
@@ -410,7 +415,7 @@
             width: 100%;
             height: 100%;
             border: none;
-            filter: invert(90%) hue-rotate(180deg); /* Gives Google Maps a sleek dark-mode look matching the app */
+            filter: invert(90%) hue-rotate(180deg);
         }
 
         .todo-left {
@@ -561,13 +566,14 @@
 
     <script>
         let currentRange = 'week';
+        let activeMapQuery = "Yorkshire Dales National Park BD23 4PQ";
 
         let events = {
             "2026-10-10": [{ title: "Football Training", color: "bg-leo", time: "10:00 AM", who: "Leo" }],
             "2026-10-15": [{ title: "Dentist Appt", color: "bg-mom", time: "02:15 PM", who: "Mom" }],
             "2026-10-17": [{ title: "Pizza & Movie Night", color: "bg-family", time: "06:30 PM", who: "Family" }],
             "2026-10-24": [
-                { title: "Yorkshire Dales National Park", color: "bg-family", time: "09:30 AM", who: "Family" },
+                { title: "Yorkshire Dales Walk", color: "bg-family", time: "09:30 AM", who: "Family" },
                 { title: "Car Service", color: "bg-dad", time: "02:00 PM", who: "Dad" }
             ]
         };
@@ -622,6 +628,14 @@
             alert('Successfully added to Family Hub!');
         }
 
+        function focusMap(title, postcode) {
+            activeMapQuery = title + " " + postcode;
+            const iframe = document.getElementById('interactive-map-frame');
+            if (iframe) {
+                iframe.src = `https://maps.google.com/maps?q=${encodeURIComponent(activeMapQuery)}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+            }
+        }
+
         function switchCategory(cat, btn) {
             document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
             if (btn) btn.classList.add('active');
@@ -630,24 +644,22 @@
             const items = categoriesData[cat];
 
             if (cat === 'places') {
-                // Construct a dynamic Google Maps query centered on Yorkshire/UK covering all destinations
-                const queryStr = encodeURIComponent("Yorkshire Dales National Park BD23 4PQ");
                 container.innerHTML = `
                     <div class="map-embed-box">
-                        <iframe src="https://maps.google.com/maps?q=${queryStr}&t=&z=9&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>
+                        <iframe id="interactive-map-frame" src="https://maps.google.com/maps?q=${encodeURIComponent(activeMapQuery)}&t=&z=11&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>
                     </div>
                 ` + items.map((item, idx) => `
-                    <div class="list-card">
+                    <div class="list-card" onclick="focusMap('${item.title}', '${item.postcode}')">
                         <div class="list-info">
                             <h5>📍 ${idx + 1}. ${item.title}</h5>
                             <span>${item.details} • <strong>${item.postcode}</strong></span>
                         </div>
-                        <a href="https://maps.google.com/?q=${encodeURIComponent(item.title + ' ' + item.postcode)}" target="_blank" class="map-btn">Map ↗</a>
+                        <a href="https://maps.google.com/?q=${encodeURIComponent(item.title + ' ' + item.postcode)}" target="_blank" class="map-btn" onclick="event.stopPropagation()">Map ↗</a>
                     </div>
                 `).join('');
             } else {
                 container.innerHTML = items.map(item => `
-                    <div class="list-card">
+                    <div class="list-card" style="cursor: default;">
                         <div class="list-info">
                             <h5>${cat === 'cinema' ? '🍿' : '📺'} ${item.title}</h5>
                             <span>${item.details}</span>
