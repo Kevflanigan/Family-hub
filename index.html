@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Hub</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --card: #161b22;
+            --border: #30363d;
+            --text: #f0f6fc;
+            --muted: #8b949e;
+            --accent: #58a6ff;
+            
+            /* Family Member Colors */
+            --mom: #ec4899;
+            --dad: #3b82f6;
+            --leo: #10b981;
+            --mia: #f59e0b;
+            --family: #a855f7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding-top: 65px;
+            padding-bottom: 2rem;
+            min-height: 100vh;
+        }
+
+        /* Top Header Navigation */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 55px;
+            background: rgba(22, 27, 34, 0.95);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1rem;
+            z-index: 1000;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .brand-icon {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            font-size: 0.9rem;
+        }
+
+        .lock-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-size: 0.78rem;
+            cursor: pointer;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .page-title h1 {
+            font-size: 1.35rem;
+            font-weight: 800;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.85rem;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Toggle Switches */
+        .toggle-box {
+            background: #0d1117;
+            border: 1px solid var(--border);
+            padding: 2px;
+            border-radius: 8px;
+            display: flex;
+        }
+
+        .toggle-btn {
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .toggle-btn.active {
+            background: var(--accent);
+            color: #ffffff;
+        }
+
+        /* Dynamic Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            padding: 0.6rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-val {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .stat-lbl {
+            font-size: 0.7rem;
+            color: var(--muted);
+        }
+
+        /* Calendar Grid */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+
+        .day-header {
+            text-align: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--muted);
+            padding-bottom: 4px;
+        }
+
+        .day-cell {
+            background: #0d1117;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            min-height: 70px;
+            padding: 4px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .day-cell.empty {
+            background: transparent;
+            border: none;
+            cursor: default;
+        }
+
+        .day-cell:not(.empty):hover {
+            border-color: var(--accent);
+        }
+
+        .day-num {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--muted);
+        }
+
+        .event-pill {
+            margin-top: 2px;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.62rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #fff;
+        }
+
+        .bg-mom { background-color: var(--mom); }
+        .bg-dad { background-color: var(--dad); }
+        .bg-leo { background-color: var(--leo); }
+        .bg-mia { background-color: var(--mia); }
+        .bg-family { background-color: var(--family); }
+
+        /* Floating Tooltip */
+        #hover-tooltip {
+            position: absolute;
+            display: none;
+            width: 210px;
+            background: #1f2937;
+            border: 1px solid #4b5563;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+            border-radius: 8px;
+            padding: 0.65rem;
+            z-index: 2000;
+            pointer-events: none;
+        }
+
+        #hover-tooltip h4 {
+            font-size: 0.8rem;
+            margin-bottom: 0.35rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.2rem;
+        }
+
+        .tooltip-line {
+            font-size: 0.75rem;
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+        /* Category Lists (Cinema, Home Watchlist, Places) */
+        .category-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 0.75rem;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .cat-tab {
+            background: #0d1117;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 4px 10px;
+            border-radius: 14px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .cat-tab.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        .list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .list-card {
+            background: #0d1117;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.6rem 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .list-info h5 {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .list-info span {
+            font-size: 0.72rem;
+            color: var(--muted);
+        }
+
+        .map-btn {
+            background: rgba(88, 166, 255, 0.1);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .map-btn:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        /* To-Dos */
+        .todo-item {
+            background: #0d1117;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.6rem 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .todo-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .todo-text {
+            font-size: 0.85rem;
+        }
+
+        .assign-tag {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 10px;
+            color: #fff;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand">
+            <div class="brand-icon">🏠</div>
+            <span>Family Hub</span>
+        </div>
+        <button class="lock-btn">🔒 Kids Mode</button>
+    </header>
+
+    <main>
+        <div class="page-title">
+            <h1>Welcome Back, Family! 👋</h1>
+        </div>
+
+        <!-- Section 1: Dynamic Summary -->
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title">📊 Upcoming Summary</div>
+                <div class="toggle-box">
+                    <button class="toggle-btn active" id="btn-week" onclick="setSummary('week')">Week</button>
+                    <button class="toggle-btn" id="btn-month" onclick="setSummary('month')">Month</button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-val" id="num-events">3</div>
+                    <div class="stat-lbl">Events</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val" id="num-tasks">4</div>
+                    <div class="stat-lbl">Tasks</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val" id="num-trips">1</div>
+                    <div class="stat-lbl">Outings</div>
+                </div>
+            </div>
+
+            <p id="summary-desc" style="font-size:0.82rem; color:var(--muted);">
+                Week ahead: 3 scheduled activities including Football Training and Family Movie Night.
+            </p>
+        </section>
+
+        <!-- Section 2: Shared Calendar -->
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title">📅 Shared Calendar</div>
+                <span style="font-size:0.75rem; color:var(--muted);">October 2026</span>
+            </div>
+
+            <div class="calendar-grid" id="calendar-grid">
+                <div class="day-header">M</div>
+                <div class="day-header">T</div>
+                <div class="day-header">W</div>
+                <div class="day-header">Th</div>
+                <div class="day-header">F</div>
+                <div class="day-header">S</div>
+                <div class="day-header">Su</div>
+            </div>
+        </section>
+
+        <!-- Section 3: Cinema, Home Films & Places to Go -->
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title">🎬 Entertainment & Places</div>
+            </div>
+
+            <div class="category-tabs">
+                <button class="cat-tab active" onclick="switchCategory('cinema', this)">🍿 Cinema Films</button>
+                <button class="cat-tab" onclick="switchCategory('home', this)">📺 Home Watchlist</button>
+                <button class="cat-tab" onclick="switchCategory('places', this)">📍 Places to Go</button>
+            </div>
+
+            <div class="list-container" id="dynamic-list-view">
+                <!-- Dynamically populated via JS -->
+            </div>
+        </section>
+
+        <!-- Section 4: To-Do List (Who & What) -->
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title">✅ To-Do List (Who & What)</div>
+            </div>
+
+            <div class="list-container">
+                <div class="todo-item">
+                    <div class="todo-left">
+                        <input type="checkbox">
+                        <span class="todo-text">Buy ingredients for Friday Pizza night</span>
+                    </div>
+                    <span class="assign-tag bg-mom">Mom</span>
+                </div>
+                <div class="todo-item">
+                    <div class="todo-left">
+                        <input type="checkbox">
+                        <span class="todo-text">Check pressure in car tires</span>
+                    </div>
+                    <span class="assign-tag bg-dad">Dad</span>
+                </div>
+                <div class="todo-item">
+                    <div class="todo-left">
+                        <input type="checkbox">
+                        <span class="todo-text">Pack football boots & water bottle</span>
+                    </div>
+                    <span class="assign-tag bg-leo">Leo</span>
+                </div>
+                <div class="todo-item">
+                    <div class="todo-left">
+                        <input type="checkbox">
+                        <span class="todo-text">Tidy up play corner in lounge</span>
+                    </div>
+                    <span class="assign-tag bg-mia">Mia</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Hover Card Tooltip -->
+    <div id="hover-tooltip">
+        <h4 id="tt-date">Date</h4>
+        <div id="tt-body"></div>
+    </div>
+
+    <script>
+        const events = {
+            "2026-10-10": [{ title: "Football Training", color: "bg-leo", time: "10:00 AM", who: "Leo" }],
+            "2026-10-15": [{ title: "Dentist Appt", color: "bg-mom", time: "02:15 PM", who: "Mom" }],
+            "2026-10-17": [{ title: "Pizza & Movie Night", color: "bg-family", time: "06:30 PM", who: "Family" }],
+            "2026-10-24": [
+                { title: "Yorkshire Dales Walk", color: "bg-family", time: "09:30 AM", who: "Family" },
+                { title: "Car Service", color: "bg-dad", time: "02:00 PM", who: "Dad" }
+            ]
+        };
+
+        const categoriesData = {
+            cinema: [
+                { title: "The Wild Robot", details: "Release: Showing Now", meta: "Family Animation" },
+                { title: "Sonic the Hedgehog 3", details: "Release: Oct 2026", meta: "Action / Family" }
+            ],
+            home: [
+                { title: "Inside Out 2", details: "Disney+", meta: "Family Movie" },
+                { title: "Paddington in Peru", details: "Streaming soon", meta: "Comedy" }
+            ],
+            places: [
+                { title: "Yorkshire Dales National Park", details: "Scenic Walk & Picnic", postcode: "BD23 4PQ" },
+                { title: "Royal Armouries Museum", details: "Interactive Exhibits", postcode: "LS10 1LT" },
+                { title: "Tropical World Leeds", details: "Zoo & Greenhouse", postcode: "LS8 2LE" }
+            ]
+        };
+
+        function switchCategory(cat, btn) {
+            document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+
+            const container = document.getElementById('dynamic-list-view');
+            const items = categoriesData[cat];
+
+            if (cat === 'places') {
+                container.innerHTML = items.map(item => `
+                    <div class="list-card">
+                        <div class="list-info">
+                            <h5>📍 ${item.title}</h5>
+                            <span>${item.details} • <strong>${item.postcode}</strong></span>
+                        </div>
+                        <a href="https://maps.google.com/?q=${encodeURIComponent(item.title + ' ' + item.postcode)}" target="_blank" class="map-btn">Map ↗</a>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = items.map(item => `
+                    <div class="list-card">
+                        <div class="list-info">
+                            <h5>${cat === 'cinema' ? '🍿' : '📺'} ${item.title}</h5>
+                            <span>${item.details}</span>
+                        </div>
+                        <span style="font-size:0.7rem; color:var(--muted);">${item.meta}</span>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Initialize with Cinema category
+        switchCategory('cinema', document.querySelector('.cat-tab'));
+
+        function setSummary(mode) {
+            document.getElementById('btn-week').classList.toggle('active', mode === 'week');
+            document.getElementById('btn-month').classList.toggle('active', mode === 'month');
+
+            if (mode === 'week') {
+                document.getElementById('num-events').textContent = '3';
+                document.getElementById('num-tasks').textContent = '4';
+                document.getElementById('num-trips').textContent = '1';
+                document.getElementById('summary-desc').textContent = 'Week ahead: 3 scheduled activities including Football Training and Family Movie Night.';
+            } else {
+                document.getElementById('num-events').textContent = '12';
+                document.getElementById('num-tasks').textContent = '9';
+                document.getElementById('num-trips').textContent = '3';
+                document.getElementById('summary-desc').textContent = 'Month ahead: 12 events scheduled including Half-Term trip to Yorkshire and 3 family days out.';
+            }
+        }
+
+        // Calendar Grid Generation (October 2026 starts on Thursday = offset 3)
+        const grid = document.getElementById('calendar-grid');
+        const tooltip = document.getElementById('hover-tooltip');
+        const ttDate = document.getElementById('tt-date');
+        const ttBody = document.getElementById('tt-body');
+
+        // 3 empty leading cells for Mon, Tue, Wed (since Oct 1, 2026 is a Thursday)
+        for (let empty = 0; empty < 3; empty++) {
+            const emptyCell = document.createElement('div');
+            emptyCell.className = 'day-cell empty';
+            grid.appendChild(emptyCell);
+        }
+
+        for (let i = 1; i <= 31; i++) {
+            const dayKey = `2026-10-${i < 10 ? '0' + i : i}`;
+            const cell = document.createElement('div');
+            cell.className = 'day-cell';
+
+            let html = `<div class="day-num">${i}</div>`;
+            if (events[dayKey]) {
+                events[dayKey].forEach(e => {
+                    html += `<div class="event-pill ${e.color}">${e.title}</div>`;
+                });
+            }
+            cell.innerHTML = html;
+
+            cell.addEventListener('mouseenter', (ev) => {
+                ttDate.textContent = `October ${i}, 2026`;
+                const dayEvs = events[dayKey];
+                if (dayEvs && dayEvs.length) {
+                    ttBody.innerHTML = dayEvs.map(e => `
+                        <div class="tooltip-line">
+                            <span class="dot ${e.color}"></span>
+                            <strong>${e.who}:</strong> ${e.title} (${e.time})
+                        </div>
+                    `).join('');
+                } else {
+                    ttBody.innerHTML = `<span style="color:var(--muted); font-size:0.75rem;">No activities</span>`;
+                }
+                tooltip.style.display = 'block';
+                moveTt(ev);
+            });
+
+            cell.addEventListener('mousemove', moveTt);
+            cell.addEventListener('mouseleave', () => tooltip.style.display = 'none');
+
+            grid.appendChild(cell);
+        }
+
+        function moveTt(ev) {
+            tooltip.style.left = (ev.pageX + 10) + 'px';
+            tooltip.style.top = (ev.pageY + 10) + 'px';
+        }
+    </script>
+</body>
+</html>
