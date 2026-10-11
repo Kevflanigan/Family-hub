@@ -396,51 +396,33 @@
             color: #fff;
         }
 
-        /* UK Map Hub Panel */
-        .uk-map-hub {
-            background: linear-gradient(135deg, #161b22, #1f2937);
+        /* Accurate UK Map Container */
+        .uk-map-container {
+            background: #0d1117;
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 0.8rem;
+            padding: 1rem;
             margin-bottom: 0.75rem;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-        }
-
-        .uk-map-header {
-            display: flex;
-            justify-content: space-between;
             align-items: center;
+            position: relative;
         }
 
-        .uk-map-header span {
-            font-size: 0.8rem;
-            font-weight: 700;
+        .uk-map-svg {
+            width: 100%;
+            max-width: 220px;
+            height: auto;
         }
 
-        .uk-regions-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-        }
-
-        .region-btn {
-            background: #0d1117;
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 6px 4px;
-            border-radius: 6px;
-            font-size: 0.72rem;
-            font-weight: 600;
+        .map-pin {
             cursor: pointer;
-            text-align: center;
+            transition: transform 0.2s;
         }
 
-        .region-btn:hover, .region-btn.active {
-            border-color: var(--accent);
-            color: var(--accent);
-            background: rgba(88, 166, 255, 0.05);
+        .map-pin:hover circle {
+            fill: #fff;
+            r: 7;
         }
 
         .todo-left {
@@ -612,9 +594,9 @@
                 { title: "Paddington in Peru", details: "Streaming soon", meta: "Comedy" }
             ],
             places: [
-                { title: "Yorkshire Dales National Park", details: "Scenic Walk & Picnic", postcode: "BD23 4PQ", region: "North" },
-                { title: "Royal Armouries Museum", details: "Interactive Exhibits", postcode: "LS10 1LT", region: "North" },
-                { title: "Tropical World Leeds", details: "Zoo & Greenhouse", postcode: "LS8 2LE", region: "North" }
+                { title: "Yorkshire Dales National Park", details: "Scenic Walk & Picnic", postcode: "BD23 4PQ", x: 95, y: 130 },
+                { title: "Royal Armouries Museum", details: "Interactive Exhibits", postcode: "LS10 1LT", x: 105, y: 155 },
+                { title: "Tropical World Leeds", details: "Zoo & Greenhouse", postcode: "LS8 2LE", x: 108, y: 150 }
             ]
         };
 
@@ -641,7 +623,7 @@
                 categoriesData[category].push({ title, details: "Newly Added", meta: "Custom" });
                 switchCategory(category, document.querySelector(`.cat-tab`));
             } else if (category === 'places') {
-                categoriesData.places.push({ title, details: "Custom Outing", postcode: "LS1 1AA", region: "North" });
+                categoriesData.places.push({ title, details: "Custom Outing", postcode: "LS1 1AA", x: 100, y: 145 });
                 switchCategory('places', document.querySelector(`.cat-tab`));
             } else if (category === 'todo') {
                 todosData.push({ text: title, who: assignee, color: colorClass });
@@ -660,21 +642,41 @@
             const items = categoriesData[cat];
 
             if (cat === 'places') {
-                const combinedQuery = items.map(i => i.title + ' ' + i.postcode).join(' | ');
-                let html = `
-                    <div class="uk-map-hub">
-                        <div class="uk-map-header">
-                            <span>🗺️ UK Places & Map Hub</span>
-                            <a href="https://maps.google.com/?q=${encodeURIComponent(combinedQuery)}" target="_blank" class="map-btn">View All on Google Maps ↗</a>
-                        </div>
-                        <div class="uk-regions-grid">
-                            <button class="region-btn active">📍 Yorkshire / Leeds</button>
-                            <button class="region-btn">🌲 National Parks</button>
-                            <button class="region-btn">🎡 Days Out UK</button>
-                        </div>
-                    </div>
+                let mapSvg = `
+                    <div class="uk-map-container">
+                        <span style="font-size:0.75rem; color:var(--muted); margin-bottom:8px; font-weight:600;">UK Locations Map</span>
+                        <svg class="uk-map-svg" viewBox="0 0 200 340" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Accurate Great Britain & UK Mainland Silhouette Path -->
+                            <path d="M100,15 
+                                     C115,18 125,35 115,55 
+                                     C105,70 95,80 100,105 
+                                     C108,125 125,135 120,165 
+                                     C115,195 95,210 90,240 
+                                     C85,270 80,290 75,315 
+                                     C68,295 72,270 82,245 
+                                     C92,220 78,195 72,170 
+                                     C66,145 82,130 78,105 
+                                     C74,80 58,72 63,50 
+                                     C68,30 85,12 100,15 Z" 
+                                  fill="#161b22" stroke="#30363d" stroke-width="2"/>
+                            <!-- Scotland Top Extension -->
+                            <path d="M100,15 C88,8 72,22 80,42 C88,52 102,45 100,15 Z" fill="#161b22" stroke="#30363d" stroke-width="2"/>
+                            <!-- Wales West Bulge -->
+                            <path d="M68,135 C52,140 48,162 68,172 C76,155 72,140 68,135 Z" fill="#161b22" stroke="#30363d" stroke-width="2"/>
                 `;
-                html += items.map((item, idx) => `
+
+                items.forEach((p, idx) => {
+                    mapSvg += `
+                        <g class="map-pin" onclick="window.open('https://maps.google.com/?q=${encodeURIComponent(p.title + ' ' + p.postcode)}', '_blank')">
+                            <circle cx="${p.x}" cy="${p.y}" r="6" fill="#58a6ff" stroke="#fff" stroke-width="1.5" />
+                            <text x="${p.x + 8}" y="${p.y + 3.5}" fill="#f0f6fc" font-size="9" font-weight="700">${idx + 1}. ${p.title.split(' ')[0]}</text>
+                        </g>
+                    `;
+                });
+
+                mapSvg += `</svg></div>`;
+
+                container.innerHTML = mapSvg + items.map((item, idx) => `
                     <div class="list-card">
                         <div class="list-info">
                             <h5>📍 ${idx + 1}. ${item.title}</h5>
@@ -683,7 +685,6 @@
                         <a href="https://maps.google.com/?q=${encodeURIComponent(item.title + ' ' + item.postcode)}" target="_blank" class="map-btn">Map ↗</a>
                     </div>
                 `).join('');
-                container.innerHTML = html;
             } else {
                 container.innerHTML = items.map(item => `
                     <div class="list-card">
