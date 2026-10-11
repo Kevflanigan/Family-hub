@@ -401,7 +401,7 @@
             color: #fff;
         }
 
-        /* Real Embedded Map Container */
+        /* Map Embed Box */
         .map-embed-box {
             width: 100%;
             height: 220px;
@@ -416,6 +416,19 @@
             height: 100%;
             border: none;
             filter: invert(90%) hue-rotate(180deg);
+        }
+
+        .home-banner {
+            font-size: 0.72rem;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
         }
 
         .todo-left {
@@ -566,6 +579,7 @@
 
     <script>
         let currentRange = 'week';
+        let homePostcode = "LS19 6BH";
         let activeMapQuery = "Yorkshire Dales National Park BD23 4PQ";
 
         let events = {
@@ -588,9 +602,9 @@
                 { title: "Paddington in Peru", details: "Streaming soon", meta: "Comedy" }
             ],
             places: [
-                { title: "Yorkshire Dales National Park", details: "Scenic Walk & Picnic", postcode: "BD23 4PQ" },
-                { title: "Royal Armouries Museum", details: "Interactive Exhibits", postcode: "LS10 1LT" },
-                { title: "Tropical World Leeds", details: "Zoo & Greenhouse", postcode: "LS8 2LE" }
+                { title: "Yorkshire Dales National Park", details: "Scenic Walk & Picnic", postcode: "BD23 4PQ", dist: "32 miles" },
+                { title: "Royal Armouries Museum", details: "Interactive Exhibits", postcode: "LS10 1LT", dist: "11 miles" },
+                { title: "Tropical World Leeds", details: "Zoo & Greenhouse", postcode: "LS8 2LE", dist: "9.5 miles" }
             ]
         };
 
@@ -617,7 +631,7 @@
                 categoriesData[category].push({ title, details: "Newly Added", meta: "Custom" });
                 switchCategory(category, document.querySelector(`.cat-tab`));
             } else if (category === 'places') {
-                categoriesData.places.push({ title, details: "Custom Outing", postcode: "LS1 1AA" });
+                categoriesData.places.push({ title, details: "Custom Outing", postcode: "LS1 1AA", dist: "14 miles" });
                 switchCategory('places', document.querySelector(`.cat-tab`));
             } else if (category === 'todo') {
                 todosData.push({ text: title, who: assignee, color: colorClass });
@@ -645,6 +659,10 @@
 
             if (cat === 'places') {
                 container.innerHTML = `
+                    <div class="home-banner">
+                        <span>🏠 Home Location: <strong>${homePostcode}</strong></span>
+                        <span style="color:var(--accent);">Live Routing Active</span>
+                    </div>
                     <div class="map-embed-box">
                         <iframe id="interactive-map-frame" src="https://maps.google.com/maps?q=${encodeURIComponent(activeMapQuery)}&t=&z=11&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>
                     </div>
@@ -652,9 +670,9 @@
                     <div class="list-card" onclick="focusMap('${item.title}', '${item.postcode}')">
                         <div class="list-info">
                             <h5>📍 ${idx + 1}. ${item.title}</h5>
-                            <span>${item.details} • <strong>${item.postcode}</strong></span>
+                            <span>${item.details} • <strong>${item.postcode}</strong> (${item.dist} from home)</span>
                         </div>
-                        <a href="https://maps.google.com/?q=${encodeURIComponent(item.title + ' ' + item.postcode)}" target="_blank" class="map-btn" onclick="event.stopPropagation()">Map ↗</a>
+                        <a href="https://maps.google.com/?saddr=${homePostcode}&daddr=${encodeURIComponent(item.title + ' ' + item.postcode)}" target="_blank" class="map-btn" onclick="event.stopPropagation()">Directions ↗</a>
                     </div>
                 `).join('');
             } else {
