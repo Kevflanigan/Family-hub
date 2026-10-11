@@ -117,6 +117,51 @@
             gap: 6px;
         }
 
+        /* Universal Quick Add Form */
+        .add-form {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .form-input, .form-select {
+            background: #0d1117;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .form-input:focus, .form-select:focus {
+            border-color: var(--accent);
+        }
+
+        .form-input {
+            flex: 1;
+        }
+
+        .add-btn {
+            background: var(--accent);
+            color: #0d1117;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .add-btn:hover {
+            opacity: 0.9;
+        }
+
         /* Toggle Switches */
         .toggle-box {
             background: #0d1117;
@@ -169,7 +214,7 @@
             color: var(--muted);
         }
 
-        /* Calendar Grid */
+        /* Perfectly Aligned Calendar Grid */
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -178,17 +223,17 @@
 
         .day-header {
             text-align: center;
-            font-size: 0.7rem;
-            font-weight: 600;
+            font-size: 0.75rem;
+            font-weight: 700;
             color: var(--muted);
-            padding-bottom: 4px;
+            padding-bottom: 6px;
         }
 
         .day-cell {
             background: #0d1117;
             border: 1px solid var(--border);
             border-radius: 6px;
-            min-height: 70px;
+            min-height: 75px;
             padding: 4px;
             position: relative;
             cursor: pointer;
@@ -265,7 +310,7 @@
             flex-shrink: 0;
         }
 
-        /* Category Lists (Cinema, Home Watchlist, Places) */
+        /* Category Lists */
         .category-tabs {
             display: flex;
             gap: 6px;
@@ -298,7 +343,7 @@
             gap: 0.5rem;
         }
 
-        .list-card {
+        .list-card, .todo-item {
             background: #0d1117;
             border: 1px solid var(--border);
             border-radius: 8px;
@@ -332,17 +377,6 @@
         .map-btn:hover {
             background: var(--accent);
             color: #fff;
-        }
-
-        /* To-Dos */
-        .todo-item {
-            background: #0d1117;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 0.6rem 0.8rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
         }
 
         .todo-left {
@@ -379,6 +413,36 @@
         <div class="page-title">
             <h1>Welcome Back, Family! 👋</h1>
         </div>
+
+        <!-- Universal Quick Add Section -->
+        <section class="card" style="border-color: var(--accent);">
+            <div class="card-header" style="margin-bottom: 0.5rem;">
+                <div class="card-title">➕ Quick Add to Hub</div>
+            </div>
+            <form class="add-form" onsubmit="addItem(event)">
+                <div class="form-row">
+                    <input type="text" id="add-title" class="form-input" placeholder="Enter title (e.g., Zoo Trip, Pizza Night)..." required>
+                    <select id="add-category" class="form-select">
+                        <option value="calendar">📅 Calendar Event</option>
+                        <option value="cinema">🍿 Cinema Film</option>
+                        <option value="home">📺 Home Watch</option>
+                        <option value="places">📍 Place to Visit</option>
+                        <option value="todo">✅ To-Do Task</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <input type="date" id="add-date" class="form-input" value="2026-10-18">
+                    <select id="add-assignee" class="form-select">
+                        <option value="family">Family</option>
+                        <option value="mom">Mom</option>
+                        <option value="dad">Dad</option>
+                        <option value="leo">Leo</option>
+                        <option value="mia">Mia</option>
+                    </select>
+                    <button type="submit" class="add-btn">Add to Hub</button>
+                </div>
+            </form>
+        </section>
 
         <!-- Section 1: Dynamic Summary -->
         <section class="card">
@@ -418,13 +482,13 @@
             </div>
 
             <div class="calendar-grid" id="calendar-grid">
-                <div class="day-header">M</div>
-                <div class="day-header">T</div>
-                <div class="day-header">W</div>
-                <div class="day-header">Th</div>
-                <div class="day-header">F</div>
-                <div class="day-header">S</div>
-                <div class="day-header">Su</div>
+                <div class="day-header">Mon</div>
+                <div class="day-header">Tue</div>
+                <div class="day-header">Wed</div>
+                <div class="day-header">Thu</div>
+                <div class="day-header">Fri</div>
+                <div class="day-header">Sat</div>
+                <div class="day-header">Sun</div>
             </div>
         </section>
 
@@ -440,9 +504,7 @@
                 <button class="cat-tab" onclick="switchCategory('places', this)">📍 Places to Go</button>
             </div>
 
-            <div class="list-container" id="dynamic-list-view">
-                <!-- Dynamically populated via JS -->
-            </div>
+            <div class="list-container" id="dynamic-list-view"></div>
         </section>
 
         <!-- Section 4: To-Do List (Who & What) -->
@@ -451,7 +513,7 @@
                 <div class="card-title">✅ To-Do List (Who & What)</div>
             </div>
 
-            <div class="list-container">
+            <div class="list-container" id="todo-list-view">
                 <div class="todo-item">
                     <div class="todo-left">
                         <input type="checkbox">
@@ -466,20 +528,6 @@
                     </div>
                     <span class="assign-tag bg-dad">Dad</span>
                 </div>
-                <div class="todo-item">
-                    <div class="todo-left">
-                        <input type="checkbox">
-                        <span class="todo-text">Pack football boots & water bottle</span>
-                    </div>
-                    <span class="assign-tag bg-leo">Leo</span>
-                </div>
-                <div class="todo-item">
-                    <div class="todo-left">
-                        <input type="checkbox">
-                        <span class="todo-text">Tidy up play corner in lounge</span>
-                    </div>
-                    <span class="assign-tag bg-mia">Mia</span>
-                </div>
             </div>
         </section>
     </main>
@@ -491,7 +539,7 @@
     </div>
 
     <script>
-        const events = {
+        let events = {
             "2026-10-10": [{ title: "Football Training", color: "bg-leo", time: "10:00 AM", who: "Leo" }],
             "2026-10-15": [{ title: "Dentist Appt", color: "bg-mom", time: "02:15 PM", who: "Mom" }],
             "2026-10-17": [{ title: "Pizza & Movie Night", color: "bg-family", time: "06:30 PM", who: "Family" }],
@@ -501,7 +549,7 @@
             ]
         };
 
-        const categoriesData = {
+        let categoriesData = {
             cinema: [
                 { title: "The Wild Robot", details: "Release: Showing Now", meta: "Family Animation" },
                 { title: "Sonic the Hedgehog 3", details: "Release: Oct 2026", meta: "Action / Family" }
@@ -512,14 +560,50 @@
             ],
             places: [
                 { title: "Yorkshire Dales National Park", details: "Scenic Walk & Picnic", postcode: "BD23 4PQ" },
-                { title: "Royal Armouries Museum", details: "Interactive Exhibits", postcode: "LS10 1LT" },
-                { title: "Tropical World Leeds", details: "Zoo & Greenhouse", postcode: "LS8 2LE" }
+                { title: "Royal Armouries Museum", details: "Interactive Exhibits", postcode: "LS10 1LT" }
             ]
         };
 
+        let todosData = [
+            { text: "Buy ingredients for Friday Pizza night", who: "Mom", color: "bg-mom" },
+            { text: "Check pressure in car tires", who: "Dad", color: "bg-dad" }
+        ];
+
+        let activeCat = 'cinema';
+
+        function addItem(e) {
+            e.preventDefault();
+            const title = document.getElementById('add-title').value;
+            const category = document.getElementById('add-category').value;
+            const dateStr = document.getElementById('add-date').value;
+            const assignee = document.getElementById('add-assignee').value;
+            const colorClass = `bg-${assignee}`;
+
+            if (category === 'calendar' || dateStr) {
+                if (!events[dateStr]) events[dateStr] = [];
+                events[dateStr].push({ title, color: colorClass, time: "All Day", who: assignee });
+                renderCalendar();
+            }
+
+            if (category === 'cinema' || category === 'home') {
+                categoriesData[category].push({ title, details: "Newly Added", meta: "Custom" });
+                switchCategory(category, document.querySelector(`.cat-tab`));
+            } else if (category === 'places') {
+                categoriesData.places.push({ title, details: "Custom Outing", postcode: "LS1 1AA" });
+                switchCategory('places', document.querySelector(`.cat-tab`));
+            } else if (category === 'todo') {
+                todosData.push({ text: title, who: assignee, color: colorClass });
+                renderTodos();
+            }
+
+            document.getElementById('add-title').value = '';
+            alert('Successfully added to Family Hub!');
+        }
+
         function switchCategory(cat, btn) {
+            activeCat = cat;
             document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
-            btn.classList.add('active');
+            if (btn) btn.classList.add('active');
 
             const container = document.getElementById('dynamic-list-view');
             const items = categoriesData[cat];
@@ -547,8 +631,83 @@
             }
         }
 
-        // Initialize with Cinema category
-        switchCategory('cinema', document.querySelector('.cat-tab'));
+        function renderTodos() {
+            const container = document.getElementById('todo-list-view');
+            container.innerHTML = todosData.map(t => `
+                <div class="todo-item">
+                    <div class="todo-left">
+                        <input type="checkbox">
+                        <span class="todo-text">${t.text}</span>
+                    </div>
+                    <span class="assign-tag ${t.color}">${t.who}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            grid.innerHTML = `
+                <div class="day-header">Mon</div>
+                <div class="day-header">Tue</div>
+                <div class="day-header">Wed</div>
+                <div class="day-header">Thu</div>
+                <div class="day-header">Fri</div>
+                <div class="day-header">Sat</div>
+                <div class="day-header">Sun</div>
+            `;
+
+            // October 1, 2026 starts on Thursday (3 empty cells)
+            for (let empty = 0; empty < 3; empty++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'day-cell empty';
+                grid.appendChild(emptyCell);
+            }
+
+            for (let i = 1; i <= 31; i++) {
+                const dayKey = `2026-10-${i < 10 ? '0' + i : i}`;
+                const cell = document.createElement('div');
+                cell.className = 'day-cell';
+
+                let html = `<div class="day-num">${i}</div>`;
+                if (events[dayKey]) {
+                    events[dayKey].forEach(e => {
+                        html += `<div class="event-pill ${e.color}">${e.title}</div>`;
+                    });
+                }
+                cell.innerHTML = html;
+
+                cell.addEventListener('mouseenter', (ev) => {
+                    const tooltip = document.getElementById('hover-tooltip');
+                    document.getElementById('tt-date').textContent = `October ${i}, 2026`;
+                    const dayEvs = events[dayKey];
+                    if (dayEvs && dayEvs.length) {
+                        document.getElementById('tt-body').innerHTML = dayEvs.map(e => `
+                            <div class="tooltip-line">
+                                <span class="dot ${e.color}"></span>
+                                <strong>${e.who}:</strong> ${e.title} (${e.time})
+                            </div>
+                        `).join('');
+                    } else {
+                        document.getElementById('tt-body').innerHTML = `<span style="color:var(--muted); font-size:0.75rem;">No activities</span>`;
+                    }
+                    tooltip.style.display = 'block';
+                    tooltip.style.left = (ev.pageX + 10) + 'px';
+                    tooltip.style.top = (ev.pageY + 10) + 'px';
+                });
+
+                cell.addEventListener('mousemove', (ev) => {
+                    const tooltip = document.getElementById('hover-tooltip');
+                    tooltip.style.left = (ev.pageX + 10) + 'px';
+                    tooltip.style.top = (ev.pageY + 10) + 'px';
+                });
+
+                cell.addEventListener('mouseleave', () => {
+                    document.getElementById('hover-tooltip').style.display = 'none';
+                });
+
+                grid.appendChild(cell);
+            }
+        }
 
         function setSummary(mode) {
             document.getElementById('btn-week').classList.toggle('active', mode === 'week');
@@ -556,70 +715,21 @@
 
             if (mode === 'week') {
                 document.getElementById('num-events').textContent = '3';
-                document.getElementById('num-tasks').textContent = '4';
+                document.getElementById('num-tasks').textContent = todosData.length;
                 document.getElementById('num-trips').textContent = '1';
                 document.getElementById('summary-desc').textContent = 'Week ahead: 3 scheduled activities including Football Training and Family Movie Night.';
             } else {
                 document.getElementById('num-events').textContent = '12';
-                document.getElementById('num-tasks').textContent = '9';
+                document.getElementById('num-tasks').textContent = todosData.length;
                 document.getElementById('num-trips').textContent = '3';
                 document.getElementById('summary-desc').textContent = 'Month ahead: 12 events scheduled including Half-Term trip to Yorkshire and 3 family days out.';
             }
         }
 
-        // Calendar Grid Generation (October 2026 starts on Thursday = offset 3)
-        const grid = document.getElementById('calendar-grid');
-        const tooltip = document.getElementById('hover-tooltip');
-        const ttDate = document.getElementById('tt-date');
-        const ttBody = document.getElementById('tt-body');
-
-        // 3 empty leading cells for Mon, Tue, Wed (since Oct 1, 2026 is a Thursday)
-        for (let empty = 0; empty < 3; empty++) {
-            const emptyCell = document.createElement('div');
-            emptyCell.className = 'day-cell empty';
-            grid.appendChild(emptyCell);
-        }
-
-        for (let i = 1; i <= 31; i++) {
-            const dayKey = `2026-10-${i < 10 ? '0' + i : i}`;
-            const cell = document.createElement('div');
-            cell.className = 'day-cell';
-
-            let html = `<div class="day-num">${i}</div>`;
-            if (events[dayKey]) {
-                events[dayKey].forEach(e => {
-                    html += `<div class="event-pill ${e.color}">${e.title}</div>`;
-                });
-            }
-            cell.innerHTML = html;
-
-            cell.addEventListener('mouseenter', (ev) => {
-                ttDate.textContent = `October ${i}, 2026`;
-                const dayEvs = events[dayKey];
-                if (dayEvs && dayEvs.length) {
-                    ttBody.innerHTML = dayEvs.map(e => `
-                        <div class="tooltip-line">
-                            <span class="dot ${e.color}"></span>
-                            <strong>${e.who}:</strong> ${e.title} (${e.time})
-                        </div>
-                    `).join('');
-                } else {
-                    ttBody.innerHTML = `<span style="color:var(--muted); font-size:0.75rem;">No activities</span>`;
-                }
-                tooltip.style.display = 'block';
-                moveTt(ev);
-            });
-
-            cell.addEventListener('mousemove', moveTt);
-            cell.addEventListener('mouseleave', () => tooltip.style.display = 'none');
-
-            grid.appendChild(cell);
-        }
-
-        function moveTt(ev) {
-            tooltip.style.left = (ev.pageX + 10) + 'px';
-            tooltip.style.top = (ev.pageY + 10) + 'px';
-        }
+        // Initial Renders
+        renderCalendar();
+        switchCategory('cinema', document.querySelector('.cat-tab'));
+        renderTodos();
     </script>
 </body>
 </html>
