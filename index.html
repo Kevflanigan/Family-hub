@@ -31,12 +31,12 @@
         body {
             background-color: var(--bg);
             color: var(--text);
-            padding-top: 65px;
+            padding-top: 60px;
             padding-bottom: 2rem;
             min-height: 100vh;
         }
 
-        /* Top Header Navigation */
+        /* Fixed Navigation */
         header {
             position: fixed;
             top: 0;
@@ -117,7 +117,7 @@
             gap: 6px;
         }
 
-        /* Universal Quick Add Form */
+        /* Quick Add Form - Clean Mobile Layout */
         .add-form {
             display: flex;
             flex-direction: column;
@@ -127,6 +127,7 @@
         .form-row {
             display: flex;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
         .form-input, .form-select {
@@ -137,14 +138,21 @@
             border-radius: 8px;
             font-size: 0.85rem;
             outline: none;
+            box-sizing: border-box;
         }
 
         .form-input:focus, .form-select:focus {
             border-color: var(--accent);
         }
 
-        .form-input {
-            flex: 1;
+        .input-full {
+            flex: 1 1 60%;
+            min-width: 140px;
+        }
+
+        .input-half {
+            flex: 1 1 35%;
+            min-width: 110px;
         }
 
         .add-btn {
@@ -156,13 +164,16 @@
             font-weight: 700;
             font-size: 0.85rem;
             cursor: pointer;
+            flex: 1 1 100%;
         }
 
-        .add-btn:hover {
-            opacity: 0.9;
+        @media (min-width: 500px) {
+            .add-btn {
+                flex: 0 0 auto;
+            }
         }
 
-        /* Toggle Switches */
+        /* Summary Toggle & Stats */
         .toggle-box {
             background: #0d1117;
             border: 1px solid var(--border);
@@ -187,7 +198,6 @@
             color: #ffffff;
         }
 
-        /* Dynamic Stats */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -214,11 +224,18 @@
             color: var(--muted);
         }
 
-        /* Perfectly Aligned Calendar Grid */
+        /* Horizontally Scrollable Calendar Container */
+        .calendar-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
         .calendar-grid {
             display: grid;
-            grid-template-columns: repeat(7, 1fr);
+            grid-template-columns: repeat(7, minmax(44px, 1fr));
             gap: 4px;
+            min-width: 310px;
         }
 
         .day-header {
@@ -259,7 +276,7 @@
             margin-top: 2px;
             padding: 2px 4px;
             border-radius: 3px;
-            font-size: 0.62rem;
+            font-size: 0.6rem;
             font-weight: 600;
             white-space: nowrap;
             overflow: hidden;
@@ -310,7 +327,7 @@
             flex-shrink: 0;
         }
 
-        /* Category Lists */
+        /* Entertainment Tabs & List */
         .category-tabs {
             display: flex;
             gap: 6px;
@@ -414,25 +431,25 @@
             <h1>Welcome Back, Family! 👋</h1>
         </div>
 
-        <!-- Universal Quick Add Section -->
+        <!-- Universal Quick Add -->
         <section class="card" style="border-color: var(--accent);">
             <div class="card-header" style="margin-bottom: 0.5rem;">
-                <div class="card-title">➕ Quick Add to Hub</div>
+                <div class="card-title">Quick Add to Hub</div>
             </div>
             <form class="add-form" onsubmit="addItem(event)">
                 <div class="form-row">
-                    <input type="text" id="add-title" class="form-input" placeholder="Enter title (e.g., Zoo Trip, Pizza Night)..." required>
-                    <select id="add-category" class="form-select">
-                        <option value="calendar">📅 Calendar Event</option>
-                        <option value="cinema">🍿 Cinema Film</option>
-                        <option value="home">📺 Home Watch</option>
-                        <option value="places">📍 Place to Visit</option>
-                        <option value="todo">✅ To-Do Task</option>
+                    <input type="text" id="add-title" class="form-input input-full" placeholder="Enter title (e.g., Zoo Trip, Pizza Night)..." required>
+                    <select id="add-category" class="form-select input-half">
+                        <option value="calendar">Calendar Event</option>
+                        <option value="cinema">Cinema Film</option>
+                        <option value="home">Home Watch</option>
+                        <option value="places">Place to Visit</option>
+                        <option value="todo">To-Do Task</option>
                     </select>
                 </div>
                 <div class="form-row">
-                    <input type="date" id="add-date" class="form-input" value="2026-10-18">
-                    <select id="add-assignee" class="form-select">
+                    <input type="date" id="add-date" class="form-input input-half" value="2026-10-18">
+                    <select id="add-assignee" class="form-select input-half">
                         <option value="family">Family</option>
                         <option value="mom">Mom</option>
                         <option value="dad">Dad</option>
@@ -447,7 +464,7 @@
         <!-- Section 1: Dynamic Summary -->
         <section class="card">
             <div class="card-header">
-                <div class="card-title">📊 Upcoming Summary</div>
+                <div class="card-title">Upcoming Summary</div>
                 <div class="toggle-box">
                     <button class="toggle-btn active" id="btn-week" onclick="setSummary('week')">Week</button>
                     <button class="toggle-btn" id="btn-month" onclick="setSummary('month')">Month</button>
@@ -477,31 +494,33 @@
         <!-- Section 2: Shared Calendar -->
         <section class="card">
             <div class="card-header">
-                <div class="card-title">📅 Shared Calendar</div>
+                <div class="card-title">Shared Calendar</div>
                 <span style="font-size:0.75rem; color:var(--muted);">October 2026</span>
             </div>
 
-            <div class="calendar-grid" id="calendar-grid">
-                <div class="day-header">Mon</div>
-                <div class="day-header">Tue</div>
-                <div class="day-header">Wed</div>
-                <div class="day-header">Thu</div>
-                <div class="day-header">Fri</div>
-                <div class="day-header">Sat</div>
-                <div class="day-header">Sun</div>
+            <div class="calendar-wrapper">
+                <div class="calendar-grid" id="calendar-grid">
+                    <div class="day-header">Mon</div>
+                    <div class="day-header">Tue</div>
+                    <div class="day-header">Wed</div>
+                    <div class="day-header">Thu</div>
+                    <div class="day-header">Fri</div>
+                    <div class="day-header">Sat</div>
+                    <div class="day-header">Sun</div>
+                </div>
             </div>
         </section>
 
         <!-- Section 3: Cinema, Home Films & Places to Go -->
         <section class="card">
             <div class="card-header">
-                <div class="card-title">🎬 Entertainment & Places</div>
+                <div class="card-title">Entertainment & Places</div>
             </div>
 
             <div class="category-tabs">
-                <button class="cat-tab active" onclick="switchCategory('cinema', this)">🍿 Cinema Films</button>
-                <button class="cat-tab" onclick="switchCategory('home', this)">📺 Home Watchlist</button>
-                <button class="cat-tab" onclick="switchCategory('places', this)">📍 Places to Go</button>
+                <button class="cat-tab active" onclick="switchCategory('cinema', this)">Cinema Films</button>
+                <button class="cat-tab" onclick="switchCategory('home', this)">Home Watchlist</button>
+                <button class="cat-tab" onclick="switchCategory('places', this)">Places to Go</button>
             </div>
 
             <div class="list-container" id="dynamic-list-view"></div>
@@ -510,25 +529,10 @@
         <!-- Section 4: To-Do List (Who & What) -->
         <section class="card">
             <div class="card-header">
-                <div class="card-title">✅ To-Do List (Who & What)</div>
+                <div class="card-title">To-Do List (Who & What)</div>
             </div>
 
-            <div class="list-container" id="todo-list-view">
-                <div class="todo-item">
-                    <div class="todo-left">
-                        <input type="checkbox">
-                        <span class="todo-text">Buy ingredients for Friday Pizza night</span>
-                    </div>
-                    <span class="assign-tag bg-mom">Mom</span>
-                </div>
-                <div class="todo-item">
-                    <div class="todo-left">
-                        <input type="checkbox">
-                        <span class="todo-text">Check pressure in car tires</span>
-                    </div>
-                    <span class="assign-tag bg-dad">Dad</span>
-                </div>
-            </div>
+            <div class="list-container" id="todo-list-view"></div>
         </section>
     </main>
 
@@ -569,8 +573,6 @@
             { text: "Check pressure in car tires", who: "Dad", color: "bg-dad" }
         ];
 
-        let activeCat = 'cinema';
-
         function addItem(e) {
             e.preventDefault();
             const title = document.getElementById('add-title').value;
@@ -601,7 +603,6 @@
         }
 
         function switchCategory(cat, btn) {
-            activeCat = cat;
             document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
             if (btn) btn.classList.add('active');
 
@@ -656,7 +657,6 @@
                 <div class="day-header">Sun</div>
             `;
 
-            // October 1, 2026 starts on Thursday (3 empty cells)
             for (let empty = 0; empty < 3; empty++) {
                 const emptyCell = document.createElement('div');
                 emptyCell.className = 'day-cell empty';
@@ -726,7 +726,6 @@
             }
         }
 
-        // Initial Renders
         renderCalendar();
         switchCategory('cinema', document.querySelector('.cat-tab'));
         renderTodos();
