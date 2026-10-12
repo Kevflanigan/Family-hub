@@ -409,6 +409,7 @@
             overflow: hidden;
             border: 1px solid var(--border);
             margin-bottom: 0.75rem;
+            position: relative;
         }
 
         .map-embed-box iframe {
@@ -416,6 +417,47 @@
             height: 100%;
             border: none;
             filter: invert(90%) hue-rotate(180deg);
+        }
+
+        /* Overlay Dots Legend for Saved Places */
+        .map-dots-bar {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            right: 8px;
+            background: rgba(13, 17, 23, 0.88);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(4px);
+            padding: 4px 8px;
+            border-radius: 6px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            overflow-x: auto;
+            z-index: 10;
+        }
+
+        .map-dot-pill {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: var(--text);
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .map-dot-badge {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #0d1117;
+            font-size: 0.6rem;
+            font-weight: 800;
+            display: grid;
+            place-items: center;
         }
 
         .home-banner {
@@ -580,7 +622,9 @@
     <script>
         let currentRange = 'week';
         let homePostcode = "LS19 6BH";
-        let activeMapQuery = "Yorkshire Dales National Park BD23 4PQ";
+        // Wide Regional UK view (z=5) on opening
+        let activeMapQuery = "United Kingdom";
+        let currentZoom = 5;
 
         let events = {
             "2026-10-10": [{ title: "Football Training", color: "bg-leo", time: "10:00 AM", who: "Leo" }],
@@ -644,9 +688,10 @@
 
         function focusMap(title, postcode) {
             activeMapQuery = title + " " + postcode;
+            currentZoom = 13; // Focus in closely when a specific place is clicked
             const iframe = document.getElementById('interactive-map-frame');
             if (iframe) {
-                iframe.src = `https://maps.google.com/maps?q=${encodeURIComponent(activeMapQuery)}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+                iframe.src = `https://maps.google.com/maps?q=${encodeURIComponent(activeMapQuery)}&t=&z=${currentZoom}&ie=UTF8&iwloc=&output=embed`;
             }
         }
 
@@ -658,13 +703,23 @@
             const items = categoriesData[cat];
 
             if (cat === 'places') {
+                let dotsHtml = items.map((p, idx) => `
+                    <div class="map-dot-pill" onclick="focusMap('${p.title}', '${p.postcode}')">
+                        <span class="map-dot-badge">${idx + 1}</span>
+                        <span>${p.title.split(' ')[0]}</span>
+                    </div>
+                `).join('');
+
                 container.innerHTML = `
                     <div class="home-banner">
                         <span>🏠 Home Location: <strong>${homePostcode}</strong></span>
                         <span style="color:var(--accent);">Live Routing Active</span>
                     </div>
                     <div class="map-embed-box">
-                        <iframe id="interactive-map-frame" src="https://maps.google.com/maps?q=${encodeURIComponent(activeMapQuery)}&t=&z=11&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>
+                        <iframe id="interactive-map-frame" src="https://maps.google.com/maps?q=${encodeURIComponent(activeMapQuery)}&t=&z=${currentZoom}&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>
+                        <div class="map-dots-bar">
+                            ${dotsHtml}
+                        </div>
                     </div>
                 ` + items.map((item, idx) => `
                     <div class="list-card" onclick="focusMap('${item.title}', '${item.postcode}')">
