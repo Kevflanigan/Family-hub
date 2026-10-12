@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -542,24 +543,24 @@
             <h1>Welcome Back, Family! 👋</h1>
         </div>
 
-        <!-- Universal Quick Add -->
         <section class="card" style="border-color: var(--accent);">
             <div class="card-header" style="margin-bottom: 0.5rem;">
                 <div class="card-title">Quick Add to Hub</div>
             </div>
             <form class="add-form" onsubmit="addItem(event)">
                 <div class="form-row">
-                    <input type="text" id="add-title" class="form-input input-full" placeholder="Enter title (e.g., Zoo Trip, Pizza Night)..." required>
+                    <input type="text" id="add-title" class="form-input input-full" placeholder="Enter title (e.g., Zoo Trip, Italian Feast)..." required>
                     <select id="add-category" class="form-select input-half" onchange="togglePostcodeField(this.value)">
                         <option value="calendar">Calendar Event</option>
                         <option value="cinema">Cinema Film</option>
                         <option value="home">Home Watch</option>
-                        <option value="places">Place to Visit</option>
+                        <option value="places">Places to Visit</option>
+                        <option value="restaurants">Restaurants to Visit</option>
                         <option value="todo">To-Do Task</option>
                     </select>
                 </div>
                 <div class="form-row" id="postcode-row" style="display: none;">
-                    <input type="text" id="add-postcode" class="form-input input-full" placeholder="Enter Postcode (optional, e.g., LS1 1AA)">
+                    <input type="text" id="add-postcode" class="form-input input-full" placeholder="Enter Postcode (e.g., LS1 1AA)">
                 </div>
                 <div class="form-row">
                     <input type="date" id="add-date" class="form-input input-half" value="2026-10-18">
@@ -575,7 +576,6 @@
             </form>
         </section>
 
-        <!-- Section 1: Dynamic Summary -->
         <section class="card">
             <div class="card-header">
                 <div class="card-title" id="summary-title-text">Upcoming Summary (This Week)</div>
@@ -605,7 +605,6 @@
             </p>
         </section>
 
-        <!-- Section 2: Shared Calendar -->
         <section class="card">
             <div class="card-header">
                 <div class="card-title" id="calendar-title-label">Shared Calendar</div>
@@ -629,22 +628,21 @@
             </div>
         </section>
 
-        <!-- Section 3: Cinema, Home Films & Places to Go -->
         <section class="card">
             <div class="card-header">
-                <div class="card-title">Entertainment & Places</div>
+                <div class="card-title" id="entertainment-section-title">Places to Visit</div>
             </div>
 
             <div class="category-tabs">
                 <button class="cat-tab" onclick="switchCategory('cinema', this)">Cinema Films</button>
                 <button class="cat-tab" onclick="switchCategory('home', this)">Home Watchlist</button>
-                <button class="cat-tab active" onclick="switchCategory('places', this)">Places to Go</button>
+                <button class="cat-tab active" onclick="switchCategory('places', this)">Places to Visit</button>
+                <button class="cat-tab" onclick="switchCategory('restaurants', this)">Restaurants to Visit</button>
             </div>
 
             <div class="list-container" id="dynamic-list-view"></div>
         </section>
 
-        <!-- Section 4: To-Do List (Who & What) -->
         <section class="card">
             <div class="card-header">
                 <div class="card-title">To-Do List (Who & What)</div>
@@ -693,6 +691,11 @@
                 { title: "Yorkshire Dales National Park", details: "Scenic Walk & Picnic", postcode: "BD23 4PQ", dist: "32 miles" },
                 { title: "Royal Armouries Museum", details: "Interactive Exhibits", postcode: "LS10 1LT", dist: "11 miles" },
                 { title: "Tropical World Leeds", details: "Zoo & Greenhouse", postcode: "LS8 2LE", dist: "9.5 miles" }
+            ],
+            restaurants: [
+                { title: "The Box Tree Restaurant", details: "Fine Dining & Tasting Menu", postcode: "LS29 9HN", dist: "12 miles" },
+                { title: "Bundobust Leeds", details: "Indian Street Food & Craft Beer", postcode: "LS1 4HY", dist: "10 miles" },
+                { title: "Riva Blue Italian", details: "Wood-fired Pizza & Pasta", postcode: "LS1 1UR", dist: "10 miles" }
             ]
         };
 
@@ -703,7 +706,7 @@
 
         function togglePostcodeField(val) {
             const row = document.getElementById('postcode-row');
-            if (row) row.style.display = (val === 'places') ? 'flex' : 'none';
+            if (row) row.style.display = (val === 'places' || val === 'restaurants') ? 'flex' : 'none';
         }
 
         function addItem(e) {
@@ -725,20 +728,28 @@
                 categoriesData[category].push({ title, details: "Newly Added", meta: "Custom" });
                 const activeTab = document.querySelector('.cat-tab.active');
                 if (activeTab) switchCategory(category, activeTab);
-            } else if (category === 'places') {
+            } else if (category === 'places' || category === 'restaurants') {
                 const finalPostcode = postcode ? postcode.toUpperCase() : "LS1 1AA";
-                categoriesData.places.push({ title, details: "Custom Outing", postcode: finalPostcode, dist: "14 miles" });
+                categoriesData[category].push({ title, details: "Custom Addition", postcode: finalPostcode, dist: "14 miles" });
                 const postcodeInp = document.getElementById('add-postcode');
                 if (postcodeInp) postcodeInp.value = '';
                 const activeTab = document.querySelector('.cat-tab.active');
-                if (activeTab) switchCategory('places', activeTab);
+                if (activeTab) switchCategory(category, activeTab);
             } else if (category === 'todo') {
                 todosData.push({ text: title, who: assignee, color: colorClass });
                 renderTodos();
             }
 
             document.getElementById('add-title').value = '';
-            alert('Successfully added to Family Hub!');
+            showNotification('Successfully added to Family Hub!');
+        }
+
+        function showNotification(msg) {
+            const note = document.createElement('div');
+            note.style.cssText = "position:fixed; bottom:20px; right:20px; background:#238636; color:#fff; padding:10px 16px; border-radius:8px; font-size:0.85rem; z-index:9999; box-shadow:0 4px 12px rgba(0,0,0,0.5);";
+            note.textContent = msg;
+            document.body.appendChild(note);
+            setTimeout(() => note.remove(), 2500);
         }
 
         function focusMap(title, postcode) {
@@ -754,10 +765,17 @@
             if (btn) btn.classList.add('active');
 
             const container = document.getElementById('dynamic-list-view');
+            const sectionTitle = document.getElementById('entertainment-section-title');
             const items = categoriesData[cat];
 
-            if (cat === 'places') {
-                let dotsHtml = categoriesData.places.map((p, idx) => `
+            if (sectionTitle) {
+                if (cat === 'places') sectionTitle.textContent = 'Places to Visit';
+                else if (cat === 'restaurants') sectionTitle.textContent = 'Restaurants to Visit';
+                else sectionTitle.textContent = 'Entertainment & Places';
+            }
+
+            if (cat === 'places' || cat === 'restaurants') {
+                let dotsHtml = items.map((p, idx) => `
                     <div class="map-dot-pill" onclick="focusMap('${p.title}', '${p.postcode}')">
                         <span class="map-dot-badge">${idx + 1}</span>
                         <span>${p.title.split(' ')[0]}</span>
@@ -775,7 +793,7 @@
                             ${dotsHtml}
                         </div>
                     </div>
-                ` + categoriesData.places.map((item, idx) => `
+                ` + items.map((item, idx) => `
                     <div class="list-card" onclick="focusMap('${item.title}', '${item.postcode}')">
                         <div class="list-info">
                             <h5>📍 ${idx + 1}. ${item.title}</h5>
@@ -853,7 +871,7 @@
                 // Find Monday of the current week
                 let d = new Date(currentStartDate);
                 let day = d.getDay();
-                let diff = d.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
+                let diff = d.getDate() - day + (day === 0 ? -6 : 1);
                 let monday = new Date(d.setDate(diff));
 
                 let sunday = new Date(monday);
@@ -974,3 +992,4 @@
     </script>
 </body>
 </html>
+```
