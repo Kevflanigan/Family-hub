@@ -1,10 +1,9 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Family Hub</title>
+    <title>Family Plan</title>
     <style>
         :root {
             --bg: #0d1117;
@@ -32,7 +31,7 @@
         body {
             background-color: var(--bg);
             color: var(--text);
-            padding-top: 60px;
+            padding-top: 70px;
             padding-bottom: 2rem;
             min-height: 100vh;
         }
@@ -43,7 +42,7 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 55px;
+            height: 60px;
             background: rgba(22, 27, 34, 0.95);
             border-bottom: 1px solid var(--border);
             display: flex;
@@ -56,19 +55,25 @@
         .brand {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-weight: 700;
-            font-size: 1.1rem;
+            gap: 10px;
         }
 
-        .brand-icon {
-            width: 30px;
-            height: 30px;
-            background: linear-gradient(135deg, #6366f1, #a855f7);
-            border-radius: 8px;
+        /* Custom SVG Logo */
+        .brand-logo {
+            width: 36px;
+            height: 36px;
             display: grid;
             place-items: center;
-            font-size: 0.9rem;
+            filter: drop-shadow(0 2px 4px rgba(88, 166, 255, 0.3));
+        }
+
+        .brand-text {
+            font-weight: 800;
+            font-size: 1.2rem;
+            letter-spacing: -0.3px;
+            background: linear-gradient(135deg, #f0f6fc 30%, #58a6ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .lock-btn {
@@ -91,8 +96,9 @@
         }
 
         .page-title h1 {
-            font-size: 1.35rem;
+            font-size: 1.4rem;
             font-weight: 800;
+            letter-spacing: -0.5px;
         }
 
         /* Cards */
@@ -532,24 +538,38 @@
 
     <header>
         <div class="brand">
-            <div class="brand-icon">🏠</div>
-            <span>Family Hub</span>
+            <!-- Custom Vector Logo: Interlocking Family Shield & Map Pin -->
+            <div class="brand-logo">
+                <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="36" height="36" rx="10" fill="url(#logo-grad)"/>
+                    <path d="M18 8L25 13.5V23.5C25 25 23.5 26.5 22 26.5H14C12.5 26.5 11 25 11 23.5V13.5L18 8Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="18" cy="18" r="3.5" fill="white"/>
+                    <defs>
+                        <linearGradient id="logo-grad" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#3b82f6"/>
+                            <stop offset="1" stop-color="#a855f7"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            <span class="brand-text">Family Plan</span>
         </div>
         <button class="lock-btn">🔒 Kids Mode</button>
     </header>
 
     <main>
         <div class="page-title">
-            <h1>Welcome Back, Family! 👋</h1>
+            <h1>Our Family Schedule & Destinations 🧭</h1>
         </div>
 
+        <!-- Universal Quick Add -->
         <section class="card" style="border-color: var(--accent);">
             <div class="card-header" style="margin-bottom: 0.5rem;">
-                <div class="card-title">Quick Add to Hub</div>
+                <div class="card-title">Quick Add to Plan</div>
             </div>
             <form class="add-form" onsubmit="addItem(event)">
                 <div class="form-row">
-                    <input type="text" id="add-title" class="form-input input-full" placeholder="Enter title (e.g., Zoo Trip, Italian Feast)..." required>
+                    <input type="text" id="add-title" class="form-input input-full" placeholder="Enter title (e.g., Zoo Trip, Bistro)..." required>
                     <select id="add-category" class="form-select input-half" onchange="togglePostcodeField(this.value)">
                         <option value="calendar">Calendar Event</option>
                         <option value="cinema">Cinema Film</option>
@@ -560,7 +580,7 @@
                     </select>
                 </div>
                 <div class="form-row" id="postcode-row" style="display: none;">
-                    <input type="text" id="add-postcode" class="form-input input-full" placeholder="Enter Postcode (e.g., LS1 1AA)">
+                    <input type="text" id="add-postcode" class="form-input input-full" placeholder="Enter Postcode (optional, e.g., LS1 1AA)">
                 </div>
                 <div class="form-row">
                     <input type="date" id="add-date" class="form-input input-half" value="2026-10-18">
@@ -571,11 +591,12 @@
                         <option value="leo">Leo</option>
                         <option value="mia">Mia</option>
                     </select>
-                    <button type="submit" class="add-btn">Add to Hub</button>
+                    <button type="submit" class="add-btn">Add to Plan</button>
                 </div>
             </form>
         </section>
 
+        <!-- Section 1: Dynamic Summary -->
         <section class="card">
             <div class="card-header">
                 <div class="card-title" id="summary-title-text">Upcoming Summary (This Week)</div>
@@ -605,6 +626,7 @@
             </p>
         </section>
 
+        <!-- Section 2: Shared Calendar -->
         <section class="card">
             <div class="card-header">
                 <div class="card-title" id="calendar-title-label">Shared Calendar</div>
@@ -628,9 +650,10 @@
             </div>
         </section>
 
+        <!-- Section 3: Entertainment, Places & Restaurants -->
         <section class="card">
             <div class="card-header">
-                <div class="card-title" id="entertainment-section-title">Places to Visit</div>
+                <div class="card-title">Entertainment & Destinations</div>
             </div>
 
             <div class="category-tabs">
@@ -643,6 +666,7 @@
             <div class="list-container" id="dynamic-list-view"></div>
         </section>
 
+        <!-- Section 4: To-Do List (Who & What) -->
         <section class="card">
             <div class="card-header">
                 <div class="card-title">To-Do List (Who & What)</div>
@@ -659,9 +683,9 @@
     </div>
 
     <script>
-        let currentRange = 'week'; // 'week' or 'month'
+        let currentRange = 'week';
         let currentStartDate = new Date(2026, 9, 12); // Oct 12, 2026 (Mon)
-        let currentMonth = 9; // October 2026
+        let currentMonth = 9;
         let currentYear = 2026;
 
         let homePostcode = "LS19 6BH";
@@ -693,9 +717,9 @@
                 { title: "Tropical World Leeds", details: "Zoo & Greenhouse", postcode: "LS8 2LE", dist: "9.5 miles" }
             ],
             restaurants: [
-                { title: "The Box Tree Restaurant", details: "Fine Dining & Tasting Menu", postcode: "LS29 9HN", dist: "12 miles" },
-                { title: "Bundobust Leeds", details: "Indian Street Food & Craft Beer", postcode: "LS1 4HY", dist: "10 miles" },
-                { title: "Riva Blue Italian", details: "Wood-fired Pizza & Pasta", postcode: "LS1 1UR", dist: "10 miles" }
+                { title: "The Box Leeds", details: "Burgers & Social", postcode: "LS1 6AZ", dist: "10 miles" },
+                { title: "Bundobust Leeds", details: "Indian Street Food & Craft Beer", postcode: "LS1 4HT", dist: "10.5 miles" },
+                { title: "The Ox Club", details: "Wood-fired Grill", postcode: "LS1 3HJ", dist: "10 miles" }
             ]
         };
 
@@ -730,7 +754,7 @@
                 if (activeTab) switchCategory(category, activeTab);
             } else if (category === 'places' || category === 'restaurants') {
                 const finalPostcode = postcode ? postcode.toUpperCase() : "LS1 1AA";
-                categoriesData[category].push({ title, details: "Custom Addition", postcode: finalPostcode, dist: "14 miles" });
+                categoriesData[category].push({ title, details: "Custom Destination", postcode: finalPostcode, dist: "12 miles" });
                 const postcodeInp = document.getElementById('add-postcode');
                 if (postcodeInp) postcodeInp.value = '';
                 const activeTab = document.querySelector('.cat-tab.active');
@@ -741,15 +765,7 @@
             }
 
             document.getElementById('add-title').value = '';
-            showNotification('Successfully added to Family Hub!');
-        }
-
-        function showNotification(msg) {
-            const note = document.createElement('div');
-            note.style.cssText = "position:fixed; bottom:20px; right:20px; background:#238636; color:#fff; padding:10px 16px; border-radius:8px; font-size:0.85rem; z-index:9999; box-shadow:0 4px 12px rgba(0,0,0,0.5);";
-            note.textContent = msg;
-            document.body.appendChild(note);
-            setTimeout(() => note.remove(), 2500);
+            alert('Successfully added to Family Plan!');
         }
 
         function focusMap(title, postcode) {
@@ -765,17 +781,10 @@
             if (btn) btn.classList.add('active');
 
             const container = document.getElementById('dynamic-list-view');
-            const sectionTitle = document.getElementById('entertainment-section-title');
             const items = categoriesData[cat];
 
-            if (sectionTitle) {
-                if (cat === 'places') sectionTitle.textContent = 'Places to Visit';
-                else if (cat === 'restaurants') sectionTitle.textContent = 'Restaurants to Visit';
-                else sectionTitle.textContent = 'Entertainment & Places';
-            }
-
             if (cat === 'places' || cat === 'restaurants') {
-                let dotsHtml = items.map((p, idx) => `
+                let dotsHtml = categoriesData[cat].map((p, idx) => `
                     <div class="map-dot-pill" onclick="focusMap('${p.title}', '${p.postcode}')">
                         <span class="map-dot-badge">${idx + 1}</span>
                         <span>${p.title.split(' ')[0]}</span>
@@ -793,7 +802,7 @@
                             ${dotsHtml}
                         </div>
                     </div>
-                ` + items.map((item, idx) => `
+                ` + categoriesData[cat].map((item, idx) => `
                     <div class="list-card" onclick="focusMap('${item.title}', '${item.postcode}')">
                         <div class="list-info">
                             <h5>📍 ${idx + 1}. ${item.title}</h5>
@@ -831,10 +840,8 @@
 
         function navigateCalendar(direction) {
             if (currentRange === 'week') {
-                // Shift by 7 days
                 currentStartDate.setDate(currentStartDate.getDate() + (direction * 7));
             } else {
-                // Shift by 1 month
                 currentMonth += direction;
                 if (currentMonth > 11) {
                     currentMonth = 0;
@@ -868,7 +875,6 @@
             if (currentRange === 'week') {
                 if (titleLbl) titleLbl.textContent = 'Shared Calendar (This Week)';
                 
-                // Find Monday of the current week
                 let d = new Date(currentStartDate);
                 let day = d.getDay();
                 let diff = d.getDate() - day + (day === 0 ? -6 : 1);
@@ -992,4 +998,3 @@
     </script>
 </body>
 </html>
-```
