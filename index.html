@@ -531,40 +531,43 @@
             text-transform: uppercase;
         }
 
-        /* New Feature Styles */
-        .meal-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 6px;
-            margin-bottom: 8px;
-        }
-
-        .meal-day-card {
+        /* Meal Planner Reference Style (Vertical Day Cards) */
+        .meal-card-row {
             background: #0d1117;
             border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 8px;
-            text-align: center;
+            border-radius: 10px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
         }
 
-        .meal-day-lbl {
-            font-size: 0.7rem;
-            color: var(--muted);
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-bottom: 4px;
+        .meal-day-name {
+            font-size: 1rem;
+            font-weight: 800;
+            width: 60px;
         }
 
-        .meal-input {
-            width: 100%;
+        .meal-dish-name {
+            font-size: 0.85rem;
+            color: var(--text);
+            flex: 1;
+            padding-left: 10px;
+        }
+
+        .meal-input-inline {
             background: transparent;
             border: none;
+            border-bottom: 1px dashed var(--border);
             color: var(--text);
-            font-size: 0.8rem;
-            text-align: center;
+            font-size: 0.85rem;
+            width: 100%;
             outline: none;
+            padding: 2px 0;
         }
 
+        /* Chores Grid */
         .chores-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -596,10 +599,6 @@
             gap: 6px;
             margin-bottom: 4px;
             color: var(--muted);
-            cursor: pointer;
-        }
-
-        .chore-item input {
             cursor: pointer;
         }
 
@@ -674,19 +673,32 @@
             </div>
             <form class="add-form" onsubmit="addItem(event)">
                 <div class="form-row">
-                    <input type="text" id="add-title" class="form-input input-full" placeholder="Enter title (e.g., Zoo Trip, Gift Idea)..." required>
-                    <select id="add-category" class="form-select input-half" onchange="togglePostcodeField(this.value)">
+                    <input type="text" id="add-title" class="form-input input-full" placeholder="Enter title / meal / chore..." required>
+                    <select id="add-category" class="form-select input-half" onchange="handleCategoryChange(this.value)">
                         <option value="calendar">Calendar Event</option>
                         <option value="cinema">Cinema Film</option>
                         <option value="home">Home Watch</option>
                         <option value="places">Places to Visit</option>
                         <option value="restaurants">Restaurants to Visit</option>
+                        <option value="meal">Meal Plan</option>
+                        <option value="chore">Chore / Allowance</option>
                         <option value="wishlist">Gift Wishlist</option>
                         <option value="todo">To-Do Task</option>
                     </select>
                 </div>
                 <div class="form-row" id="postcode-row" style="display: none;">
                     <input type="text" id="add-postcode" class="form-input input-full" placeholder="Enter Postcode (optional, e.g., LS1 1AA)">
+                </div>
+                <div class="form-row" id="mealday-row" style="display: none;">
+                    <select id="add-mealday" class="form-select input-full">
+                        <option value="Mon">Monday</option>
+                        <option value="Tue">Tuesday</option>
+                        <option value="Wed">Wednesday</option>
+                        <option value="Thu">Thursday</option>
+                        <option value="Fri">Friday</option>
+                        <option value="Sat">Saturday</option>
+                        <option value="Sun">Sunday</option>
+                    </select>
                 </div>
                 <div class="form-row">
                     <input type="date" id="add-date" class="form-input input-half" value="2026-10-18">
@@ -702,45 +714,47 @@
             </form>
         </section>
 
-        <!-- Feature 1: Meal Planner -->
+        <!-- Meal Planner (Reference Style Vertical List) -->
         <section class="card">
             <div class="card-header">
                 <div class="card-title">🍽️ Weekly Meal Planner</div>
                 <button class="map-btn" onclick="syncMealsToTodo()">Sync to To-Do ↗</button>
             </div>
-            <div class="meal-grid" id="meal-grid-view">
+            <div id="meal-list-view">
                 <!-- Dynamically populated -->
             </div>
         </section>
 
-        <!-- Feature 2: Kids' Chores & Allowance -->
+        <!-- Kids' Chores & Allowance -->
         <section class="card">
             <div class="card-header">
                 <div class="card-title">⭐ Kids' Chores & Allowance</div>
             </div>
-            <div class="chores-grid">
-                <div class="kid-card">
+            <div class="chores-grid" id="chores-container">
+                <div class="kid-card" data-kid="Leo">
                     <div class="kid-header">
                         <span>Leo</span>
-                        <span style="color:var(--accent); font-size:0.75rem;" id="leo-score">£3.50 earned</span>
+                        <span style="color:var(--accent); font-size:0.75rem;" class="kid-score">£3.50 earned</span>
                     </div>
-                    <label class="chore-item"><input type="checkbox" onchange="updateChoreScore()"> Tidied Bedroom</label>
-                    <label class="chore-item"><input type="checkbox" checked onchange="updateChoreScore()"> Fed the Cat</label>
-                    <label class="chore-item"><input type="checkbox" onchange="updateChoreScore()"> Cleared Table</label>
+                    <div class="kid-chores-list">
+                        <label class="chore-item"><input type="checkbox" onchange="updateChoreScore(this)"> Tidied Bedroom</label>
+                        <label class="chore-item"><input type="checkbox" checked onchange="updateChoreScore(this)"> Fed the Cat</label>
+                    </div>
                 </div>
-                <div class="kid-card">
+                <div class="kid-card" data-kid="Mia">
                     <div class="kid-header">
                         <span>Mia</span>
-                        <span style="color:var(--accent); font-size:0.75rem;" id="mia-score">£2.00 earned</span>
+                        <span style="color:var(--accent); font-size:0.75rem;" class="kid-score">£2.00 earned</span>
                     </div>
-                    <label class="chore-item"><input type="checkbox" onchange="updateChoreScore()"> Put Toys Away</label>
-                    <label class="chore-item"><input type="checkbox" checked onchange="updateChoreScore()"> Watered Plants</label>
-                    <label class="chore-item"><input type="checkbox" onchange="updateChoreScore()"> Homework Done</label>
+                    <div class="kid-chores-list">
+                        <label class="chore-item"><input type="checkbox" onchange="updateChoreScore(this)"> Put Toys Away</label>
+                        <label class="chore-item"><input type="checkbox" checked onchange="updateChoreScore(this)"> Watered Plants</label>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Section 1: Dynamic Summary -->
+        <!-- Dynamic Summary -->
         <section class="card">
             <div class="card-header">
                 <div class="card-title" id="summary-title-text">Upcoming Summary (This Week)</div>
@@ -770,7 +784,7 @@
             </p>
         </section>
 
-        <!-- Section 2: Shared Calendar -->
+        <!-- Shared Calendar -->
         <section class="card">
             <div class="card-header">
                 <div class="card-title" id="calendar-title-label">Shared Calendar</div>
@@ -794,7 +808,7 @@
             </div>
         </section>
 
-        <!-- Section 3: Entertainment, Places & Restaurants -->
+        <!-- Entertainment, Places & Restaurants -->
         <section class="card">
             <div class="card-header">
                 <div class="card-title">Entertainment & Destinations</div>
@@ -810,17 +824,15 @@
             <div class="list-container" id="dynamic-list-view"></div>
         </section>
 
-        <!-- Feature 4: Wishlist & Gift Ideas -->
+        <!-- Gift Wishlist -->
         <section class="card">
             <div class="card-header">
                 <div class="card-title">🎁 Gift Wishlist & Ideas</div>
             </div>
-            <div class="list-container" id="wishlist-view">
-                <!-- Dynamically populated -->
-            </div>
+            <div class="list-container" id="wishlist-view"></div>
         </section>
 
-        <!-- Feature 3: Emergency Contacts -->
+        <!-- Important Contacts -->
         <section class="card">
             <div class="card-header">
                 <div class="card-title">☎️ Important Contacts</div>
@@ -845,7 +857,7 @@
             </div>
         </section>
 
-        <!-- Section 4: To-Do List (Who & What) -->
+        <!-- To-Do List -->
         <section class="card">
             <div class="card-header">
                 <div class="card-title">To-Do List (Who & What)</div>
@@ -882,13 +894,13 @@
         };
 
         let mealsData = [
-            { day: "Mon", meal: "Chicken Tikka" },
-            { day: "Tue", meal: "Pasta Bolognese" },
-            { day: "Wed", meal: "Fish & Veg" },
-            { day: "Thu", meal: "Sausage Mash" },
-            { day: "Fri", meal: "Pizza Night" },
-            { day: "Sat", meal: "Burgers" },
-            { day: "Sun", meal: "Roast Dinner" }
+            { day: "Mon", meal: "Chicken Tikka Traybake" },
+            { day: "Tue", meal: "Spicy Thai Pork" },
+            { day: "Wed", meal: "Pork Stroganoff" },
+            { day: "Thu", meal: "Pizza Night" },
+            { day: "Fri", meal: "Dirty Fries" },
+            { day: "Sat", meal: "Katsu Curry" },
+            { day: "Sun", meal: "Bolognese Pasta Bake" }
         ];
 
         let wishlistData = [
@@ -922,12 +934,21 @@
             { text: "Check pressure in car tires", who: "Dad", color: "bg-dad" }
         ];
 
+        function handleCategoryChange(val) {
+            const postcodeRow = document.getElementById('postcode-row');
+            const mealdayRow = document.getElementById('mealday-row');
+            if (postcodeRow) postcodeRow.style.display = (val === 'places' || val === 'restaurants') ? 'flex' : 'none';
+            if (mealdayRow) mealdayRow.style.display = (val === 'meal') ? 'flex' : 'none';
+        }
+
         function renderMeals() {
-            const container = document.getElementById('meal-grid-view');
+            const container = document.getElementById('meal-list-view');
             container.innerHTML = mealsData.map((m, idx) => `
-                <div class="meal-day-card">
-                    <div class="meal-day-lbl">${m.day}</div>
-                    <input type="text" class="meal-input" value="${m.meal}" onchange="mealsData[${idx}].meal = this.value">
+                <div class="meal-card-row">
+                    <div class="meal-day-name">${m.day}</div>
+                    <div class="meal-dish-name">
+                        <input type="text" class="meal-input-inline" value="${m.meal}" onchange="mealsData[${idx}].meal = this.value">
+                    </div>
                 </div>
             `).join('');
         }
@@ -940,10 +961,13 @@
             alert('Meals successfully synced to To-Do List!');
         }
 
-        function updateChoreScore() {
-            // Simple dynamic feedback demo
-            document.getElementById('leo-score').textContent = "£3.50 earned";
-            document.getElementById('mia-score').textContent = "£2.00 earned";
+        function updateChoreScore(checkbox) {
+            // Recalculate scores dynamically
+            const cards = document.querySelectorAll('.kid-card');
+            cards.forEach(card => {
+                const checkedCount = card.querySelectorAll('input[type="checkbox"]:checked').length;
+                card.querySelector('.kid-score').textContent = `£${(checkedCount * 1.00).toFixed(2)} earned`;
+            });
         }
 
         function renderWishlist() {
@@ -956,11 +980,6 @@
             `).join('');
         }
 
-        function togglePostcodeField(val) {
-            const row = document.getElementById('postcode-row');
-            if (row) row.style.display = (val === 'places' || val === 'restaurants') ? 'flex' : 'none';
-        }
-
         function addItem(e) {
             e.preventDefault();
             const title = document.getElementById('add-title').value;
@@ -968,15 +987,14 @@
             const dateStr = document.getElementById('add-date').value;
             const assignee = document.getElementById('add-assignee').value;
             const postcode = document.getElementById('add-postcode').value.trim();
+            const mealDay = document.getElementById('add-mealday').value;
             const colorClass = `bg-${assignee}`;
 
-            if (category === 'calendar' || dateStr) {
+            if (category === 'calendar' || dateStr && category === 'calendar') {
                 if (!events[dateStr]) events[dateStr] = [];
                 events[dateStr].push({ title, color: colorClass, time: "All Day", who: assignee });
                 renderCalendar();
-            }
-
-            if (category === 'cinema' || category === 'home') {
+            } else if (category === 'cinema' || category === 'home') {
                 categoriesData[category].push({ title, details: "Newly Added", meta: "Custom" });
                 const activeTab = document.querySelector('.cat-tab.active');
                 if (activeTab) switchCategory(category, activeTab);
@@ -987,6 +1005,19 @@
                 if (postcodeInp) postcodeInp.value = '';
                 const activeTab = document.querySelector('.cat-tab.active');
                 if (activeTab) switchCategory(category, activeTab);
+            } else if (category === 'meal') {
+                const found = mealsData.find(m => m.day === mealDay);
+                if (found) found.meal = title;
+                renderMeals();
+            } else if (category === 'chore') {
+                const kidCard = document.querySelector(`.kid-card[data-kid="${assignee === 'leo' || assignee === 'Leo' ? 'Leo' : 'Mia'}"]`) || document.querySelector('.kid-card');
+                if (kidCard) {
+                    const list = kidCard.querySelector('.kid-chores-list');
+                    const newLabel = document.createElement('label');
+                    newLabel.className = 'chore-item';
+                    newLabel.innerHTML = `<input type="checkbox" onchange="updateChoreScore(this)"> ${title}`;
+                    list.appendChild(newLabel);
+                }
             } else if (category === 'wishlist') {
                 wishlistData.push({ title, note: `Added by ${assignee}` });
                 renderWishlist();
