@@ -224,6 +224,30 @@
             color: var(--muted);
         }
 
+        /* Calendar Controls */
+        .calendar-nav {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cal-nav-btn {
+            background: #0d1117;
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+        }
+
+        .cal-nav-btn:hover {
+            border-color: var(--accent);
+        }
+
         /* Calendar */
         .calendar-wrapper {
             width: 100%;
@@ -401,10 +425,11 @@
             color: #fff;
         }
 
-        /* Compact Map Embed Box */
+        /* Fixed Compact Map Box */
         .map-embed-box {
             width: 100%;
-            height: 170px; /* Compact height */
+            height: 170px;
+            max-height: 170px;
             border-radius: 8px;
             overflow: hidden;
             border: 1px solid var(--border);
@@ -417,6 +442,7 @@
             height: 100%;
             border: none;
             filter: invert(90%) hue-rotate(180deg);
+            pointer-events: auto;
         }
 
         /* Overlay Dots Bar */
@@ -571,8 +597,12 @@
         <!-- Section 2: Shared Calendar -->
         <section class="card">
             <div class="card-header">
-                <div class="card-title" id="calendar-title-label">Shared Calendar (Week View)</div>
-                <span style="font-size:0.75rem; color:var(--muted);" id="calendar-date-subtitle">October 2026</span>
+                <div class="card-title" id="calendar-title-label">Shared Calendar (Full Month)</div>
+                <div class="calendar-nav">
+                    <button class="cal-nav-btn" onclick="changeMonth(-1)">◀</button>
+                    <span style="font-size:0.75rem; color:var(--muted); font-weight:600;" id="calendar-date-subtitle">October 2026</span>
+                    <button class="cal-nav-btn" onclick="changeMonth(1)">▶</button>
+                </div>
             </div>
 
             <div class="calendar-wrapper">
@@ -620,10 +650,11 @@
     </div>
 
     <script>
-        let currentRange = 'week';
+        let currentRange = 'month'; // Default to month view to see month nav clearly
+        let currentYear = 2026;
+        let currentMonth = 9; // 0-indexed (9 = October)
         let homePostcode = "LS19 6BH";
         let activeMapQuery = "United Kingdom";
-        let currentZoom = 6; // Compact regional UK view
 
         let events = {
             "2026-10-10": [{ title: "Football Training", color: "bg-leo", time: "10:00 AM", who: "Leo" }],
@@ -632,7 +663,9 @@
             "2026-10-24": [
                 { title: "Yorkshire Dales Walk", color: "bg-family", time: "09:30 AM", who: "Family" },
                 { title: "Car Service", color: "bg-dad", time: "02:00 PM", who: "Dad" }
-            ]
+            ],
+            // Example event in November 2026
+            "2026-11-05": [{ title: "Bonfire Night", color: "bg-family", time: "07:00 PM", who: "Family" }]
         };
 
         let categoriesData = {
@@ -647,7 +680,8 @@
             places: [
                 { title: "Yorkshire Dales National Park", details: "Scenic Walk & Picnic", postcode: "BD23 4PQ", dist: "32 miles" },
                 { title: "Royal Armouries Museum", details: "Interactive Exhibits", postcode: "LS10 1LT", dist: "11 miles" },
-                { title: "Tropical World Leeds", details: "Zoo & Greenhouse", postcode: "LS8 2LE", dist: "9.5 miles" }
+                { title: "Tropical World Leeds", details: "Zoo & Greenhouse", postcode: "LS8 2LE", dist: "9.5 miles" },
+                { title: "Zoo", details: "Custom Outing", postcode: "LS1 1AA", dist: "14 miles" }
             ]
         };
 
@@ -687,10 +721,17 @@
 
         function focusMap(title, postcode) {
             activeMapQuery = title + " " + postcode;
-            currentZoom = 13;
             const iframe = document.getElementById('interactive-map-frame');
             if (iframe) {
-                iframe.src = `https://maps.google.com/maps?q=${encodeURIComponent(activeMapQuery)}&t=&z=${currentZoom}&ie=UTF8&iwloc=&output=embed`;
+                iframe.src = `https://maps.google.com/maps?q=${encodeURIComponent(activeMapQuery)}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+            }
+        }
+
+        function resetMapOverview() {
+            activeMapQuery = "United Kingdom";
+            const iframe = document.getElementById('interactive-map-frame');
+            if (iframe) {
+                iframe.src = `https://maps.google.com/maps?q=${encodeURIComponent(activeMapQuery)}&t=&z=6&ie=UTF8&iwloc=&output=embed`;
             }
         }
 
@@ -715,7 +756,7 @@
                         <span style="color:var(--accent);">Live Routing Active</span>
                     </div>
                     <div class="map-embed-box">
-                        <iframe id="interactive-map-frame" src="https://maps.google.com/maps?q=${encodeURIComponent(activeMapQuery)}&t=&z=${currentZoom}&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>
+                        <iframe id="interactive-map-frame" src="https://maps.google.com/maps?q=${encodeURIComponent(activeMapQuery)}&t=&z=6&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>
                         <div class="map-dots-bar">
                             ${dotsHtml}
                         </div>
@@ -755,6 +796,18 @@
             `).join('');
         }
 
+        function changeMonth(direction) {
+            currentMonth += direction;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            } else if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendar();
+        }
+
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid');
             grid.innerHTML = `
@@ -767,35 +820,44 @@
                 <div class="day-header">Sun</div>
             `;
 
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            document.getElementById('calendar-date-subtitle').textContent = `${monthNames[currentMonth]} ${currentYear}`;
+            document.getElementById('calendar-title-label').textContent = currentRange === 'week' ? 'Shared Calendar (This Week)' : 'Shared Calendar (Full Month)';
+
             if (currentRange === 'week') {
-                document.getElementById('calendar-title-label').textContent = 'Shared Calendar (This Week)';
-                document.getElementById('calendar-date-subtitle').textContent = 'Oct 12 – Oct 18, 2026';
-                
                 for (let i = 12; i <= 18; i++) {
-                    renderDayCell(i);
+                    renderDayCell(currentYear, currentMonth, i);
                 }
             } else {
-                document.getElementById('calendar-title-label').textContent = 'Shared Calendar (Full Month)';
-                document.getElementById('calendar-date-subtitle').textContent = 'October 2026';
+                // Get first day of month and total days
+                const firstDay = new Date(currentYear, currentMonth, 1);
+                // Adjust JS Sunday-start (0=Sun) to Monday-start (0=Mon)
+                let startDay = firstDay.getDay() - 1;
+                if (startDay === -1) startDay = 6;
 
-                for (let empty = 0; empty < 3; empty++) {
+                const totalDays = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+                for (let empty = 0; empty < startDay; empty++) {
                     const emptyCell = document.createElement('div');
                     emptyCell.className = 'day-cell empty';
                     grid.appendChild(emptyCell);
                 }
 
-                for (let i = 1; i <= 31; i++) {
-                    renderDayCell(i);
+                for (let i = 1; i <= totalDays; i++) {
+                    renderDayCell(currentYear, currentMonth, i);
                 }
             }
         }
 
-        function renderDayCell(i) {
-            const dayKey = `2026-10-${i < 10 ? '0' + i : i}`;
+        function renderDayCell(year, month, dayNum) {
+            const mStr = (month + 1) < 10 ? '0' + (month + 1) : (month + 1);
+            const dStr = dayNum < 10 ? '0' + dayNum : dayNum;
+            const dayKey = `${year}-${mStr}-${dStr}`;
+
             const cell = document.createElement('div');
             cell.className = 'day-cell';
 
-            let html = `<div class="day-num">${i}</div>`;
+            let html = `<div class="day-num">${dayNum}</div>`;
             if (events[dayKey]) {
                 events[dayKey].forEach(e => {
                     html += `<div class="event-pill ${e.color}">${e.title}</div>`;
@@ -805,7 +867,8 @@
 
             cell.addEventListener('mouseenter', (ev) => {
                 const tooltip = document.getElementById('hover-tooltip');
-                document.getElementById('tt-date').textContent = `October ${i}, 2026`;
+                const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                document.getElementById('tt-date').textContent = `${monthNames[month]} ${dayNum}, ${year}`;
                 const dayEvs = events[dayKey];
                 if (dayEvs && dayEvs.length) {
                     document.getElementById('tt-body').innerHTML = dayEvs.map(e => `
