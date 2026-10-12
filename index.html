@@ -58,7 +58,6 @@
             gap: 10px;
         }
 
-        /* Custom SVG Logo */
         .brand-logo {
             width: 36px;
             height: 36px;
@@ -255,7 +254,7 @@
             border-color: var(--accent);
         }
 
-        /* Calendar */
+        /* Calendar Grid */
         .calendar-wrapper {
             width: 100%;
             overflow-x: auto;
@@ -432,7 +431,7 @@
             color: #fff;
         }
 
-        /* 340px Map Box */
+        /* Map Box */
         .map-embed-box {
             width: 100%;
             height: 340px;
@@ -452,7 +451,6 @@
             pointer-events: auto;
         }
 
-        /* Overlay Dots Bar */
         .map-dots-bar {
             position: absolute;
             bottom: 8px;
@@ -532,13 +530,120 @@
             color: #fff;
             text-transform: uppercase;
         }
+
+        /* New Feature Styles */
+        .meal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .meal-day-card {
+            background: #0d1117;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .meal-day-lbl {
+            font-size: 0.7rem;
+            color: var(--muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .meal-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-size: 0.8rem;
+            text-align: center;
+            outline: none;
+        }
+
+        .chores-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .kid-card {
+            background: #0d1117;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px;
+        }
+
+        .kid-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 4px;
+        }
+
+        .chore-item {
+            font-size: 0.78rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+        .chore-item input {
+            cursor: pointer;
+        }
+
+        .contacts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 8px;
+        }
+
+        .contact-pill {
+            background: #0d1117;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px;
+        }
+
+        .contact-pill h6 {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .contact-pill p {
+            font-size: 0.72rem;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .wishlist-item {
+            background: #0d1117;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.82rem;
+        }
     </style>
 </head>
 <body>
 
     <header>
         <div class="brand">
-            <!-- Custom Vector Logo: Interlocking Family Shield & Map Pin -->
             <div class="brand-logo">
                 <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <rect width="36" height="36" rx="10" fill="url(#logo-grad)"/>
@@ -569,13 +674,14 @@
             </div>
             <form class="add-form" onsubmit="addItem(event)">
                 <div class="form-row">
-                    <input type="text" id="add-title" class="form-input input-full" placeholder="Enter title (e.g., Zoo Trip, Bistro)..." required>
+                    <input type="text" id="add-title" class="form-input input-full" placeholder="Enter title (e.g., Zoo Trip, Gift Idea)..." required>
                     <select id="add-category" class="form-select input-half" onchange="togglePostcodeField(this.value)">
                         <option value="calendar">Calendar Event</option>
                         <option value="cinema">Cinema Film</option>
                         <option value="home">Home Watch</option>
                         <option value="places">Places to Visit</option>
                         <option value="restaurants">Restaurants to Visit</option>
+                        <option value="wishlist">Gift Wishlist</option>
                         <option value="todo">To-Do Task</option>
                     </select>
                 </div>
@@ -594,6 +700,44 @@
                     <button type="submit" class="add-btn">Add to Plan</button>
                 </div>
             </form>
+        </section>
+
+        <!-- Feature 1: Meal Planner -->
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title">🍽️ Weekly Meal Planner</div>
+                <button class="map-btn" onclick="syncMealsToTodo()">Sync to To-Do ↗</button>
+            </div>
+            <div class="meal-grid" id="meal-grid-view">
+                <!-- Dynamically populated -->
+            </div>
+        </section>
+
+        <!-- Feature 2: Kids' Chores & Allowance -->
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title">⭐ Kids' Chores & Allowance</div>
+            </div>
+            <div class="chores-grid">
+                <div class="kid-card">
+                    <div class="kid-header">
+                        <span>Leo</span>
+                        <span style="color:var(--accent); font-size:0.75rem;" id="leo-score">£3.50 earned</span>
+                    </div>
+                    <label class="chore-item"><input type="checkbox" onchange="updateChoreScore()"> Tidied Bedroom</label>
+                    <label class="chore-item"><input type="checkbox" checked onchange="updateChoreScore()"> Fed the Cat</label>
+                    <label class="chore-item"><input type="checkbox" onchange="updateChoreScore()"> Cleared Table</label>
+                </div>
+                <div class="kid-card">
+                    <div class="kid-header">
+                        <span>Mia</span>
+                        <span style="color:var(--accent); font-size:0.75rem;" id="mia-score">£2.00 earned</span>
+                    </div>
+                    <label class="chore-item"><input type="checkbox" onchange="updateChoreScore()"> Put Toys Away</label>
+                    <label class="chore-item"><input type="checkbox" checked onchange="updateChoreScore()"> Watered Plants</label>
+                    <label class="chore-item"><input type="checkbox" onchange="updateChoreScore()"> Homework Done</label>
+                </div>
+            </div>
         </section>
 
         <!-- Section 1: Dynamic Summary -->
@@ -666,6 +810,41 @@
             <div class="list-container" id="dynamic-list-view"></div>
         </section>
 
+        <!-- Feature 4: Wishlist & Gift Ideas -->
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title">🎁 Gift Wishlist & Ideas</div>
+            </div>
+            <div class="list-container" id="wishlist-view">
+                <!-- Dynamically populated -->
+            </div>
+        </section>
+
+        <!-- Feature 3: Emergency Contacts -->
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title">☎️ Important Contacts</div>
+            </div>
+            <div class="contacts-grid">
+                <div class="contact-pill">
+                    <h6>Local GP Surgery</h6>
+                    <p>0113 200 1234</p>
+                </div>
+                <div class="contact-pill">
+                    <h6>Family Vet</h6>
+                    <p>0113 555 7890</p>
+                </div>
+                <div class="contact-pill">
+                    <h6>Home Insurance</h6>
+                    <p>Policy #UK-98421</p>
+                </div>
+                <div class="contact-pill">
+                    <h6>Emergency Services</h6>
+                    <p>999 / 111</p>
+                </div>
+            </div>
+        </section>
+
         <!-- Section 4: To-Do List (Who & What) -->
         <section class="card">
             <div class="card-header">
@@ -684,7 +863,7 @@
 
     <script>
         let currentRange = 'week';
-        let currentStartDate = new Date(2026, 9, 12); // Oct 12, 2026 (Mon)
+        let currentStartDate = new Date(2026, 9, 12);
         let currentMonth = 9;
         let currentYear = 2026;
 
@@ -701,6 +880,21 @@
             ],
             "2026-11-05": [{ title: "Bonfire Night", color: "bg-family", time: "07:00 PM", who: "Family" }]
         };
+
+        let mealsData = [
+            { day: "Mon", meal: "Chicken Tikka" },
+            { day: "Tue", meal: "Pasta Bolognese" },
+            { day: "Wed", meal: "Fish & Veg" },
+            { day: "Thu", meal: "Sausage Mash" },
+            { day: "Fri", meal: "Pizza Night" },
+            { day: "Sat", meal: "Burgers" },
+            { day: "Sun", meal: "Roast Dinner" }
+        ];
+
+        let wishlistData = [
+            { title: "Board Game: Ticket to Ride", note: "For Leo's birthday" },
+            { title: "Coffee Bean Subscription", note: "From Leodis Roasters" }
+        ];
 
         let categoriesData = {
             cinema: [
@@ -727,6 +921,40 @@
             { text: "Buy ingredients for Friday Pizza night", who: "Mom", color: "bg-mom" },
             { text: "Check pressure in car tires", who: "Dad", color: "bg-dad" }
         ];
+
+        function renderMeals() {
+            const container = document.getElementById('meal-grid-view');
+            container.innerHTML = mealsData.map((m, idx) => `
+                <div class="meal-day-card">
+                    <div class="meal-day-lbl">${m.day}</div>
+                    <input type="text" class="meal-input" value="${m.meal}" onchange="mealsData[${idx}].meal = this.value">
+                </div>
+            `).join('');
+        }
+
+        function syncMealsToTodo() {
+            mealsData.forEach(m => {
+                todosData.push({ text: `Cook ${m.meal} (${m.day})`, who: "Family", color: "bg-family" });
+            });
+            renderTodos();
+            alert('Meals successfully synced to To-Do List!');
+        }
+
+        function updateChoreScore() {
+            // Simple dynamic feedback demo
+            document.getElementById('leo-score').textContent = "£3.50 earned";
+            document.getElementById('mia-score').textContent = "£2.00 earned";
+        }
+
+        function renderWishlist() {
+            const container = document.getElementById('wishlist-view');
+            container.innerHTML = wishlistData.map(w => `
+                <div class="wishlist-item">
+                    <span>🎁 <strong>${w.title}</strong></span>
+                    <span style="color:var(--muted); font-size:0.75rem;">${w.note}</span>
+                </div>
+            `).join('');
+        }
 
         function togglePostcodeField(val) {
             const row = document.getElementById('postcode-row');
@@ -759,6 +987,9 @@
                 if (postcodeInp) postcodeInp.value = '';
                 const activeTab = document.querySelector('.cat-tab.active');
                 if (activeTab) switchCategory(category, activeTab);
+            } else if (category === 'wishlist') {
+                wishlistData.push({ title, note: `Added by ${assignee}` });
+                renderWishlist();
             } else if (category === 'todo') {
                 todosData.push({ text: title, who: assignee, color: colorClass });
                 renderTodos();
@@ -992,6 +1223,8 @@
         }
 
         // Initial Renders
+        renderMeals();
+        renderWishlist();
         renderCalendar();
         switchCategory('places', document.querySelectorAll('.cat-tab')[2]);
         renderTodos();
