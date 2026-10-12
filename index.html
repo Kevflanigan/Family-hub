@@ -425,11 +425,11 @@
             color: #fff;
         }
 
-        /* Fixed Compact Map Box */
+        /* Double-Sized Map Box (340px) */
         .map-embed-box {
             width: 100%;
-            height: 170px;
-            max-height: 170px;
+            height: 340px;
+            max-height: 340px;
             border-radius: 8px;
             overflow: hidden;
             border: 1px solid var(--border);
@@ -448,13 +448,13 @@
         /* Overlay Dots Bar */
         .map-dots-bar {
             position: absolute;
-            bottom: 6px;
-            left: 6px;
-            right: 6px;
+            bottom: 8px;
+            left: 8px;
+            right: 8px;
             background: rgba(13, 17, 23, 0.9);
             border: 1px solid var(--border);
             backdrop-filter: blur(4px);
-            padding: 3px 6px;
+            padding: 4px 8px;
             border-radius: 6px;
             display: flex;
             gap: 8px;
@@ -467,7 +467,7 @@
             display: flex;
             align-items: center;
             gap: 4px;
-            font-size: 0.65rem;
+            font-size: 0.68rem;
             font-weight: 600;
             color: var(--text);
             white-space: nowrap;
@@ -475,12 +475,12 @@
         }
 
         .map-dot-badge {
-            width: 13px;
-            height: 13px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
             background: var(--accent);
             color: #0d1117;
-            font-size: 0.58rem;
+            font-size: 0.6rem;
             font-weight: 800;
             display: grid;
             place-items: center;
@@ -542,13 +542,16 @@
             <form class="add-form" onsubmit="addItem(event)">
                 <div class="form-row">
                     <input type="text" id="add-title" class="form-input input-full" placeholder="Enter title (e.g., Zoo Trip, Pizza Night)..." required>
-                    <select id="add-category" class="form-select input-half">
+                    <select id="add-category" class="form-select input-half" onchange="togglePostcodeField(this.value)">
                         <option value="calendar">Calendar Event</option>
                         <option value="cinema">Cinema Film</option>
                         <option value="home">Home Watch</option>
                         <option value="places">Place to Visit</option>
                         <option value="todo">To-Do Task</option>
                     </select>
+                </div>
+                <div class="form-row" id="postcode-row" style="display: none;">
+                    <input type="text" id="add-postcode" class="form-input input-full" placeholder="Enter Postcode (optional, e.g., LS1 1AA)">
                 </div>
                 <div class="form-row">
                     <input type="date" id="add-date" class="form-input input-half" value="2026-10-18">
@@ -650,9 +653,9 @@
     </div>
 
     <script>
-        let currentRange = 'month'; // Default to month view to see month nav clearly
+        let currentRange = 'month';
         let currentYear = 2026;
-        let currentMonth = 9; // 0-indexed (9 = October)
+        let currentMonth = 9; // October
         let homePostcode = "LS19 6BH";
         let activeMapQuery = "United Kingdom";
 
@@ -664,7 +667,6 @@
                 { title: "Yorkshire Dales Walk", color: "bg-family", time: "09:30 AM", who: "Family" },
                 { title: "Car Service", color: "bg-dad", time: "02:00 PM", who: "Dad" }
             ],
-            // Example event in November 2026
             "2026-11-05": [{ title: "Bonfire Night", color: "bg-family", time: "07:00 PM", who: "Family" }]
         };
 
@@ -680,8 +682,7 @@
             places: [
                 { title: "Yorkshire Dales National Park", details: "Scenic Walk & Picnic", postcode: "BD23 4PQ", dist: "32 miles" },
                 { title: "Royal Armouries Museum", details: "Interactive Exhibits", postcode: "LS10 1LT", dist: "11 miles" },
-                { title: "Tropical World Leeds", details: "Zoo & Greenhouse", postcode: "LS8 2LE", dist: "9.5 miles" },
-                { title: "Zoo", details: "Custom Outing", postcode: "LS1 1AA", dist: "14 miles" }
+                { title: "Tropical World Leeds", details: "Zoo & Greenhouse", postcode: "LS8 2LE", dist: "9.5 miles" }
             ]
         };
 
@@ -690,12 +691,18 @@
             { text: "Check pressure in car tires", who: "Dad", color: "bg-dad" }
         ];
 
+        function togglePostcodeField(val) {
+            const row = document.getElementById('postcode-row');
+            row.style.display = (val === 'places') ? 'flex' : 'none';
+        }
+
         function addItem(e) {
             e.preventDefault();
             const title = document.getElementById('add-title').value;
             const category = document.getElementById('add-category').value;
             const dateStr = document.getElementById('add-date').value;
             const assignee = document.getElementById('add-assignee').value;
+            const postcode = document.getElementById('add-postcode').value.trim();
             const colorClass = `bg-${assignee}`;
 
             if (category === 'calendar' || dateStr) {
@@ -708,7 +715,9 @@
                 categoriesData[category].push({ title, details: "Newly Added", meta: "Custom" });
                 switchCategory(category, document.querySelector(`.cat-tab`));
             } else if (category === 'places') {
-                categoriesData.places.push({ title, details: "Custom Outing", postcode: "LS1 1AA", dist: "14 miles" });
+                const finalPostcode = postcode ? postcode.toUpperCase() : "LS1 1AA";
+                categoriesData.places.push({ title, details: "Custom Outing", postcode: finalPostcode, dist: "14 miles" });
+                document.getElementById('add-postcode').value = '';
                 switchCategory('places', document.querySelector(`.cat-tab`));
             } else if (category === 'todo') {
                 todosData.push({ text: title, who: assignee, color: colorClass });
@@ -724,14 +733,6 @@
             const iframe = document.getElementById('interactive-map-frame');
             if (iframe) {
                 iframe.src = `https://maps.google.com/maps?q=${encodeURIComponent(activeMapQuery)}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
-            }
-        }
-
-        function resetMapOverview() {
-            activeMapQuery = "United Kingdom";
-            const iframe = document.getElementById('interactive-map-frame');
-            if (iframe) {
-                iframe.src = `https://maps.google.com/maps?q=${encodeURIComponent(activeMapQuery)}&t=&z=6&ie=UTF8&iwloc=&output=embed`;
             }
         }
 
@@ -829,9 +830,7 @@
                     renderDayCell(currentYear, currentMonth, i);
                 }
             } else {
-                // Get first day of month and total days
                 const firstDay = new Date(currentYear, currentMonth, 1);
-                // Adjust JS Sunday-start (0=Sun) to Monday-start (0=Mon)
                 let startDay = firstDay.getDay() - 1;
                 if (startDay === -1) startDay = 6;
 
@@ -922,7 +921,7 @@
 
         // Initial Renders
         renderCalendar();
-        switchCategory('cinema', document.querySelector('.cat-tab'));
+        switchCategory('places', document.querySelectorAll('.cat-tab')[2]); // Default to Places tab to see map
         renderTodos();
     </script>
 </body>
