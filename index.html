@@ -451,13 +451,13 @@
             bottom: 8px;
             left: 8px;
             right: 8px;
-            background: rgba(13, 17, 23, 0.9);
+            background: rgba(13, 17, 23, 0.92);
             border: 1px solid var(--border);
             backdrop-filter: blur(4px);
-            padding: 4px 8px;
+            padding: 6px 10px;
             border-radius: 6px;
             display: flex;
-            gap: 8px;
+            gap: 10px;
             align-items: center;
             overflow-x: auto;
             z-index: 10;
@@ -466,21 +466,29 @@
         .map-dot-pill {
             display: flex;
             align-items: center;
-            gap: 4px;
-            font-size: 0.68rem;
+            gap: 5px;
+            font-size: 0.72rem;
             font-weight: 600;
             color: var(--text);
             white-space: nowrap;
             cursor: pointer;
+            background: rgba(88, 166, 255, 0.1);
+            border: 1px solid var(--border);
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        .map-dot-pill:hover {
+            border-color: var(--accent);
         }
 
         .map-dot-badge {
-            width: 14px;
-            height: 14px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
             background: var(--accent);
             color: #0d1117;
-            font-size: 0.6rem;
+            font-size: 0.65rem;
             font-weight: 800;
             display: grid;
             place-items: center;
@@ -628,9 +636,9 @@
             </div>
 
             <div class="category-tabs">
-                <button class="cat-tab active" onclick="switchCategory('cinema', this)">Cinema Films</button>
+                <button class="cat-tab" onclick="switchCategory('cinema', this)">Cinema Films</button>
                 <button class="cat-tab" onclick="switchCategory('home', this)">Home Watchlist</button>
-                <button class="cat-tab" onclick="switchCategory('places', this)">Places to Go</button>
+                <button class="cat-tab active" onclick="switchCategory('places', this)">Places to Go</button>
             </div>
 
             <div class="list-container" id="dynamic-list-view"></div>
@@ -693,7 +701,7 @@
 
         function togglePostcodeField(val) {
             const row = document.getElementById('postcode-row');
-            row.style.display = (val === 'places') ? 'flex' : 'none';
+            if (row) row.style.display = (val === 'places') ? 'flex' : 'none';
         }
 
         function addItem(e) {
@@ -713,12 +721,15 @@
 
             if (category === 'cinema' || category === 'home') {
                 categoriesData[category].push({ title, details: "Newly Added", meta: "Custom" });
-                switchCategory(category, document.querySelector(`.cat-tab`));
+                const activeTab = document.querySelector('.cat-tab.active');
+                if (activeTab) switchCategory(category, activeTab);
             } else if (category === 'places') {
                 const finalPostcode = postcode ? postcode.toUpperCase() : "LS1 1AA";
                 categoriesData.places.push({ title, details: "Custom Outing", postcode: finalPostcode, dist: "14 miles" });
-                document.getElementById('add-postcode').value = '';
-                switchCategory('places', document.querySelector(`.cat-tab`));
+                const postcodeInp = document.getElementById('add-postcode');
+                if (postcodeInp) postcodeInp.value = '';
+                const activeTab = document.querySelector('.cat-tab.active');
+                if (activeTab) switchCategory('places', activeTab);
             } else if (category === 'todo') {
                 todosData.push({ text: title, who: assignee, color: colorClass });
                 renderTodos();
@@ -744,7 +755,7 @@
             const items = categoriesData[cat];
 
             if (cat === 'places') {
-                let dotsHtml = items.map((p, idx) => `
+                let dotsHtml = categoriesData.places.map((p, idx) => `
                     <div class="map-dot-pill" onclick="focusMap('${p.title}', '${p.postcode}')">
                         <span class="map-dot-badge">${idx + 1}</span>
                         <span>${p.title.split(' ')[0]}</span>
@@ -762,7 +773,7 @@
                             ${dotsHtml}
                         </div>
                     </div>
-                ` + items.map((item, idx) => `
+                ` + categoriesData.places.map((item, idx) => `
                     <div class="list-card" onclick="focusMap('${item.title}', '${item.postcode}')">
                         <div class="list-info">
                             <h5>📍 ${idx + 1}. ${item.title}</h5>
@@ -786,6 +797,7 @@
 
         function renderTodos() {
             const container = document.getElementById('todo-list-view');
+            if (!container) return;
             container.innerHTML = todosData.map(t => `
                 <div class="todo-item">
                     <div class="todo-left">
@@ -811,6 +823,7 @@
 
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid');
+            if (!grid) return;
             grid.innerHTML = `
                 <div class="day-header">Mon</div>
                 <div class="day-header">Tue</div>
@@ -822,8 +835,10 @@
             `;
 
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            document.getElementById('calendar-date-subtitle').textContent = `${monthNames[currentMonth]} ${currentYear}`;
-            document.getElementById('calendar-title-label').textContent = currentRange === 'week' ? 'Shared Calendar (This Week)' : 'Shared Calendar (Full Month)';
+            const subTitle = document.getElementById('calendar-date-subtitle');
+            const titleLbl = document.getElementById('calendar-title-label');
+            if (subTitle) subTitle.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+            if (titleLbl) titleLbl.textContent = currentRange === 'week' ? 'Shared Calendar (This Week)' : 'Shared Calendar (Full Month)';
 
             if (currentRange === 'week') {
                 for (let i = 12; i <= 18; i++) {
@@ -921,7 +936,7 @@
 
         // Initial Renders
         renderCalendar();
-        switchCategory('cinema', document.querySelector('.cat-tab'));
+        switchCategory('places', document.querySelectorAll('.cat-tab')[2]);
         renderTodos();
     </script>
 </body>
