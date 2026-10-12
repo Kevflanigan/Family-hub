@@ -425,11 +425,11 @@
             color: #fff;
         }
 
-        /* 300px Map Box */
+        /* 340px Map Box */
         .map-embed-box {
             width: 100%;
-            height: 300px;
-            max-height: 300px;
+            height: 340px;
+            max-height: 340px;
             border-radius: 8px;
             overflow: hidden;
             border: 1px solid var(--border);
@@ -608,11 +608,11 @@
         <!-- Section 2: Shared Calendar -->
         <section class="card">
             <div class="card-header">
-                <div class="card-title" id="calendar-title-label">Shared Calendar (Full Month)</div>
+                <div class="card-title" id="calendar-title-label">Shared Calendar</div>
                 <div class="calendar-nav">
-                    <button class="cal-nav-btn" onclick="changeMonth(-1)">◀</button>
+                    <button class="cal-nav-btn" onclick="navigateCalendar(-1)">◀</button>
                     <span style="font-size:0.75rem; color:var(--muted); font-weight:600;" id="calendar-date-subtitle">October 2026</span>
-                    <button class="cal-nav-btn" onclick="changeMonth(1)">▶</button>
+                    <button class="cal-nav-btn" onclick="navigateCalendar(1)">▶</button>
                 </div>
             </div>
 
@@ -661,9 +661,11 @@
     </div>
 
     <script>
-        let currentRange = 'month';
+        let currentRange = 'week'; // 'week' or 'month'
+        let currentStartDate = new Date(2026, 9, 12); // Oct 12, 2026 (Mon)
+        let currentMonth = 9; // October 2026
         let currentYear = 2026;
-        let currentMonth = 9; // October
+
         let homePostcode = "LS19 6BH";
         let activeMapQuery = "United Kingdom";
 
@@ -809,14 +811,21 @@
             `).join('');
         }
 
-        function changeMonth(direction) {
-            currentMonth += direction;
-            if (currentMonth > 11) {
-                currentMonth = 0;
-                currentYear++;
-            } else if (currentMonth < 0) {
-                currentMonth = 11;
-                currentYear--;
+        function navigateCalendar(direction) {
+            if (currentRange === 'week') {
+                // Shift by 7 days
+                currentStartDate.setDate(currentStartDate.getDate() + (direction * 7));
+            } else {
+                // Shift by 1 month
+                currentMonth += direction;
+                if (currentMonth > 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                } else if (currentMonth < 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                }
+                currentStartDate = new Date(currentYear, currentMonth, 1);
             }
             renderCalendar();
         }
@@ -837,14 +846,33 @@
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             const subTitle = document.getElementById('calendar-date-subtitle');
             const titleLbl = document.getElementById('calendar-title-label');
-            if (subTitle) subTitle.textContent = `${monthNames[currentMonth]} ${currentYear}`;
-            if (titleLbl) titleLbl.textContent = currentRange === 'week' ? 'Shared Calendar (This Week)' : 'Shared Calendar (Full Month)';
 
             if (currentRange === 'week') {
-                for (let i = 12; i <= 18; i++) {
-                    renderDayCell(currentYear, currentMonth, i);
+                if (titleLbl) titleLbl.textContent = 'Shared Calendar (This Week)';
+                
+                // Find Monday of the current week
+                let d = new Date(currentStartDate);
+                let day = d.getDay();
+                let diff = d.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
+                let monday = new Date(d.setDate(diff));
+
+                let sunday = new Date(monday);
+                sunday.setDate(monday.getDate() + 6);
+
+                if (subTitle) {
+                    subTitle.textContent = `${monday.getDate()} ${monthNames[monday.getMonth()]} – ${sunday.getDate()} ${monthNames[sunday.getMonth()]}`;
                 }
+
+                for (let i = 0; i < 7; i++) {
+                    let loopDate = new Date(monday);
+                    loopDate.setDate(monday.getDate() + i);
+                    renderDayCellByDate(loopDate);
+                }
+
             } else {
+                if (titleLbl) titleLbl.textContent = 'Shared Calendar (Full Month)';
+                if (subTitle) subTitle.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+
                 const firstDay = new Date(currentYear, currentMonth, 1);
                 let startDay = firstDay.getDay() - 1;
                 if (startDay === -1) startDay = 6;
@@ -858,12 +886,17 @@
                 }
 
                 for (let i = 1; i <= totalDays; i++) {
-                    renderDayCell(currentYear, currentMonth, i);
+                    let loopDate = new Date(currentYear, currentMonth, i);
+                    renderDayCellByDate(loopDate);
                 }
             }
         }
 
-        function renderDayCell(year, month, dayNum) {
+        function renderDayCellByDate(dateObj) {
+            const year = dateObj.getFullYear();
+            const month = dateObj.getMonth();
+            const dayNum = dateObj.getDate();
+
             const mStr = (month + 1) < 10 ? '0' + (month + 1) : (month + 1);
             const dStr = dayNum < 10 ? '0' + dayNum : dayNum;
             const dayKey = `${year}-${mStr}-${dStr}`;
