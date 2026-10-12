@@ -26,24 +26,25 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            scroll-behavior: smooth;
         }
 
         body {
             background-color: var(--bg);
             color: var(--text);
-            padding-top: 70px;
+            padding-top: 110px;
             padding-bottom: 2rem;
             min-height: 100vh;
         }
 
-        /* Fixed Navigation */
+        /* Fixed Top Header */
         header {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            height: 60px;
-            background: rgba(22, 27, 34, 0.95);
+            height: 55px;
+            background: rgba(22, 27, 34, 0.98);
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
@@ -59,8 +60,8 @@
         }
 
         .brand-logo {
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             display: grid;
             place-items: center;
             filter: drop-shadow(0 2px 4px rgba(88, 166, 255, 0.3));
@@ -68,7 +69,7 @@
 
         .brand-text {
             font-weight: 800;
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             letter-spacing: -0.3px;
             background: linear-gradient(135deg, #f0f6fc 30%, #58a6ff 100%);
             -webkit-background-clip: text;
@@ -83,6 +84,51 @@
             border-radius: 16px;
             font-size: 0.78rem;
             cursor: pointer;
+        }
+
+        /* Quick Jump Navigation Bar */
+        .jump-nav-bar {
+            position: fixed;
+            top: 55px;
+            left: 0;
+            right: 0;
+            height: 48px;
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 1rem;
+            overflow-x: auto;
+            white-space: nowrap;
+            z-index: 999;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .jump-nav-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-pill-btn {
+            background: #161b22;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-pill-btn:hover, .nav-pill-btn.active {
+            background: var(--accent);
+            color: #0d1117;
+            border-color: var(--accent);
         }
 
         main {
@@ -106,6 +152,7 @@
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 1rem;
+            scroll-margin-top: 115px; /* Perfect offset for smooth jump links */
         }
 
         .card-header {
@@ -637,10 +684,31 @@
             align-items: center;
             font-size: 0.82rem;
         }
+
+        /* Back to Top Floating Button */
+        .top-btn {
+            position: fixed;
+            bottom: 18px;
+            right: 18px;
+            background: var(--accent);
+            color: #0d1117;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            font-weight: 800;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
 
+    <!-- Header Bar -->
     <header>
         <div class="brand">
             <div class="brand-logo">
@@ -661,13 +729,26 @@
         <button class="lock-btn">🔒 Kids Mode</button>
     </header>
 
+    <!-- Quick Jump Navigation Pill Bar -->
+    <nav class="jump-nav-bar">
+        <a href="#sec-quickadd" class="nav-pill-btn">➕ Add Item</a>
+        <a href="#sec-calendar" class="nav-pill-btn">📅 Calendar</a>
+        <a href="#sec-meals" class="nav-pill-btn">🍽️ Meals</a>
+        <a href="#sec-foodshop" class="nav-pill-btn">🛒 Food List</a>
+        <a href="#sec-familyshop" class="nav-pill-btn">🛍️ Family List</a>
+        <a href="#sec-destinations" class="nav-pill-btn">📍 Destinations</a>
+        <a href="#sec-chores" class="nav-pill-btn">⭐ Chores</a>
+        <a href="#sec-wishlist" class="nav-pill-btn">🎁 Wishlist</a>
+        <a href="#sec-todo" class="nav-pill-btn">📝 To-Do</a>
+    </nav>
+
     <main>
         <div class="page-title">
             <h1>Our Family Schedule & Destinations 🧭</h1>
         </div>
 
         <!-- Universal Quick Add -->
-        <section class="card" style="border-color: var(--accent);">
+        <section class="card" id="sec-quickadd" style="border-color: var(--accent);">
             <div class="card-header" style="margin-bottom: 0.5rem;">
                 <div class="card-title">Quick Add to Plan</div>
             </div>
@@ -716,60 +797,6 @@
             </form>
         </section>
 
-        <!-- Meal Planner -->
-        <section class="card">
-            <div class="card-header">
-                <div class="card-title">🍽️ Weekly Meal Planner</div>
-                <button class="map-btn" onclick="syncMealsToTodo()">Sync to To-Do ↗</button>
-            </div>
-            <div id="meal-list-view"></div>
-        </section>
-
-        <!-- Food Shopping List -->
-        <section class="card">
-            <div class="card-header">
-                <div class="card-title">🛒 Food Shopping List</div>
-            </div>
-            <div class="list-container" id="foodshop-list-view"></div>
-        </section>
-
-        <!-- Family Shopping List -->
-        <section class="card">
-            <div class="card-header">
-                <div class="card-title">🛍️ Family Shopping List</div>
-            </div>
-            <div class="list-container" id="familyshop-list-view"></div>
-        </section>
-
-        <!-- Kids' Chores & Allowance -->
-        <section class="card">
-            <div class="card-header">
-                <div class="card-title">⭐ Kids' Chores & Allowance</div>
-            </div>
-            <div class="chores-grid" id="chores-container">
-                <div class="kid-card" data-kid="Leo">
-                    <div class="kid-header">
-                        <span>Leo</span>
-                        <span style="color:var(--accent); font-size:0.75rem;" class="kid-score">£3.50 earned</span>
-                    </div>
-                    <div class="kid-chores-list">
-                        <label class="chore-item"><input type="checkbox" onchange="updateChoreScore(this)"> Tidied Bedroom</label>
-                        <label class="chore-item"><input type="checkbox" checked onchange="updateChoreScore(this)"> Fed the Cat</label>
-                    </div>
-                </div>
-                <div class="kid-card" data-kid="Mia">
-                    <div class="kid-header">
-                        <span>Mia</span>
-                        <span style="color:var(--accent); font-size:0.75rem;" class="kid-score">£2.00 earned</span>
-                    </div>
-                    <div class="kid-chores-list">
-                        <label class="chore-item"><input type="checkbox" onchange="updateChoreScore(this)"> Put Toys Away</label>
-                        <label class="chore-item"><input type="checkbox" checked onchange="updateChoreScore(this)"> Watered Plants</label>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <!-- Dynamic Summary -->
         <section class="card">
             <div class="card-header">
@@ -801,7 +828,7 @@
         </section>
 
         <!-- Shared Calendar -->
-        <section class="card">
+        <section class="card" id="sec-calendar">
             <div class="card-header">
                 <div class="card-title" id="calendar-title-label">Shared Calendar</div>
                 <div class="calendar-nav">
@@ -824,8 +851,33 @@
             </div>
         </section>
 
+        <!-- Meal Planner -->
+        <section class="card" id="sec-meals">
+            <div class="card-header">
+                <div class="card-title">🍽️ Weekly Meal Planner</div>
+                <button class="map-btn" onclick="syncMealsToTodo()">Sync to To-Do ↗</button>
+            </div>
+            <div id="meal-list-view"></div>
+        </section>
+
+        <!-- Food Shopping List -->
+        <section class="card" id="sec-foodshop">
+            <div class="card-header">
+                <div class="card-title">🛒 Food Shopping List</div>
+            </div>
+            <div class="list-container" id="foodshop-list-view"></div>
+        </section>
+
+        <!-- Family Shopping List -->
+        <section class="card" id="sec-familyshop">
+            <div class="card-header">
+                <div class="card-title">🛍️ Family Shopping List</div>
+            </div>
+            <div class="list-container" id="familyshop-list-view"></div>
+        </section>
+
         <!-- Entertainment, Places & Restaurants -->
-        <section class="card">
+        <section class="card" id="sec-destinations">
             <div class="card-header">
                 <div class="card-title">Entertainment & Destinations</div>
             </div>
@@ -840,8 +892,37 @@
             <div class="list-container" id="dynamic-list-view"></div>
         </section>
 
+        <!-- Kids' Chores & Allowance -->
+        <section class="card" id="sec-chores">
+            <div class="card-header">
+                <div class="card-title">⭐ Kids' Chores & Allowance</div>
+            </div>
+            <div class="chores-grid" id="chores-container">
+                <div class="kid-card" data-kid="Leo">
+                    <div class="kid-header">
+                        <span>Leo</span>
+                        <span style="color:var(--accent); font-size:0.75rem;" class="kid-score">£3.50 earned</span>
+                    </div>
+                    <div class="kid-chores-list">
+                        <label class="chore-item"><input type="checkbox" onchange="updateChoreScore(this)"> Tidied Bedroom</label>
+                        <label class="chore-item"><input type="checkbox" checked onchange="updateChoreScore(this)"> Fed the Cat</label>
+                    </div>
+                </div>
+                <div class="kid-card" data-kid="Mia">
+                    <div class="kid-header">
+                        <span>Mia</span>
+                        <span style="color:var(--accent); font-size:0.75rem;" class="kid-score">£2.00 earned</span>
+                    </div>
+                    <div class="kid-chores-list">
+                        <label class="chore-item"><input type="checkbox" onchange="updateChoreScore(this)"> Put Toys Away</label>
+                        <label class="chore-item"><input type="checkbox" checked onchange="updateChoreScore(this)"> Watered Plants</label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Gift Wishlist -->
-        <section class="card">
+        <section class="card" id="sec-wishlist">
             <div class="card-header">
                 <div class="card-title">🎁 Gift Wishlist & Ideas</div>
             </div>
@@ -874,7 +955,7 @@
         </section>
 
         <!-- To-Do List -->
-        <section class="card">
+        <section class="card" id="sec-todo">
             <div class="card-header">
                 <div class="card-title">To-Do List (Who & What)</div>
             </div>
@@ -882,6 +963,9 @@
             <div class="list-container" id="todo-list-view"></div>
         </section>
     </main>
+
+    <!-- Floating Back To Top Button -->
+    <button class="top-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">↑</button>
 
     <!-- Hover Card Tooltip -->
     <div id="hover-tooltip">
