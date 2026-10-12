@@ -390,7 +390,7 @@
             gap: 0.5rem;
         }
 
-        .list-card, .todo-item {
+        .list-card, .todo-item, .shopping-item {
             background: #0d1117;
             border: 1px solid var(--border);
             border-radius: 8px;
@@ -401,7 +401,7 @@
             cursor: pointer;
         }
 
-        .list-card:hover {
+        .list-card:hover, .shopping-item:hover {
             border-color: var(--accent);
         }
 
@@ -512,13 +512,13 @@
             border: 1px solid var(--border);
         }
 
-        .todo-left {
+        .todo-left, .shop-left {
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .todo-text {
+        .todo-text, .shop-text {
             font-size: 0.85rem;
         }
 
@@ -531,7 +531,7 @@
             text-transform: uppercase;
         }
 
-        /* Meal Planner Reference Style (Vertical Day Cards) */
+        /* Meal Planner Reference Style */
         .meal-card-row {
             background: #0d1117;
             border: 1px solid var(--border);
@@ -673,7 +673,7 @@
             </div>
             <form class="add-form" onsubmit="addItem(event)">
                 <div class="form-row">
-                    <input type="text" id="add-title" class="form-input input-full" placeholder="Enter title / meal / chore..." required>
+                    <input type="text" id="add-title" class="form-input input-full" placeholder="Enter title / item / meal / chore..." required>
                     <select id="add-category" class="form-select input-half" onchange="handleCategoryChange(this.value)">
                         <option value="calendar">Calendar Event</option>
                         <option value="cinema">Cinema Film</option>
@@ -682,6 +682,8 @@
                         <option value="restaurants">Restaurants to Visit</option>
                         <option value="meal">Meal Plan</option>
                         <option value="chore">Chore / Allowance</option>
+                        <option value="foodshop">Food Shopping Item</option>
+                        <option value="familyshop">Family Shopping Item</option>
                         <option value="wishlist">Gift Wishlist</option>
                         <option value="todo">To-Do Task</option>
                     </select>
@@ -714,15 +716,29 @@
             </form>
         </section>
 
-        <!-- Meal Planner (Reference Style Vertical List) -->
+        <!-- Meal Planner -->
         <section class="card">
             <div class="card-header">
                 <div class="card-title">🍽️ Weekly Meal Planner</div>
                 <button class="map-btn" onclick="syncMealsToTodo()">Sync to To-Do ↗</button>
             </div>
-            <div id="meal-list-view">
-                <!-- Dynamically populated -->
+            <div id="meal-list-view"></div>
+        </section>
+
+        <!-- Food Shopping List -->
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title">🛒 Food Shopping List</div>
             </div>
+            <div class="list-container" id="foodshop-list-view"></div>
+        </section>
+
+        <!-- Family Shopping List -->
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title">🛍️ Family Shopping List</div>
+            </div>
+            <div class="list-container" id="familyshop-list-view"></div>
         </section>
 
         <!-- Kids' Chores & Allowance -->
@@ -903,6 +919,17 @@
             { day: "Sun", meal: "Bolognese Pasta Bake" }
         ];
 
+        let foodShopData = [
+            { text: "Chicken breasts & green pesto", who: "Mom", color: "bg-mom" },
+            { text: "Mozzarella & pizza dough", who: "Family", color: "bg-family" },
+            { text: "Fresh vegetables & salad", who: "Dad", color: "bg-dad" }
+        ];
+
+        let familyShopData = [
+            { text: "Printer paper & ink cartridges", who: "Dad", color: "bg-dad" },
+            { text: "Washing detergent & dishwasher tablets", who: "Mom", color: "bg-mom" }
+        ];
+
         let wishlistData = [
             { title: "Board Game: Ticket to Ride", note: "For Leo's birthday" },
             { title: "Coffee Bean Subscription", note: "From Leodis Roasters" }
@@ -953,6 +980,32 @@
             `).join('');
         }
 
+        function renderFoodShop() {
+            const container = document.getElementById('foodshop-list-view');
+            container.innerHTML = foodShopData.map(item => `
+                <div class="shopping-item">
+                    <div class="shop-left">
+                        <input type="checkbox">
+                        <span class="shop-text">${item.text}</span>
+                    </div>
+                    <span class="assign-tag ${item.color}">${item.who}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderFamilyShop() {
+            const container = document.getElementById('familyshop-list-view');
+            container.innerHTML = familyShopData.map(item => `
+                <div class="shopping-item">
+                    <div class="shop-left">
+                        <input type="checkbox">
+                        <span class="shop-text">${item.text}</span>
+                    </div>
+                    <span class="assign-tag ${item.color}">${item.who}</span>
+                </div>
+            `).join('');
+        }
+
         function syncMealsToTodo() {
             mealsData.forEach(m => {
                 todosData.push({ text: `Cook ${m.meal} (${m.day})`, who: "Family", color: "bg-family" });
@@ -962,7 +1015,6 @@
         }
 
         function updateChoreScore(checkbox) {
-            // Recalculate scores dynamically
             const cards = document.querySelectorAll('.kid-card');
             cards.forEach(card => {
                 const checkedCount = card.querySelectorAll('input[type="checkbox"]:checked').length;
@@ -1009,8 +1061,14 @@
                 const found = mealsData.find(m => m.day === mealDay);
                 if (found) found.meal = title;
                 renderMeals();
+            } else if (category === 'foodshop') {
+                foodShopData.push({ text: title, who: assignee, color: colorClass });
+                renderFoodShop();
+            } else if (category === 'familyshop') {
+                familyShopData.push({ text: title, who: assignee, color: colorClass });
+                renderFamilyShop();
             } else if (category === 'chore') {
-                const kidCard = document.querySelector(`.kid-card[data-kid="${assignee === 'leo' || assignee === 'Leo' ? 'Leo' : 'Mia'}"]`) || document.querySelector('.kid-card');
+                const kidCard = document.querySelector(`.kid-card[data-kid="${assignee.toLowerCase() === 'leo' ? 'Leo' : 'Mia'}"]`) || document.querySelector('.kid-card');
                 if (kidCard) {
                     const list = kidCard.querySelector('.kid-chores-list');
                     const newLabel = document.createElement('label');
@@ -1255,6 +1313,8 @@
 
         // Initial Renders
         renderMeals();
+        renderFoodShop();
+        renderFamilyShop();
         renderWishlist();
         renderCalendar();
         switchCategory('places', document.querySelectorAll('.cat-tab')[2]);
