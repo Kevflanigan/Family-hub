@@ -425,11 +425,11 @@
             color: #fff;
         }
 
-        /* Double-Sized Map Box (340px) */
+        /* 300px Map Box */
         .map-embed-box {
             width: 100%;
-            height: 340px;
-            max-height: 340px;
+            height: 300px;
+            max-height: 300px;
             border-radius: 8px;
             overflow: hidden;
             border: 1px solid var(--border);
@@ -921,7 +921,7 @@
 
         // Initial Renders
         renderCalendar();
-        switchCategory('places', document.querySelectorAll('.cat-tab')[2]); // Default to Places tab to see map
+        switchCategory('cinema', document.querySelector('.cat-tab'));
         renderTodos();
     </script>
 </body>
