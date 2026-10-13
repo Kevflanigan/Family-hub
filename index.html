@@ -76,14 +76,20 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .lock-btn {
+        .mode-toggle-btn {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border);
             color: var(--text);
-            padding: 4px 10px;
+            padding: 5px 12px;
             border-radius: 16px;
             font-size: 0.78rem;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .mode-toggle-btn:hover {
+            border-color: var(--accent);
         }
 
         /* Quick Jump Navigation Bar */
@@ -152,7 +158,7 @@
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 1rem;
-            scroll-margin-top: 115px; /* Perfect offset for smooth jump links */
+            scroll-margin-top: 115px;
         }
 
         .card-header {
@@ -747,13 +753,14 @@
             font-size: 1.12rem;
             letter-spacing: -.55px;
         }
-        .lock-btn {
+        .mode-toggle-btn {
             background: #f5f3ff;
             border: 1px solid #ded8ff;
             color: #5144b7;
-            padding: 8px 12px;
+            padding: 8px 14px;
             font-weight: 700;
             min-height: 38px;
+            border-radius: 10px;
         }
         .jump-nav-bar {
             top: 62px;
@@ -904,7 +911,7 @@
             body { padding-top: 108px; }
             header { padding: 0 12px; }
             .brand-text { font-size: 1rem; }
-            .lock-btn { font-size: .72rem; padding: 7px 9px; }
+            .mode-toggle-btn { font-size: .72rem; padding: 7px 10px; }
             .jump-nav-bar { padding: 0 12px; }
             main { padding: 1rem 12px 2.5rem; gap: .85rem; }
             .card { padding: 14px; border-radius: 14px; }
@@ -927,7 +934,6 @@
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
         }
-
     </style>
 </head>
 <body>
@@ -950,7 +956,7 @@
             </div>
             <span class="brand-text">Familiplan</span>
         </div>
-        <button class="lock-btn" type="button" aria-label="Toggle kids mode">🔒 Kids Mode</button>
+        <button class="mode-toggle-btn" id="user-mode-btn" type="button" onclick="toggleUserMode()" aria-label="Toggle user or family mode">🏠 Family View</button>
     </header>
 
     <!-- Quick Jump Navigation Pill Bar -->
@@ -968,7 +974,8 @@
 
     <main>
         <div class="page-title">
-            <h1>Family life, organised <span aria-hidden="true">✦</span></h1><p class="page-intro">One shared place for plans, meals, lists and little adventures.</p>
+            <h1>Family life, organised <span aria-hidden="true">✦</span></h1>
+            <p class="page-intro" id="welcome-subtitle">One shared place for plans, meals, lists and little adventures.</p>
         </div>
 
         <!-- Universal Quick Add -->
@@ -1205,12 +1212,13 @@
         let currentStartDate = new Date(2026, 9, 12);
         let currentMonth = 9;
         let currentYear = 2026;
+        let isUserMode = false; // false = Family View, true = User View (Kevin)
 
         let homePostcode = "LS19 6BH";
         let activeMapQuery = "United Kingdom";
 
         let events = {
-            "2026-10-10": [{ title: "Football Training", color: "bg-leo", time: "10:00 AM", who: "Leo" }],
+            "2026-10-10": [{ title: "Football Training", color: "bg-leo", who: "Leo" }],
             "2026-10-15": [{ title: "Dentist Appt", color: "bg-mom", time: "02:15 PM", who: "Mom" }],
             "2026-10-17": [{ title: "Pizza & Movie Night", color: "bg-family", time: "06:30 PM", who: "Family" }],
             "2026-10-24": [
@@ -1272,6 +1280,27 @@
             { text: "Check pressure in car tires", who: "Dad", color: "bg-dad" }
         ];
 
+        function toggleUserMode() {
+            isUserMode = !isUserMode;
+            const btn = document.getElementById('user-mode-btn');
+            const subtitle = document.getElementById('welcome-subtitle');
+
+            if (isUserMode) {
+                btn.textContent = "👤 Kevin's View";
+                btn.style.borderColor = "var(--accent)";
+                if (subtitle) subtitle.textContent = "Viewing personal dashboard for Kevin. Showing your specific events, tasks and items.";
+            } else {
+                btn.textContent = "🏠 Family View";
+                btn.style.borderColor = "var(--border)";
+                if (subtitle) subtitle.textContent = "One shared place for plans, meals, lists and little adventures.";
+            }
+
+            renderCalendar();
+            renderTodos();
+            renderFoodShop();
+            renderFamilyShop();
+        }
+
         function handleCategoryChange(val) {
             const postcodeRow = document.getElementById('postcode-row');
             const mealdayRow = document.getElementById('mealday-row');
@@ -1293,7 +1322,11 @@
 
         function renderFoodShop() {
             const container = document.getElementById('foodshop-list-view');
-            container.innerHTML = foodShopData.map(item => `
+            let filtered = foodShopData;
+            if (isUserMode) {
+                filtered = foodShopData.filter(item => item.who.toLowerCase() === 'dad' || item.who.toLowerCase() === 'family');
+            }
+            container.innerHTML = filtered.map(item => `
                 <div class="shopping-item">
                     <div class="shop-left">
                         <input type="checkbox">
@@ -1301,12 +1334,16 @@
                     </div>
                     <span class="assign-tag ${item.color}">${item.who}</span>
                 </div>
-            `).join('');
+            `).join('') || `<div style="padding: 0.5rem; color: var(--muted); font-size: 0.8rem;">No items for this profile.</div>`;
         }
 
         function renderFamilyShop() {
             const container = document.getElementById('familyshop-list-view');
-            container.innerHTML = familyShopData.map(item => `
+            let filtered = familyShopData;
+            if (isUserMode) {
+                filtered = familyShopData.filter(item => item.who.toLowerCase() === 'dad' || item.who.toLowerCase() === 'family');
+            }
+            container.innerHTML = filtered.map(item => `
                 <div class="shopping-item">
                     <div class="shop-left">
                         <input type="checkbox">
@@ -1314,7 +1351,7 @@
                     </div>
                     <span class="assign-tag ${item.color}">${item.who}</span>
                 </div>
-            `).join('');
+            `).join('') || `<div style="padding: 0.5rem; color: var(--muted); font-size: 0.8rem;">No items for this profile.</div>`;
         }
 
         function syncMealsToTodo() {
@@ -1458,7 +1495,11 @@
         function renderTodos() {
             const container = document.getElementById('todo-list-view');
             if (!container) return;
-            container.innerHTML = todosData.map(t => `
+            let filtered = todosData;
+            if (isUserMode) {
+                filtered = todosData.filter(t => t.who.toLowerCase() === 'dad' || t.who.toLowerCase() === 'family');
+            }
+            container.innerHTML = filtered.map(t => `
                 <div class="todo-item">
                     <div class="todo-left">
                         <input type="checkbox">
@@ -1466,7 +1507,7 @@
                     </div>
                     <span class="assign-tag ${t.color}">${t.who}</span>
                 </div>
-            `).join('');
+            `).join('') || `<div style="padding: 0.5rem; color: var(--muted); font-size: 0.8rem;">No tasks for this profile.</div>`;
         }
 
         function navigateCalendar(direction) {
@@ -1504,7 +1545,7 @@
             const titleLbl = document.getElementById('calendar-title-label');
 
             if (currentRange === 'week') {
-                if (titleLbl) titleLbl.textContent = 'Shared Calendar (This Week)';
+                if (titleLbl) titleLbl.textContent = !isUserMode ? 'Shared Calendar (This Week)' : "Kevin's Schedule (This Week)";
                 
                 let d = new Date(currentStartDate);
                 let day = d.getDay();
@@ -1525,7 +1566,7 @@
                 }
 
             } else {
-                if (titleLbl) titleLbl.textContent = 'Shared Calendar (Full Month)';
+                if (titleLbl) titleLbl.textContent = !isUserMode ? 'Shared Calendar (Full Month)' : "Kevin's Schedule (Full Month)";
                 if (subTitle) subTitle.textContent = `${monthNames[currentMonth]} ${currentYear}`;
 
                 const firstDay = new Date(currentYear, currentMonth, 1);
@@ -1562,19 +1603,21 @@
             cell.setAttribute('role', 'button');
             cell.setAttribute('aria-label', `Show activities for ${dayKey}`);
 
-            let html = `<div class="day-num">${dayNum}</div>`;
-            if (events[dayKey]) {
-                events[dayKey].forEach(e => {
-                    html += `<div class="event-pill ${e.color}">${e.title}</div>`;
-                });
+            let dayEvs = events[dayKey] || [];
+            if (isUserMode) {
+                dayEvs = dayEvs.filter(e => e.who.toLowerCase() === 'dad' || e.who.toLowerCase() === 'family');
             }
+
+            let html = `<div class="day-num">${dayNum}</div>`;
+            dayEvs.forEach(e => {
+                html += `<div class="event-pill ${e.color}">${e.title}</div>`;
+            });
             cell.innerHTML = html;
 
             cell.addEventListener('mouseenter', (ev) => {
                 const tooltip = document.getElementById('hover-tooltip');
                 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
                 document.getElementById('tt-date').textContent = `${monthNames[month]} ${dayNum}, ${year}`;
-                const dayEvs = events[dayKey];
                 if (dayEvs && dayEvs.length) {
                     document.getElementById('tt-body').innerHTML = dayEvs.map(e => `
                         <div class="tooltip-line">
@@ -1603,11 +1646,10 @@
                 document.querySelectorAll('.day-cell.selected').forEach(el => el.classList.remove('selected'));
                 cell.classList.add('selected');
                 const panel = document.getElementById('calendar-day-details');
-                const dayEvs = events[dayKey] || [];
                 const dateLabel = new Date(year, month, dayNum).toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
                 panel.innerHTML = `<strong>${dateLabel}</strong>` + (dayEvs.length
                     ? dayEvs.map(e => `<span>• ${e.time} — ${e.who}: ${e.title}</span>`).join('')
-                    : '<span>No activities planned. Add something using Quick Add.</span>');
+                    : '<span>No activities planned for this profile.</span>');
             };
             cell.addEventListener('click', showDayDetails);
             cell.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showDayDetails(); } });
