@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Family Plan</title>
+    <title>Familiplan — Family life, organised</title>
     <style>
         :root {
             --bg: #0d1117;
@@ -184,7 +184,7 @@
         }
 
         .form-input, .form-select {
-            background: #0d1117;
+            background: #fbfaf8;
             border: 1px solid var(--border);
             color: var(--text);
             padding: 8px 10px;
@@ -228,7 +228,7 @@
 
         /* Summary Toggle & Stats */
         .toggle-box {
-            background: #0d1117;
+            background: #fbfaf8;
             border: 1px solid var(--border);
             padding: 2px;
             border-radius: 8px;
@@ -285,7 +285,7 @@
         }
 
         .cal-nav-btn {
-            background: #0d1117;
+            background: #fbfaf8;
             border: 1px solid var(--border);
             color: var(--text);
             width: 26px;
@@ -324,7 +324,7 @@
         }
 
         .day-cell {
-            background: #0d1117;
+            background: #fbfaf8;
             border: 1px solid var(--border);
             border-radius: 6px;
             min-height: 75px;
@@ -414,7 +414,7 @@
         }
 
         .cat-tab {
-            background: #0d1117;
+            background: #fbfaf8;
             border: 1px solid var(--border);
             color: var(--muted);
             padding: 4px 10px;
@@ -438,7 +438,7 @@
         }
 
         .list-card, .todo-item, .shopping-item {
-            background: #0d1117;
+            background: #fbfaf8;
             border: 1px solid var(--border);
             border-radius: 8px;
             padding: 0.6rem 0.8rem;
@@ -580,7 +580,7 @@
 
         /* Meal Planner Reference Style */
         .meal-card-row {
-            background: #0d1117;
+            background: #fbfaf8;
             border: 1px solid var(--border);
             border-radius: 10px;
             padding: 10px 14px;
@@ -622,7 +622,7 @@
         }
 
         .kid-card {
-            background: #0d1117;
+            background: #fbfaf8;
             border: 1px solid var(--border);
             border-radius: 8px;
             padding: 8px;
@@ -656,7 +656,7 @@
         }
 
         .contact-pill {
-            background: #0d1117;
+            background: #fbfaf8;
             border: 1px solid var(--border);
             border-radius: 8px;
             padding: 8px;
@@ -675,7 +675,7 @@
         }
 
         .wishlist-item {
-            background: #0d1117;
+            background: #fbfaf8;
             border: 1px solid var(--border);
             border-radius: 8px;
             padding: 8px;
@@ -704,6 +704,230 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.5);
             z-index: 1000;
         }
+
+        /* Familiplan refresh: warmer, calmer, more readable and mobile-first */
+        :root {
+            --bg: #f7f5f1;
+            --card: #ffffff;
+            --border: #e7e2da;
+            --text: #252b36;
+            --muted: #6f7785;
+            --accent: #6d5ce8;
+            --mom: #d9468d;
+            --dad: #3678d4;
+            --leo: #159b75;
+            --mia: #c47a08;
+            --family: #805ad5;
+            --surface-soft: #f5f3ff;
+            --shadow-soft: 0 8px 24px rgba(36, 32, 64, .055);
+        }
+        html { scroll-padding-top: 118px; }
+        body {
+            background:
+              radial-gradient(ellipse at 12% 0%, rgba(109,92,232,.08), transparent 32rem),
+              var(--bg);
+            color: var(--text);
+            padding-top: 112px;
+            line-height: 1.45;
+        }
+        header {
+            height: 62px;
+            padding: 0 max(1rem, calc((100vw - 1080px)/2));
+            background: rgba(255,255,255,.94);
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 2px 12px rgba(30,35,50,.035);
+            backdrop-filter: blur(14px);
+        }
+        .brand { gap: 11px; }
+        .brand-logo { width: 36px; height: 36px; filter: none; }
+        .brand-text {
+            background: none;
+            color: #28253b;
+            -webkit-text-fill-color: currentColor;
+            font-size: 1.12rem;
+            letter-spacing: -.55px;
+        }
+        .lock-btn {
+            background: #f5f3ff;
+            border: 1px solid #ded8ff;
+            color: #5144b7;
+            padding: 8px 12px;
+            font-weight: 700;
+            min-height: 38px;
+        }
+        .jump-nav-bar {
+            top: 62px;
+            height: 48px;
+            padding: 0 max(1rem, calc((100vw - 1080px)/2));
+            background: rgba(247,245,241,.94);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+            gap: 8px;
+        }
+        .nav-pill-btn {
+            background: #fff;
+            color: #5d6472;
+            border-color: #e5e0d8;
+            padding: 7px 12px;
+            font-size: .78rem;
+        }
+        .nav-pill-btn:hover, .nav-pill-btn.active {
+            background: #eeeaff;
+            color: #5144b7;
+            border-color: #cfc7ff;
+        }
+        main { max-width: 1040px; padding: 1.35rem 1rem 3rem; gap: 1rem; }
+        .page-title { padding: .35rem .15rem .25rem; }
+        .page-title h1 { font-size: clamp(1.55rem, 3vw, 2.1rem); letter-spacing: -1px; }
+        .page-title h1 span { color: var(--accent); }
+        .page-intro { margin-top: .35rem; color: var(--muted); font-size: .94rem; }
+        .card {
+            background: rgba(255,255,255,.96);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: clamp(1rem, 2.3vw, 1.35rem);
+            box-shadow: var(--shadow-soft);
+            scroll-margin-top: 122px;
+        }
+        #sec-quickadd { border: 1px solid #d9d2ff !important; background: linear-gradient(135deg,#fff 0%,#faf9ff 100%); }
+        .card-header { gap: 12px; margin-bottom: 1rem; }
+        .card-title { font-size: 1.04rem; letter-spacing: -.2px; gap: 8px; }
+        .form-input, .form-select {
+            background: #fff;
+            border: 1px solid #dcdfe6;
+            color: var(--text);
+            padding: 11px 12px;
+            min-height: 44px;
+            font-size: .92rem;
+            border-radius: 10px;
+        }
+        .form-input::placeholder { color: #9399a5; }
+        .form-input:focus, .form-select:focus, .meal-input-inline:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(109,92,232,.12);
+        }
+        .add-btn {
+            background: var(--accent);
+            color: #fff;
+            min-height: 44px;
+            padding: 10px 18px;
+            border-radius: 10px;
+            transition: transform .15s ease, background .15s ease;
+        }
+        .add-btn:hover { background: #5948d0; transform: translateY(-1px); }
+        .toggle-box { background: #f3f1ed; border-color: var(--border); padding: 3px; }
+        .toggle-btn { padding: 7px 12px; color: var(--muted); }
+        .toggle-btn.active { background: #fff; color: #5144b7; box-shadow: 0 1px 4px rgba(20,20,30,.1); }
+        .stats-grid { gap: 12px; }
+        .stat-card {
+            background: #faf9ff;
+            border-color: #ebe7ff;
+            padding: 1rem .65rem;
+            border-radius: 12px;
+        }
+        .stat-val { color: var(--accent); font-size: 1.55rem; }
+        .stat-lbl { font-size: .76rem; margin-top: 2px; }
+        .cal-nav-btn {
+            background: #fff; color: var(--text); border-color: var(--border);
+            width: 34px; height: 34px; font-size: 1.2rem;
+        }
+        .calendar-grid { gap: 6px; }
+        .calendar-day-details {
+            margin-top: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 3px;
+            border: 1px solid #e8e3ff; background: #faf9ff; border-radius: 10px;
+            color: var(--text); font-size: .84rem;
+        }
+        .calendar-day-details span { color: var(--muted); }
+        .day-cell.selected { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(109,92,232,.14); }
+        .day-header { font-size: .72rem; letter-spacing: .03em; text-transform: uppercase; padding: 4px 0 8px; }
+        .day-cell {
+            background: #fff;
+            border-color: #e8e5df;
+            border-radius: 9px;
+            min-height: 88px;
+            padding: 6px;
+            transition: border-color .15s ease, box-shadow .15s ease;
+        }
+        .day-cell:not(.empty):hover, .day-cell:focus-visible {
+            border-color: #aaa0ff;
+            box-shadow: 0 0 0 2px rgba(109,92,232,.08);
+            outline: none;
+        }
+        .day-num { color: #505868; font-size: .8rem; }
+        .event-pill { font-size: .66rem; line-height: 1.35; border-radius: 5px; padding: 3px 5px; margin-top: 4px; }
+        .bg-mom { background-color: var(--mom); }
+        .bg-dad { background-color: var(--dad); }
+        .bg-leo { background-color: var(--leo); }
+        .bg-mia { background-color: var(--mia); }
+        .bg-family { background-color: var(--family); }
+        #hover-tooltip {
+            background: #29263b; color: #fff; border: 1px solid #514b70;
+            border-radius: 12px; box-shadow: 0 12px 34px rgba(25,20,50,.22);
+        }
+        .category-tabs { gap: 8px; }
+        .cat-tab {
+            background: #fff; color: #687080; border-color: var(--border);
+            padding: 8px 12px; border-radius: 20px; font-size: .8rem;
+        }
+        .cat-tab.active { background: #eeeaff; color: #5144b7; border-color: #d5ceff; }
+        .list-card, .todo-item, .shopping-item, .meal-card-row, .kid-card, .contact-pill, .wishlist-item {
+            background: #fff; border-color: #e8e5df; border-radius: 11px;
+        }
+        .list-card, .shopping-item, .todo-item { padding: 12px; gap: 10px; }
+        .list-card:hover, .shopping-item:hover { border-color: #b9b0ff; }
+        .list-info h5 { font-size: .92rem; }
+        .list-info span { display: inline-block; margin-top: 3px; line-height: 1.45; }
+        .map-btn { background: #f0edff; border-color: #d8d0ff; color: #5144b7; padding: 7px 10px; white-space: nowrap; }
+        .map-btn:hover { background: var(--accent); color: #fff; }
+        .map-embed-box { border-color: var(--border); border-radius: 12px; }
+        .map-embed-box iframe { filter: none; }
+        .map-dots-bar { background: rgba(255,255,255,.95); border-color: var(--border); }
+        .map-dot-pill { background: #fff; border-color: var(--border); color: var(--text); padding: 5px 9px; }
+        .map-dot-badge { background: var(--accent); color: #fff; }
+        .home-banner { background: #faf9ff; border-color: #e8e3ff; border-radius: 8px; }
+        .assign-tag { padding: 4px 8px; border-radius: 20px; font-size: .64rem; letter-spacing: .02em; }
+        .meal-card-row { padding: 12px; margin-bottom: 8px; }
+        .meal-day-name { color: #5144b7; width: 54px; }
+        .meal-input-inline { border-radius: 4px; padding: 6px 4px; }
+        .kid-card { padding: 12px; }
+        .kid-header { padding-bottom: 8px; margin-bottom: 9px; }
+        .chore-item { padding: 5px 0; font-size: .82rem; }
+        input[type="checkbox"] { accent-color: var(--accent); width: 17px; height: 17px; flex-shrink: 0; }
+        .contact-pill h6 { color: #5144b7; font-size: .82rem; }
+        .contact-pill p { font-size: .78rem; }
+        .top-btn { background: var(--accent); color: #fff; box-shadow: 0 6px 18px rgba(60,45,150,.25); }
+        button, a, input, select { -webkit-tap-highlight-color: transparent; }
+        button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+            outline: 3px solid rgba(109,92,232,.38); outline-offset: 2px;
+        }
+        @media (max-width: 600px) {
+            body { padding-top: 108px; }
+            header { padding: 0 12px; }
+            .brand-text { font-size: 1rem; }
+            .lock-btn { font-size: .72rem; padding: 7px 9px; }
+            .jump-nav-bar { padding: 0 12px; }
+            main { padding: 1rem 12px 2.5rem; gap: .85rem; }
+            .card { padding: 14px; border-radius: 14px; }
+            .page-title h1 { font-size: 1.55rem; }
+            .stats-grid { gap: 7px; }
+            .stat-card { padding: .8rem .35rem; }
+            .stat-val { font-size: 1.35rem; }
+            .calendar-wrapper { overflow-x: visible; }
+            .calendar-grid { min-width: 0; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; }
+            .day-header { font-size: .61rem; letter-spacing: 0; }
+            .day-cell { min-height: 62px; padding: 3px; border-radius: 6px; }
+            .day-num { font-size: .7rem; }
+            .event-pill { font-size: .55rem; padding: 2px; }
+            .map-embed-box { height: 260px; }
+            .chores-grid { grid-template-columns: 1fr; }
+            .list-card { align-items: flex-start; }
+            .map-btn { align-self: center; }
+            .card-header { align-items: flex-start; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+        }
+
     </style>
 </head>
 <body>
@@ -724,9 +948,9 @@
                     </defs>
                 </svg>
             </div>
-            <span class="brand-text">Family Plan</span>
+            <span class="brand-text">Familiplan</span>
         </div>
-        <button class="lock-btn">🔒 Kids Mode</button>
+        <button class="lock-btn" type="button" aria-label="Toggle kids mode">🔒 Kids Mode</button>
     </header>
 
     <!-- Quick Jump Navigation Pill Bar -->
@@ -744,7 +968,7 @@
 
     <main>
         <div class="page-title">
-            <h1>Our Family Schedule & Destinations 🧭</h1>
+            <h1>Family life, organised <span aria-hidden="true">✦</span></h1><p class="page-intro">One shared place for plans, meals, lists and little adventures.</p>
         </div>
 
         <!-- Universal Quick Add -->
@@ -784,7 +1008,7 @@
                     </select>
                 </div>
                 <div class="form-row">
-                    <input type="date" id="add-date" class="form-input input-half" value="2026-10-18">
+                    <input type="date" id="add-date" class="form-input input-half" value="">
                     <select id="add-assignee" class="form-select input-half">
                         <option value="family">Family</option>
                         <option value="mom">Mom</option>
@@ -832,9 +1056,9 @@
             <div class="card-header">
                 <div class="card-title" id="calendar-title-label">Shared Calendar</div>
                 <div class="calendar-nav">
-                    <button class="cal-nav-btn" onclick="navigateCalendar(-1)">◀</button>
+                    <button class="cal-nav-btn" type="button" aria-label="Previous period" onclick="navigateCalendar(-1)">‹</button>
                     <span style="font-size:0.75rem; color:var(--muted); font-weight:600;" id="calendar-date-subtitle">October 2026</span>
-                    <button class="cal-nav-btn" onclick="navigateCalendar(1)">▶</button>
+                    <button class="cal-nav-btn" type="button" aria-label="Next period" onclick="navigateCalendar(1)">›</button>
                 </div>
             </div>
 
@@ -848,6 +1072,9 @@
                     <div class="day-header">Sat</div>
                     <div class="day-header">Sun</div>
                 </div>
+            </div>
+            <div id="calendar-day-details" class="calendar-day-details" aria-live="polite">
+                <strong>Choose a date</strong><span>Select a day to see its activities.</span>
             </div>
         </section>
 
@@ -965,7 +1192,7 @@
     </main>
 
     <!-- Floating Back To Top Button -->
-    <button class="top-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">↑</button>
+    <button class="top-btn" aria-label="Back to top" title="Back to top" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">↑</button>
 
     <!-- Hover Card Tooltip -->
     <div id="hover-tooltip">
@@ -1331,6 +1558,9 @@
 
             const cell = document.createElement('div');
             cell.className = 'day-cell';
+            cell.tabIndex = 0;
+            cell.setAttribute('role', 'button');
+            cell.setAttribute('aria-label', `Show activities for ${dayKey}`);
 
             let html = `<div class="day-num">${dayNum}</div>`;
             if (events[dayKey]) {
@@ -1369,6 +1599,18 @@
             cell.addEventListener('mouseleave', () => {
                 document.getElementById('hover-tooltip').style.display = 'none';
             });
+            const showDayDetails = () => {
+                document.querySelectorAll('.day-cell.selected').forEach(el => el.classList.remove('selected'));
+                cell.classList.add('selected');
+                const panel = document.getElementById('calendar-day-details');
+                const dayEvs = events[dayKey] || [];
+                const dateLabel = new Date(year, month, dayNum).toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                panel.innerHTML = `<strong>${dateLabel}</strong>` + (dayEvs.length
+                    ? dayEvs.map(e => `<span>• ${e.time} — ${e.who}: ${e.title}</span>`).join('')
+                    : '<span>No activities planned. Add something using Quick Add.</span>');
+            };
+            cell.addEventListener('click', showDayDetails);
+            cell.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showDayDetails(); } });
 
             document.getElementById('calendar-grid').appendChild(cell);
         }
@@ -1393,6 +1635,13 @@
             }
 
             renderCalendar();
+        }
+
+        // Use today's local date as the default for new items.
+        const dateInput = document.getElementById('add-date');
+        if (dateInput) {
+            const now = new Date();
+            dateInput.value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
         }
 
         // Initial Renders
