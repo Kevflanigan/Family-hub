@@ -39,7 +39,7 @@
             line-height: 1.45;
         }
 
-        /* Fixed Top Header */
+        /* Fixed Header */
         header {
             position: fixed;
             top: 0;
@@ -80,41 +80,29 @@
         .header-actions {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
-        .account-btn {
-            background: transparent;
-            border: none;
+        .more-menu-btn {
+            background: #f0edff;
+            border: 1px solid #dcd5ff;
+            color: var(--accent);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 700;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text);
-            padding: 4px;
-            border-radius: 50%;
-        }
-
-        .account-btn:hover {
-            background: rgba(0,0,0,0.05);
         }
 
         .logout-btn {
             background: #fff;
             border: 1px solid var(--border);
             color: var(--muted);
-            padding: 6px 12px;
+            padding: 6px 10px;
             border-radius: 8px;
             font-size: 0.78rem;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .logout-btn:hover {
-            border-color: #f87171;
-            color: #ef4444;
-            background: #fef2f2;
         }
 
         /* Views management */
@@ -135,26 +123,21 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Fixed Bottom Navigation Bar */
+        /* Clean 4-Core Bottom Navigation Bar */
         .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
             height: 62px;
-            background: rgba(255, 255, 255, 0.96);
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(12px);
             border-top: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: space-around;
-            padding: 0 0.25rem;
+            padding: 0 0.5rem;
             z-index: 1000;
-            overflow-x: auto;
-        }
-
-        .bottom-nav::-webkit-scrollbar {
-            display: none;
         }
 
         .nav-item {
@@ -165,15 +148,14 @@
             background: none;
             border: none;
             color: var(--muted);
-            padding: 6px 6px;
-            font-size: 0.65rem;
+            padding: 6px;
+            font-size: 0.72rem;
             font-weight: 600;
             cursor: pointer;
             border-radius: 8px;
-            min-width: 48px;
+            flex: 1;
             gap: 2px;
             transition: color 0.15s ease;
-            flex-shrink: 0;
         }
 
         .nav-item.active {
@@ -182,11 +164,11 @@
         }
 
         .nav-icon {
-            font-size: 1.15rem;
+            font-size: 1.25rem;
             line-height: 1;
         }
 
-        /* Cards */
+        /* Cards & Forms */
         .card {
             background: rgba(255,255,255,.96);
             border: 1px solid var(--border);
@@ -206,10 +188,8 @@
         .card-title {
             font-size: 1.1rem;
             font-weight: 800;
-            letter-spacing: -0.3px;
         }
 
-        /* Form Inputs */
         .add-form {
             display: flex;
             flex-direction: column;
@@ -233,11 +213,6 @@
             outline: none;
         }
 
-        .form-input:focus, .form-select:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(109,92,232,.12);
-        }
-
         .input-full { flex: 1 1 100%; }
         .input-half { flex: 1 1 48%; }
 
@@ -251,12 +226,8 @@
             font-weight: 700;
             font-size: 0.88rem;
             cursor: pointer;
-            transition: background 0.15s ease;
         }
 
-        .add-btn:hover { background: #5948d0; }
-
-        /* Item Components */
         .list-container {
             display: flex;
             flex-direction: column;
@@ -273,7 +244,7 @@
             background: #faf9ff;
         }
 
-        .todo-item, .shopping-item, .meal-card-row, .kid-card, .wishlist-item, .list-card {
+        .todo-item, .shopping-item, .meal-card-row, .wishlist-item, .list-card {
             background: #fff;
             border: 1px solid #e8e5df;
             border-radius: 11px;
@@ -298,12 +269,6 @@
             cursor: pointer;
             font-size: 0.85rem;
             padding: 4px 8px;
-            border-radius: 6px;
-        }
-
-        .delete-btn:hover {
-            color: #ef4444;
-            background: #fef2f2;
         }
 
         .assign-tag {
@@ -313,15 +278,7 @@
             border-radius: 20px;
             color: #fff;
             text-transform: uppercase;
-            letter-spacing: .02em;
-            flex-shrink: 0;
             cursor: pointer;
-            user-select: none;
-            transition: transform 0.1s ease;
-        }
-
-        .assign-tag:active {
-            transform: scale(0.95);
         }
 
         .bg-mom { background-color: var(--mom); }
@@ -330,195 +287,91 @@
         .bg-mia { background-color: var(--mia); }
         .bg-family { background-color: var(--family); }
 
-        .meal-card-row {
-            margin-bottom: 6px;
-        }
+        .meal-card-row { margin-bottom: 6px; }
+        .meal-day-name { font-size: 0.95rem; font-weight: 800; color: #5144b7; width: 50px; }
+        .meal-input-inline { background: transparent; border: none; border-bottom: 1px dashed var(--border); font-size: 0.88rem; width: 100%; outline: none; }
 
-        .meal-day-name {
-            font-size: 0.95rem;
-            font-weight: 800;
-            color: #5144b7;
-            width: 50px;
-        }
+        /* Calendar */
+        .calendar-nav { display: flex; align-items: center; gap: 8px; }
+        .cal-nav-btn { background: #fff; border: 1px solid var(--border); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+        .day-header { text-align: center; font-size: 0.7rem; font-weight: 700; color: var(--muted); text-transform: uppercase; }
+        .day-cell { background: #fff; border: 1px solid #e8e5df; border-radius: 8px; min-height: 75px; padding: 6px; cursor: pointer; }
+        .day-num { font-size: 0.75rem; font-weight: 600; color: #505868; }
+        .event-pill { margin-top: 3px; padding: 2px 4px; border-radius: 4px; font-size: 0.62rem; color: #fff; font-weight: 600; }
 
-        .meal-input-inline {
-            background: transparent;
-            border: none;
-            border-bottom: 1px dashed var(--border);
-            color: var(--text);
-            font-size: 0.88rem;
-            width: 100%;
-            outline: none;
-            padding: 4px 0;
-        }
-
-        /* Calendar Styles */
-        .calendar-nav {
-            display: flex;
+        /* Modal Overlay for More Menu */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px);
+            display: none;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            z-index: 2000;
+            padding: 1rem;
         }
-
-        .cal-nav-btn {
+        .modal-overlay.open { display: flex; }
+        .modal-card {
             background: #fff;
-            border: 1px solid var(--border);
-            color: var(--text);
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            font-size: 1rem;
-            display: grid;
-            place-items: center;
-            cursor: pointer;
+            width: 100%;
+            max-width: 400px;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 6px;
-        }
-
-        .day-header {
-            text-align: center;
-            font-size: 0.7rem;
+        .modal-item {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
             font-weight: 700;
-            color: var(--muted);
-            text-transform: uppercase;
-            padding-bottom: 4px;
-        }
-
-        .day-cell {
-            background: #fff;
-            border: 1px solid #e8e5df;
-            border-radius: 8px;
-            min-height: 75px;
-            padding: 6px;
+            font-size: 0.95rem;
             cursor: pointer;
-            transition: border-color 0.15s ease, box-shadow 0.15s ease;
-        }
-
-        .day-cell:hover {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 2px rgba(109,92,232,0.1);
-        }
-
-        .day-num {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #505868;
-        }
-
-        .event-pill {
-            margin-top: 3px;
-            padding: 2px 4px;
-            border-radius: 4px;
-            font-size: 0.62rem;
-            color: #fff;
-            font-weight: 600;
-        }
-
-        /* Map and Destinations Styles */
-        .category-tabs {
             display: flex;
-            gap: 8px;
-            margin-bottom: 1rem;
-            overflow-x: auto;
-            padding-bottom: 4px;
-        }
-
-        .cat-tab {
-            background: #fff;
-            border: 1px solid var(--border);
-            color: var(--muted);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-
-        .cat-tab.active {
-            background: #eeeaff;
-            color: #5144b7;
-            border-color: #d5ceff;
-        }
-
-        .map-embed-box {
-            width: 100%;
-            height: 280px;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            margin-bottom: 0.85rem;
-            position: relative;
-        }
-
-        .map-embed-box iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        .home-banner {
-            font-size: 0.76rem;
-            color: var(--muted);
-            margin-bottom: 0.65rem;
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-            background: #faf9ff;
-            padding: 6px 10px;
-            border-radius: 8px;
-            border: 1px solid #e8e3ff;
-        }
-
-        .chores-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 10px;
+            color: var(--text);
         }
+        .modal-item:hover { background: #faf9ff; color: var(--accent); }
     </style>
 </head>
 <body>
 
-    <!-- Fixed Header -->
+    <!-- Header -->
     <header>
         <div class="brand">
             <div class="brand-logo">
-                <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="36" height="36" rx="10" fill="url(#logo-grad)"/>
-                    <path d="M18 8L25 13.5V23.5C25 25 23.5 26.5 22 26.5H14C12.5 26.5 11 25 11 23.5V13.5L18 8Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <circle cx="18" cy="18" r="3.5" fill="white"/>
-                    <defs>
-                        <linearGradient id="logo-grad" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
-                            <stop stop-color="#3b82f6"/>
-                            <stop offset="1" stop-color="#a855f7"/>
-                        </linearGradient>
-                    </defs>
-                </svg>
+                <svg viewBox="0 0 36 36" fill="none"><rect width="36" height="36" rx="10" fill="url(#lg)"/><path d="M18 8L25 13.5V23.5C25 25 23.5 26.5 22 26.5H14C12.5 26.5 11 25 11 23.5V13.5L18 8Z" stroke="white" stroke-width="2"/><circle cx="18" cy="18" r="3.5" fill="white"/><defs><linearGradient id="lg" x1="0" y1="0" x2="36" y2="36"><stop stop-color="#3b82f6"/><stop offset="1" stop-color="#a855f7"/></linearGradient></defs></svg>
             </div>
             <span class="brand-text">Familiplan</span>
         </div>
         <div class="header-actions">
-            <button class="account-btn" type="button" aria-label="Account Profile">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-            </button>
-            <button class="logout-btn" onclick="handleLogout()">Log Out</button>
+            <button class="more-menu-btn" onclick="toggleMoreMenu(true)">☰ More</button>
+            <button class="logout-btn" onclick="alert('Logged out')">Log Out</button>
         </div>
     </header>
 
-    <!-- VIEW 1: Home / Quick Add -->
+    <!-- MORE MENU MODAL -->
+    <div id="more-modal" class="modal-overlay" onclick="if(event.target===this) toggleMoreMenu(false)">
+        <div class="modal-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                <h3 style="font-weight:800;">More Sections</h3>
+                <button onclick="toggleMoreMenu(false)" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
+            </div>
+            <div class="modal-item" onclick="openMoreSection('meals')">🍽️ Weekly Meal Planner</div>
+            <div class="modal-item" onclick="openMoreSection('places')">📍 Places & Restaurants</div>
+            <div class="modal-item" onclick="openMoreSection('watchlist')">🍿 Cinema & Home Watchlist</div>
+            <div class="modal-item" onclick="openMoreSection('chores')">⭐ Kids' Chores</div>
+            <div class="modal-item" onclick="openMoreSection('wishlist')">🎁 Gift Wishlist</div>
+        </div>
+    </div>
+
+    <!-- VIEW 1: Quick Add -->
     <div id="view-home" class="view active">
         <section class="card" style="border-color: var(--accent);">
-            <div class="card-header">
-                <div class="card-title">Quick Add Item</div>
-            </div>
+            <div class="card-header"><div class="card-title">Quick Add Item</div></div>
             <form class="add-form" onsubmit="handleQuickAdd(event)">
-                <input type="text" id="add-title" class="form-input input-full" placeholder="Enter title / item / meal..." required>
+                <input type="text" id="add-title" class="form-input input-full" placeholder="Enter title / item / task..." required>
                 <div class="form-row">
                     <select id="add-category" class="form-select input-half" onchange="handleCategoryChange(this.value)">
                         <option value="calendar">Calendar Event</option>
@@ -529,9 +382,9 @@
                         <option value="restaurants">Restaurant</option>
                         <option value="cinema">Cinema Film</option>
                         <option value="home">Home Watchlist</option>
+                        <option value="todo">To-Do Task</option>
                         <option value="chores">Kid Chore</option>
                         <option value="wishlist">Gift Wishlist</option>
-                        <option value="todo">To-Do Task</option>
                     </select>
                     <select id="add-assignee" class="form-select input-half">
                         <option value="family">Family</option>
@@ -545,17 +398,10 @@
                     <input type="date" id="add-date" class="form-input input-full">
                 </div>
                 <div class="form-row" id="postcode-row" style="display:none;">
-                    <input type="text" id="add-postcode" class="form-input input-full" placeholder="Postcode (optional, e.g., LS1 1AA)">
+                    <input type="text" id="add-postcode" class="form-input input-full" placeholder="Postcode (optional)">
                 </div>
                 <button type="submit" class="add-btn">Add to Plan</button>
             </form>
-        </section>
-
-        <section class="card">
-            <div class="card-header">
-                <div class="card-title">Plan Overview</div>
-            </div>
-            <p style="color: var(--muted); font-size: 0.88rem;">Select any section from the bottom navigation bar to view or edit your family plans.</p>
         </section>
     </div>
 
@@ -563,119 +409,38 @@
     <div id="view-calendar" class="view">
         <section class="card">
             <div class="card-header">
-                <div class="card-title">Shared Calendar</div>
+                <div class="card-title" id="calendar-month-label">October 2026</div>
                 <div class="calendar-nav">
                     <button class="cal-nav-btn" onclick="navigateCalendar(-1)">‹</button>
-                    <span id="calendar-month-label" style="font-size:0.85rem; font-weight:700;">October 2026</span>
                     <button class="cal-nav-btn" onclick="navigateCalendar(1)">›</button>
                 </div>
             </div>
-            <div class="calendar-grid" id="calendar-grid">
-                <div class="day-header">Mon</div>
-                <div class="day-header">Tue</div>
-                <div class="day-header">Wed</div>
-                <div class="day-header">Thu</div>
-                <div class="day-header">Fri</div>
-                <div class="day-header">Sat</div>
-                <div class="day-header">Sun</div>
-            </div>
+            <div class="calendar-grid" id="calendar-grid"></div>
         </section>
     </div>
 
-    <!-- VIEW 3: Weekly Meal Planner -->
-    <div id="view-meals" class="view">
-        <section class="card">
-            <div class="card-header">
-                <div class="card-title">🍽️ Weekly Meal Planner</div>
-            </div>
-            <div id="meal-list-container" class="list-container"></div>
-        </section>
-    </div>
-
-    <!-- VIEW 4: Food Shopping List -->
-    <div id="view-foodshop" class="view">
-        <section class="card">
-            <div class="card-header">
-                <div class="card-title">🛒 Food Shopping List</div>
-            </div>
-            <div class="form-row" style="margin-bottom: 12px;">
-                <input type="text" id="foodshop-quick-input" class="form-input input-full" placeholder="Add food item..." onkeypress="if(event.key==='Enter') addInlineItem('foodshop')">
+    <!-- VIEW 3: Shopping (Food & Family Combined) -->
+    <div id="view-shopping" class="view">
+        <section class="card" style="margin-bottom:1rem;">
+            <div class="card-header"><div class="card-title">🛒 Food Shopping List</div></div>
+            <div class="form-row" style="margin-bottom: 10px;">
+                <input type="text" id="foodshop-quick-input" class="form-input input-full" placeholder="Add food item..." onkeypress="if(event.key==='Enter') addInlineShop('foodshop')">
             </div>
             <div id="foodshop-list-container" class="list-container"></div>
         </section>
-    </div>
-
-    <!-- VIEW 5: Family Shopping List -->
-    <div id="view-familyshop" class="view">
         <section class="card">
-            <div class="card-header">
-                <div class="card-title">🛍️ Family Shopping List</div>
-            </div>
-            <div class="form-row" style="margin-bottom: 12px;">
-                <input type="text" id="familyshop-quick-input" class="form-input input-full" placeholder="Add family item..." onkeypress="if(event.key==='Enter') addInlineItem('familyshop')">
+            <div class="card-header"><div class="card-title">🛍️ Family Shopping List</div></div>
+            <div class="form-row" style="margin-bottom: 10px;">
+                <input type="text" id="familyshop-quick-input" class="form-input input-full" placeholder="Add family shopping item..." onkeypress="if(event.key==='Enter') addInlineShop('familyshop')">
             </div>
             <div id="familyshop-list-container" class="list-container"></div>
         </section>
     </div>
 
-    <!-- VIEW 6: Places & Destinations -->
-    <div id="view-destinations" class="view">
-        <section class="card">
-            <div class="card-header">
-                <div class="card-title">📍 Places & Destinations</div>
-            </div>
-
-            <div class="category-tabs">
-                <button class="cat-tab active" onclick="switchCategory('places', this)">Places to Visit</button>
-                <button class="cat-tab" onclick="switchCategory('restaurants', this)">Restaurants to Visit</button>
-            </div>
-
-            <div id="destinations-dynamic-container"></div>
-        </section>
-    </div>
-
-    <!-- VIEW 7: Watchlist (Cinema & Home Movies) -->
-    <div id="view-watchlist" class="view">
-        <section class="card">
-            <div class="card-header">
-                <div class="card-title">🍿 Cinema & Home Watchlist</div>
-            </div>
-
-            <div class="category-tabs">
-                <button class="cat-tab active" onclick="switchWatchlistTab('cinema', this)">🍿 Cinema Films</button>
-                <button class="cat-tab" onclick="switchWatchlistTab('home', this)">📺 Home Watchlist</button>
-            </div>
-
-            <div id="watchlist-dynamic-container" class="list-container"></div>
-        </section>
-    </div>
-
-    <!-- VIEW 8: Kids' Chores -->
-    <div id="view-chores" class="view">
-        <section class="card">
-            <div class="card-header">
-                <div class="card-title">⭐ Kids' Chores & Allowance</div>
-            </div>
-            <div id="chores-list-container" class="chores-grid"></div>
-        </section>
-    </div>
-
-    <!-- VIEW 9: Gift Wishlist -->
-    <div id="view-wishlist" class="view">
-        <section class="card">
-            <div class="card-header">
-                <div class="card-title">🎁 Gift Wishlist</div>
-            </div>
-            <div id="wishlist-container" class="list-container"></div>
-        </section>
-    </div>
-
-    <!-- VIEW 10: To-Do List -->
+    <!-- VIEW 4: To-Do Tasks -->
     <div id="view-todo" class="view">
         <section class="card">
-            <div class="card-header">
-                <div class="card-title">📝 To-Do List</div>
-            </div>
+            <div class="card-header"><div class="card-title">📝 To-Do List</div></div>
             <div class="form-row" style="margin-bottom: 12px;">
                 <input type="text" id="todo-quick-input" class="form-input input-full" placeholder="Add new task..." onkeypress="if(event.key==='Enter') addTodoItem()">
             </div>
@@ -683,7 +448,43 @@
         </section>
     </div>
 
-    <!-- Fixed Bottom Navigation Bar -->
+    <!-- EXTRA POPUP VIEWS (Triggered via More Menu) -->
+    <div id="view-meals" class="view">
+        <section class="card">
+            <div class="card-header"><div class="card-title">🍽️ Weekly Meal Planner</div></div>
+            <div id="meal-list-container" class="list-container"></div>
+        </section>
+    </div>
+
+    <div id="view-places" class="view">
+        <section class="card">
+            <div class="card-header"><div class="card-title">📍 Places & Restaurants</div></div>
+            <div id="places-list-container" class="list-container"></div>
+        </section>
+    </div>
+
+    <div id="view-watchlist" class="view">
+        <section class="card">
+            <div class="card-header"><div class="card-title">🍿 Cinema & Home Watchlist</div></div>
+            <div id="watchlist-list-container" class="list-container"></div>
+        </section>
+    </div>
+
+    <div id="view-chores" class="view">
+        <section class="card">
+            <div class="card-header"><div class="card-title">⭐ Kids' Chores</div></div>
+            <div id="chores-list-container" class="chores-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
+        </section>
+    </div>
+
+    <div id="view-wishlist" class="view">
+        <section class="card">
+            <div class="card-header"><div class="card-title">🎁 Gift Wishlist</div></div>
+            <div id="wishlist-list-container" class="list-container"></div>
+        </section>
+    </div>
+
+    <!-- Clean 4-Core Bottom Navigation Bar -->
     <nav class="bottom-nav">
         <button id="nav-btn-home" class="nav-item active" onclick="showView('home', this)">
             <span class="nav-icon">➕</span>
@@ -693,72 +494,29 @@
             <span class="nav-icon">📅</span>
             <span>Calendar</span>
         </button>
-        <button class="nav-item" onclick="showView('meals', this)">
-            <span class="nav-icon">🍽️</span>
-            <span>Meals</span>
-        </button>
-        <button class="nav-item" onclick="showView('foodshop', this)">
+        <button id="nav-btn-shopping" class="nav-item" onclick="showView('shopping', this)">
             <span class="nav-icon">🛒</span>
-            <span>Food</span>
+            <span>Shopping</span>
         </button>
-        <button class="nav-item" onclick="showView('familyshop', this)">
-            <span class="nav-icon">🛍️</span>
-            <span>Family</span>
-        </button>
-        <button class="nav-item" onclick="showView('destinations', this)">
-            <span class="nav-icon">📍</span>
-            <span>Places</span>
-        </button>
-        <button class="nav-item" onclick="showView('watchlist', this)">
-            <span class="nav-icon">🎬</span>
-            <span>Watchlist</span>
-        </button>
-        <button class="nav-item" onclick="showView('chores', this)">
-            <span class="nav-icon">⭐</span>
-            <span>Chores</span>
-        </button>
-        <button class="nav-item" onclick="showView('wishlist', this)">
-            <span class="nav-icon">🎁</span>
-            <span>Wishlist</span>
-        </button>
-        <button class="nav-item" onclick="showView('todo', this)">
+        <button id="nav-btn-todo" class="nav-item" onclick="showView('todo', this)">
             <span class="nav-icon">📝</span>
             <span>To-Do</span>
         </button>
     </nav>
 
     <script>
-        let currentMonth = 9; // October
+        let currentMonth = 9;
         let currentYear = 2026;
-        let activeCategoryTab = 'places';
-        let activeWatchlistTab = 'cinema';
-        let homePostcode = "LS19 6BH";
-        let activeMapQuery = "United Kingdom";
-
         const assignees = ['family', 'mom', 'dad', 'leo', 'mia'];
 
-        // Load persisted data or defaults
         let mealsData = JSON.parse(localStorage.getItem('fam_meals')) || [
-            { day: "Mon", meal: "" },
-            { day: "Tue", meal: "" },
-            { day: "Wed", meal: "" },
-            { day: "Thu", meal: "" },
-            { day: "Fri", meal: "" },
-            { day: "Sat", meal: "" },
-            { day: "Sun", meal: "" }
+            { day: "Mon", meal: "" }, { day: "Tue", meal: "" }, { day: "Wed", meal: "" },
+            { day: "Thu", meal: "" }, { day: "Fri", meal: "" }, { day: "Sat", meal: "" }, { day: "Sun", meal: "" }
         ];
         let foodShopData = JSON.parse(localStorage.getItem('fam_foodshop')) || [];
         let familyShopData = JSON.parse(localStorage.getItem('fam_familyshop')) || [];
-        let destinationsData = JSON.parse(localStorage.getItem('fam_destinations')) || {
-            places: [],
-            restaurants: [],
-            cinema: [],
-            home: []
-        };
-        let choresData = JSON.parse(localStorage.getItem('fam_chores')) || [
-            { kid: "Leo", chores: [] },
-            { kid: "Mia", chores: [] }
-        ];
+        let destinationsData = JSON.parse(localStorage.getItem('fam_destinations')) || { places: [], restaurants: [], cinema: [], home: [] };
+        let choresData = JSON.parse(localStorage.getItem('fam_chores')) || [{ kid: "Leo", chores: [] }, { kid: "Mia", chores: [] }];
         let wishlistData = JSON.parse(localStorage.getItem('fam_wishlist')) || [];
         let todosData = JSON.parse(localStorage.getItem('fam_todos')) || [];
         let calendarEvents = JSON.parse(localStorage.getItem('fam_calendar')) || {};
@@ -776,45 +534,24 @@
 
         function showView(viewId, navBtn) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-            
-            const selectedView = document.getElementById(`view-${viewId}`);
-            if (selectedView) {
-                selectedView.classList.add('active');
-            }
-            if (navBtn) {
-                navBtn.classList.add('active');
-            } else {
-                const targetBtn = document.getElementById(`nav-btn-${viewId}`);
-                if (targetBtn) targetBtn.classList.add('active');
-            }
+            document.querySelectorAll('.bottom-nav .nav-item').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`view-${viewId}`).classList.add('active');
+            if (navBtn) navBtn.classList.add('active');
             window.scrollTo(0, 0);
         }
 
+        function toggleMoreMenu(open) {
+            document.getElementById('more-modal').classList.toggle('open', open);
+        }
+
+        function openMoreSection(sectionId) {
+            toggleMoreMenu(false);
+            showView(sectionId, null);
+        }
+
         function handleCategoryChange(val) {
-            const dateRow = document.getElementById('date-row');
-            const postcodeRow = document.getElementById('postcode-row');
-            if (dateRow) dateRow.style.display = (val === 'calendar') ? 'flex' : 'none';
-            if (postcodeRow) postcodeRow.style.display = (val === 'places' || val === 'restaurants') ? 'flex' : 'none';
-        }
-
-        function handleLogout() {
-            if (confirm("Are you sure you want to log out?")) {
-                alert("Logged out successfully.");
-            }
-        }
-
-        function jumpToAddEventForDate(dateStr) {
-            showView('home', document.getElementById('nav-btn-home'));
-            const categorySelect = document.getElementById('add-category');
-            if (categorySelect) {
-                categorySelect.value = 'calendar';
-                handleCategoryChange('calendar');
-            }
-            const dateInput = document.getElementById('add-date');
-            if (dateInput) dateInput.value = dateStr;
-            const titleInput = document.getElementById('add-title');
-            if (titleInput) titleInput.focus();
+            document.getElementById('date-row').style.display = (val === 'calendar') ? 'flex' : 'none';
+            document.getElementById('postcode-row').style.display = (val === 'places' || val === 'restaurants') ? 'flex' : 'none';
         }
 
         function renderCalendar() {
@@ -822,62 +559,43 @@
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             document.getElementById('calendar-month-label').textContent = `${monthNames[currentMonth]} ${currentYear}`;
 
-            let html = `
-                <div class="day-header">Mon</div>
-                <div class="day-header">Tue</div>
-                <div class="day-header">Wed</div>
-                <div class="day-header">Thu</div>
-                <div class="day-header">Fri</div>
-                <div class="day-header">Sat</div>
-                <div class="day-header">Sun</div>
-            `;
-
+            let html = `<div class="day-header">Mon</div><div class="day-header">Tue</div><div class="day-header">Wed</div><div class="day-header">Thu</div><div class="day-header">Fri</div><div class="day-header">Sat</div><div class="day-header">Sun</div>`;
             const firstDay = new Date(currentYear, currentMonth, 1);
             let startDay = firstDay.getDay() - 1;
             if (startDay === -1) startDay = 6;
             const totalDays = new Date(currentYear, currentMonth + 1, 0).getDate();
 
-            for (let i = 0; i < startDay; i++) {
-                html += `<div class="day-cell" style="background:transparent; border:none; cursor:default;"></div>`;
-            }
+            for (let i = 0; i < startDay; i++) html += `<div class="day-cell" style="background:transparent; border:none;"></div>`;
 
             for (let i = 1; i <= totalDays; i++) {
                 const mStr = String(currentMonth + 1).padStart(2, '0');
                 const dStr = String(i).padStart(2, '0');
                 const dateKey = `${currentYear}-${mStr}-${dStr}`;
-                
                 let eventsHtml = '';
                 if (calendarEvents[dateKey]) {
-                    calendarEvents[dateKey].forEach((ev) => {
-                        eventsHtml += `<div class="event-pill bg-${ev.who}">${ev.title}</div>`;
-                    });
+                    calendarEvents[dateKey].forEach(ev => eventsHtml += `<div class="event-pill bg-${ev.who}">${ev.title}</div>`);
                 }
-
-                html += `
-                    <div class="day-cell" onclick="jumpToAddEventForDate('${dateKey}')">
-                        <div class="day-num">${i}</div>
-                        ${eventsHtml}
-                    </div>
-                `;
+                html += `<div class="day-cell" onclick="jumpToAddEvent('${dateKey}')"><div class="day-num">${i}</div>${eventsHtml}</div>`;
             }
             grid.innerHTML = html;
         }
 
-        function navigateCalendar(direction) {
-            currentMonth += direction;
-            if (currentMonth > 11) {
-                currentMonth = 0;
-                currentYear++;
-            } else if (currentMonth < 0) {
-                currentMonth = 11;
-                currentYear--;
-            }
+        function jumpToAddEvent(dateStr) {
+            showView('home', document.getElementById('nav-btn-home'));
+            document.getElementById('add-category').value = 'calendar';
+            handleCategoryChange('calendar');
+            document.getElementById('add-date').value = dateStr;
+        }
+
+        function navigateCalendar(dir) {
+            currentMonth += dir;
+            if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+            else if (currentMonth < 0) { currentMonth = 11; currentYear--; }
             renderCalendar();
         }
 
         function renderMeals() {
-            const container = document.getElementById('meal-list-container');
-            container.innerHTML = mealsData.map((m, idx) => `
+            document.getElementById('meal-list-container').innerHTML = mealsData.map((m, idx) => `
                 <div class="meal-card-row">
                     <div class="meal-day-name">${m.day}</div>
                     <input type="text" class="meal-input-inline" placeholder="Enter meal..." value="${m.meal}" onchange="mealsData[${idx}].meal = this.value; saveData();">
@@ -885,201 +603,52 @@
             `).join('');
         }
 
-        function addInlineItem(type) {
+        function addInlineShop(type) {
             const inputId = type === 'foodshop' ? 'foodshop-quick-input' : 'familyshop-quick-input';
             const input = document.getElementById(inputId);
             if (!input || !input.value.trim()) return;
-
-            const newItem = { text: input.value.trim(), who: 'family' };
-            if (type === 'foodshop') {
-                foodShopData.push(newItem);
-                renderFoodShop();
-            } else {
-                familyShopData.push(newItem);
-                renderFamilyShop();
-            }
+            const target = type === 'foodshop' ? foodShopData : familyShopData;
+            target.push({ text: input.value.trim(), who: 'family' });
             input.value = '';
             saveData();
+            renderShopping();
         }
 
-        function deleteItem(type, index) {
-            if (type === 'foodshop') foodShopData.splice(index, 1);
-            if (type === 'familyshop') familyShopData.splice(index, 1);
-            if (type === 'wishlist') wishlistData.splice(index, 1);
-            if (type === 'todo') todosData.splice(index, 1);
-            if (type === 'destinations') destinationsData[activeCategoryTab].splice(index, 1);
-            if (type === 'watchlist') destinationsData[activeWatchlistTab].splice(index, 1);
-            saveData();
-            renderFoodShop();
-            renderFamilyShop();
-            renderWishlist();
-            renderTodos();
-            renderDestinations();
-            renderWatchlist();
+        function renderShopping() {
+            const foodCont = document.getElementById('foodshop-list-container');
+            const famCont = document.getElementById('familyshop-list-container');
+
+            foodCont.innerHTML = foodShopData.length === 0 ? `<div class="list-empty">Food list empty.</div>` : foodShopData.map((item, idx) => `
+                <div class="shopping-item">
+                    <div class="shop-left"><input type="checkbox"><span>${item.text}</span></div>
+                    <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('foodshop', ${idx})">${item.who}</span>
+                    <button class="delete-btn" onclick="foodShopData.splice(${idx},1); saveData(); renderShopping();">✕</button>
+                </div>
+            `).join('');
+
+            famCont.innerHTML = familyShopData.length === 0 ? `<div class="list-empty">Family list empty.</div>` : familyShopData.map((item, idx) => `
+                <div class="shopping-item">
+                    <div class="shop-left"><input type="checkbox"><span>${item.text}</span></div>
+                    <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('familyshop', ${idx})">${item.who}</span>
+                    <button class="delete-btn" onclick="familyShopData.splice(${idx},1); saveData(); renderShopping();">✕</button>
+                </div>
+            `).join('');
         }
 
         function cycleAssignee(type, index) {
-            if (type === 'foodshop') {
-                const currentWho = foodShopData[index].who || 'family';
-                const nextIdx = (assignees.indexOf(currentWho) + 1) % assignees.length;
-                foodShopData[index].who = assignees[nextIdx];
-                renderFoodShop();
-            } else if (type === 'familyshop') {
-                const currentWho = familyShopData[index].who || 'family';
-                const nextIdx = (assignees.indexOf(currentWho) + 1) % assignees.length;
-                familyShopData[index].who = assignees[nextIdx];
-                renderFamilyShop();
-            } else if (type === 'todo') {
-                const currentWho = todosData[index].who || 'family';
-                const nextIdx = (assignees.indexOf(currentWho) + 1) % assignees.length;
-                todosData[index].who = assignees[nextIdx];
-                renderTodos();
-            }
+            let data = type === 'foodshop' ? foodShopData : (type === 'familyshop' ? familyShopData : todosData);
+            const currentWho = data[index].who || 'family';
+            data[index].who = assignees[(assignees.indexOf(currentWho) + 1) % assignees.length];
             saveData();
+            if (type === 'todo') renderTodos(); else renderShopping();
         }
 
-        function renderFoodShop() {
-            const container = document.getElementById('foodshop-list-container');
-            if (foodShopData.length === 0) {
-                container.innerHTML = `<div class="list-empty">No items on food list.</div>`;
-                return;
-            }
-            container.innerHTML = foodShopData.map((item, idx) => `
-                <div class="shopping-item">
-                    <div class="shop-left">
-                        <input type="checkbox">
-                        <span>${item.text}</span>
-                    </div>
-                    <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('foodshop', ${idx})" title="Click to change assignee">${item.who}</span>
-                    <button class="delete-btn" onclick="deleteItem('foodshop', ${idx})">✕</button>
-                </div>
-            `).join('');
-        }
-
-        function renderFamilyShop() {
-            const container = document.getElementById('familyshop-list-container');
-            if (familyShopData.length === 0) {
-                container.innerHTML = `<div class="list-empty">No items on family list.</div>`;
-                return;
-            }
-            container.innerHTML = familyShopData.map((item, idx) => `
-                <div class="shopping-item">
-                    <div class="shop-left">
-                        <input type="checkbox">
-                        <span>${item.text}</span>
-                    </div>
-                    <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('familyshop', ${idx})" title="Click to change assignee">${item.who}</span>
-                    <button class="delete-btn" onclick="deleteItem('familyshop', ${idx})">✕</button>
-                </div>
-            `).join('');
-        }
-
-        function switchCategory(cat, btn) {
-            activeCategoryTab = cat;
-            document.querySelectorAll('#view-destinations .cat-tab').forEach(t => t.classList.remove('active'));
-            if (btn) btn.classList.add('active');
-            renderDestinations();
-        }
-
-        function switchWatchlistTab(cat, btn) {
-            activeWatchlistTab = cat;
-            document.querySelectorAll('#view-watchlist .cat-tab').forEach(t => t.classList.remove('active'));
-            if (btn) btn.classList.add('active');
-            renderWatchlist();
-        }
-
-        function focusMap(title, postcode) {
-            activeMapQuery = title + " " + (postcode || "");
-            const iframe = document.getElementById('interactive-map-frame');
-            if (iframe) {
-                iframe.src = `https://maps.google.com/maps?q=${encodeURIComponent(activeMapQuery)}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
-            }
-        }
-
-        function renderDestinations() {
-            const container = document.getElementById('destinations-dynamic-container');
-            const items = destinationsData[activeCategoryTab] || [];
-
-            let dotsHtml = items.map((p, idx) => `
-                <div class="map-dot-pill" onclick="focusMap('${p.title}', '${p.postcode || ''}')" style="display:inline-flex; align-items:center; gap:4px; background:#f0edff; border:1px solid #d8d0ff; padding:3px 8px; border-radius:12px; font-size:0.75rem; cursor:pointer;">
-                    <strong>${idx + 1}</strong> <span>${p.title.split(' ')[0]}</span>
-                </div>
-            `).join('');
-
-            container.innerHTML = `
-                <div class="home-banner">
-                    <span>🏠 Home Location: <strong>${homePostcode}</strong></span>
-                    <span style="color:var(--accent);">Live Routing Active</span>
-                </div>
-                <div class="map-embed-box">
-                    <iframe id="interactive-map-frame" src="https://maps.google.com/maps?q=${encodeURIComponent(activeMapQuery)}&t=&z=11&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>
-                </div>
-                <div style="display:flex; gap:6px; overflow-x:auto; margin-bottom:12px; padding-bottom:4px;">
-                    ${dotsHtml}
-                </div>
-            ` + (items.length === 0 ? `<div class="list-empty">No ${activeCategoryTab === 'places' ? 'places' : 'restaurants'} added to list yet.</div>` : items.map((item, idx) => `
-                <div class="list-card" onclick="focusMap('${item.title}', '${item.postcode || ''}')" style="cursor:pointer; margin-bottom: 8px;">
-                    <div>
-                        <h5>📍 ${idx + 1}. ${item.title}</h5>
-                        <span style="font-size:0.75rem; color:var(--muted);">${item.details || 'Custom Destination'} • <strong>${item.postcode || 'LS1 1AA'}</strong></span>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <span class="assign-tag bg-${item.who}">${item.who}</span>
-                        <button class="delete-btn" onclick="event.stopPropagation(); deleteItem('destinations', ${idx})">✕</button>
-                    </div>
-                </div>
-            `).join(''));
-        }
-
-        function renderWatchlist() {
-            const container = document.getElementById('watchlist-dynamic-container');
-            const items = destinationsData[activeWatchlistTab] || [];
-
-            if (items.length === 0) {
-                container.innerHTML = `<div class="list-empty">No ${activeWatchlistTab === 'cinema' ? 'cinema films' : 'home movies'} on watchlist.</div>`;
-                return;
-            }
-
-            container.innerHTML = items.map((item, idx) => `
-                <div class="list-card">
-                    <div>
-                        <h5>${activeWatchlistTab === 'cinema' ? '🍿' : '📺'} ${item.title}</h5>
-                        <span style="font-size:0.75rem; color:var(--muted);">${item.details || 'Watchlist'}</span>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <span class="assign-tag bg-${item.who}">${item.who}</span>
-                        <button class="delete-btn" onclick="deleteItem('watchlist', ${idx})">✕</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderChores() {
-            const container = document.getElementById('chores-list-container');
-            container.innerHTML = choresData.map(k => `
-                <div class="card" style="margin-bottom:0;">
-                    <div style="font-weight: 800; margin-bottom: 8px;">${k.kid}</div>
-                    <div class="list-container">
-                        ${k.chores.length === 0 ? '<span style="font-size:0.8rem; color:var(--muted);">No chores assigned</span>' : ''}
-                        ${k.chores.map(c => `<label><input type="checkbox"> ${c}</label>`).join('')}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderWishlist() {
-            const container = document.getElementById('wishlist-container');
-            if (wishlistData.length === 0) {
-                container.innerHTML = `<div class="list-empty">Wishlist is currently empty.</div>`;
-                return;
-            }
-            container.innerHTML = wishlistData.map((w, idx) => `
-                <div class="wishlist-item">
-                    <span>🎁 ${w.title}</span>
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <span class="assign-tag bg-${w.who}">${w.who}</span>
-                        <button class="delete-btn" onclick="deleteItem('wishlist', ${idx})">✕</button>
-                    </div>
+        function renderTodos() {
+            document.getElementById('todo-list-container').innerHTML = todosData.length === 0 ? `<div class="list-empty">No tasks remaining.</div>` : todosData.map((t, idx) => `
+                <div class="todo-item">
+                    <div class="todo-left"><input type="checkbox"><span>${t.text}</span></div>
+                    <span class="assign-tag bg-${t.who}" onclick="cycleAssignee('todo', ${idx})">${t.who}</span>
+                    <button class="delete-btn" onclick="todosData.splice(${idx},1); saveData(); renderTodos();">✕</button>
                 </div>
             `).join('');
         }
@@ -1093,20 +662,38 @@
             renderTodos();
         }
 
-        function renderTodos() {
-            const container = document.getElementById('todo-list-container');
-            if (todosData.length === 0) {
-                container.innerHTML = `<div class="list-empty">No to-do tasks remaining.</div>`;
-                return;
-            }
-            container.innerHTML = todosData.map((t, idx) => `
-                <div class="todo-item">
-                    <div class="todo-left">
-                        <input type="checkbox">
-                        <span>${t.text}</span>
-                    </div>
-                    <span class="assign-tag bg-${t.who}" onclick="cycleAssignee('todo', ${idx})" title="Click to change assignee">${t.who}</span>
-                    <button class="delete-btn" onclick="deleteItem('todo', ${idx})">✕</button>
+        function renderPlaces() {
+            const allPlaces = [...destinationsData.places, ...destinationsData.restaurants];
+            document.getElementById('places-list-container').innerHTML = allPlaces.length === 0 ? `<div class="list-empty">No places added.</div>` : allPlaces.map((item, idx) => `
+                <div class="list-card">
+                    <div><h5>📍 ${item.title}</h5><span style="font-size:0.75rem; color:var(--muted);">${item.postcode || ''}</span></div>
+                    <span class="assign-tag bg-${item.who}">${item.who}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderWatchlist() {
+            const allWatch = [...destinationsData.cinema, ...destinationsData.home];
+            document.getElementById('watchlist-list-container').innerHTML = allWatch.length === 0 ? `<div class="list-empty">Watchlist is empty.</div>` : allWatch.map((item, idx) => `
+                <div class="list-card">
+                    <div><h5>🎬 ${item.title}</h5></div>
+                    <span class="assign-tag bg-${item.who}">${item.who}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderChores() {
+            document.getElementById('chores-list-container').innerHTML = choresData.map(k => `
+                <div class="card" style="margin-bottom:0;"><div style="font-weight:800; margin-bottom:8px;">${k.kid}</div>
+                ${k.chores.length === 0 ? '<span style="font-size:0.8rem; color:var(--muted);">No chores</span>' : k.chores.map(c => `<label><input type="checkbox"> ${c}</label>`).join('')}</div>
+            `).join('');
+        }
+
+        function renderWishlist() {
+            document.getElementById('wishlist-list-container').innerHTML = wishlistData.length === 0 ? `<div class="list-empty">Wishlist is empty.</div>` : wishlistData.map((w, idx) => `
+                <div class="wishlist-item">
+                    <span>🎁 ${w.title}</span>
+                    <span class="assign-tag bg-${w.who}">${w.who}</span>
                 </div>
             `).join('');
         }
@@ -1120,62 +707,36 @@
             const postcode = document.getElementById('add-postcode').value.trim();
 
             if (category === 'calendar') {
-                if (!dateVal) {
-                    alert('Please select a date for the calendar event.');
-                    return;
-                }
                 if (!calendarEvents[dateVal]) calendarEvents[dateVal] = [];
-                calendarEvents[dateVal].push({ title: title, who: assignee });
+                calendarEvents[dateVal].push({ title, who: assignee });
                 renderCalendar();
-            } else if (category === 'foodshop') {
-                foodShopData.push({ text: title, who: assignee });
-                renderFoodShop();
-            } else if (category === 'familyshop') {
-                familyShopData.push({ text: title, who: assignee });
-                renderFamilyShop();
-            } else if (category === 'places' || category === 'restaurants') {
-                destinationsData[category].push({ title: title, who: assignee, postcode: postcode || 'LS1 1AA', details: 'Custom Destination' });
-                activeCategoryTab = category;
-                renderDestinations();
-            } else if (category === 'cinema' || category === 'home') {
-                destinationsData[category].push({ title: title, who: assignee, details: 'Watchlist Item' });
-                activeWatchlistTab = category;
-                renderWatchlist();
-            } else if (category === 'wishlist') {
-                wishlistData.push({ title: title, who: assignee });
-                renderWishlist();
-            } else if (category === 'todo') {
-                todosData.push({ text: title, who: assignee });
-                renderTodos();
-            } else if (category === 'chores') {
-                const target = choresData.find(c => c.kid.toLowerCase() === assignee.toLowerCase()) || choresData[0];
-                target.chores.push(title);
-                renderChores();
+            } else if (category === 'foodshop') foodShopData.push({ text: title, who: assignee });
+            else if (category === 'familyshop') familyShopData.push({ text: title, who: assignee });
+            else if (['places','restaurants','cinema','home'].includes(category)) destinationsData[category].push({ title, who: assignee, postcode });
+            else if (category === 'todo') todosData.push({ text: title, who: assignee });
+            else if (category === 'wishlist') wishlistData.push({ title, who: assignee });
+            else if (category === 'meals') {
+                // assign to next available meal day or Mon
+                const emptyMeal = mealsData.find(m => !m.meal);
+                if (emptyMeal) emptyMeal.meal = title;
+                renderMeals();
             }
 
             saveData();
             document.getElementById('add-title').value = '';
             document.getElementById('add-postcode').value = '';
-            document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
-            alert('Item successfully added!');
+            alert('Item added successfully!');
         }
 
-        // Set default date input value to today
-        const todayStr = new Date().toISOString().split('T')[0];
-        const dateInp = document.getElementById('add-date');
-        if (dateInp) dateInp.value = todayStr;
-
-        // Initialize UI View States
-        handleCategoryChange('calendar');
+        document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
         renderCalendar();
         renderMeals();
-        renderFoodShop();
-        renderFamilyShop();
-        renderDestinations();
+        renderShopping();
+        renderTodos();
+        renderPlaces();
         renderWatchlist();
         renderChores();
         renderWishlist();
-        renderTodos();
     </script>
 </body>
 </html>
