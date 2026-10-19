@@ -1671,7 +1671,8 @@
                 'sec-meals', 'sec-foodshop', 'sec-familyshop', 'sec-destinations',
                 'sec-chores', 'sec-wishlist', 'sec-contacts', 'sec-todo'
             ];
-            const initiallyOpen = new Set(); // Keep the first screen focused on Quick Add, summary and calendar.
+            // Changed to include all section IDs so they open by default
+            const initiallyOpen = new Set(sectionIds); 
 
             sectionIds.forEach(id => {
                 const section = document.getElementById(id);
