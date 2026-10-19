@@ -123,7 +123,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Clean 4-Core Bottom Navigation Bar */
+        /* Clean 5-Core Bottom Navigation Bar */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -149,7 +149,7 @@
             border: none;
             color: var(--muted);
             padding: 6px;
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             font-weight: 600;
             cursor: pointer;
             border-radius: 8px;
@@ -164,7 +164,7 @@
         }
 
         .nav-icon {
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             line-height: 1;
         }
 
@@ -353,7 +353,7 @@
         </div>
     </header>
 
-    <!-- MORE MENU MODAL -->
+    <!-- MORE MENU MODAL (For less frequent views like Meals & Watchlist) -->
     <div id="more-modal" class="modal-overlay" onclick="if(event.target===this) toggleMoreMenu(false)">
         <div class="modal-card">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
@@ -361,8 +361,6 @@
                 <button onclick="toggleMoreMenu(false)" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
             </div>
             <div class="modal-item" onclick="openMoreSection('meals')">🍽️ Weekly Meal Planner</div>
-            <div class="modal-item" onclick="openMoreSection('places')">📍 Places to Visit</div>
-            <div class="modal-item" onclick="openMoreSection('restaurants')">🍽️ Restaurants</div>
             <div class="modal-item" onclick="openMoreSection('watchlist')">🍿 Cinema & Home Watchlist</div>
         </div>
     </div>
@@ -438,7 +436,19 @@
         </section>
     </div>
 
-    <!-- VIEW 4: To-Do & Tasks Hub (Includes Chores & Wishlist) -->
+    <!-- VIEW 4: Places & Restaurants (Bottom Tab) -->
+    <div id="view-places" class="view">
+        <section class="card" style="margin-bottom:1rem;">
+            <div class="card-header"><div class="card-title">📍 Places to Visit</div></div>
+            <div id="places-list-container" class="list-container"></div>
+        </section>
+        <section class="card">
+            <div class="card-header"><div class="card-title">🍽️ Restaurants</div></div>
+            <div id="restaurants-list-container" class="list-container"></div>
+        </section>
+    </div>
+
+    <!-- VIEW 5: To-Do & Tasks Hub (Includes Chores & Wishlist) -->
     <div id="view-todo" class="view">
         <section class="card">
             <div class="card-header"><div class="card-title">📝 To-Do List</div></div>
@@ -467,20 +477,6 @@
         </section>
     </div>
 
-    <div id="view-places" class="view">
-        <section class="card">
-            <div class="card-header"><div class="card-title">📍 Places to Visit</div></div>
-            <div id="places-list-container" class="list-container"></div>
-        </section>
-    </div>
-
-    <div id="view-restaurants" class="view">
-        <section class="card">
-            <div class="card-header"><div class="card-title">🍽️ Restaurants</div></div>
-            <div id="restaurants-list-container" class="list-container"></div>
-        </section>
-    </div>
-
     <div id="view-watchlist" class="view">
         <section class="card">
             <div class="card-header"><div class="card-title">🍿 Cinema & Home Watchlist</div></div>
@@ -488,7 +484,7 @@
         </section>
     </div>
 
-    <!-- Clean 4-Core Bottom Navigation Bar -->
+    <!-- Clean 5-Core Bottom Navigation Bar -->
     <nav class="bottom-nav">
         <button id="nav-btn-home" class="nav-item active" onclick="showView('home', this)">
             <span class="nav-icon">➕</span>
@@ -501,6 +497,10 @@
         <button id="nav-btn-shopping" class="nav-item" onclick="showView('shopping', this)">
             <span class="nav-icon">🛒</span>
             <span>Shopping</span>
+        </button>
+        <button id="nav-btn-places" class="nav-item" onclick="showView('places', this)">
+            <span class="nav-icon">📍</span>
+            <span>Places</span>
         </button>
         <button id="nav-btn-todo" class="nav-item" onclick="showView('todo', this)">
             <span class="nav-icon">📝</span>
@@ -726,7 +726,7 @@
             else if (category === 'familyshop') familyShopData.push({ text: title, who: assignee });
             else if (['places','restaurants','cinema','home'].includes(category)) destinationsData[category].push({ title, who: assignee, postcode });
             else if (category === 'todo') todosData.push({ text: title, who: assignee });
-            else if (category === 'wishlist') wishlistData.push({ title, who: assignee });
+            else if (category === 'wishlist') wishlistData.push({ text: title, who: assignee });
             else if (category === 'chores') {
                 const target = choresData.find(c => c.kid.toLowerCase() === assignee.toLowerCase()) || choresData[0];
                 target.chores.push(title);
