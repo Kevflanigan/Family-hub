@@ -236,12 +236,13 @@
 
         .list-empty {
             text-align: center;
-            padding: 2rem 1rem;
+            padding: 1.5rem 1rem;
             color: var(--muted);
-            font-size: 0.88rem;
+            font-size: 0.85rem;
             border: 1px dashed var(--border);
             border-radius: 12px;
             background: #faf9ff;
+            margin-bottom: 1rem;
         }
 
         .todo-item, .shopping-item, .meal-card-row, .wishlist-item, .list-card {
@@ -253,6 +254,7 @@
             align-items: center;
             justify-content: space-between;
             gap: 10px;
+            margin-bottom: 8px;
         }
 
         .shop-left, .todo-left {
@@ -359,10 +361,9 @@
                 <button onclick="toggleMoreMenu(false)" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
             </div>
             <div class="modal-item" onclick="openMoreSection('meals')">🍽️ Weekly Meal Planner</div>
-            <div class="modal-item" onclick="openMoreSection('places')">📍 Places & Restaurants</div>
+            <div class="modal-item" onclick="openMoreSection('places')">📍 Places to Visit</div>
+            <div class="modal-item" onclick="openMoreSection('restaurants')">🍽️ Restaurants</div>
             <div class="modal-item" onclick="openMoreSection('watchlist')">🍿 Cinema & Home Watchlist</div>
-            <div class="modal-item" onclick="openMoreSection('chores')">⭐ Kids' Chores</div>
-            <div class="modal-item" onclick="openMoreSection('wishlist')">🎁 Gift Wishlist</div>
         </div>
     </div>
 
@@ -419,7 +420,7 @@
         </section>
     </div>
 
-    <!-- VIEW 3: Shopping (Food & Family Combined) -->
+    <!-- VIEW 3: Shopping -->
     <div id="view-shopping" class="view">
         <section class="card" style="margin-bottom:1rem;">
             <div class="card-header"><div class="card-title">🛒 Food Shopping List</div></div>
@@ -437,7 +438,7 @@
         </section>
     </div>
 
-    <!-- VIEW 4: To-Do Tasks -->
+    <!-- VIEW 4: To-Do & Tasks Hub (Includes Chores & Wishlist) -->
     <div id="view-todo" class="view">
         <section class="card">
             <div class="card-header"><div class="card-title">📝 To-Do List</div></div>
@@ -445,6 +446,16 @@
                 <input type="text" id="todo-quick-input" class="form-input input-full" placeholder="Add new task..." onkeypress="if(event.key==='Enter') addTodoItem()">
             </div>
             <div id="todo-list-container" class="list-container"></div>
+        </section>
+
+        <section class="card">
+            <div class="card-header"><div class="card-title">⭐ Kids' Chores</div></div>
+            <div id="chores-list-container" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
+        </section>
+
+        <section class="card">
+            <div class="card-header"><div class="card-title">🎁 Gift Wishlist</div></div>
+            <div id="wishlist-list-container" class="list-container"></div>
         </section>
     </div>
 
@@ -458,8 +469,15 @@
 
     <div id="view-places" class="view">
         <section class="card">
-            <div class="card-header"><div class="card-title">📍 Places & Restaurants</div></div>
+            <div class="card-header"><div class="card-title">📍 Places to Visit</div></div>
             <div id="places-list-container" class="list-container"></div>
+        </section>
+    </div>
+
+    <div id="view-restaurants" class="view">
+        <section class="card">
+            <div class="card-header"><div class="card-title">🍽️ Restaurants</div></div>
+            <div id="restaurants-list-container" class="list-container"></div>
         </section>
     </div>
 
@@ -467,20 +485,6 @@
         <section class="card">
             <div class="card-header"><div class="card-title">🍿 Cinema & Home Watchlist</div></div>
             <div id="watchlist-list-container" class="list-container"></div>
-        </section>
-    </div>
-
-    <div id="view-chores" class="view">
-        <section class="card">
-            <div class="card-header"><div class="card-title">⭐ Kids' Chores</div></div>
-            <div id="chores-list-container" class="chores-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
-        </section>
-    </div>
-
-    <div id="view-wishlist" class="view">
-        <section class="card">
-            <div class="card-header"><div class="card-title">🎁 Gift Wishlist</div></div>
-            <div id="wishlist-list-container" class="list-container"></div>
         </section>
     </div>
 
@@ -663,10 +667,18 @@
         }
 
         function renderPlaces() {
-            const allPlaces = [...destinationsData.places, ...destinationsData.restaurants];
-            document.getElementById('places-list-container').innerHTML = allPlaces.length === 0 ? `<div class="list-empty">No places added.</div>` : allPlaces.map((item, idx) => `
+            document.getElementById('places-list-container').innerHTML = destinationsData.places.length === 0 ? `<div class="list-empty">No places added.</div>` : destinationsData.places.map((item, idx) => `
                 <div class="list-card">
                     <div><h5>📍 ${item.title}</h5><span style="font-size:0.75rem; color:var(--muted);">${item.postcode || ''}</span></div>
+                    <span class="assign-tag bg-${item.who}">${item.who}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderRestaurants() {
+            document.getElementById('restaurants-list-container').innerHTML = destinationsData.restaurants.length === 0 ? `<div class="list-empty">No restaurants added.</div>` : destinationsData.restaurants.map((item, idx) => `
+                <div class="list-card">
+                    <div><h5>🍽️ ${item.title}</h5><span style="font-size:0.75rem; color:var(--muted);">${item.postcode || ''}</span></div>
                     <span class="assign-tag bg-${item.who}">${item.who}</span>
                 </div>
             `).join('');
@@ -715,8 +727,11 @@
             else if (['places','restaurants','cinema','home'].includes(category)) destinationsData[category].push({ title, who: assignee, postcode });
             else if (category === 'todo') todosData.push({ text: title, who: assignee });
             else if (category === 'wishlist') wishlistData.push({ title, who: assignee });
-            else if (category === 'meals') {
-                // assign to next available meal day or Mon
+            else if (category === 'chores') {
+                const target = choresData.find(c => c.kid.toLowerCase() === assignee.toLowerCase()) || choresData[0];
+                target.chores.push(title);
+                renderChores();
+            } else if (category === 'meals') {
                 const emptyMeal = mealsData.find(m => !m.meal);
                 if (emptyMeal) emptyMeal.meal = title;
                 renderMeals();
@@ -734,6 +749,7 @@
         renderShopping();
         renderTodos();
         renderPlaces();
+        renderRestaurants();
         renderWatchlist();
         renderChores();
         renderWishlist();
