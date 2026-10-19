@@ -153,6 +153,10 @@
             overflow-x: auto;
         }
 
+        .bottom-nav::-webkit-scrollbar {
+            display: none;
+        }
+
         .nav-item {
             display: flex;
             flex-direction: column;
@@ -162,13 +166,14 @@
             border: none;
             color: var(--muted);
             padding: 6px 8px;
-            font-size: 0.7rem;
+            font-size: 0.68rem;
             font-weight: 600;
             cursor: pointer;
             border-radius: 8px;
-            min-width: 55px;
+            min-width: 52px;
             gap: 2px;
             transition: color 0.15s ease;
+            flex-shrink: 0;
         }
 
         .nav-item.active {
@@ -268,7 +273,7 @@
             background: #faf9ff;
         }
 
-        .todo-item, .shopping-item, .meal-card-row, .kid-card, .contact-pill, .wishlist-item, .list-card {
+        .todo-item, .shopping-item, .meal-card-row, .kid-card, .wishlist-item, .list-card {
             background: #fff;
             border: 1px solid #e8e5df;
             border-radius: 11px;
@@ -279,10 +284,26 @@
             gap: 10px;
         }
 
-        .shop-left {
+        .shop-left, .todo-left {
             display: flex;
             align-items: center;
             gap: 10px;
+            flex: 1;
+        }
+
+        .delete-btn {
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .delete-btn:hover {
+            color: #ef4444;
+            background: #fef2f2;
         }
 
         .assign-tag {
@@ -293,6 +314,7 @@
             color: #fff;
             text-transform: uppercase;
             letter-spacing: .02em;
+            flex-shrink: 0;
         }
 
         .bg-mom { background-color: var(--mom); }
@@ -388,6 +410,62 @@
             font-weight: 600;
         }
 
+        /* Map and Destinations Styles */
+        .category-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1rem;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .cat-tab {
+            background: #fff;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .cat-tab.active {
+            background: #eeeaff;
+            color: #5144b7;
+            border-color: #d5ceff;
+        }
+
+        .map-embed-box {
+            width: 100%;
+            height: 300px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            margin-bottom: 0.85rem;
+            position: relative;
+        }
+
+        .map-embed-box iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .home-banner {
+            font-size: 0.76rem;
+            color: var(--muted);
+            margin-bottom: 0.65rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #faf9ff;
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: 1px solid #e8e3ff;
+        }
+
         .chores-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -440,7 +518,10 @@
                         <option value="meals">Weekly Meal</option>
                         <option value="foodshop">Food Shopping</option>
                         <option value="familyshop">Family Shopping</option>
-                        <option value="destinations">Destination / Film</option>
+                        <option value="cinema">Cinema Film</option>
+                        <option value="home">Home Watchlist</option>
+                        <option value="places">Places to Visit</option>
+                        <option value="restaurants">Restaurants to Visit</option>
                         <option value="chores">Kid Chore</option>
                         <option value="wishlist">Gift Wishlist</option>
                         <option value="todo">To-Do Task</option>
@@ -456,6 +537,9 @@
                 <div class="form-row" id="date-row">
                     <input type="date" id="add-date" class="form-input input-full">
                 </div>
+                <div class="form-row" id="postcode-row" style="display:none;">
+                    <input type="text" id="add-postcode" class="form-input input-full" placeholder="Postcode (optional, e.g., LS1 1AA)">
+                </div>
                 <button type="submit" class="add-btn">Add to Plan</button>
             </form>
         </section>
@@ -464,7 +548,7 @@
             <div class="card-header">
                 <div class="card-title">Plan Overview</div>
             </div>
-            <p style="color: var(--muted); font-size: 0.88rem;">Select any section from the bottom navigation bar to start managing your family plan.</p>
+            <p style="color: var(--muted); font-size: 0.88rem;">Select any section from the bottom navigation bar to view or edit your family plans.</p>
         </section>
     </div>
 
@@ -507,6 +591,9 @@
             <div class="card-header">
                 <div class="card-title">🛒 Food Shopping List</div>
             </div>
+            <div class="form-row" style="margin-bottom: 12px;">
+                <input type="text" id="foodshop-quick-input" class="form-input input-full" placeholder="Add food item..." onkeypress="if(event.key==='Enter') addInlineItem('foodshop')">
+            </div>
             <div id="foodshop-list-container" class="list-container"></div>
         </section>
     </div>
@@ -517,17 +604,28 @@
             <div class="card-header">
                 <div class="card-title">🛍️ Family Shopping List</div>
             </div>
+            <div class="form-row" style="margin-bottom: 12px;">
+                <input type="text" id="familyshop-quick-input" class="form-input input-full" placeholder="Add family item..." onkeypress="if(event.key==='Enter') addInlineItem('familyshop')">
+            </div>
             <div id="familyshop-list-container" class="list-container"></div>
         </section>
     </div>
 
-    <!-- VIEW 6: Destinations -->
+    <!-- VIEW 6: Entertainment & Destinations -->
     <div id="view-destinations" class="view">
         <section class="card">
             <div class="card-header">
                 <div class="card-title">📍 Entertainment & Destinations</div>
             </div>
-            <div id="destinations-list-container" class="list-container"></div>
+
+            <div class="category-tabs">
+                <button class="cat-tab active" onclick="switchCategory('places', this)">Places to Visit</button>
+                <button class="cat-tab" onclick="switchCategory('restaurants', this)">Restaurants</button>
+                <button class="cat-tab" onclick="switchCategory('cinema', this)">Cinema Films</button>
+                <button class="cat-tab" onclick="switchCategory('home', this)">Home Watchlist</button>
+            </div>
+
+            <div id="destinations-dynamic-container"></div>
         </section>
     </div>
 
@@ -556,6 +654,9 @@
         <section class="card">
             <div class="card-header">
                 <div class="card-title">📝 To-Do List</div>
+            </div>
+            <div class="form-row" style="margin-bottom: 12px;">
+                <input type="text" id="todo-quick-input" class="form-input input-full" placeholder="Add new task..." onkeypress="if(event.key==='Enter') addTodoItem()">
             </div>
             <div id="todo-list-container" class="list-container"></div>
         </section>
@@ -604,8 +705,12 @@
     <script>
         let currentMonth = 9; // October
         let currentYear = 2026;
-        
-        let mealsData = [
+        let activeCategoryTab = 'places';
+        let homePostcode = "LS19 6BH";
+        let activeMapQuery = "United Kingdom";
+
+        // Load persisted data or defaults
+        let mealsData = JSON.parse(localStorage.getItem('fam_meals')) || [
             { day: "Mon", meal: "" },
             { day: "Tue", meal: "" },
             { day: "Wed", meal: "" },
@@ -614,16 +719,32 @@
             { day: "Sat", meal: "" },
             { day: "Sun", meal: "" }
         ];
-        let foodShopData = [];
-        let familyShopData = [];
-        let destinationsData = [];
-        let choresData = [
+        let foodShopData = JSON.parse(localStorage.getItem('fam_foodshop')) || [];
+        let familyShopData = JSON.parse(localStorage.getItem('fam_familyshop')) || [];
+        let destinationsData = JSON.parse(localStorage.getItem('fam_destinations')) || {
+            places: [],
+            restaurants: [],
+            cinema: [],
+            home: []
+        };
+        let choresData = JSON.parse(localStorage.getItem('fam_chores')) || [
             { kid: "Leo", chores: [] },
             { kid: "Mia", chores: [] }
         ];
-        let wishlistData = [];
-        let todosData = [];
-        let calendarEvents = {};
+        let wishlistData = JSON.parse(localStorage.getItem('fam_wishlist')) || [];
+        let todosData = JSON.parse(localStorage.getItem('fam_todos')) || [];
+        let calendarEvents = JSON.parse(localStorage.getItem('fam_calendar')) || {};
+
+        function saveData() {
+            localStorage.setItem('fam_meals', JSON.stringify(mealsData));
+            localStorage.setItem('fam_foodshop', JSON.stringify(foodShopData));
+            localStorage.setItem('fam_familyshop', JSON.stringify(familyShopData));
+            localStorage.setItem('fam_destinations', JSON.stringify(destinationsData));
+            localStorage.setItem('fam_chores', JSON.stringify(choresData));
+            localStorage.setItem('fam_wishlist', JSON.stringify(wishlistData));
+            localStorage.setItem('fam_todos', JSON.stringify(todosData));
+            localStorage.setItem('fam_calendar', JSON.stringify(calendarEvents));
+        }
 
         function showView(viewId, navBtn) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -636,7 +757,6 @@
             if (navBtn) {
                 navBtn.classList.add('active');
             } else {
-                // Fallback to match bottom bar button if triggered programmatically
                 const targetBtn = document.getElementById(`nav-btn-${viewId}`);
                 if (targetBtn) targetBtn.classList.add('active');
             }
@@ -645,9 +765,9 @@
 
         function handleCategoryChange(val) {
             const dateRow = document.getElementById('date-row');
-            if (dateRow) {
-                dateRow.style.display = (val === 'calendar') ? 'flex' : 'none';
-            }
+            const postcodeRow = document.getElementById('postcode-row');
+            if (dateRow) dateRow.style.display = (val === 'calendar') ? 'flex' : 'none';
+            if (postcodeRow) postcodeRow.style.display = (val === 'places' || val === 'restaurants') ? 'flex' : 'none';
         }
 
         function handleLogout() {
@@ -657,27 +777,16 @@
         }
 
         function jumpToAddEventForDate(dateStr) {
-            // Switch to the Add view (Home)
             showView('home', document.getElementById('nav-btn-home'));
-            
-            // Set category dropdown to Calendar Event
             const categorySelect = document.getElementById('add-category');
             if (categorySelect) {
                 categorySelect.value = 'calendar';
                 handleCategoryChange('calendar');
             }
-
-            // Populate date picker input with the clicked date
             const dateInput = document.getElementById('add-date');
-            if (dateInput) {
-                dateInput.value = dateStr;
-            }
-
-            // Focus on title input for fast entry
+            if (dateInput) dateInput.value = dateStr;
             const titleInput = document.getElementById('add-title');
-            if (titleInput) {
-                titleInput.focus();
-            }
+            if (titleInput) titleInput.focus();
         }
 
         function renderCalendar() {
@@ -711,7 +820,7 @@
                 
                 let eventsHtml = '';
                 if (calendarEvents[dateKey]) {
-                    calendarEvents[dateKey].forEach(ev => {
+                    calendarEvents[dateKey].forEach((ev, evIdx) => {
                         eventsHtml += `<div class="event-pill bg-${ev.who}">${ev.title}</div>`;
                     });
                 }
@@ -743,9 +852,38 @@
             container.innerHTML = mealsData.map((m, idx) => `
                 <div class="meal-card-row">
                     <div class="meal-day-name">${m.day}</div>
-                    <input type="text" class="meal-input-inline" placeholder="Enter meal..." value="${m.meal}" onchange="mealsData[${idx}].meal = this.value">
+                    <input type="text" class="meal-input-inline" placeholder="Enter meal..." value="${m.meal}" onchange="mealsData[${idx}].meal = this.value; saveData();">
                 </div>
             `).join('');
+        }
+
+        function addInlineItem(type) {
+            const inputId = type === 'foodshop' ? 'foodshop-quick-input' : 'familyshop-quick-input';
+            const input = document.getElementById(inputId);
+            if (!input || !input.value.trim()) return;
+
+            const newItem = { text: input.value.trim(), who: 'family' };
+            if (type === 'foodshop') {
+                foodShopData.push(newItem);
+                renderFoodShop();
+            } else {
+                familyShopData.push(newItem);
+                renderFamilyShop();
+            }
+            input.value = '';
+            saveData();
+        }
+
+        function deleteItem(type, index) {
+            if (type === 'foodshop') foodShopData.splice(index, 1);
+            if (type === 'familyshop') familyShopData.splice(index, 1);
+            if (type === 'wishlist') wishlistData.splice(index, 1);
+            if (type === 'todo') todosData.splice(index, 1);
+            saveData();
+            renderFoodShop();
+            renderFamilyShop();
+            renderWishlist();
+            renderTodos();
         }
 
         function renderFoodShop() {
@@ -754,13 +892,14 @@
                 container.innerHTML = `<div class="list-empty">No items on food list.</div>`;
                 return;
             }
-            container.innerHTML = foodShopData.map(item => `
+            container.innerHTML = foodShopData.map((item, idx) => `
                 <div class="shopping-item">
                     <div class="shop-left">
                         <input type="checkbox">
                         <span>${item.text}</span>
                     </div>
                     <span class="assign-tag bg-${item.who}">${item.who}</span>
+                    <button class="delete-btn" onclick="deleteItem('foodshop', ${idx})">✕</button>
                 </div>
             `).join('');
         }
@@ -771,29 +910,75 @@
                 container.innerHTML = `<div class="list-empty">No items on family list.</div>`;
                 return;
             }
-            container.innerHTML = familyShopData.map(item => `
+            container.innerHTML = familyShopData.map((item, idx) => `
                 <div class="shopping-item">
                     <div class="shop-left">
                         <input type="checkbox">
                         <span>${item.text}</span>
                     </div>
                     <span class="assign-tag bg-${item.who}">${item.who}</span>
+                    <button class="delete-btn" onclick="deleteItem('familyshop', ${idx})">✕</button>
                 </div>
             `).join('');
         }
 
-        function renderDestinations() {
-            const container = document.getElementById('destinations-list-container');
-            if (destinationsData.length === 0) {
-                container.innerHTML = `<div class="list-empty">No destinations added yet.</div>`;
-                return;
+        function switchCategory(cat, btn) {
+            activeCategoryTab = cat;
+            document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            renderDestinations();
+        }
+
+        function focusMap(title, postcode) {
+            activeMapQuery = title + " " + (postcode || "");
+            const iframe = document.getElementById('interactive-map-frame');
+            if (iframe) {
+                iframe.src = `https://maps.google.com/maps?q=${encodeURIComponent(activeMapQuery)}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
             }
-            container.innerHTML = destinationsData.map(item => `
-                <div class="list-card">
-                    <div><strong>${item.title}</strong></div>
-                    <span class="assign-tag bg-${item.who}">${item.who}</span>
-                </div>
-            `).join('');
+        }
+
+        function renderDestinations() {
+            const container = document.getElementById('destinations-dynamic-container');
+            const items = destinationsData[activeCategoryTab] || [];
+
+            if (activeCategoryTab === 'places' || activeCategoryTab === 'restaurants') {
+                let dotsHtml = items.map((p, idx) => `
+                    <div class="map-dot-pill" onclick="focusMap('${p.title}', '${p.postcode || ''}')" style="display:inline-flex; align-items:center; gap:4px; background:#f0edff; border:1px solid #d8d0ff; padding:3px 8px; border-radius:12px; font-size:0.75rem; cursor:pointer;">
+                        <strong>${idx + 1}</strong> <span>${p.title.split(' ')[0]}</span>
+                    </div>
+                `).join('');
+
+                container.innerHTML = `
+                    <div class="home-banner">
+                        <span>🏠 Home Location: <strong>${homePostcode}</strong></span>
+                        <span style="color:var(--accent);">Live Routing Active</span>
+                    </div>
+                    <div class="map-embed-box">
+                        <iframe id="interactive-map-frame" src="https://maps.google.com/maps?q=${encodeURIComponent(activeMapQuery)}&t=&z=11&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>
+                    </div>
+                    <div style="display:flex; gap:6px; overflow-x:auto; margin-bottom:10px; padding-bottom:4px;">
+                        ${dotsHtml}
+                    </div>
+                ` + (items.length === 0 ? `<div class="list-empty">No destinations added yet.</div>` : items.map((item, idx) => `
+                    <div class="list-card" onclick="focusMap('${item.title}', '${item.postcode || ''}')" style="cursor:pointer;">
+                        <div>
+                            <h5>📍 ${idx + 1}. ${item.title}</h5>
+                            <span style="font-size:0.75rem; color:var(--muted);">${item.details || 'Custom Destination'} • <strong>${item.postcode || 'LS1 1AA'}</strong></span>
+                        </div>
+                        <span class="assign-tag bg-${item.who}">${item.who}</span>
+                    </div>
+                `).join(''));
+            } else {
+                container.innerHTML = items.length === 0 ? `<div class="list-empty">No items added yet.</div>` : items.map(item => `
+                    <div class="list-card">
+                        <div>
+                            <h5>${activeCategoryTab === 'cinema' ? '🍿' : '📺'} ${item.title}</h5>
+                            <span style="font-size:0.75rem; color:var(--muted);">${item.details || 'Watchlist'}</span>
+                        </div>
+                        <span class="assign-tag bg-${item.who}">${item.who}</span>
+                    </div>
+                `).join('');
+            }
         }
 
         function renderChores() {
@@ -815,12 +1000,24 @@
                 container.innerHTML = `<div class="list-empty">Wishlist is currently empty.</div>`;
                 return;
             }
-            container.innerHTML = wishlistData.map(w => `
+            container.innerHTML = wishlistData.map((w, idx) => `
                 <div class="wishlist-item">
                     <span>🎁 ${w.title}</span>
-                    <span class="assign-tag bg-${w.who}">${w.who}</span>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span class="assign-tag bg-${w.who}">${w.who}</span>
+                        <button class="delete-btn" onclick="deleteItem('wishlist', ${idx})">✕</button>
+                    </div>
                 </div>
             `).join('');
+        }
+
+        function addTodoItem() {
+            const input = document.getElementById('todo-quick-input');
+            if (!input || !input.value.trim()) return;
+            todosData.push({ text: input.value.trim(), who: 'family' });
+            input.value = '';
+            saveData();
+            renderTodos();
         }
 
         function renderTodos() {
@@ -829,23 +1026,25 @@
                 container.innerHTML = `<div class="list-empty">No to-do tasks remaining.</div>`;
                 return;
             }
-            container.innerHTML = todosData.map(t => `
+            container.innerHTML = todosData.map((t, idx) => `
                 <div class="todo-item">
                     <div class="todo-left">
                         <input type="checkbox">
                         <span>${t.text}</span>
                     </div>
                     <span class="assign-tag bg-${t.who}">${t.who}</span>
+                    <button class="delete-btn" onclick="deleteItem('todo', ${idx})">✕</button>
                 </div>
             `).join('');
         }
 
         function handleQuickAdd(e) {
             e.preventDefault();
-            const title = document.getElementById('add-title').value;
+            const title = document.getElementById('add-title').value.trim();
             const category = document.getElementById('add-category').value;
             const assignee = document.getElementById('add-assignee').value;
             const dateVal = document.getElementById('add-date').value;
+            const postcode = document.getElementById('add-postcode').value.trim();
 
             if (category === 'calendar') {
                 if (!dateVal) {
@@ -861,8 +1060,13 @@
             } else if (category === 'familyshop') {
                 familyShopData.push({ text: title, who: assignee });
                 renderFamilyShop();
-            } else if (category === 'destinations') {
-                destinationsData.push({ title: title, who: assignee });
+            } else if (category === 'places' || category === 'restaurants') {
+                destinationsData[category].push({ title: title, who: assignee, postcode: postcode || 'LS1 1AA', details: 'Custom Destination' });
+                activeCategoryTab = category;
+                renderDestinations();
+            } else if (category === 'cinema' || category === 'home') {
+                destinationsData[category].push({ title: title, who: assignee, details: 'Custom Watchlist' });
+                activeCategoryTab = category;
                 renderDestinations();
             } else if (category === 'wishlist') {
                 wishlistData.push({ title: title, who: assignee });
@@ -876,9 +1080,11 @@
                 renderChores();
             }
 
+            saveData();
             document.getElementById('add-title').value = '';
+            document.getElementById('add-postcode').value = '';
             document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
-            alert('Item added successfully!');
+            alert('Item successfully added!');
         }
 
         // Set default date input value to today
