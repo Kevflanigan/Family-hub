@@ -148,7 +148,7 @@
             display: flex;
             align-items: center;
             justify-content: space-around;
-            padding: 0 0.5rem;
+            padding: 0 0.25rem;
             z-index: 1000;
             overflow-x: auto;
         }
@@ -165,12 +165,12 @@
             background: none;
             border: none;
             color: var(--muted);
-            padding: 6px 8px;
-            font-size: 0.68rem;
+            padding: 6px 6px;
+            font-size: 0.65rem;
             font-weight: 600;
             cursor: pointer;
             border-radius: 8px;
-            min-width: 52px;
+            min-width: 48px;
             gap: 2px;
             transition: color 0.15s ease;
             flex-shrink: 0;
@@ -309,12 +309,19 @@
         .assign-tag {
             font-size: 0.64rem;
             font-weight: 700;
-            padding: 4px 8px;
+            padding: 4px 10px;
             border-radius: 20px;
             color: #fff;
             text-transform: uppercase;
             letter-spacing: .02em;
             flex-shrink: 0;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.1s ease;
+        }
+
+        .assign-tag:active {
+            transform: scale(0.95);
         }
 
         .bg-mom { background-color: var(--mom); }
@@ -439,7 +446,7 @@
 
         .map-embed-box {
             width: 100%;
-            height: 300px;
+            height: 280px;
             border-radius: 12px;
             overflow: hidden;
             border: 1px solid var(--border);
@@ -518,10 +525,10 @@
                         <option value="meals">Weekly Meal</option>
                         <option value="foodshop">Food Shopping</option>
                         <option value="familyshop">Family Shopping</option>
+                        <option value="places">Place to Visit</option>
+                        <option value="restaurants">Restaurant</option>
                         <option value="cinema">Cinema Film</option>
                         <option value="home">Home Watchlist</option>
-                        <option value="places">Places to Visit</option>
-                        <option value="restaurants">Restaurants to Visit</option>
                         <option value="chores">Kid Chore</option>
                         <option value="wishlist">Gift Wishlist</option>
                         <option value="todo">To-Do Task</option>
@@ -611,25 +618,39 @@
         </section>
     </div>
 
-    <!-- VIEW 6: Entertainment & Destinations -->
+    <!-- VIEW 6: Places & Destinations -->
     <div id="view-destinations" class="view">
         <section class="card">
             <div class="card-header">
-                <div class="card-title">📍 Entertainment & Destinations</div>
+                <div class="card-title">📍 Places & Destinations</div>
             </div>
 
             <div class="category-tabs">
                 <button class="cat-tab active" onclick="switchCategory('places', this)">Places to Visit</button>
-                <button class="cat-tab" onclick="switchCategory('restaurants', this)">Restaurants</button>
-                <button class="cat-tab" onclick="switchCategory('cinema', this)">Cinema Films</button>
-                <button class="cat-tab" onclick="switchCategory('home', this)">Home Watchlist</button>
+                <button class="cat-tab" onclick="switchCategory('restaurants', this)">Restaurants to Visit</button>
             </div>
 
             <div id="destinations-dynamic-container"></div>
         </section>
     </div>
 
-    <!-- VIEW 7: Kids' Chores -->
+    <!-- VIEW 7: Watchlist (Cinema & Home Movies) -->
+    <div id="view-watchlist" class="view">
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title">🍿 Cinema & Home Watchlist</div>
+            </div>
+
+            <div class="category-tabs">
+                <button class="cat-tab active" onclick="switchWatchlistTab('cinema', this)">🍿 Cinema Films</button>
+                <button class="cat-tab" onclick="switchWatchlistTab('home', this)">📺 Home Watchlist</button>
+            </div>
+
+            <div id="watchlist-dynamic-container" class="list-container"></div>
+        </section>
+    </div>
+
+    <!-- VIEW 8: Kids' Chores -->
     <div id="view-chores" class="view">
         <section class="card">
             <div class="card-header">
@@ -639,7 +660,7 @@
         </section>
     </div>
 
-    <!-- VIEW 8: Gift Wishlist -->
+    <!-- VIEW 9: Gift Wishlist -->
     <div id="view-wishlist" class="view">
         <section class="card">
             <div class="card-header">
@@ -649,7 +670,7 @@
         </section>
     </div>
 
-    <!-- VIEW 9: To-Do List -->
+    <!-- VIEW 10: To-Do List -->
     <div id="view-todo" class="view">
         <section class="card">
             <div class="card-header">
@@ -688,6 +709,10 @@
             <span class="nav-icon">📍</span>
             <span>Places</span>
         </button>
+        <button class="nav-item" onclick="showView('watchlist', this)">
+            <span class="nav-icon">🎬</span>
+            <span>Watchlist</span>
+        </button>
         <button class="nav-item" onclick="showView('chores', this)">
             <span class="nav-icon">⭐</span>
             <span>Chores</span>
@@ -706,8 +731,11 @@
         let currentMonth = 9; // October
         let currentYear = 2026;
         let activeCategoryTab = 'places';
+        let activeWatchlistTab = 'cinema';
         let homePostcode = "LS19 6BH";
         let activeMapQuery = "United Kingdom";
+
+        const assignees = ['family', 'mom', 'dad', 'leo', 'mia'];
 
         // Load persisted data or defaults
         let mealsData = JSON.parse(localStorage.getItem('fam_meals')) || [
@@ -820,7 +848,7 @@
                 
                 let eventsHtml = '';
                 if (calendarEvents[dateKey]) {
-                    calendarEvents[dateKey].forEach((ev, evIdx) => {
+                    calendarEvents[dateKey].forEach((ev) => {
                         eventsHtml += `<div class="event-pill bg-${ev.who}">${ev.title}</div>`;
                     });
                 }
@@ -879,10 +907,22 @@
             if (type === 'familyshop') familyShopData.splice(index, 1);
             if (type === 'wishlist') wishlistData.splice(index, 1);
             if (type === 'todo') todosData.splice(index, 1);
+            if (type === 'destinations') destinationsData[activeCategoryTab].splice(index, 1);
+            if (type === 'watchlist') destinationsData[activeWatchlistTab].splice(index, 1);
             saveData();
             renderFoodShop();
             renderFamilyShop();
             renderWishlist();
+            renderTodos();
+            renderDestinations();
+            renderWatchlist();
+        }
+
+        function cycleTodoAssignee(index) {
+            const currentWho = todosData[index].who || 'family';
+            const nextIdx = (assignees.indexOf(currentWho) + 1) % assignees.length;
+            todosData[index].who = assignees[nextIdx];
+            saveData();
             renderTodos();
         }
 
@@ -924,9 +964,16 @@
 
         function switchCategory(cat, btn) {
             activeCategoryTab = cat;
-            document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('#view-destinations .cat-tab').forEach(t => t.classList.remove('active'));
             if (btn) btn.classList.add('active');
             renderDestinations();
+        }
+
+        function switchWatchlistTab(cat, btn) {
+            activeWatchlistTab = cat;
+            document.querySelectorAll('#view-watchlist .cat-tab').forEach(t => t.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            renderWatchlist();
         }
 
         function focusMap(title, postcode) {
@@ -941,44 +988,58 @@
             const container = document.getElementById('destinations-dynamic-container');
             const items = destinationsData[activeCategoryTab] || [];
 
-            if (activeCategoryTab === 'places' || activeCategoryTab === 'restaurants') {
-                let dotsHtml = items.map((p, idx) => `
-                    <div class="map-dot-pill" onclick="focusMap('${p.title}', '${p.postcode || ''}')" style="display:inline-flex; align-items:center; gap:4px; background:#f0edff; border:1px solid #d8d0ff; padding:3px 8px; border-radius:12px; font-size:0.75rem; cursor:pointer;">
-                        <strong>${idx + 1}</strong> <span>${p.title.split(' ')[0]}</span>
-                    </div>
-                `).join('');
+            let dotsHtml = items.map((p, idx) => `
+                <div class="map-dot-pill" onclick="focusMap('${p.title}', '${p.postcode || ''}')" style="display:inline-flex; align-items:center; gap:4px; background:#f0edff; border:1px solid #d8d0ff; padding:3px 8px; border-radius:12px; font-size:0.75rem; cursor:pointer;">
+                    <strong>${idx + 1}</strong> <span>${p.title.split(' ')[0]}</span>
+                </div>
+            `).join('');
 
-                container.innerHTML = `
-                    <div class="home-banner">
-                        <span>🏠 Home Location: <strong>${homePostcode}</strong></span>
-                        <span style="color:var(--accent);">Live Routing Active</span>
+            container.innerHTML = `
+                <div class="home-banner">
+                    <span>🏠 Home Location: <strong>${homePostcode}</strong></span>
+                    <span style="color:var(--accent);">Live Routing Active</span>
+                </div>
+                <div class="map-embed-box">
+                    <iframe id="interactive-map-frame" src="https://maps.google.com/maps?q=${encodeURIComponent(activeMapQuery)}&t=&z=11&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>
+                </div>
+                <div style="display:flex; gap:6px; overflow-x:auto; margin-bottom:12px; padding-bottom:4px;">
+                    ${dotsHtml}
+                </div>
+            ` + (items.length === 0 ? `<div class="list-empty">No ${activeCategoryTab === 'places' ? 'places' : 'restaurants'} added to list yet.</div>` : items.map((item, idx) => `
+                <div class="list-card" onclick="focusMap('${item.title}', '${item.postcode || ''}')" style="cursor:pointer; margin-bottom: 8px;">
+                    <div>
+                        <h5>📍 ${idx + 1}. ${item.title}</h5>
+                        <span style="font-size:0.75rem; color:var(--muted);">${item.details || 'Custom Destination'} • <strong>${item.postcode || 'LS1 1AA'}</strong></span>
                     </div>
-                    <div class="map-embed-box">
-                        <iframe id="interactive-map-frame" src="https://maps.google.com/maps?q=${encodeURIComponent(activeMapQuery)}&t=&z=11&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>
-                    </div>
-                    <div style="display:flex; gap:6px; overflow-x:auto; margin-bottom:10px; padding-bottom:4px;">
-                        ${dotsHtml}
-                    </div>
-                ` + (items.length === 0 ? `<div class="list-empty">No destinations added yet.</div>` : items.map((item, idx) => `
-                    <div class="list-card" onclick="focusMap('${item.title}', '${item.postcode || ''}')" style="cursor:pointer;">
-                        <div>
-                            <h5>📍 ${idx + 1}. ${item.title}</h5>
-                            <span style="font-size:0.75rem; color:var(--muted);">${item.details || 'Custom Destination'} • <strong>${item.postcode || 'LS1 1AA'}</strong></span>
-                        </div>
+                    <div style="display:flex; align-items:center; gap:8px;">
                         <span class="assign-tag bg-${item.who}">${item.who}</span>
+                        <button class="delete-btn" onclick="event.stopPropagation(); deleteItem('destinations', ${idx})">✕</button>
                     </div>
-                `).join(''));
-            } else {
-                container.innerHTML = items.length === 0 ? `<div class="list-empty">No items added yet.</div>` : items.map(item => `
-                    <div class="list-card">
-                        <div>
-                            <h5>${activeCategoryTab === 'cinema' ? '🍿' : '📺'} ${item.title}</h5>
-                            <span style="font-size:0.75rem; color:var(--muted);">${item.details || 'Watchlist'}</span>
-                        </div>
-                        <span class="assign-tag bg-${item.who}">${item.who}</span>
-                    </div>
-                `).join('');
+                </div>
+            `).join(''));
+        }
+
+        function renderWatchlist() {
+            const container = document.getElementById('watchlist-dynamic-container');
+            const items = destinationsData[activeWatchlistTab] || [];
+
+            if (items.length === 0) {
+                container.innerHTML = `<div class="list-empty">No ${activeWatchlistTab === 'cinema' ? 'cinema films' : 'home movies'} on watchlist.</div>`;
+                return;
             }
+
+            container.innerHTML = items.map((item, idx) => `
+                <div class="list-card">
+                    <div>
+                        <h5>${activeWatchlistTab === 'cinema' ? '🍿' : '📺'} ${item.title}</h5>
+                        <span style="font-size:0.75rem; color:var(--muted);">${item.details || 'Watchlist'}</span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span class="assign-tag bg-${item.who}">${item.who}</span>
+                        <button class="delete-btn" onclick="deleteItem('watchlist', ${idx})">✕</button>
+                    </div>
+                </div>
+            `).join('');
         }
 
         function renderChores() {
@@ -1032,7 +1093,7 @@
                         <input type="checkbox">
                         <span>${t.text}</span>
                     </div>
-                    <span class="assign-tag bg-${t.who}">${t.who}</span>
+                    <span class="assign-tag bg-${t.who}" onclick="cycleTodoAssignee(${idx})" title="Click to change assignee">${t.who}</span>
                     <button class="delete-btn" onclick="deleteItem('todo', ${idx})">✕</button>
                 </div>
             `).join('');
@@ -1065,9 +1126,9 @@
                 activeCategoryTab = category;
                 renderDestinations();
             } else if (category === 'cinema' || category === 'home') {
-                destinationsData[category].push({ title: title, who: assignee, details: 'Custom Watchlist' });
-                activeCategoryTab = category;
-                renderDestinations();
+                destinationsData[category].push({ title: title, who: assignee, details: 'Watchlist Item' });
+                activeWatchlistTab = category;
+                renderWatchlist();
             } else if (category === 'wishlist') {
                 wishlistData.push({ title: title, who: assignee });
                 renderWishlist();
@@ -1099,6 +1160,7 @@
         renderFoodShop();
         renderFamilyShop();
         renderDestinations();
+        renderWatchlist();
         renderChores();
         renderWishlist();
         renderTodos();
