@@ -6,19 +6,18 @@
     <title>Familiplan — Family life, organised</title>
     <style>
         :root {
-            --bg: #0d1117;
-            --card: #161b22;
-            --border: #30363d;
-            --text: #f0f6fc;
-            --muted: #8b949e;
-            --accent: #58a6ff;
-            
-            /* Family Member Colors */
-            --mom: #ec4899;
-            --dad: #3b82f6;
-            --leo: #10b981;
-            --mia: #f59e0b;
-            --family: #a855f7;
+            --bg: #f7f5f1;
+            --card: #ffffff;
+            --border: #e7e2da;
+            --text: #252b36;
+            --muted: #6f7785;
+            --accent: #6d5ce8;
+            --mom: #d9468d;
+            --dad: #3678d4;
+            --leo: #159b75;
+            --mia: #c47a08;
+            --family: #805ad5;
+            --shadow-soft: 0 8px 24px rgba(36, 32, 64, .055);
         }
 
         * {
@@ -26,15 +25,18 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            scroll-behavior: smooth;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: var(--bg);
+            background:
+              radial-gradient(ellipse at 12% 0%, rgba(109,92,232,.08), transparent 32rem),
+              var(--bg);
             color: var(--text);
-            padding-top: 110px;
-            padding-bottom: 2rem;
+            padding-top: 65px;
+            padding-bottom: 75px;
             min-height: 100vh;
+            line-height: 1.45;
         }
 
         /* Fixed Top Header */
@@ -43,9 +45,11 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 55px;
-            background: rgba(22, 27, 34, 0.98);
+            height: 60px;
+            background: rgba(255, 255, 255, 0.95);
             border-bottom: 1px solid var(--border);
+            box-shadow: 0 2px 12px rgba(30,35,50,.035);
+            backdrop-filter: blur(14px);
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -64,117 +68,147 @@
             height: 32px;
             display: grid;
             place-items: center;
-            filter: drop-shadow(0 2px 4px rgba(88, 166, 255, 0.3));
         }
 
         .brand-text {
             font-weight: 800;
-            font-size: 1.15rem;
-            letter-spacing: -0.3px;
-            background: linear-gradient(135deg, #f0f6fc 30%, #58a6ff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 1.12rem;
+            letter-spacing: -0.5px;
+            color: #28253b;
         }
 
-        .lock-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 4px 10px;
-            border-radius: 16px;
-            font-size: 0.78rem;
-            cursor: pointer;
-        }
-
-        /* Quick Jump Navigation Bar */
-        .jump-nav-bar {
-            position: fixed;
-            top: 55px;
-            left: 0;
-            right: 0;
-            height: 48px;
-            background: rgba(13, 17, 23, 0.95);
-            backdrop-filter: blur(8px);
-            border-bottom: 1px solid var(--border);
+        .header-actions {
             display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 0 1rem;
-            overflow-x: auto;
-            white-space: nowrap;
-            z-index: 999;
-            -webkit-overflow-scrolling: touch;
+            gap: 10px;
         }
 
-        .jump-nav-bar::-webkit-scrollbar {
-            display: none;
+        .account-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+            padding: 4px;
+            border-radius: 50%;
         }
 
-        .nav-pill-btn {
-            background: #161b22;
+        .account-btn:hover {
+            background: rgba(0,0,0,0.05);
+        }
+
+        .logout-btn {
+            background: #fff;
             border: 1px solid var(--border);
             color: var(--muted);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
             transition: all 0.2s ease;
         }
 
-        .nav-pill-btn:hover, .nav-pill-btn.active {
-            background: var(--accent);
-            color: #0d1117;
-            border-color: var(--accent);
+        .logout-btn:hover {
+            border-color: #f87171;
+            color: #ef4444;
+            background: #fef2f2;
         }
 
-        main {
+        /* Views management */
+        .view {
+            display: none;
             max-width: 800px;
             margin: 0 auto;
             padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.25rem;
+            animation: fadeIn 0.18s ease-in-out;
         }
 
-        .page-title h1 {
-            font-size: 1.4rem;
-            font-weight: 800;
-            letter-spacing: -0.5px;
+        .view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Fixed Bottom Navigation Bar */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 62px;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 0 0.5rem;
+            z-index: 1000;
+            overflow-x: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            color: var(--muted);
+            padding: 6px 8px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            min-width: 55px;
+            gap: 2px;
+            transition: color 0.15s ease;
+        }
+
+        .nav-item.active {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .nav-icon {
+            font-size: 1.15rem;
+            line-height: 1;
         }
 
         /* Cards */
         .card {
-            background: var(--card);
+            background: rgba(255,255,255,.96);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1rem;
-            scroll-margin-top: 115px; /* Perfect offset for smooth jump links */
+            border-radius: 16px;
+            padding: clamp(1rem, 2.3vw, 1.35rem);
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 1rem;
         }
 
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.85rem;
+            margin-bottom: 1rem;
         }
 
         .card-title {
-            font-size: 1rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
         }
 
-        /* Quick Add Form */
+        /* Form Inputs */
         .add-form {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
 
         .form-row {
@@ -184,181 +218,81 @@
         }
 
         .form-input, .form-select {
-            background: #fbfaf8;
-            border: 1px solid var(--border);
+            background: #fff;
+            border: 1px solid #dcdfe6;
             color: var(--text);
-            padding: 8px 10px;
-            border-radius: 8px;
-            font-size: 0.85rem;
+            padding: 10px 12px;
+            min-height: 42px;
+            font-size: 0.88rem;
+            border-radius: 10px;
             outline: none;
-            box-sizing: border-box;
         }
 
         .form-input:focus, .form-select:focus {
             border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(109,92,232,.12);
         }
 
-        .input-full {
-            flex: 1 1 60%;
-            min-width: 140px;
-        }
-
-        .input-half {
-            flex: 1 1 35%;
-            min-width: 110px;
-        }
+        .input-full { flex: 1 1 100%; }
+        .input-half { flex: 1 1 48%; }
 
         .add-btn {
             background: var(--accent);
-            color: #0d1117;
+            color: #fff;
             border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
+            min-height: 42px;
+            padding: 10px 18px;
+            border-radius: 10px;
             font-weight: 700;
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             cursor: pointer;
-            flex: 1 1 100%;
+            transition: background 0.15s ease;
         }
 
-        @media (min-width: 500px) {
-            .add-btn {
-                flex: 0 0 auto;
-            }
-        }
+        .add-btn:hover { background: #5948d0; }
 
-        /* Summary Toggle & Stats */
-        .toggle-box {
-            background: #fbfaf8;
-            border: 1px solid var(--border);
-            padding: 2px;
-            border-radius: 8px;
+        /* Item Components */
+        .list-container {
             display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
         }
 
-        .toggle-btn {
-            background: transparent;
-            border: none;
-            color: var(--muted);
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .toggle-btn.active {
-            background: var(--accent);
-            color: #ffffff;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-bottom: 0.75rem;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border);
-            padding: 0.6rem;
-            border-radius: 8px;
+        .list-empty {
             text-align: center;
-        }
-
-        .stat-val {
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: var(--accent);
-        }
-
-        .stat-lbl {
-            font-size: 0.7rem;
+            padding: 2rem 1rem;
             color: var(--muted);
+            font-size: 0.88rem;
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+            background: #faf9ff;
         }
 
-        /* Calendar Controls */
-        .calendar-nav {
+        .todo-item, .shopping-item, .meal-card-row, .kid-card, .contact-pill, .wishlist-item, .list-card {
+            background: #fff;
+            border: 1px solid #e8e5df;
+            border-radius: 11px;
+            padding: 12px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: space-between;
+            gap: 10px;
         }
 
-        .cal-nav-btn {
-            background: #fbfaf8;
-            border: 1px solid var(--border);
-            color: var(--text);
-            width: 26px;
-            height: 26px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            display: grid;
-            place-items: center;
-            cursor: pointer;
+        .todo-left, .shop-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .cal-nav-btn:hover {
-            border-color: var(--accent);
-        }
-
-        /* Calendar Grid */
-        .calendar-wrapper {
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, minmax(44px, 1fr));
-            gap: 4px;
-            min-width: 310px;
-        }
-
-        .day-header {
-            text-align: center;
-            font-size: 0.75rem;
+        .assign-tag {
+            font-size: 0.64rem;
             font-weight: 700;
-            color: var(--muted);
-            padding-bottom: 6px;
-        }
-
-        .day-cell {
-            background: #fbfaf8;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            min-height: 75px;
-            padding: 4px;
-            position: relative;
-            cursor: pointer;
-        }
-
-        .day-cell.empty {
-            background: transparent;
-            border: none;
-            cursor: default;
-        }
-
-        .day-cell:not(.empty):hover {
-            border-color: var(--accent);
-        }
-
-        .day-num {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--muted);
-        }
-
-        .event-pill {
-            margin-top: 2px;
-            padding: 2px 4px;
-            border-radius: 3px;
-            font-size: 0.6rem;
-            font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            padding: 4px 8px;
+            border-radius: 20px;
             color: #fff;
+            text-transform: uppercase;
+            letter-spacing: .02em;
         }
 
         .bg-mom { background-color: var(--mom); }
@@ -367,240 +301,15 @@
         .bg-mia { background-color: var(--mia); }
         .bg-family { background-color: var(--family); }
 
-        /* Floating Tooltip */
-        #hover-tooltip {
-            position: absolute;
-            display: none;
-            width: 210px;
-            background: #1f2937;
-            border: 1px solid #4b5563;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-            border-radius: 8px;
-            padding: 0.65rem;
-            z-index: 2000;
-            pointer-events: none;
-        }
-
-        #hover-tooltip h4 {
-            font-size: 0.8rem;
-            margin-bottom: 0.35rem;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 0.2rem;
-        }
-
-        .tooltip-line {
-            font-size: 0.75rem;
-            margin-bottom: 0.3rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            display: inline-block;
-            flex-shrink: 0;
-        }
-
-        /* Entertainment Tabs & List */
-        .category-tabs {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 0.75rem;
-            overflow-x: auto;
-            padding-bottom: 4px;
-        }
-
-        .cat-tab {
-            background: #fbfaf8;
-            border: 1px solid var(--border);
-            color: var(--muted);
-            padding: 4px 10px;
-            border-radius: 14px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-
-        .cat-tab.active {
-            background: var(--accent);
-            color: #fff;
-            border-color: var(--accent);
-        }
-
-        .list-container {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .list-card, .todo-item, .shopping-item {
-            background: #fbfaf8;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 0.6rem 0.8rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-        }
-
-        .list-card:hover, .shopping-item:hover {
-            border-color: var(--accent);
-        }
-
-        .list-info h5 {
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        .list-info span {
-            font-size: 0.72rem;
-            color: var(--muted);
-        }
-
-        .map-btn {
-            background: rgba(88, 166, 255, 0.1);
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-size: 0.72rem;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .map-btn:hover {
-            background: var(--accent);
-            color: #fff;
-        }
-
-        /* Map Box */
-        .map-embed-box {
-            width: 100%;
-            height: 340px;
-            max-height: 340px;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            margin-bottom: 0.75rem;
-            position: relative;
-        }
-
-        .map-embed-box iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            filter: invert(90%) hue-rotate(180deg);
-            pointer-events: auto;
-        }
-
-        .map-dots-bar {
-            position: absolute;
-            bottom: 8px;
-            left: 8px;
-            right: 8px;
-            background: rgba(13, 17, 23, 0.92);
-            border: 1px solid var(--border);
-            backdrop-filter: blur(4px);
-            padding: 6px 10px;
-            border-radius: 6px;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            overflow-x: auto;
-            z-index: 10;
-        }
-
-        .map-dot-pill {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.72rem;
-            font-weight: 600;
-            color: var(--text);
-            white-space: nowrap;
-            cursor: pointer;
-            background: rgba(88, 166, 255, 0.1);
-            border: 1px solid var(--border);
-            padding: 2px 8px;
-            border-radius: 12px;
-        }
-
-        .map-dot-pill:hover {
-            border-color: var(--accent);
-        }
-
-        .map-dot-badge {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: var(--accent);
-            color: #0d1117;
-            font-size: 0.65rem;
-            font-weight: 800;
-            display: grid;
-            place-items: center;
-        }
-
-        .home-banner {
-            font-size: 0.72rem;
-            color: var(--muted);
-            margin-bottom: 0.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.02);
-            padding: 4px 8px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-        }
-
-        .todo-left, .shop-left {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .todo-text, .shop-text {
-            font-size: 0.85rem;
-        }
-
-        .assign-tag {
-            font-size: 0.65rem;
-            font-weight: 700;
-            padding: 2px 6px;
-            border-radius: 10px;
-            color: #fff;
-            text-transform: uppercase;
-        }
-
-        /* Meal Planner Reference Style */
         .meal-card-row {
-            background: #fbfaf8;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 10px 14px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
             margin-bottom: 6px;
         }
 
         .meal-day-name {
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 800;
-            width: 60px;
-        }
-
-        .meal-dish-name {
-            font-size: 0.85rem;
-            color: var(--text);
-            flex: 1;
-            padding-left: 10px;
+            color: #5144b7;
+            width: 50px;
         }
 
         .meal-input-inline {
@@ -608,352 +317,118 @@
             border: none;
             border-bottom: 1px dashed var(--border);
             color: var(--text);
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             width: 100%;
             outline: none;
-            padding: 2px 0;
+            padding: 4px 0;
         }
 
-        /* Chores Grid */
-        .chores-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        /* Calendar Styles */
+        .calendar-nav {
+            display: flex;
+            align-items: center;
             gap: 8px;
         }
 
-        .kid-card {
-            background: #fbfaf8;
+        .cal-nav-btn {
+            background: #fff;
             border: 1px solid var(--border);
+            color: var(--text);
+            width: 32px;
+            height: 32px;
             border-radius: 8px;
-            padding: 8px;
+            font-size: 1rem;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
         }
 
-        .kid-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.85rem;
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+        }
+
+        .day-header {
+            text-align: center;
+            font-size: 0.7rem;
             font-weight: 700;
-            margin-bottom: 6px;
-            border-bottom: 1px solid var(--border);
+            color: var(--muted);
+            text-transform: uppercase;
             padding-bottom: 4px;
         }
 
-        .chore-item {
-            font-size: 0.78rem;
+        .day-cell {
+            background: #fff;
+            border: 1px solid #e8e5df;
+            border-radius: 8px;
+            min-height: 75px;
+            padding: 4px;
+        }
+
+        .day-num {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #505868;
+        }
+
+        .event-pill {
+            margin-top: 3px;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-size: 0.62rem;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* Category Tabs */
+        .category-tabs {
             display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 4px;
+            gap: 8px;
+            margin-bottom: 0.85rem;
+            overflow-x: auto;
+        }
+
+        .cat-tab {
+            background: #fff;
+            border: 1px solid var(--border);
             color: var(--muted);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
             cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .cat-tab.active {
+            background: #eeeaff;
+            color: #5144b7;
+            border-color: #d5ceff;
+        }
+
+        .chores-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 10px;
         }
 
         .contacts-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 8px;
+            gap: 10px;
         }
 
-        .contact-pill {
-            background: #fbfaf8;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 8px;
+        input[type="checkbox"] {
+            accent-color: var(--accent);
+            width: 17px;
+            height: 17px;
         }
-
-        .contact-pill h6 {
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: var(--accent);
-        }
-
-        .contact-pill p {
-            font-size: 0.72rem;
-            color: var(--muted);
-            margin-top: 2px;
-        }
-
-        .wishlist-item {
-            background: #fbfaf8;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.82rem;
-        }
-
-        /* Back to Top Floating Button */
-        .top-btn {
-            position: fixed;
-            bottom: 18px;
-            right: 18px;
-            background: var(--accent);
-            color: #0d1117;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            font-weight: 800;
-            display: grid;
-            place-items: center;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-            z-index: 1000;
-        }
-
-        /* Familiplan refresh: warmer, calmer, more readable and mobile-first */
-        :root {
-            --bg: #f7f5f1;
-            --card: #ffffff;
-            --border: #e7e2da;
-            --text: #252b36;
-            --muted: #6f7785;
-            --accent: #6d5ce8;
-            --mom: #d9468d;
-            --dad: #3678d4;
-            --leo: #159b75;
-            --mia: #c47a08;
-            --family: #805ad5;
-            --surface-soft: #f5f3ff;
-            --shadow-soft: 0 8px 24px rgba(36, 32, 64, .055);
-        }
-        html { scroll-padding-top: 118px; }
-        body {
-            background:
-              radial-gradient(ellipse at 12% 0%, rgba(109,92,232,.08), transparent 32rem),
-              var(--bg);
-            color: var(--text);
-            padding-top: 112px;
-            line-height: 1.45;
-        }
-        header {
-            height: 62px;
-            padding: 0 max(1rem, calc((100vw - 1080px)/2));
-            background: rgba(255,255,255,.94);
-            border-bottom: 1px solid var(--border);
-            box-shadow: 0 2px 12px rgba(30,35,50,.035);
-            backdrop-filter: blur(14px);
-        }
-        .brand { gap: 11px; }
-        .brand-logo { width: 36px; height: 36px; filter: none; }
-        .brand-text {
-            background: none;
-            color: #28253b;
-            -webkit-text-fill-color: currentColor;
-            font-size: 1.12rem;
-            letter-spacing: -.55px;
-        }
-        .lock-btn {
-            background: #f5f3ff;
-            border: 1px solid #ded8ff;
-            color: #5144b7;
-            padding: 8px 12px;
-            font-weight: 700;
-            min-height: 38px;
-        }
-        .jump-nav-bar {
-            top: 62px;
-            height: 48px;
-            padding: 0 max(1rem, calc((100vw - 1080px)/2));
-            background: rgba(247,245,241,.94);
-            border-bottom: 1px solid var(--border);
-            backdrop-filter: blur(12px);
-            gap: 8px;
-        }
-        .nav-pill-btn {
-            background: #fff;
-            color: #5d6472;
-            border-color: #e5e0d8;
-            padding: 7px 12px;
-            font-size: .78rem;
-        }
-        .nav-pill-btn:hover, .nav-pill-btn.active {
-            background: #eeeaff;
-            color: #5144b7;
-            border-color: #cfc7ff;
-        }
-        main { max-width: 1040px; padding: 1.35rem 1rem 3rem; gap: 1rem; }
-        .page-title { padding: .35rem .15rem .25rem; }
-        .page-title h1 { font-size: clamp(1.55rem, 3vw, 2.1rem); letter-spacing: -1px; }
-        .page-title h1 span { color: var(--accent); }
-        .page-intro { margin-top: .35rem; color: var(--muted); font-size: .94rem; }
-        .card {
-            background: rgba(255,255,255,.96);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: clamp(1rem, 2.3vw, 1.35rem);
-            box-shadow: var(--shadow-soft);
-            scroll-margin-top: 122px;
-        }
-        #sec-quickadd { border: 1px solid #d9d2ff !important; background: linear-gradient(135deg,#fff 0%,#faf9ff 100%); }
-        .card-header { gap: 12px; margin-bottom: 1rem; }
-        .card-title { font-size: 1.04rem; letter-spacing: -.2px; gap: 8px; }
-        .form-input, .form-select {
-            background: #fff;
-            border: 1px solid #dcdfe6;
-            color: var(--text);
-            padding: 11px 12px;
-            min-height: 44px;
-            font-size: .92rem;
-            border-radius: 10px;
-        }
-        .form-input::placeholder { color: #9399a5; }
-        .form-input:focus, .form-select:focus, .meal-input-inline:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(109,92,232,.12);
-        }
-        .add-btn {
-            background: var(--accent);
-            color: #fff;
-            min-height: 44px;
-            padding: 10px 18px;
-            border-radius: 10px;
-            transition: transform .15s ease, background .15s ease;
-        }
-        .add-btn:hover { background: #5948d0; transform: translateY(-1px); }
-        .toggle-box { background: #f3f1ed; border-color: var(--border); padding: 3px; }
-        .toggle-btn { padding: 7px 12px; color: var(--muted); }
-        .toggle-btn.active { background: #fff; color: #5144b7; box-shadow: 0 1px 4px rgba(20,20,30,.1); }
-        .stats-grid { gap: 12px; }
-        .stat-card {
-            background: #faf9ff;
-            border-color: #ebe7ff;
-            padding: 1rem .65rem;
-            border-radius: 12px;
-        }
-        .stat-val { color: var(--accent); font-size: 1.55rem; }
-        .stat-lbl { font-size: .76rem; margin-top: 2px; }
-        .cal-nav-btn {
-            background: #fff; color: var(--text); border-color: var(--border);
-            width: 34px; height: 34px; font-size: 1.2rem;
-        }
-        .calendar-grid { gap: 6px; }
-        .calendar-day-details {
-            margin-top: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 3px;
-            border: 1px solid #e8e3ff; background: #faf9ff; border-radius: 10px;
-            color: var(--text); font-size: .84rem;
-        }
-        .calendar-day-details span { color: var(--muted); }
-        .day-cell.selected { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(109,92,232,.14); }
-        .day-header { font-size: .72rem; letter-spacing: .03em; text-transform: uppercase; padding: 4px 0 8px; }
-        .day-cell {
-            background: #fff;
-            border-color: #e8e5df;
-            border-radius: 9px;
-            min-height: 88px;
-            padding: 6px;
-            transition: border-color .15s ease, box-shadow .15s ease;
-        }
-        .day-cell:not(.empty):hover, .day-cell:focus-visible {
-            border-color: #aaa0ff;
-            box-shadow: 0 0 0 2px rgba(109,92,232,.08);
-            outline: none;
-        }
-        .day-num { color: #505868; font-size: .8rem; }
-        .event-pill { font-size: .66rem; line-height: 1.35; border-radius: 5px; padding: 3px 5px; margin-top: 4px; }
-        .bg-mom { background-color: var(--mom); }
-        .bg-dad { background-color: var(--dad); }
-        .bg-leo { background-color: var(--leo); }
-        .bg-mia { background-color: var(--mia); }
-        .bg-family { background-color: var(--family); }
-        #hover-tooltip {
-            background: #29263b; color: #fff; border: 1px solid #514b70;
-            border-radius: 12px; box-shadow: 0 12px 34px rgba(25,20,50,.22);
-        }
-        .category-tabs { gap: 8px; }
-        .cat-tab {
-            background: #fff; color: #687080; border-color: var(--border);
-            padding: 8px 12px; border-radius: 20px; font-size: .8rem;
-        }
-        .cat-tab.active { background: #eeeaff; color: #5144b7; border-color: #d5ceff; }
-        .list-card, .todo-item, .shopping-item, .meal-card-row, .kid-card, .contact-pill, .wishlist-item {
-            background: #fff; border-color: #e8e5df; border-radius: 11px;
-        }
-        .list-card, .shopping-item, .todo-item { padding: 12px; gap: 10px; }
-        .list-card:hover, .shopping-item:hover { border-color: #b9b0ff; }
-        .list-info h5 { font-size: .92rem; }
-        .list-info span { display: inline-block; margin-top: 3px; line-height: 1.45; }
-        .map-btn { background: #f0edff; border-color: #d8d0ff; color: #5144b7; padding: 7px 10px; white-space: nowrap; }
-        .map-btn:hover { background: var(--accent); color: #fff; }
-        .map-embed-box { border-color: var(--border); border-radius: 12px; }
-        .map-embed-box iframe { filter: none; }
-        .map-dots-bar { background: rgba(255,255,255,.95); border-color: var(--border); }
-        .map-dot-pill { background: #fff; border-color: var(--border); color: var(--text); padding: 5px 9px; }
-        .map-dot-badge { background: var(--accent); color: #fff; }
-        .home-banner { background: #faf9ff; border-color: #e8e3ff; border-radius: 8px; }
-        .assign-tag { padding: 4px 8px; border-radius: 20px; font-size: .64rem; letter-spacing: .02em; }
-        .meal-card-row { padding: 12px; margin-bottom: 8px; }
-        .meal-day-name { color: #5144b7; width: 54px; }
-        .meal-input-inline { border-radius: 4px; padding: 6px 4px; }
-        .kid-card { padding: 12px; }
-        .kid-header { padding-bottom: 8px; margin-bottom: 9px; }
-        .chore-item { padding: 5px 0; font-size: .82rem; }
-        input[type="checkbox"] { accent-color: var(--accent); width: 17px; height: 17px; flex-shrink: 0; }
-        .contact-pill h6 { color: #5144b7; font-size: .82rem; }
-        .contact-pill p { font-size: .78rem; }
-        .top-btn { background: var(--accent); color: #fff; box-shadow: 0 6px 18px rgba(60,45,150,.25); }
-        button, a, input, select { -webkit-tap-highlight-color: transparent; }
-        button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
-            outline: 3px solid rgba(109,92,232,.38); outline-offset: 2px;
-        }
-        /* Collapsible sections: keep the overview calm and let people open what they need */
-        .section-toggle {
-            display: inline-flex; align-items: center; justify-content: center; gap: 7px;
-            min-height: 36px; padding: 7px 10px; border: 1px solid var(--border);
-            border-radius: 9px; background: #fff; color: var(--text); font-size: .76rem;
-            font-weight: 700; white-space: nowrap; cursor: pointer; flex-shrink: 0;
-        }
-        .section-toggle:hover { border-color: var(--accent); background: #f7f5ff; }
-        .section-toggle .chevron { display: inline-block; transition: transform .18s ease; font-size: .9rem; }
-        .section-toggle[aria-expanded="true"] .chevron { transform: rotate(180deg); }
-        .card-header { gap: 10px; }
-        .card-header .card-title { min-width: 0; }
-        .collapsible-content { min-width: 0; }
-        .collapsible-content[hidden] { display: none !important; }
-        .section-toggle:focus-visible { outline: 3px solid rgba(109,92,232,.38); outline-offset: 2px; }
-        @media (max-width: 600px) {
-            .section-toggle { min-height: 34px; padding: 6px 8px; font-size: .72rem; }
-            .card-header { flex-wrap: wrap; }
-            .card-header .section-toggle { margin-left: auto; }
-        }
-
-        @media (max-width: 600px) {
-            body { padding-top: 108px; }
-            header { padding: 0 12px; }
-            .brand-text { font-size: 1rem; }
-            .lock-btn { font-size: .72rem; padding: 7px 9px; }
-            .jump-nav-bar { padding: 0 12px; }
-            main { padding: 1rem 12px 2.5rem; gap: .85rem; }
-            .card { padding: 14px; border-radius: 14px; }
-            .page-title h1 { font-size: 1.55rem; }
-            .stats-grid { gap: 7px; }
-            .stat-card { padding: .8rem .35rem; }
-            .stat-val { font-size: 1.35rem; }
-            .calendar-wrapper { overflow-x: visible; }
-            .calendar-grid { min-width: 0; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; }
-            .day-header { font-size: .61rem; letter-spacing: 0; }
-            .day-cell { min-height: 62px; padding: 3px; border-radius: 6px; }
-            .day-num { font-size: .7rem; }
-            .event-pill { font-size: .55rem; padding: 2px; }
-            .map-embed-box { height: 260px; }
-            .chores-grid { grid-template-columns: 1fr; }
-            .list-card { align-items: flex-start; }
-            .map-btn { align-self: center; }
-            .card-header { align-items: flex-start; }
-        }
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
-        }
-
     </style>
 </head>
 <body>
 
-    <!-- Header Bar -->
+    <!-- Fixed Header -->
     <header>
         <div class="brand">
             <div class="brand-logo">
@@ -971,65 +446,36 @@
             </div>
             <span class="brand-text">Familiplan</span>
         </div>
-        <button class="lock-btn" type="button" aria-label="Toggle kids mode">🔒 Kids Mode</button>
+        <div class="header-actions">
+            <button class="account-btn" type="button" aria-label="Account Profile">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </button>
+            <button class="logout-btn" onclick="handleLogout()">Log Out</button>
+        </div>
     </header>
 
-    <!-- Quick Jump Navigation Pill Bar -->
-    <nav class="jump-nav-bar">
-        <a href="#sec-quickadd" class="nav-pill-btn">➕ Add Item</a>
-        <a href="#sec-calendar" class="nav-pill-btn">📅 Calendar</a>
-        <a href="#sec-meals" class="nav-pill-btn">🍽️ Meals</a>
-        <a href="#sec-foodshop" class="nav-pill-btn">🛒 Food List</a>
-        <a href="#sec-familyshop" class="nav-pill-btn">🛍️ Family List</a>
-        <a href="#sec-destinations" class="nav-pill-btn">📍 Destinations</a>
-        <a href="#sec-chores" class="nav-pill-btn">⭐ Chores</a>
-        <a href="#sec-wishlist" class="nav-pill-btn">🎁 Wishlist</a>
-        <a href="#sec-todo" class="nav-pill-btn">📝 To-Do</a>
-    </nav>
-
-    <main>
-        <div class="page-title">
-            <h1>Family life, organised <span aria-hidden="true">✦</span></h1><p class="page-intro">One shared place for plans, meals, lists and little adventures.</p>
-        </div>
-
-        <!-- Universal Quick Add -->
-        <section class="card" id="sec-quickadd" style="border-color: var(--accent);">
-            <div class="card-header" style="margin-bottom: 0.5rem;">
-                <div class="card-title">Quick Add to Plan</div>
+    <!-- VIEW 1: Home / Quick Add -->
+    <div id="view-home" class="view active">
+        <section class="card" style="border-color: var(--accent);">
+            <div class="card-header">
+                <div class="card-title">Quick Add Item</div>
             </div>
-            <form class="add-form" onsubmit="addItem(event)">
+            <form class="add-form" onsubmit="handleQuickAdd(event)">
+                <input type="text" id="add-title" class="form-input input-full" placeholder="Enter title / item / meal..." required>
                 <div class="form-row">
-                    <input type="text" id="add-title" class="form-input input-full" placeholder="Enter title / item / meal / chore..." required>
-                    <select id="add-category" class="form-select input-half" onchange="handleCategoryChange(this.value)">
+                    <select id="add-category" class="form-select input-half">
                         <option value="calendar">Calendar Event</option>
-                        <option value="cinema">Cinema Film</option>
-                        <option value="home">Home Watch</option>
-                        <option value="places">Places to Visit</option>
-                        <option value="restaurants">Restaurants to Visit</option>
-                        <option value="meal">Meal Plan</option>
-                        <option value="chore">Chore / Allowance</option>
-                        <option value="foodshop">Food Shopping Item</option>
-                        <option value="familyshop">Family Shopping Item</option>
+                        <option value="meals">Weekly Meal</option>
+                        <option value="foodshop">Food Shopping</option>
+                        <option value="familyshop">Family Shopping</option>
+                        <option value="destinations">Destination / Film</option>
+                        <option value="chores">Kid Chore</option>
                         <option value="wishlist">Gift Wishlist</option>
                         <option value="todo">To-Do Task</option>
                     </select>
-                </div>
-                <div class="form-row" id="postcode-row" style="display: none;">
-                    <input type="text" id="add-postcode" class="form-input input-full" placeholder="Enter Postcode (optional, e.g., LS1 1AA)">
-                </div>
-                <div class="form-row" id="mealday-row" style="display: none;">
-                    <select id="add-mealday" class="form-select input-full">
-                        <option value="Mon">Monday</option>
-                        <option value="Tue">Tuesday</option>
-                        <option value="Wed">Wednesday</option>
-                        <option value="Thu">Thursday</option>
-                        <option value="Fri">Friday</option>
-                        <option value="Sat">Saturday</option>
-                        <option value="Sun">Sunday</option>
-                    </select>
-                </div>
-                <div class="form-row">
-                    <input type="date" id="add-date" class="form-input input-half" value="">
                     <select id="add-assignee" class="form-select input-half">
                         <option value="family">Family</option>
                         <option value="mom">Mom</option>
@@ -1037,480 +483,31 @@
                         <option value="leo">Leo</option>
                         <option value="mia">Mia</option>
                     </select>
-                    <button type="submit" class="add-btn">Add to Plan</button>
                 </div>
+                <button type="submit" class="add-btn">Add to Plan</button>
             </form>
         </section>
 
-        <!-- Dynamic Summary -->
         <section class="card">
             <div class="card-header">
-                <div class="card-title" id="summary-title-text">Upcoming Summary (This Week)</div>
-                <div class="toggle-box">
-                    <button class="toggle-btn active" id="btn-week" onclick="setSummaryRange('week')">Week</button>
-                    <button class="toggle-btn" id="btn-month" onclick="setSummaryRange('month')">Month</button>
-                </div>
+                <div class="card-title">Plan Overview</div>
             </div>
-
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-val" id="num-events">3</div>
-                    <div class="stat-lbl">Events</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-val" id="num-tasks">4</div>
-                    <div class="stat-lbl">Tasks</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-val" id="num-trips">1</div>
-                    <div class="stat-lbl">Outings</div>
-                </div>
-            </div>
-
-            <p id="summary-desc" style="font-size:0.82rem; color:var(--muted);">
-                Week ahead: 3 scheduled activities including Football Training and Family Movie Night.
-            </p>
+            <p style="color: var(--muted); font-size: 0.88rem;">Select any section from the bottom navigation bar to start managing your family plan.</p>
         </section>
-
-        <!-- Shared Calendar -->
-        <section class="card" id="sec-calendar">
-            <div class="card-header">
-                <div class="card-title" id="calendar-title-label">Shared Calendar</div>
-                <div class="calendar-nav">
-                    <button class="cal-nav-btn" type="button" aria-label="Previous period" onclick="navigateCalendar(-1)">‹</button>
-                    <span style="font-size:0.75rem; color:var(--muted); font-weight:600;" id="calendar-date-subtitle">October 2026</span>
-                    <button class="cal-nav-btn" type="button" aria-label="Next period" onclick="navigateCalendar(1)">›</button>
-                </div>
-            </div>
-
-            <div class="calendar-wrapper">
-                <div class="calendar-grid" id="calendar-grid">
-                    <div class="day-header">Mon</div>
-                    <div class="day-header">Tue</div>
-                    <div class="day-header">Wed</div>
-                    <div class="day-header">Thu</div>
-                    <div class="day-header">Fri</div>
-                    <div class="day-header">Sat</div>
-                    <div class="day-header">Sun</div>
-                </div>
-            </div>
-            <div id="calendar-day-details" class="calendar-day-details" aria-live="polite">
-                <strong>Choose a date</strong><span>Select a day to see its activities.</span>
-            </div>
-        </section>
-
-        <!-- Meal Planner -->
-        <section class="card" id="sec-meals">
-            <div class="card-header">
-                <div class="card-title">🍽️ Weekly Meal Planner</div>
-                <button class="map-btn" onclick="syncMealsToTodo()">Sync to To-Do ↗</button>
-            </div>
-            <div id="meal-list-view"></div>
-        </section>
-
-        <!-- Food Shopping List -->
-        <section class="card" id="sec-foodshop">
-            <div class="card-header">
-                <div class="card-title">🛒 Food Shopping List</div>
-            </div>
-            <div class="list-container" id="foodshop-list-view"></div>
-        </section>
-
-        <!-- Family Shopping List -->
-        <section class="card" id="sec-familyshop">
-            <div class="card-header">
-                <div class="card-title">🛍️ Family Shopping List</div>
-            </div>
-            <div class="list-container" id="familyshop-list-view"></div>
-        </section>
-
-        <!-- Entertainment, Places & Restaurants -->
-        <section class="card" id="sec-destinations">
-            <div class="card-header">
-                <div class="card-title">Entertainment & Destinations</div>
-            </div>
-
-            <div class="category-tabs">
-                <button class="cat-tab" onclick="switchCategory('cinema', this)">Cinema Films</button>
-                <button class="cat-tab" onclick="switchCategory('home', this)">Home Watchlist</button>
-                <button class="cat-tab active" onclick="switchCategory('places', this)">Places to Visit</button>
-                <button class="cat-tab" onclick="switchCategory('restaurants', this)">Restaurants to Visit</button>
-            </div>
-
-            <div class="list-container" id="dynamic-list-view"></div>
-        </section>
-
-        <!-- Kids' Chores & Allowance -->
-        <section class="card" id="sec-chores">
-            <div class="card-header">
-                <div class="card-title">⭐ Kids' Chores & Allowance</div>
-            </div>
-            <div class="chores-grid" id="chores-container">
-                <div class="kid-card" data-kid="Leo">
-                    <div class="kid-header">
-                        <span>Leo</span>
-                        <span style="color:var(--accent); font-size:0.75rem;" class="kid-score">£3.50 earned</span>
-                    </div>
-                    <div class="kid-chores-list">
-                        <label class="chore-item"><input type="checkbox" onchange="updateChoreScore(this)"> Tidied Bedroom</label>
-                        <label class="chore-item"><input type="checkbox" checked onchange="updateChoreScore(this)"> Fed the Cat</label>
-                    </div>
-                </div>
-                <div class="kid-card" data-kid="Mia">
-                    <div class="kid-header">
-                        <span>Mia</span>
-                        <span style="color:var(--accent); font-size:0.75rem;" class="kid-score">£2.00 earned</span>
-                    </div>
-                    <div class="kid-chores-list">
-                        <label class="chore-item"><input type="checkbox" onchange="updateChoreScore(this)"> Put Toys Away</label>
-                        <label class="chore-item"><input type="checkbox" checked onchange="updateChoreScore(this)"> Watered Plants</label>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Gift Wishlist -->
-        <section class="card" id="sec-wishlist">
-            <div class="card-header">
-                <div class="card-title">🎁 Gift Wishlist & Ideas</div>
-            </div>
-            <div class="list-container" id="wishlist-view"></div>
-        </section>
-
-        <!-- Important Contacts -->
-        <section class="card" id="sec-contacts">
-            <div class="card-header">
-                <div class="card-title">☎️ Important Contacts</div>
-            </div>
-            <div class="contacts-grid">
-                <div class="contact-pill">
-                    <h6>Local GP Surgery</h6>
-                    <p>0113 200 1234</p>
-                </div>
-                <div class="contact-pill">
-                    <h6>Family Vet</h6>
-                    <p>0113 555 7890</p>
-                </div>
-                <div class="contact-pill">
-                    <h6>Home Insurance</h6>
-                    <p>Policy #UK-98421</p>
-                </div>
-                <div class="contact-pill">
-                    <h6>Emergency Services</h6>
-                    <p>999 / 111</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- To-Do List -->
-        <section class="card" id="sec-todo">
-            <div class="card-header">
-                <div class="card-title">To-Do List (Who & What)</div>
-            </div>
-
-            <div class="list-container" id="todo-list-view"></div>
-        </section>
-    </main>
-
-    <!-- Floating Back To Top Button -->
-    <button class="top-btn" aria-label="Back to top" title="Back to top" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">↑</button>
-
-    <!-- Hover Card Tooltip -->
-    <div id="hover-tooltip">
-        <h4 id="tt-date">Date</h4>
-        <div id="tt-body"></div>
     </div>
 
-    <script>
-        let currentRange = 'week';
-        let currentStartDate = new Date(2026, 9, 12);
-        let currentMonth = 9;
-        let currentYear = 2026;
-
-        let homePostcode = "LS19 6BH";
-        let activeMapQuery = "United Kingdom";
-
-        let events = {
-            "2026-10-10": [{ title: "Football Training", color: "bg-leo", time: "10:00 AM", who: "Leo" }],
-            "2026-10-15": [{ title: "Dentist Appt", color: "bg-mom", time: "02:15 PM", who: "Mom" }],
-            "2026-10-17": [{ title: "Pizza & Movie Night", color: "bg-family", time: "06:30 PM", who: "Family" }],
-            "2026-10-24": [
-                { title: "Yorkshire Dales Walk", color: "bg-family", time: "09:30 AM", who: "Family" },
-                { title: "Car Service", color: "bg-dad", time: "02:00 PM", who: "Dad" }
-            ],
-            "2026-11-05": [{ title: "Bonfire Night", color: "bg-family", time: "07:00 PM", who: "Family" }]
-        };
-
-        let mealsData = [
-            { day: "Mon", meal: "Chicken Tikka Traybake" },
-            { day: "Tue", meal: "Spicy Thai Pork" },
-            { day: "Wed", meal: "Pork Stroganoff" },
-            { day: "Thu", meal: "Pizza Night" },
-            { day: "Fri", meal: "Dirty Fries" },
-            { day: "Sat", meal: "Katsu Curry" },
-            { day: "Sun", meal: "Bolognese Pasta Bake" }
-        ];
-
-        let foodShopData = [
-            { text: "Chicken breasts & green pesto", who: "Mom", color: "bg-mom" },
-            { text: "Mozzarella & pizza dough", who: "Family", color: "bg-family" },
-            { text: "Fresh vegetables & salad", who: "Dad", color: "bg-dad" }
-        ];
-
-        let familyShopData = [
-            { text: "Printer paper & ink cartridges", who: "Dad", color: "bg-dad" },
-            { text: "Washing detergent & dishwasher tablets", who: "Mom", color: "bg-mom" }
-        ];
-
-        let wishlistData = [
-            { title: "Board Game: Ticket to Ride", note: "For Leo's birthday" },
-            { title: "Coffee Bean Subscription", note: "From Leodis Roasters" }
-        ];
-
-        let categoriesData = {
-            cinema: [
-                { title: "The Wild Robot", details: "Release: Showing Now", meta: "Family Animation" },
-                { title: "Sonic the Hedgehog 3", details: "Release: Oct 2026", meta: "Action / Family" }
-            ],
-            home: [
-                { title: "Inside Out 2", details: "Disney+", meta: "Family Movie" },
-                { title: "Paddington in Peru", details: "Streaming soon", meta: "Comedy" }
-            ],
-            places: [
-                { title: "Yorkshire Dales National Park", details: "Scenic Walk & Picnic", postcode: "BD23 4PQ", dist: "32 miles" },
-                { title: "Royal Armouries Museum", details: "Interactive Exhibits", postcode: "LS10 1LT", dist: "11 miles" },
-                { title: "Tropical World Leeds", details: "Zoo & Greenhouse", postcode: "LS8 2LE", dist: "9.5 miles" }
-            ],
-            restaurants: [
-                { title: "The Box Leeds", details: "Burgers & Social", postcode: "LS1 6AZ", dist: "10 miles" },
-                { title: "Bundobust Leeds", details: "Indian Street Food & Craft Beer", postcode: "LS1 4HT", dist: "10.5 miles" },
-                { title: "The Ox Club", details: "Wood-fired Grill", postcode: "LS1 3HJ", dist: "10 miles" }
-            ]
-        };
-
-        let todosData = [
-            { text: "Buy ingredients for Friday Pizza night", who: "Mom", color: "bg-mom" },
-            { text: "Check pressure in car tires", who: "Dad", color: "bg-dad" }
-        ];
-
-        function handleCategoryChange(val) {
-            const postcodeRow = document.getElementById('postcode-row');
-            const mealdayRow = document.getElementById('mealday-row');
-            if (postcodeRow) postcodeRow.style.display = (val === 'places' || val === 'restaurants') ? 'flex' : 'none';
-            if (mealdayRow) mealdayRow.style.display = (val === 'meal') ? 'flex' : 'none';
-        }
-
-        function renderMeals() {
-            const container = document.getElementById('meal-list-view');
-            container.innerHTML = mealsData.map((m, idx) => `
-                <div class="meal-card-row">
-                    <div class="meal-day-name">${m.day}</div>
-                    <div class="meal-dish-name">
-                        <input type="text" class="meal-input-inline" value="${m.meal}" onchange="mealsData[${idx}].meal = this.value">
-                    </div>
+    <!-- VIEW 2: Calendar -->
+    <div id="view-calendar" class="view">
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title">Shared Calendar</div>
+                <div class="calendar-nav">
+                    <button class="cal-nav-btn" onclick="navigateCalendar(-1)">‹</button>
+                    <span id="calendar-month-label" style="font-size:0.85rem; font-weight:700;">October 2026</span>
+                    <button class="cal-nav-btn" onclick="navigateCalendar(1)">›</button>
                 </div>
-            `).join('');
-        }
-
-        function renderFoodShop() {
-            const container = document.getElementById('foodshop-list-view');
-            container.innerHTML = foodShopData.map(item => `
-                <div class="shopping-item">
-                    <div class="shop-left">
-                        <input type="checkbox">
-                        <span class="shop-text">${item.text}</span>
-                    </div>
-                    <span class="assign-tag ${item.color}">${item.who}</span>
-                </div>
-            `).join('');
-        }
-
-        function renderFamilyShop() {
-            const container = document.getElementById('familyshop-list-view');
-            container.innerHTML = familyShopData.map(item => `
-                <div class="shopping-item">
-                    <div class="shop-left">
-                        <input type="checkbox">
-                        <span class="shop-text">${item.text}</span>
-                    </div>
-                    <span class="assign-tag ${item.color}">${item.who}</span>
-                </div>
-            `).join('');
-        }
-
-        function syncMealsToTodo() {
-            mealsData.forEach(m => {
-                todosData.push({ text: `Cook ${m.meal} (${m.day})`, who: "Family", color: "bg-family" });
-            });
-            renderTodos();
-            alert('Meals successfully synced to To-Do List!');
-        }
-
-        function updateChoreScore(checkbox) {
-            const cards = document.querySelectorAll('.kid-card');
-            cards.forEach(card => {
-                const checkedCount = card.querySelectorAll('input[type="checkbox"]:checked').length;
-                card.querySelector('.kid-score').textContent = `£${(checkedCount * 1.00).toFixed(2)} earned`;
-            });
-        }
-
-        function renderWishlist() {
-            const container = document.getElementById('wishlist-view');
-            container.innerHTML = wishlistData.map(w => `
-                <div class="wishlist-item">
-                    <span>🎁 <strong>${w.title}</strong></span>
-                    <span style="color:var(--muted); font-size:0.75rem;">${w.note}</span>
-                </div>
-            `).join('');
-        }
-
-        function addItem(e) {
-            e.preventDefault();
-            const title = document.getElementById('add-title').value;
-            const category = document.getElementById('add-category').value;
-            const dateStr = document.getElementById('add-date').value;
-            const assignee = document.getElementById('add-assignee').value;
-            const postcode = document.getElementById('add-postcode').value.trim();
-            const mealDay = document.getElementById('add-mealday').value;
-            const colorClass = `bg-${assignee}`;
-
-            if (category === 'calendar' || dateStr && category === 'calendar') {
-                if (!events[dateStr]) events[dateStr] = [];
-                events[dateStr].push({ title, color: colorClass, time: "All Day", who: assignee });
-                renderCalendar();
-            } else if (category === 'cinema' || category === 'home') {
-                categoriesData[category].push({ title, details: "Newly Added", meta: "Custom" });
-                const activeTab = document.querySelector('.cat-tab.active');
-                if (activeTab) switchCategory(category, activeTab);
-            } else if (category === 'places' || category === 'restaurants') {
-                const finalPostcode = postcode ? postcode.toUpperCase() : "LS1 1AA";
-                categoriesData[category].push({ title, details: "Custom Destination", postcode: finalPostcode, dist: "12 miles" });
-                const postcodeInp = document.getElementById('add-postcode');
-                if (postcodeInp) postcodeInp.value = '';
-                const activeTab = document.querySelector('.cat-tab.active');
-                if (activeTab) switchCategory(category, activeTab);
-            } else if (category === 'meal') {
-                const found = mealsData.find(m => m.day === mealDay);
-                if (found) found.meal = title;
-                renderMeals();
-            } else if (category === 'foodshop') {
-                foodShopData.push({ text: title, who: assignee, color: colorClass });
-                renderFoodShop();
-            } else if (category === 'familyshop') {
-                familyShopData.push({ text: title, who: assignee, color: colorClass });
-                renderFamilyShop();
-            } else if (category === 'chore') {
-                const kidCard = document.querySelector(`.kid-card[data-kid="${assignee.toLowerCase() === 'leo' ? 'Leo' : 'Mia'}"]`) || document.querySelector('.kid-card');
-                if (kidCard) {
-                    const list = kidCard.querySelector('.kid-chores-list');
-                    const newLabel = document.createElement('label');
-                    newLabel.className = 'chore-item';
-                    newLabel.innerHTML = `<input type="checkbox" onchange="updateChoreScore(this)"> ${title}`;
-                    list.appendChild(newLabel);
-                }
-            } else if (category === 'wishlist') {
-                wishlistData.push({ title, note: `Added by ${assignee}` });
-                renderWishlist();
-            } else if (category === 'todo') {
-                todosData.push({ text: title, who: assignee, color: colorClass });
-                renderTodos();
-            }
-
-            document.getElementById('add-title').value = '';
-            alert('Successfully added to Family Plan!');
-        }
-
-        function focusMap(title, postcode) {
-            activeMapQuery = title + " " + postcode;
-            const iframe = document.getElementById('interactive-map-frame');
-            if (iframe) {
-                iframe.src = `https://maps.google.com/maps?q=${encodeURIComponent(activeMapQuery)}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
-            }
-        }
-
-        function switchCategory(cat, btn) {
-            document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
-            if (btn) btn.classList.add('active');
-
-            const container = document.getElementById('dynamic-list-view');
-            const items = categoriesData[cat];
-
-            if (cat === 'places' || cat === 'restaurants') {
-                let dotsHtml = categoriesData[cat].map((p, idx) => `
-                    <div class="map-dot-pill" onclick="focusMap('${p.title}', '${p.postcode}')">
-                        <span class="map-dot-badge">${idx + 1}</span>
-                        <span>${p.title.split(' ')[0]}</span>
-                    </div>
-                `).join('');
-
-                container.innerHTML = `
-                    <div class="home-banner">
-                        <span>🏠 Home Location: <strong>${homePostcode}</strong></span>
-                        <span style="color:var(--accent);">Live Routing Active</span>
-                    </div>
-                    <div class="map-embed-box">
-                        <iframe id="interactive-map-frame" src="https://maps.google.com/maps?q=${encodeURIComponent(activeMapQuery)}&t=&z=6&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>
-                        <div class="map-dots-bar">
-                            ${dotsHtml}
-                        </div>
-                    </div>
-                ` + categoriesData[cat].map((item, idx) => `
-                    <div class="list-card" onclick="focusMap('${item.title}', '${item.postcode}')">
-                        <div class="list-info">
-                            <h5>📍 ${idx + 1}. ${item.title}</h5>
-                            <span>${item.details} • <strong>${item.postcode}</strong> (${item.dist} from home)</span>
-                        </div>
-                        <a href="https://maps.google.com/?saddr=${homePostcode}&daddr=${encodeURIComponent(item.title + ' ' + item.postcode)}" target="_blank" class="map-btn" onclick="event.stopPropagation()">Directions ↗</a>
-                    </div>
-                `).join('');
-            } else {
-                container.innerHTML = items.map(item => `
-                    <div class="list-card" style="cursor: default;">
-                        <div class="list-info">
-                            <h5>${cat === 'cinema' ? '🍿' : '📺'} ${item.title}</h5>
-                            <span>${item.details}</span>
-                        </div>
-                        <span style="font-size:0.7rem; color:var(--muted);">${item.meta}</span>
-                    </div>
-                `).join('');
-            }
-        }
-
-        function renderTodos() {
-            const container = document.getElementById('todo-list-view');
-            if (!container) return;
-            container.innerHTML = todosData.map(t => `
-                <div class="todo-item">
-                    <div class="todo-left">
-                        <input type="checkbox">
-                        <span class="todo-text">${t.text}</span>
-                    </div>
-                    <span class="assign-tag ${t.color}">${t.who}</span>
-                </div>
-            `).join('');
-        }
-
-        function navigateCalendar(direction) {
-            if (currentRange === 'week') {
-                currentStartDate.setDate(currentStartDate.getDate() + (direction * 7));
-            } else {
-                currentMonth += direction;
-                if (currentMonth > 11) {
-                    currentMonth = 0;
-                    currentYear++;
-                } else if (currentMonth < 0) {
-                    currentMonth = 11;
-                    currentYear--;
-                }
-                currentStartDate = new Date(currentYear, currentMonth, 1);
-            }
-            renderCalendar();
-        }
-
-        function renderCalendar() {
-            const grid = document.getElementById('calendar-grid');
-            if (!grid) return;
-            grid.innerHTML = `
+            </div>
+            <div class="calendar-grid" id="calendar-grid">
                 <div class="day-header">Mon</div>
                 <div class="day-header">Tue</div>
                 <div class="day-header">Wed</div>
@@ -1518,216 +515,304 @@
                 <div class="day-header">Fri</div>
                 <div class="day-header">Sat</div>
                 <div class="day-header">Sun</div>
-            `;
+            </div>
+        </section>
+    </div>
 
-            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            const subTitle = document.getElementById('calendar-date-subtitle');
-            const titleLbl = document.getElementById('calendar-title-label');
+    <!-- VIEW 3: Weekly Meal Planner -->
+    <div id="view-meals" class="view">
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title">🍽️ Weekly Meal Planner</div>
+            </div>
+            <div id="meal-list-container" class="list-container"></div>
+        </section>
+    </div>
 
-            if (currentRange === 'week') {
-                if (titleLbl) titleLbl.textContent = 'Shared Calendar (This Week)';
-                
-                let d = new Date(currentStartDate);
-                let day = d.getDay();
-                let diff = d.getDate() - day + (day === 0 ? -6 : 1);
-                let monday = new Date(d.setDate(diff));
+    <!-- VIEW 4: Food Shopping List -->
+    <div id="view-foodshop" class="view">
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title">🛒 Food Shopping List</div>
+            </div>
+            <div id="foodshop-list-container" class="list-container"></div>
+        </section>
+    </div>
 
-                let sunday = new Date(monday);
-                sunday.setDate(monday.getDate() + 6);
+    <!-- VIEW 5: Family Shopping List -->
+    <div id="view-familyshop" class="view">
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title">🛍️ Family Shopping List</div>
+            </div>
+            <div id="familyshop-list-container" class="list-container"></div>
+        </section>
+    </div>
 
-                if (subTitle) {
-                    subTitle.textContent = `${monday.getDate()} ${monthNames[monday.getMonth()]} – ${sunday.getDate()} ${monthNames[sunday.getMonth()]}`;
-                }
+    <!-- VIEW 6: Destinations -->
+    <div id="view-destinations" class="view">
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title">📍 Entertainment & Destinations</div>
+            </div>
+            <div id="destinations-list-container" class="list-container"></div>
+        </section>
+    </div>
 
-                for (let i = 0; i < 7; i++) {
-                    let loopDate = new Date(monday);
-                    loopDate.setDate(monday.getDate() + i);
-                    renderDayCellByDate(loopDate);
-                }
+    <!-- VIEW 7: Kids' Chores -->
+    <div id="view-chores" class="view">
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title">⭐ Kids' Chores & Allowance</div>
+            </div>
+            <div id="chores-list-container" class="chores-grid"></div>
+        </section>
+    </div>
 
-            } else {
-                if (titleLbl) titleLbl.textContent = 'Shared Calendar (Full Month)';
-                if (subTitle) subTitle.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+    <!-- VIEW 8: Gift Wishlist -->
+    <div id="view-wishlist" class="view">
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title">🎁 Gift Wishlist</div>
+            </div>
+            <div id="wishlist-container" class="list-container"></div>
+        </section>
+    </div>
 
-                const firstDay = new Date(currentYear, currentMonth, 1);
-                let startDay = firstDay.getDay() - 1;
-                if (startDay === -1) startDay = 6;
+    <!-- VIEW 9: To-Do List -->
+    <div id="view-todo" class="view">
+        <section class="card">
+            <div class="card-header">
+                <div class="card-title">📝 To-Do List</div>
+            </div>
+            <div id="todo-list-container" class="list-container"></div>
+        </section>
+    </div>
 
-                const totalDays = new Date(currentYear, currentMonth + 1, 0).getDate();
+    <!-- Fixed Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="showView('home', this)">
+            <span class="nav-icon">➕</span>
+            <span>Add</span>
+        </button>
+        <button class="nav-item" onclick="showView('calendar', this)">
+            <span class="nav-icon">📅</span>
+            <span>Calendar</span>
+        </button>
+        <button class="nav-item" onclick="showView('meals', this)">
+            <span class="nav-icon">🍽️</span>
+            <span>Meals</span>
+        </button>
+        <button class="nav-item" onclick="showView('foodshop', this)">
+            <span class="nav-icon">🛒</span>
+            <span>Food</span>
+        </button>
+        <button class="nav-item" onclick="showView('familyshop', this)">
+            <span class="nav-icon">🛍️</span>
+            <span>Family</span>
+        </button>
+        <button class="nav-item" onclick="showView('destinations', this)">
+            <span class="nav-icon">📍</span>
+            <span>Places</span>
+        </button>
+        <button class="nav-item" onclick="showView('chores', this)">
+            <span class="nav-icon">⭐</span>
+            <span>Chores</span>
+        </button>
+        <button class="nav-item" onclick="showView('wishlist', this)">
+            <span class="nav-icon">🎁</span>
+            <span>Wishlist</span>
+        </button>
+        <button class="nav-item" onclick="showView('todo', this)">
+            <span class="nav-icon">📝</span>
+            <span>To-Do</span>
+        </button>
+    </nav>
 
-                for (let empty = 0; empty < startDay; empty++) {
-                    const emptyCell = document.createElement('div');
-                    emptyCell.className = 'day-cell empty';
-                    grid.appendChild(emptyCell);
-                }
+    <script>
+        // Data Structures initialized empty
+        let mealsData = [
+            { day: "Mon", meal: "" },
+            { day: "Tue", meal: "" },
+            { day: "Wed", meal: "" },
+            { day: "Thu", meal: "" },
+            { day: "Fri", meal: "" },
+            { day: "Sat", meal: "" },
+            { day: "Sun", meal: "" }
+        ];
+        let foodShopData = [];
+        let familyShopData = [];
+        let destinationsData = [];
+        let choresData = [
+            { kid: "Leo", chores: [] },
+            { kid: "Mia", chores: [] }
+        ];
+        let wishlistData = [];
+        let todosData = [];
+        let calendarEvents = {};
 
-                for (let i = 1; i <= totalDays; i++) {
-                    let loopDate = new Date(currentYear, currentMonth, i);
-                    renderDayCellByDate(loopDate);
-                }
+        function showView(viewId, navBtn) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+            
+            const selectedView = document.getElementById(`view-${viewId}`);
+            if (selectedView) {
+                selectedView.classList.add('active');
+            }
+            if (navBtn) {
+                navBtn.classList.add('active');
+            }
+            window.scrollTo(0, 0);
+        }
+
+        function handleLogout() {
+            if (confirm("Are you sure you want to log out?")) {
+                alert("Logged out successfully.");
             }
         }
 
-        function renderDayCellByDate(dateObj) {
-            const year = dateObj.getFullYear();
-            const month = dateObj.getMonth();
-            const dayNum = dateObj.getDate();
+        function renderMeals() {
+            const container = document.getElementById('meal-list-container');
+            container.innerHTML = mealsData.map((m, idx) => `
+                <div class="meal-card-row">
+                    <div class="meal-day-name">${m.day}</div>
+                    <input type="text" class="meal-input-inline" placeholder="Enter meal..." value="${m.meal}" onchange="mealsData[${idx}].meal = this.value">
+                </div>
+            `).join('');
+        }
 
-            const mStr = (month + 1) < 10 ? '0' + (month + 1) : (month + 1);
-            const dStr = dayNum < 10 ? '0' + dayNum : dayNum;
-            const dayKey = `${year}-${mStr}-${dStr}`;
-
-            const cell = document.createElement('div');
-            cell.className = 'day-cell';
-            cell.tabIndex = 0;
-            cell.setAttribute('role', 'button');
-            cell.setAttribute('aria-label', `Show activities for ${dayKey}`);
-
-            let html = `<div class="day-num">${dayNum}</div>`;
-            if (events[dayKey]) {
-                events[dayKey].forEach(e => {
-                    html += `<div class="event-pill ${e.color}">${e.title}</div>`;
-                });
+        function renderFoodShop() {
+            const container = document.getElementById('foodshop-list-container');
+            if (foodShopData.length === 0) {
+                container.innerHTML = `<div class="list-empty">No items on food list.</div>`;
+                return;
             }
-            cell.innerHTML = html;
-
-            cell.addEventListener('mouseenter', (ev) => {
-                const tooltip = document.getElementById('hover-tooltip');
-                const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                document.getElementById('tt-date').textContent = `${monthNames[month]} ${dayNum}, ${year}`;
-                const dayEvs = events[dayKey];
-                if (dayEvs && dayEvs.length) {
-                    document.getElementById('tt-body').innerHTML = dayEvs.map(e => `
-                        <div class="tooltip-line">
-                            <span class="dot ${e.color}"></span>
-                            <strong>${e.who}:</strong> ${e.title} (${e.time})
-                        </div>
-                    `).join('');
-                } else {
-                    document.getElementById('tt-body').innerHTML = `<span style="color:var(--muted); font-size:0.75rem;">No activities</span>`;
-                }
-                tooltip.style.display = 'block';
-                tooltip.style.left = (ev.pageX + 10) + 'px';
-                tooltip.style.top = (ev.pageY + 10) + 'px';
-            });
-
-            cell.addEventListener('mousemove', (ev) => {
-                const tooltip = document.getElementById('hover-tooltip');
-                tooltip.style.left = (ev.pageX + 10) + 'px';
-                tooltip.style.top = (ev.pageY + 10) + 'px';
-            });
-
-            cell.addEventListener('mouseleave', () => {
-                document.getElementById('hover-tooltip').style.display = 'none';
-            });
-            const showDayDetails = () => {
-                document.querySelectorAll('.day-cell.selected').forEach(el => el.classList.remove('selected'));
-                cell.classList.add('selected');
-                const panel = document.getElementById('calendar-day-details');
-                const dayEvs = events[dayKey] || [];
-                const dateLabel = new Date(year, month, dayNum).toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-                panel.innerHTML = `<strong>${dateLabel}</strong>` + (dayEvs.length
-                    ? dayEvs.map(e => `<span>• ${e.time} — ${e.who}: ${e.title}</span>`).join('')
-                    : '<span>No activities planned. Add something using Quick Add.</span>');
-            };
-            cell.addEventListener('click', showDayDetails);
-            cell.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showDayDetails(); } });
-
-            document.getElementById('calendar-grid').appendChild(cell);
+            container.innerHTML = foodShopData.map((item, idx) => `
+                <div class="shopping-item">
+                    <div class="shop-left">
+                        <input type="checkbox">
+                        <span>${item.text}</span>
+                    </div>
+                    <span class="assign-tag bg-${item.who}">${item.who}</span>
+                </div>
+            `).join('');
         }
 
-        function setSummaryRange(mode) {
-            currentRange = mode;
-            document.getElementById('btn-week').classList.toggle('active', mode === 'week');
-            document.getElementById('btn-month').classList.toggle('active', mode === 'month');
+        function renderFamilyShop() {
+            const container = document.getElementById('familyshop-list-container');
+            if (familyShopData.length === 0) {
+                container.innerHTML = `<div class="list-empty">No items on family list.</div>`;
+                return;
+            }
+            container.innerHTML = familyShopData.map((item, idx) => `
+                <div class="shopping-item">
+                    <div class="shop-left">
+                        <input type="checkbox">
+                        <span>${item.text}</span>
+                    </div>
+                    <span class="assign-tag bg-${item.who}">${item.who}</span>
+                </div>
+            `).join('');
+        }
 
-            if (mode === 'week') {
-                document.getElementById('summary-title-text').textContent = 'Upcoming Summary (This Week)';
-                document.getElementById('num-events').textContent = '3';
-                document.getElementById('num-tasks').textContent = todosData.length;
-                document.getElementById('num-trips').textContent = '1';
-                document.getElementById('summary-desc').textContent = 'Week ahead: 3 scheduled activities including Football Training and Family Movie Night.';
-            } else {
-                document.getElementById('summary-title-text').textContent = 'Upcoming Summary (This Month)';
-                document.getElementById('num-events').textContent = '12';
-                document.getElementById('num-tasks').textContent = todosData.length;
-                document.getElementById('num-trips').textContent = '3';
-                document.getElementById('summary-desc').textContent = 'Month ahead: 12 events scheduled including Half-Term trip to Yorkshire and 3 family days out.';
+        function renderDestinations() {
+            const container = document.getElementById('destinations-list-container');
+            if (destinationsData.length === 0) {
+                container.innerHTML = `<div class="list-empty">No destinations added yet.</div>`;
+                return;
+            }
+            container.innerHTML = destinationsData.map(item => `
+                <div class="list-card">
+                    <div>
+                        <strong>${item.title}</strong>
+                    </div>
+                    <span class="assign-tag bg-${item.who}">${item.who}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderChores() {
+            const container = document.getElementById('chores-list-container');
+            container.innerHTML = choresData.map(k => `
+                <div class="kid-card">
+                    <div style="font-weight: 800; margin-bottom: 8px;">${k.kid}</div>
+                    <div class="list-container">
+                        ${k.chores.length === 0 ? '<span style="font-size:0.8rem; color:var(--muted);">No chores assigned</span>' : ''}
+                        ${k.chores.map(c => `<label><input type="checkbox"> ${c}</label>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderWishlist() {
+            const container = document.getElementById('wishlist-container');
+            if (wishlistData.length === 0) {
+                container.innerHTML = `<div class="list-empty">Wishlist is currently empty.</div>`;
+                return;
+            }
+            container.innerHTML = wishlistData.map(w => `
+                <div class="wishlist-item">
+                    <span>🎁 ${w.title}</span>
+                    <span class="assign-tag bg-${w.who}">${w.who}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderTodos() {
+            const container = document.getElementById('todo-list-container');
+            if (todosData.length === 0) {
+                container.innerHTML = `<div class="list-empty">No to-do tasks remaining.</div>`;
+                return;
+            }
+            container.innerHTML = todosData.map(t => `
+                <div class="todo-item">
+                    <div class="todo-left">
+                        <input type="checkbox">
+                        <span>${t.text}</span>
+                    </div>
+                    <span class="assign-tag bg-${t.who}">${t.who}</span>
+                </div>
+            `).join('');
+        }
+
+        function handleQuickAdd(e) {
+            e.preventDefault();
+            const title = document.getElementById('add-title').value;
+            const category = document.getElementById('add-category').value;
+            const assignee = document.getElementById('add-assignee').value;
+
+            if (category === 'foodshop') {
+                foodShopData.push({ text: title, who: assignee });
+                renderFoodShop();
+            } else if (category === 'familyshop') {
+                familyShopData.push({ text: title, who: assignee });
+                renderFamilyShop();
+            } else if (category === 'destinations') {
+                destinationsData.push({ title: title, who: assignee });
+                renderDestinations();
+            } else if (category === 'wishlist') {
+                wishlistData.push({ title: title, who: assignee });
+                renderWishlist();
+            } else if (category === 'todo') {
+                todosData.push({ text: title, who: assignee });
+                renderTodos();
+            } else if (category === 'chores') {
+                const target = choresData.find(c => c.kid.toLowerCase() === assignee.toLowerCase()) || choresData[0];
+                target.chores.push(title);
+                renderChores();
             }
 
-            renderCalendar();
+            document.getElementById('add-title').value = '';
+            alert('Item added successfully!');
         }
 
-        // Use today's local date as the default for new items.
-        const dateInput = document.getElementById('add-date');
-        if (dateInput) {
-            const now = new Date();
-            dateInput.value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-        }
-
-        // Make long, secondary areas collapsible so the page is easier to scan.
-        function setupCollapsibleSections() {
-            const sectionIds = [
-                'sec-meals', 'sec-foodshop', 'sec-familyshop', 'sec-destinations',
-                'sec-chores', 'sec-wishlist', 'sec-contacts', 'sec-todo'
-            ];
-            // Changed to include all section IDs so they open by default
-            const initiallyOpen = new Set(sectionIds); 
-
-            sectionIds.forEach(id => {
-                const section = document.getElementById(id);
-                if (!section) return;
-                const header = section.querySelector('.card-header');
-                if (!header || section.querySelector('.section-toggle')) return;
-
-                const content = document.createElement('div');
-                content.className = 'collapsible-content';
-                content.id = `${id}-content`;
-                while (header.nextSibling) content.appendChild(header.nextSibling);
-                section.appendChild(content);
-
-                const toggle = document.createElement('button');
-                toggle.type = 'button';
-                toggle.className = 'section-toggle';
-                toggle.setAttribute('aria-controls', content.id);
-                toggle.innerHTML = '<span class="toggle-label"></span><span class="chevron" aria-hidden="true">⌄</span>';
-                header.appendChild(toggle);
-
-                const open = initiallyOpen.has(id);
-                content.hidden = !open;
-                toggle.setAttribute('aria-expanded', String(open));
-                toggle.querySelector('.toggle-label').textContent = open ? 'Hide' : 'Show';
-                toggle.addEventListener('click', () => setSectionExpanded(section, !content.hidden));
-            });
-
-            // Jump links should open a collapsed destination before scrolling to it.
-            document.querySelectorAll('.jump-nav-bar a[href^="#"]').forEach(link => {
-                link.addEventListener('click', () => {
-                    const target = document.querySelector(link.getAttribute('href'));
-                    if (target) setSectionExpanded(target, true);
-                });
-            });
-        }
-
-        function setSectionExpanded(section, expanded) {
-            const content = section.querySelector('.collapsible-content');
-            const toggle = section.querySelector('.section-toggle');
-            if (!content || !toggle) return;
-            content.hidden = !expanded;
-            toggle.setAttribute('aria-expanded', String(expanded));
-            const label = toggle.querySelector('.toggle-label');
-            if (label) label.textContent = expanded ? 'Hide' : 'Show';
-        }
-
-        setupCollapsibleSections();
-
-        // Initial Renders
+        // Initialize UI View States
         renderMeals();
         renderFoodShop();
         renderFamilyShop();
+        renderDestinations();
+        renderChores();
         renderWishlist();
-        renderCalendar();
-        switchCategory('places', document.querySelectorAll('.cat-tab')[2]);
         renderTodos();
     </script>
 </body>
