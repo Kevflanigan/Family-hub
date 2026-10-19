@@ -381,48 +381,10 @@
             font-weight: 600;
         }
 
-        /* Category Tabs */
-        .category-tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 0.85rem;
-            overflow-x: auto;
-        }
-
-        .cat-tab {
-            background: #fff;
-            border: 1px solid var(--border);
-            color: var(--muted);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-
-        .cat-tab.active {
-            background: #eeeaff;
-            color: #5144b7;
-            border-color: #d5ceff;
-        }
-
         .chores-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 10px;
-        }
-
-        .contacts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 10px;
-        }
-
-        input[type="checkbox"] {
-            accent-color: var(--accent);
-            width: 17px;
-            height: 17px;
         }
     </style>
 </head>
@@ -466,7 +428,7 @@
             <form class="add-form" onsubmit="handleQuickAdd(event)">
                 <input type="text" id="add-title" class="form-input input-full" placeholder="Enter title / item / meal..." required>
                 <div class="form-row">
-                    <select id="add-category" class="form-select input-half">
+                    <select id="add-category" class="form-select input-half" onchange="handleCategoryChange(this.value)">
                         <option value="calendar">Calendar Event</option>
                         <option value="meals">Weekly Meal</option>
                         <option value="foodshop">Food Shopping</option>
@@ -483,6 +445,9 @@
                         <option value="leo">Leo</option>
                         <option value="mia">Mia</option>
                     </select>
+                </div>
+                <div class="form-row" id="date-row">
+                    <input type="date" id="add-date" class="form-input input-full">
                 </div>
                 <button type="submit" class="add-btn">Add to Plan</button>
             </form>
@@ -630,7 +595,9 @@
     </nav>
 
     <script>
-        // Data Structures initialized empty
+        let currentMonth = 9; // October
+        let currentYear = 2026;
+        
         let mealsData = [
             { day: "Mon", meal: "" },
             { day: "Tue", meal: "" },
@@ -665,10 +632,75 @@
             window.scrollTo(0, 0);
         }
 
+        function handleCategoryChange(val) {
+            const dateRow = document.getElementById('date-row');
+            if (dateRow) {
+                dateRow.style.display = (val === 'calendar') ? 'flex' : 'none';
+            }
+        }
+
         function handleLogout() {
             if (confirm("Are you sure you want to log out?")) {
                 alert("Logged out successfully.");
             }
+        }
+
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            document.getElementById('calendar-month-label').textContent = `${monthNames[currentMonth]} ${currentYear}`;
+
+            let html = `
+                <div class="day-header">Mon</div>
+                <div class="day-header">Tue</div>
+                <div class="day-header">Wed</div>
+                <div class="day-header">Thu</div>
+                <div class="day-header">Fri</div>
+                <div class="day-header">Sat</div>
+                <div class="day-header">Sun</div>
+            `;
+
+            const firstDay = new Date(currentYear, currentMonth, 1);
+            let startDay = firstDay.getDay() - 1;
+            if (startDay === -1) startDay = 6;
+            const totalDays = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+            for (let i = 0; i < startDay; i++) {
+                html += `<div class="day-cell" style="background:transparent; border:none;"></div>`;
+            }
+
+            for (let i = 1; i <= totalDays; i++) {
+                const mStr = String(currentMonth + 1).padStart(2, '0');
+                const dStr = String(i).padStart(2, '0');
+                const dateKey = `${currentYear}-${mStr}-${dStr}`;
+                
+                let eventsHtml = '';
+                if (calendarEvents[dateKey]) {
+                    calendarEvents[dateKey].forEach(ev => {
+                        eventsHtml += `<div class="event-pill bg-${ev.who}">${ev.title}</div>`;
+                    });
+                }
+
+                html += `
+                    <div class="day-cell">
+                        <div class="day-num">${i}</div>
+                        ${eventsHtml}
+                    </div>
+                `;
+            }
+            grid.innerHTML = html;
+        }
+
+        function navigateCalendar(direction) {
+            currentMonth += direction;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            } else if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendar();
         }
 
         function renderMeals() {
@@ -687,7 +719,7 @@
                 container.innerHTML = `<div class="list-empty">No items on food list.</div>`;
                 return;
             }
-            container.innerHTML = foodShopData.map((item, idx) => `
+            container.innerHTML = foodShopData.map(item => `
                 <div class="shopping-item">
                     <div class="shop-left">
                         <input type="checkbox">
@@ -704,7 +736,7 @@
                 container.innerHTML = `<div class="list-empty">No items on family list.</div>`;
                 return;
             }
-            container.innerHTML = familyShopData.map((item, idx) => `
+            container.innerHTML = familyShopData.map(item => `
                 <div class="shopping-item">
                     <div class="shop-left">
                         <input type="checkbox">
@@ -723,9 +755,7 @@
             }
             container.innerHTML = destinationsData.map(item => `
                 <div class="list-card">
-                    <div>
-                        <strong>${item.title}</strong>
-                    </div>
+                    <div><strong>${item.title}</strong></div>
                     <span class="assign-tag bg-${item.who}">${item.who}</span>
                 </div>
             `).join('');
@@ -734,7 +764,7 @@
         function renderChores() {
             const container = document.getElementById('chores-list-container');
             container.innerHTML = choresData.map(k => `
-                <div class="kid-card">
+                <div class="card" style="margin-bottom:0;">
                     <div style="font-weight: 800; margin-bottom: 8px;">${k.kid}</div>
                     <div class="list-container">
                         ${k.chores.length === 0 ? '<span style="font-size:0.8rem; color:var(--muted);">No chores assigned</span>' : ''}
@@ -780,8 +810,17 @@
             const title = document.getElementById('add-title').value;
             const category = document.getElementById('add-category').value;
             const assignee = document.getElementById('add-assignee').value;
+            const dateVal = document.getElementById('add-date').value;
 
-            if (category === 'foodshop') {
+            if (category === 'calendar') {
+                if (!dateVal) {
+                    alert('Please select a date for the calendar event.');
+                    return;
+                }
+                if (!calendarEvents[dateVal]) calendarEvents[dateVal] = [];
+                calendarEvents[dateVal].push({ title: title, who: assignee });
+                renderCalendar();
+            } else if (category === 'foodshop') {
                 foodShopData.push({ text: title, who: assignee });
                 renderFoodShop();
             } else if (category === 'familyshop') {
@@ -803,10 +842,18 @@
             }
 
             document.getElementById('add-title').value = '';
+            document.getElementById('add-date').value = '';
             alert('Item added successfully!');
         }
 
+        // Set default date input value to today
+        const todayStr = new Date().toISOString().split('T')[0];
+        const dateInp = document.getElementById('add-date');
+        if (dateInp) dateInp.value = todayStr;
+
         // Initialize UI View States
+        handleCategoryChange('calendar');
+        renderCalendar();
         renderMeals();
         renderFoodShop();
         renderFamilyShop();
