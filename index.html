@@ -918,12 +918,24 @@
             renderWatchlist();
         }
 
-        function cycleTodoAssignee(index) {
-            const currentWho = todosData[index].who || 'family';
-            const nextIdx = (assignees.indexOf(currentWho) + 1) % assignees.length;
-            todosData[index].who = assignees[nextIdx];
+        function cycleAssignee(type, index) {
+            if (type === 'foodshop') {
+                const currentWho = foodShopData[index].who || 'family';
+                const nextIdx = (assignees.indexOf(currentWho) + 1) % assignees.length;
+                foodShopData[index].who = assignees[nextIdx];
+                renderFoodShop();
+            } else if (type === 'familyshop') {
+                const currentWho = familyShopData[index].who || 'family';
+                const nextIdx = (assignees.indexOf(currentWho) + 1) % assignees.length;
+                familyShopData[index].who = assignees[nextIdx];
+                renderFamilyShop();
+            } else if (type === 'todo') {
+                const currentWho = todosData[index].who || 'family';
+                const nextIdx = (assignees.indexOf(currentWho) + 1) % assignees.length;
+                todosData[index].who = assignees[nextIdx];
+                renderTodos();
+            }
             saveData();
-            renderTodos();
         }
 
         function renderFoodShop() {
@@ -938,7 +950,7 @@
                         <input type="checkbox">
                         <span>${item.text}</span>
                     </div>
-                    <span class="assign-tag bg-${item.who}">${item.who}</span>
+                    <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('foodshop', ${idx})" title="Click to change assignee">${item.who}</span>
                     <button class="delete-btn" onclick="deleteItem('foodshop', ${idx})">✕</button>
                 </div>
             `).join('');
@@ -956,7 +968,7 @@
                         <input type="checkbox">
                         <span>${item.text}</span>
                     </div>
-                    <span class="assign-tag bg-${item.who}">${item.who}</span>
+                    <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('familyshop', ${idx})" title="Click to change assignee">${item.who}</span>
                     <button class="delete-btn" onclick="deleteItem('familyshop', ${idx})">✕</button>
                 </div>
             `).join('');
@@ -1093,7 +1105,7 @@
                         <input type="checkbox">
                         <span>${t.text}</span>
                     </div>
-                    <span class="assign-tag bg-${t.who}" onclick="cycleTodoAssignee(${idx})" title="Click to change assignee">${t.who}</span>
+                    <span class="assign-tag bg-${t.who}" onclick="cycleAssignee('todo', ${idx})" title="Click to change assignee">${t.who}</span>
                     <button class="delete-btn" onclick="deleteItem('todo', ${idx})">✕</button>
                 </div>
             `).join('');
