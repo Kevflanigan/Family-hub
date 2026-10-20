@@ -37,6 +37,7 @@
             padding-bottom: 75px;
             min-height: 100vh;
             line-height: 1.45;
+            overflow-x: hidden;
         }
 
         /* Fixed Header */
@@ -97,6 +98,7 @@
         /* Views management */
         .view {
             display: none;
+            width: 100%;
             max-width: 800px;
             margin: 0 auto;
             padding: 1rem;
@@ -172,6 +174,7 @@
             padding: clamp(1rem, 2.3vw, 1.35rem);
             box-shadow: var(--shadow-soft);
             margin-bottom: 1rem;
+            width: 100%;
         }
 
         .card-header {
@@ -214,6 +217,7 @@
             font-size: 0.88rem;
             border-radius: 10px;
             outline: none;
+            width: 100%;
         }
 
         .form-input:focus, .form-select:focus {
@@ -235,6 +239,7 @@
             font-size: 0.88rem;
             cursor: pointer;
             white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .add-btn:hover, .inline-add-btn:hover { background: #5948d0; }
@@ -243,6 +248,7 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+            width: 100%;
         }
 
         .list-empty {
@@ -266,6 +272,7 @@
             justify-content: space-between;
             gap: 8px;
             margin-bottom: 6px;
+            width: 100%;
         }
 
         .shopping-item.completed span, .todo-item.completed span {
@@ -279,12 +286,14 @@
             align-items: center;
             gap: 10px;
             flex: 1;
+            min-width: 0;
         }
 
         .item-text-label {
             font-size: 0.88rem;
             font-weight: 500;
             flex: 1;
+            word-break: break-word;
         }
 
         .edit-inline-input {
@@ -304,6 +313,7 @@
             font-size: 0.85rem;
             padding: 4px 6px;
             border-radius: 6px;
+            flex-shrink: 0;
         }
 
         .action-btn:hover {
@@ -335,8 +345,16 @@
         .bg-family { background-color: var(--family); }
 
         .meal-card-row { margin-bottom: 6px; }
-        .meal-day-name { font-size: 0.95rem; font-weight: 800; color: #5144b7; width: 50px; }
+        .meal-day-name { font-size: 0.95rem; font-weight: 800; color: #5144b7; width: 50px; flex-shrink: 0; }
         .meal-input-inline { background: transparent; border: none; border-bottom: 1px dashed var(--border); font-size: 0.88rem; width: 100%; outline: none; }
+
+        /* Kids Chores Grid Responsive Fix */
+        .chores-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 12px;
+            width: 100%;
+        }
 
         /* Calendar */
         .calendar-nav { display: flex; align-items: center; gap: 8px; }
@@ -454,15 +472,24 @@
         </section>
     </div>
 
-    <!-- VIEW 5: Cinema & Home Watchlist -->
+    <!-- VIEW 5: Watchlist (Split into Cinema & Home Watchlists) -->
     <div id="view-watchlist" class="view">
-        <section class="card">
-            <div class="card-header"><div class="card-title">🍿 Cinema & Home Watchlist</div></div>
+        <section class="card" style="margin-bottom:1rem;">
+            <div class="card-header"><div class="card-title">🎬 Cinema Watchlist</div></div>
             <div class="inline-add-group">
-                <input type="text" id="watchlist-quick-input" class="form-input input-full" placeholder="Add movie or show..." onkeypress="if(event.key==='Enter') addWatchlistItem()">
-                <button class="inline-add-btn" onclick="addWatchlistItem()">+ Add</button>
+                <input type="text" id="cinema-quick-input" class="form-input input-full" placeholder="Add movie for cinema..." onkeypress="if(event.key==='Enter') addWatchlistItem('cinema')">
+                <button class="inline-add-btn" onclick="addWatchlistItem('cinema')">+ Add</button>
             </div>
-            <div id="watchlist-list-container" class="list-container"></div>
+            <div id="cinema-list-container" class="list-container"></div>
+        </section>
+
+        <section class="card">
+            <div class="card-header"><div class="card-title">📺 Home Watchlist</div></div>
+            <div class="inline-add-group">
+                <input type="text" id="home-quick-input" class="form-input input-full" placeholder="Add TV show or stream..." onkeypress="if(event.key==='Enter') addWatchlistItem('home')">
+                <button class="inline-add-btn" onclick="addWatchlistItem('home')">+ Add</button>
+            </div>
+            <div id="home-list-container" class="list-container"></div>
         </section>
     </div>
 
@@ -479,7 +506,7 @@
 
         <section class="card">
             <div class="card-header"><div class="card-title">⭐ Kids' Chores</div></div>
-            <div id="chores-list-container" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
+            <div id="chores-list-container" class="chores-grid"></div>
         </section>
 
         <section class="card">
@@ -679,13 +706,14 @@
         }
 
         function cycleAssignee(type, index) {
-            let data = type === 'foodshop' ? foodShopData : (type === 'familyshop' ? familyShopData : (type === 'wishlist' ? wishlistData : (type === 'watchlist' ? destinationsData.cinema : todosData)));
+            let data = type === 'foodshop' ? foodShopData : (type === 'familyshop' ? familyShopData : (type === 'wishlist' ? wishlistData : (type === 'cinema' ? destinationsData.cinema : (type === 'home' ? destinationsData.home : todosData))));
+            if (!data) return;
             const currentWho = data[index].who || 'family';
             data[index].who = assignees[(assignees.indexOf(currentWho) + 1) % assignees.length];
             saveData();
             if (type === 'todo') renderTodos();
             else if (type === 'wishlist') renderWishlist();
-            else if (type === 'watchlist') renderWatchlist();
+            else if (type === 'cinema' || type === 'home') renderWatchlist();
             else renderShopping();
         }
 
@@ -795,24 +823,38 @@
             `).join('');
         }
 
-        /* WATCHLIST */
-        function addWatchlistItem() {
-            const input = document.getElementById('watchlist-quick-input');
+        /* SEPARATE CINEMA & HOME WATCHLISTS */
+        function addWatchlistItem(type) {
+            const inputId = type === 'cinema' ? 'cinema-quick-input' : 'home-quick-input';
+            const input = document.getElementById(inputId);
             if (!input || !input.value.trim()) return;
-            destinationsData.cinema.push({ title: input.value.trim(), who: 'family' });
+            if (!destinationsData[type]) destinationsData[type] = [];
+            destinationsData[type].push({ title: input.value.trim(), who: 'family' });
             input.value = '';
             saveData();
             renderWatchlist();
         }
 
         function renderWatchlist() {
-            const list = destinationsData.cinema || [];
-            document.getElementById('watchlist-list-container').innerHTML = list.length === 0 ? `<div class="list-empty">Watchlist is empty.</div>` : list.map((item, idx) => `
+            const cinemaList = destinationsData.cinema || [];
+            const homeList = destinationsData.home || [];
+
+            document.getElementById('cinema-list-container').innerHTML = cinemaList.length === 0 ? `<div class="list-empty">Cinema watchlist empty.</div>` : cinemaList.map((item, idx) => `
                 <div class="list-card">
                     <span class="item-text-label">🎬 ${item.title}</span>
                     <div style="display:flex; align-items:center; gap:8px;">
-                        <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('watchlist', ${idx})">${item.who}</span>
+                        <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('cinema', ${idx})">${item.who}</span>
                         <button class="action-btn delete-btn" onclick="destinationsData.cinema.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('home-list-container').innerHTML = homeList.length === 0 ? `<div class="list-empty">Home watchlist empty.</div>` : homeList.map((item, idx) => `
+                <div class="list-card">
+                    <span class="item-text-label">📺 ${item.title}</span>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('home', ${idx})">${item.who}</span>
+                        <button class="action-btn delete-btn" onclick="destinationsData.home.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
                     </div>
                 </div>
             `).join('');
@@ -851,7 +893,10 @@
             } else if (category === 'foodshop') foodShopData.push({ text: title, who: assignee, done: false, isEditing: false });
             else if (category === 'familyshop') familyShopData.push({ text: title, who: assignee, done: false, isEditing: false });
             else if (['places','restaurants'].includes(category)) destinationsData[category].push({ title, who: assignee, postcode });
-            else if (['cinema','home'].includes(category)) destinationsData.cinema.push({ title, who: assignee });
+            else if (['cinema','home'].includes(category)) {
+                if (!destinationsData[category]) destinationsData[category] = [];
+                destinationsData[category].push({ title, who: assignee });
+            }
             else if (category === 'todo') todosData.push({ text: title, who: assignee, done: false, isEditing: false });
             else if (category === 'wishlist') wishlistData.push({ title, who: assignee });
             else if (category === 'chores') {
