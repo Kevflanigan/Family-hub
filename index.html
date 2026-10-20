@@ -83,17 +83,6 @@
             gap: 8px;
         }
 
-        .more-menu-btn {
-            background: #f0edff;
-            border: 1px solid #dcd5ff;
-            color: var(--accent);
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
         .logout-btn {
             background: #fff;
             border: 1px solid var(--border);
@@ -123,7 +112,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Clean 5-Core Bottom Navigation Bar */
+        /* Bottom Navigation Bar */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -136,8 +125,13 @@
             display: flex;
             align-items: center;
             justify-content: space-around;
-            padding: 0 0.5rem;
+            padding: 0 0.25rem;
             z-index: 1000;
+            overflow-x: auto;
+        }
+
+        .bottom-nav::-webkit-scrollbar {
+            display: none;
         }
 
         .nav-item {
@@ -148,14 +142,16 @@
             background: none;
             border: none;
             color: var(--muted);
-            padding: 6px;
-            font-size: 0.7rem;
+            padding: 6px 4px;
+            font-size: 0.65rem;
             font-weight: 600;
             cursor: pointer;
             border-radius: 8px;
             flex: 1;
+            min-width: 52px;
             gap: 2px;
             transition: color 0.15s ease;
+            flex-shrink: 0;
         }
 
         .nav-item.active {
@@ -164,11 +160,11 @@
         }
 
         .nav-icon {
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             line-height: 1;
         }
 
-        /* Cards & Forms */
+        /* Cards & Inputs */
         .card {
             background: rgba(255,255,255,.96);
             border: 1px solid var(--border);
@@ -202,6 +198,13 @@
             flex-wrap: wrap;
         }
 
+        .inline-add-group {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
         .form-input, .form-select {
             background: #fff;
             border: 1px solid #dcdfe6;
@@ -213,20 +216,28 @@
             outline: none;
         }
 
+        .form-input:focus, .form-select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(109,92,232,.12);
+        }
+
         .input-full { flex: 1 1 100%; }
         .input-half { flex: 1 1 48%; }
 
-        .add-btn {
+        .add-btn, .inline-add-btn {
             background: var(--accent);
             color: #fff;
             border: none;
             min-height: 42px;
-            padding: 10px 18px;
+            padding: 10px 16px;
             border-radius: 10px;
             font-weight: 700;
             font-size: 0.88rem;
             cursor: pointer;
+            white-space: nowrap;
         }
+
+        .add-btn:hover, .inline-add-btn:hover { background: #5948d0; }
 
         .list-container {
             display: flex;
@@ -242,19 +253,25 @@
             border: 1px dashed var(--border);
             border-radius: 12px;
             background: #faf9ff;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
 
-        .todo-item, .shopping-item, .meal-card-row, .wishlist-item, .list-card {
+        .todo-item, .shopping-item, .meal-card-row, .wishlist-item, .list-card, .chore-item-row {
             background: #fff;
             border: 1px solid #e8e5df;
             border-radius: 11px;
-            padding: 12px;
+            padding: 8px 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 8px;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .shopping-item.completed span, .todo-item.completed span {
+            text-decoration: line-through;
+            color: var(--muted);
+            opacity: 0.7;
         }
 
         .shop-left, .todo-left {
@@ -264,13 +281,39 @@
             flex: 1;
         }
 
-        .delete-btn {
+        .item-text-label {
+            font-size: 0.88rem;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .edit-inline-input {
+            font-size: 0.88rem;
+            padding: 4px 8px;
+            border: 1px solid var(--accent);
+            border-radius: 6px;
+            outline: none;
+            width: 100%;
+        }
+
+        .action-btn {
             background: transparent;
             border: none;
             color: var(--muted);
             cursor: pointer;
             font-size: 0.85rem;
-            padding: 4px 8px;
+            padding: 4px 6px;
+            border-radius: 6px;
+        }
+
+        .action-btn:hover {
+            color: var(--text);
+            background: #f0f0f5;
+        }
+
+        .delete-btn:hover {
+            color: #ef4444;
+            background: #fef2f2;
         }
 
         .assign-tag {
@@ -281,6 +324,8 @@
             color: #fff;
             text-transform: uppercase;
             cursor: pointer;
+            user-select: none;
+            flex-shrink: 0;
         }
 
         .bg-mom { background-color: var(--mom); }
@@ -301,40 +346,6 @@
         .day-cell { background: #fff; border: 1px solid #e8e5df; border-radius: 8px; min-height: 75px; padding: 6px; cursor: pointer; }
         .day-num { font-size: 0.75rem; font-weight: 600; color: #505868; }
         .event-pill { margin-top: 3px; padding: 2px 4px; border-radius: 4px; font-size: 0.62rem; color: #fff; font-weight: 600; }
-
-        /* Modal Overlay for More Menu */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.4);
-            backdrop-filter: blur(4px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            padding: 1rem;
-        }
-        .modal-overlay.open { display: flex; }
-        .modal-card {
-            background: #fff;
-            width: 100%;
-            max-width: 400px;
-            border-radius: 16px;
-            padding: 1.5rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        .modal-item {
-            padding: 12px;
-            border-bottom: 1px solid var(--border);
-            font-weight: 700;
-            font-size: 0.95rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--text);
-        }
-        .modal-item:hover { background: #faf9ff; color: var(--accent); }
     </style>
 </head>
 <body>
@@ -348,22 +359,9 @@
             <span class="brand-text">Familiplan</span>
         </div>
         <div class="header-actions">
-            <button class="more-menu-btn" onclick="toggleMoreMenu(true)">☰ More</button>
             <button class="logout-btn" onclick="alert('Logged out')">Log Out</button>
         </div>
     </header>
-
-    <!-- MORE MENU MODAL (For less frequent views like Meals & Watchlist) -->
-    <div id="more-modal" class="modal-overlay" onclick="if(event.target===this) toggleMoreMenu(false)">
-        <div class="modal-card">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-                <h3 style="font-weight:800;">More Sections</h3>
-                <button onclick="toggleMoreMenu(false)" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
-            </div>
-            <div class="modal-item" onclick="openMoreSection('meals')">🍽️ Weekly Meal Planner</div>
-            <div class="modal-item" onclick="openMoreSection('watchlist')">🍿 Cinema & Home Watchlist</div>
-        </div>
-    </div>
 
     <!-- VIEW 1: Quick Add -->
     <div id="view-home" class="view active">
@@ -418,25 +416,33 @@
         </section>
     </div>
 
-    <!-- VIEW 3: Shopping -->
+    <!-- VIEW 3: Shopping (With Meal Planner) -->
     <div id="view-shopping" class="view">
         <section class="card" style="margin-bottom:1rem;">
+            <div class="card-header"><div class="card-title">🍽️ Weekly Meal Planner</div></div>
+            <div id="meal-list-container" class="list-container"></div>
+        </section>
+
+        <section class="card" style="margin-bottom:1rem;">
             <div class="card-header"><div class="card-title">🛒 Food Shopping List</div></div>
-            <div class="form-row" style="margin-bottom: 10px;">
+            <div class="inline-add-group">
                 <input type="text" id="foodshop-quick-input" class="form-input input-full" placeholder="Add food item..." onkeypress="if(event.key==='Enter') addInlineShop('foodshop')">
+                <button class="inline-add-btn" onclick="addInlineShop('foodshop')">+ Add</button>
             </div>
             <div id="foodshop-list-container" class="list-container"></div>
         </section>
+
         <section class="card">
             <div class="card-header"><div class="card-title">🛍️ Family Shopping List</div></div>
-            <div class="form-row" style="margin-bottom: 10px;">
-                <input type="text" id="familyshop-quick-input" class="form-input input-full" placeholder="Add family shopping item..." onkeypress="if(event.key==='Enter') addInlineShop('familyshop')">
+            <div class="inline-add-group">
+                <input type="text" id="familyshop-quick-input" class="form-input input-full" placeholder="Add family item..." onkeypress="if(event.key==='Enter') addInlineShop('familyshop')">
+                <button class="inline-add-btn" onclick="addInlineShop('familyshop')">+ Add</button>
             </div>
             <div id="familyshop-list-container" class="list-container"></div>
         </section>
     </div>
 
-    <!-- VIEW 4: Places & Restaurants (Bottom Tab) -->
+    <!-- VIEW 4: Places & Restaurants -->
     <div id="view-places" class="view">
         <section class="card" style="margin-bottom:1rem;">
             <div class="card-header"><div class="card-title">📍 Places to Visit</div></div>
@@ -448,12 +454,25 @@
         </section>
     </div>
 
-    <!-- VIEW 5: To-Do & Tasks Hub (Includes Chores & Wishlist) -->
+    <!-- VIEW 5: Cinema & Home Watchlist -->
+    <div id="view-watchlist" class="view">
+        <section class="card">
+            <div class="card-header"><div class="card-title">🍿 Cinema & Home Watchlist</div></div>
+            <div class="inline-add-group">
+                <input type="text" id="watchlist-quick-input" class="form-input input-full" placeholder="Add movie or show..." onkeypress="if(event.key==='Enter') addWatchlistItem()">
+                <button class="inline-add-btn" onclick="addWatchlistItem()">+ Add</button>
+            </div>
+            <div id="watchlist-list-container" class="list-container"></div>
+        </section>
+    </div>
+
+    <!-- VIEW 6: To-Do & Tasks Hub -->
     <div id="view-todo" class="view">
         <section class="card">
             <div class="card-header"><div class="card-title">📝 To-Do List</div></div>
-            <div class="form-row" style="margin-bottom: 12px;">
+            <div class="inline-add-group">
                 <input type="text" id="todo-quick-input" class="form-input input-full" placeholder="Add new task..." onkeypress="if(event.key==='Enter') addTodoItem()">
+                <button class="inline-add-btn" onclick="addTodoItem()">+ Add</button>
             </div>
             <div id="todo-list-container" class="list-container"></div>
         </section>
@@ -465,26 +484,15 @@
 
         <section class="card">
             <div class="card-header"><div class="card-title">🎁 Gift Wishlist</div></div>
+            <div class="inline-add-group">
+                <input type="text" id="wishlist-quick-input" class="form-input input-full" placeholder="Add wishlist item..." onkeypress="if(event.key==='Enter') addWishlistItem()">
+                <button class="inline-add-btn" onclick="addWishlistItem()">+ Add</button>
+            </div>
             <div id="wishlist-list-container" class="list-container"></div>
         </section>
     </div>
 
-    <!-- EXTRA POPUP VIEWS (Triggered via More Menu) -->
-    <div id="view-meals" class="view">
-        <section class="card">
-            <div class="card-header"><div class="card-title">🍽️ Weekly Meal Planner</div></div>
-            <div id="meal-list-container" class="list-container"></div>
-        </section>
-    </div>
-
-    <div id="view-watchlist" class="view">
-        <section class="card">
-            <div class="card-header"><div class="card-title">🍿 Cinema & Home Watchlist</div></div>
-            <div id="watchlist-list-container" class="list-container"></div>
-        </section>
-    </div>
-
-    <!-- Clean 5-Core Bottom Navigation Bar -->
+    <!-- Bottom Navigation Bar -->
     <nav class="bottom-nav">
         <button id="nav-btn-home" class="nav-item active" onclick="showView('home', this)">
             <span class="nav-icon">➕</span>
@@ -501,6 +509,10 @@
         <button id="nav-btn-places" class="nav-item" onclick="showView('places', this)">
             <span class="nav-icon">📍</span>
             <span>Places</span>
+        </button>
+        <button id="nav-btn-watchlist" class="nav-item" onclick="showView('watchlist', this)">
+            <span class="nav-icon">🎬</span>
+            <span>Watchlist</span>
         </button>
         <button id="nav-btn-todo" class="nav-item" onclick="showView('todo', this)">
             <span class="nav-icon">📝</span>
@@ -542,15 +554,6 @@
             document.getElementById(`view-${viewId}`).classList.add('active');
             if (navBtn) navBtn.classList.add('active');
             window.scrollTo(0, 0);
-        }
-
-        function toggleMoreMenu(open) {
-            document.getElementById('more-modal').classList.toggle('open', open);
-        }
-
-        function openMoreSection(sectionId) {
-            toggleMoreMenu(false);
-            showView(sectionId, null);
         }
 
         function handleCategoryChange(val) {
@@ -607,13 +610,35 @@
             `).join('');
         }
 
+        /* SHOPPING */
         function addInlineShop(type) {
             const inputId = type === 'foodshop' ? 'foodshop-quick-input' : 'familyshop-quick-input';
             const input = document.getElementById(inputId);
             if (!input || !input.value.trim()) return;
             const target = type === 'foodshop' ? foodShopData : familyShopData;
-            target.push({ text: input.value.trim(), who: 'family' });
+            target.push({ text: input.value.trim(), who: 'family', done: false, isEditing: false });
             input.value = '';
+            saveData();
+            renderShopping();
+        }
+
+        function toggleShopCheck(type, idx) {
+            const target = type === 'foodshop' ? foodShopData : familyShopData;
+            target[idx].done = !target[idx].done;
+            saveData();
+            renderShopping();
+        }
+
+        function enableShopEdit(type, idx) {
+            const target = type === 'foodshop' ? foodShopData : familyShopData;
+            target[idx].isEditing = true;
+            renderShopping();
+        }
+
+        function saveShopEdit(type, idx, newText) {
+            const target = type === 'foodshop' ? foodShopData : familyShopData;
+            if (newText.trim()) target[idx].text = newText.trim();
+            target[idx].isEditing = false;
             saveData();
             renderShopping();
         }
@@ -623,54 +648,181 @@
             const famCont = document.getElementById('familyshop-list-container');
 
             foodCont.innerHTML = foodShopData.length === 0 ? `<div class="list-empty">Food list empty.</div>` : foodShopData.map((item, idx) => `
-                <div class="shopping-item">
-                    <div class="shop-left"><input type="checkbox"><span>${item.text}</span></div>
+                <div class="shopping-item ${item.done ? 'completed' : ''}">
+                    <div class="shop-left">
+                        <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleShopCheck('foodshop', ${idx})">
+                        ${item.isEditing ? 
+                            `<input type="text" class="edit-inline-input" value="${item.text}" onkeypress="if(event.key==='Enter') saveShopEdit('foodshop', ${idx}, this.value)" onblur="saveShopEdit('foodshop', ${idx}, this.value)" autofocus>` : 
+                            `<span class="item-text-label">${item.text}</span>`
+                        }
+                    </div>
+                    <button class="action-btn" onclick="enableShopEdit('foodshop', ${idx})">✏️</button>
                     <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('foodshop', ${idx})">${item.who}</span>
-                    <button class="delete-btn" onclick="foodShopData.splice(${idx},1); saveData(); renderShopping();">✕</button>
+                    <button class="action-btn delete-btn" onclick="foodShopData.splice(${idx},1); saveData(); renderShopping();">✕</button>
                 </div>
             `).join('');
 
             famCont.innerHTML = familyShopData.length === 0 ? `<div class="list-empty">Family list empty.</div>` : familyShopData.map((item, idx) => `
-                <div class="shopping-item">
-                    <div class="shop-left"><input type="checkbox"><span>${item.text}</span></div>
+                <div class="shopping-item ${item.done ? 'completed' : ''}">
+                    <div class="shop-left">
+                        <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleShopCheck('familyshop', ${idx})">
+                        ${item.isEditing ? 
+                            `<input type="text" class="edit-inline-input" value="${item.text}" onkeypress="if(event.key==='Enter') saveShopEdit('familyshop', ${idx}, this.value)" onblur="saveShopEdit('familyshop', ${idx}, this.value)" autofocus>` : 
+                            `<span class="item-text-label">${item.text}</span>`
+                        }
+                    </div>
+                    <button class="action-btn" onclick="enableShopEdit('familyshop', ${idx})">✏️</button>
                     <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('familyshop', ${idx})">${item.who}</span>
-                    <button class="delete-btn" onclick="familyShopData.splice(${idx},1); saveData(); renderShopping();">✕</button>
+                    <button class="action-btn delete-btn" onclick="familyShopData.splice(${idx},1); saveData(); renderShopping();">✕</button>
                 </div>
             `).join('');
         }
 
         function cycleAssignee(type, index) {
-            let data = type === 'foodshop' ? foodShopData : (type === 'familyshop' ? familyShopData : todosData);
+            let data = type === 'foodshop' ? foodShopData : (type === 'familyshop' ? familyShopData : (type === 'wishlist' ? wishlistData : (type === 'watchlist' ? destinationsData.cinema : todosData)));
             const currentWho = data[index].who || 'family';
             data[index].who = assignees[(assignees.indexOf(currentWho) + 1) % assignees.length];
             saveData();
-            if (type === 'todo') renderTodos(); else renderShopping();
+            if (type === 'todo') renderTodos();
+            else if (type === 'wishlist') renderWishlist();
+            else if (type === 'watchlist') renderWatchlist();
+            else renderShopping();
+        }
+
+        /* TO-DO */
+        function addTodoItem() {
+            const input = document.getElementById('todo-quick-input');
+            if (!input || !input.value.trim()) return;
+            todosData.push({ text: input.value.trim(), who: 'family', done: false, isEditing: false });
+            input.value = '';
+            saveData();
+            renderTodos();
+        }
+
+        function toggleTodoCheck(idx) {
+            todosData[idx].done = !todosData[idx].done;
+            saveData();
+            renderTodos();
+        }
+
+        function enableTodoEdit(idx) {
+            todosData[idx].isEditing = true;
+            renderTodos();
+        }
+
+        function saveTodoEdit(idx, newText) {
+            if (newText.trim()) todosData[idx].text = newText.trim();
+            todosData[idx].isEditing = false;
+            saveData();
+            renderTodos();
         }
 
         function renderTodos() {
             document.getElementById('todo-list-container').innerHTML = todosData.length === 0 ? `<div class="list-empty">No tasks remaining.</div>` : todosData.map((t, idx) => `
-                <div class="todo-item">
-                    <div class="todo-left"><input type="checkbox"><span>${t.text}</span></div>
+                <div class="todo-item ${t.done ? 'completed' : ''}">
+                    <div class="todo-left">
+                        <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodoCheck(${idx})">
+                        ${t.isEditing ? 
+                            `<input type="text" class="edit-inline-input" value="${t.text}" onkeypress="if(event.key==='Enter') saveTodoEdit(${idx}, this.value)" onblur="saveTodoEdit(${idx}, this.value)" autofocus>` : 
+                            `<span class="item-text-label">${t.text}</span>`
+                        }
+                    </div>
+                    <button class="action-btn" onclick="enableTodoEdit(${idx})">✏️</button>
                     <span class="assign-tag bg-${t.who}" onclick="cycleAssignee('todo', ${idx})">${t.who}</span>
-                    <button class="delete-btn" onclick="todosData.splice(${idx},1); saveData(); renderTodos();">✕</button>
+                    <button class="action-btn delete-btn" onclick="todosData.splice(${idx},1); saveData(); renderTodos();">✕</button>
                 </div>
             `).join('');
         }
 
-        function addTodoItem() {
-            const input = document.getElementById('todo-quick-input');
+        /* CHORES */
+        function addKidChore(kidIndex) {
+            const input = document.getElementById(`chore-input-${kidIndex}`);
             if (!input || !input.value.trim()) return;
-            todosData.push({ text: input.value.trim(), who: 'family' });
+            choresData[kidIndex].chores.push({ text: input.value.trim(), done: false });
             input.value = '';
             saveData();
-            renderTodos();
+            renderChores();
+        }
+
+        function deleteKidChore(kidIndex, choreIndex) {
+            choresData[kidIndex].chores.splice(choreIndex, 1);
+            saveData();
+            renderChores();
+        }
+
+        function renderChores() {
+            document.getElementById('chores-list-container').innerHTML = choresData.map((k, kIdx) => `
+                <div class="card" style="margin-bottom:0; padding:12px;">
+                    <div style="font-weight:800; margin-bottom:8px;">${k.kid}</div>
+                    <div class="inline-add-group" style="margin-bottom:8px;">
+                        <input type="text" id="chore-input-${kIdx}" class="form-input input-full" placeholder="Add chore..." style="min-height:34px; font-size:0.8rem;" onkeypress="if(event.key==='Enter') addKidChore(${kIdx})">
+                        <button class="inline-add-btn" onclick="addKidChore(${kIdx})" style="min-height:34px; padding:4px 10px; font-size:0.78rem;">+</button>
+                    </div>
+                    <div class="list-container">
+                        ${k.chores.length === 0 ? '<span style="font-size:0.8rem; color:var(--muted);">No chores</span>' : k.chores.map((c, cIdx) => {
+                            const choreText = typeof c === 'string' ? c : c.text;
+                            return `
+                                <div class="chore-item-row" style="padding:6px 8px; font-size:0.82rem;">
+                                    <label style="display:flex; align-items:center; gap:6px;"><input type="checkbox"> ${choreText}</label>
+                                    <button class="action-btn delete-btn" onclick="deleteKidChore(${kIdx},${cIdx})" style="padding:0 4px;">✕</button>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* WISHLIST */
+        function addWishlistItem() {
+            const input = document.getElementById('wishlist-quick-input');
+            if (!input || !input.value.trim()) return;
+            wishlistData.push({ title: input.value.trim(), who: 'family' });
+            input.value = '';
+            saveData();
+            renderWishlist();
+        }
+
+        function renderWishlist() {
+            document.getElementById('wishlist-list-container').innerHTML = wishlistData.length === 0 ? `<div class="list-empty">Wishlist is empty.</div>` : wishlistData.map((w, idx) => `
+                <div class="wishlist-item">
+                    <span class="item-text-label">🎁 ${w.title}</span>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span class="assign-tag bg-${w.who}" onclick="cycleAssignee('wishlist', ${idx})">${w.who}</span>
+                        <button class="action-btn delete-btn" onclick="wishlistData.splice(${idx},1); saveData(); renderWishlist();">✕</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* WATCHLIST */
+        function addWatchlistItem() {
+            const input = document.getElementById('watchlist-quick-input');
+            if (!input || !input.value.trim()) return;
+            destinationsData.cinema.push({ title: input.value.trim(), who: 'family' });
+            input.value = '';
+            saveData();
+            renderWatchlist();
+        }
+
+        function renderWatchlist() {
+            const list = destinationsData.cinema || [];
+            document.getElementById('watchlist-list-container').innerHTML = list.length === 0 ? `<div class="list-empty">Watchlist is empty.</div>` : list.map((item, idx) => `
+                <div class="list-card">
+                    <span class="item-text-label">🎬 ${item.title}</span>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('watchlist', ${idx})">${item.who}</span>
+                        <button class="action-btn delete-btn" onclick="destinationsData.cinema.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
+                    </div>
+                </div>
+            `).join('');
         }
 
         function renderPlaces() {
             document.getElementById('places-list-container').innerHTML = destinationsData.places.length === 0 ? `<div class="list-empty">No places added.</div>` : destinationsData.places.map((item, idx) => `
                 <div class="list-card">
                     <div><h5>📍 ${item.title}</h5><span style="font-size:0.75rem; color:var(--muted);">${item.postcode || ''}</span></div>
-                    <span class="assign-tag bg-${item.who}">${item.who}</span>
+                    <button class="action-btn delete-btn" onclick="destinationsData.places.splice(${idx},1); saveData(); renderPlaces();">✕</button>
                 </div>
             `).join('');
         }
@@ -679,33 +831,7 @@
             document.getElementById('restaurants-list-container').innerHTML = destinationsData.restaurants.length === 0 ? `<div class="list-empty">No restaurants added.</div>` : destinationsData.restaurants.map((item, idx) => `
                 <div class="list-card">
                     <div><h5>🍽️ ${item.title}</h5><span style="font-size:0.75rem; color:var(--muted);">${item.postcode || ''}</span></div>
-                    <span class="assign-tag bg-${item.who}">${item.who}</span>
-                </div>
-            `).join('');
-        }
-
-        function renderWatchlist() {
-            const allWatch = [...destinationsData.cinema, ...destinationsData.home];
-            document.getElementById('watchlist-list-container').innerHTML = allWatch.length === 0 ? `<div class="list-empty">Watchlist is empty.</div>` : allWatch.map((item, idx) => `
-                <div class="list-card">
-                    <div><h5>🎬 ${item.title}</h5></div>
-                    <span class="assign-tag bg-${item.who}">${item.who}</span>
-                </div>
-            `).join('');
-        }
-
-        function renderChores() {
-            document.getElementById('chores-list-container').innerHTML = choresData.map(k => `
-                <div class="card" style="margin-bottom:0;"><div style="font-weight:800; margin-bottom:8px;">${k.kid}</div>
-                ${k.chores.length === 0 ? '<span style="font-size:0.8rem; color:var(--muted);">No chores</span>' : k.chores.map(c => `<label><input type="checkbox"> ${c}</label>`).join('')}</div>
-            `).join('');
-        }
-
-        function renderWishlist() {
-            document.getElementById('wishlist-list-container').innerHTML = wishlistData.length === 0 ? `<div class="list-empty">Wishlist is empty.</div>` : wishlistData.map((w, idx) => `
-                <div class="wishlist-item">
-                    <span>🎁 ${w.title}</span>
-                    <span class="assign-tag bg-${w.who}">${w.who}</span>
+                    <button class="action-btn delete-btn" onclick="destinationsData.restaurants.splice(${idx},1); saveData(); renderRestaurants();">✕</button>
                 </div>
             `).join('');
         }
@@ -722,14 +848,15 @@
                 if (!calendarEvents[dateVal]) calendarEvents[dateVal] = [];
                 calendarEvents[dateVal].push({ title, who: assignee });
                 renderCalendar();
-            } else if (category === 'foodshop') foodShopData.push({ text: title, who: assignee });
-            else if (category === 'familyshop') familyShopData.push({ text: title, who: assignee });
-            else if (['places','restaurants','cinema','home'].includes(category)) destinationsData[category].push({ title, who: assignee, postcode });
-            else if (category === 'todo') todosData.push({ text: title, who: assignee });
-            else if (category === 'wishlist') wishlistData.push({ text: title, who: assignee });
+            } else if (category === 'foodshop') foodShopData.push({ text: title, who: assignee, done: false, isEditing: false });
+            else if (category === 'familyshop') familyShopData.push({ text: title, who: assignee, done: false, isEditing: false });
+            else if (['places','restaurants'].includes(category)) destinationsData[category].push({ title, who: assignee, postcode });
+            else if (['cinema','home'].includes(category)) destinationsData.cinema.push({ title, who: assignee });
+            else if (category === 'todo') todosData.push({ text: title, who: assignee, done: false, isEditing: false });
+            else if (category === 'wishlist') wishlistData.push({ title, who: assignee });
             else if (category === 'chores') {
                 const target = choresData.find(c => c.kid.toLowerCase() === assignee.toLowerCase()) || choresData[0];
-                target.chores.push(title);
+                target.chores.push({ text: title, done: false });
                 renderChores();
             } else if (category === 'meals') {
                 const emptyMeal = mealsData.find(m => !m.meal);
