@@ -732,7 +732,7 @@
 
         let currentUser = localStorage.getItem('fam_user') || 'dad';
         let currentUserName = localStorage.getItem('fam_user_name') || 'Dad';
-        let viewMode = 'family';
+        let viewMode = localStorage.getItem('fam_view_mode') || 'family';
         let activePlacesTab = 'places';
 
         let mealsData = JSON.parse(localStorage.getItem('fam_meals')) || [
@@ -773,6 +773,7 @@
             localStorage.setItem('fam_calendar', JSON.stringify(calendarEvents));
             localStorage.setItem('fam_user', currentUser);
             localStorage.setItem('fam_user_name', currentUserName);
+            localStorage.setItem('fam_view_mode', viewMode);
         }
 
         /* USER PROFILE & VIEW MODE MANAGEMENT */
@@ -799,7 +800,8 @@
         }
 
         function filterItem(itemWho) {
-            return true;
+            if (viewMode === 'family') return true;
+            return itemWho === currentUser || itemWho === 'family';
         }
 
         function showView(viewId, navBtn) {
@@ -840,7 +842,7 @@
                 const dateKey = `${currentYear}-${mStr}-${dStr}`;
                 let eventsHtml = '';
                 if (calendarEvents[dateKey]) {
-                    calendarEvents[dateKey].forEach(ev => eventsHtml += `<div class="event-pill bg-${ev.who}">${ev.title}</div>`);
+                    calendarEvents[dateKey].filter(ev => filterItem(ev.who)).forEach(ev => eventsHtml += `<div class="event-pill bg-${ev.who}">${ev.title}</div>`);
                 }
                 html += `<div class="day-cell" onclick="jumpToAddEvent('${dateKey}')"><div class="day-num">${i}</div>${eventsHtml}</div>`;
             }
@@ -908,35 +910,43 @@
             const foodCont = document.getElementById('foodshop-list-container');
             const famCont = document.getElementById('familyshop-list-container');
 
-            foodCont.innerHTML = foodShopData.length === 0 ? `<div class="list-empty">Food list empty.</div>` : foodShopData.map((item, idx) => `
-                <div class="shopping-item ${item.done ? 'completed' : ''}">
-                    <div class="shop-left">
-                        <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleShopCheck('foodshop', ${idx})">
-                        ${item.isEditing ? 
-                            `<input type="text" class="edit-inline-input" value="${item.text}" onkeypress="if(event.key==='Enter') saveShopEdit('foodshop', ${idx}, this.value)" onblur="saveShopEdit('foodshop', ${idx}, this.value)" autofocus>` : 
-                            `<span class="item-text-label">${item.text}</span>`
-                        }
+            const filteredFood = foodShopData.filter(item => filterItem(item.who));
+            foodCont.innerHTML = filteredFood.length === 0 ? `<div class="list-empty">Food list empty.</div>` : foodShopData.map((item, idx) => {
+                if (!filterItem(item.who)) return '';
+                return `
+                    <div class="shopping-item ${item.done ? 'completed' : ''}">
+                        <div class="shop-left">
+                            <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleShopCheck('foodshop', ${idx})">
+                            ${item.isEditing ? 
+                                `<input type="text" class="edit-inline-input" value="${item.text}" onkeypress="if(event.key==='Enter') saveShopEdit('foodshop', ${idx}, this.value)" onblur="saveShopEdit('foodshop', ${idx}, this.value)" autofocus>` : 
+                                `<span class="item-text-label">${item.text}</span>`
+                            }
+                        </div>
+                        <button class="action-btn" onclick="enableShopEdit('foodshop', ${idx})">✏️</button>
+                        <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('foodshop', ${idx})">${item.who}</span>
+                        <button class="action-btn delete-btn" onclick="foodShopData.splice(${idx},1); saveData(); renderShopping();">✕</button>
                     </div>
-                    <button class="action-btn" onclick="enableShopEdit('foodshop', ${idx})">✏️</button>
-                    <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('foodshop', ${idx})">${item.who}</span>
-                    <button class="action-btn delete-btn" onclick="foodShopData.splice(${idx},1); saveData(); renderShopping();">✕</button>
-                </div>
-            `).join('');
+                `;
+            }).join('');
 
-            famCont.innerHTML = familyShopData.length === 0 ? `<div class="list-empty">Family list empty.</div>` : familyShopData.map((item, idx) => `
-                <div class="shopping-item ${item.done ? 'completed' : ''}">
-                    <div class="shop-left">
-                        <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleShopCheck('familyshop', ${idx})">
-                        ${item.isEditing ? 
-                            `<input type="text" class="edit-inline-input" value="${item.text}" onkeypress="if(event.key==='Enter') saveShopEdit('familyshop', ${idx}, this.value)" onblur="saveShopEdit('familyshop', ${idx}, this.value)" autofocus>` : 
-                            `<span class="item-text-label">${item.text}</span>`
-                        }
+            const filteredFam = familyShopData.filter(item => filterItem(item.who));
+            famCont.innerHTML = filteredFam.length === 0 ? `<div class="list-empty">Family list empty.</div>` : familyShopData.map((item, idx) => {
+                if (!filterItem(item.who)) return '';
+                return `
+                    <div class="shopping-item ${item.done ? 'completed' : ''}">
+                        <div class="shop-left">
+                            <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleShopCheck('familyshop', ${idx})">
+                            ${item.isEditing ? 
+                                `<input type="text" class="edit-inline-input" value="${item.text}" onkeypress="if(event.key==='Enter') saveShopEdit('familyshop', ${idx}, this.value)" onblur="saveShopEdit('familyshop', ${idx}, this.value)" autofocus>` : 
+                                `<span class="item-text-label">${item.text}</span>`
+                            }
+                        </div>
+                        <button class="action-btn" onclick="enableShopEdit('familyshop', ${idx})">✏️</button>
+                        <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('familyshop', ${idx})">${item.who}</span>
+                        <button class="action-btn delete-btn" onclick="familyShopData.splice(${idx},1); saveData(); renderShopping();">✕</button>
                     </div>
-                    <button class="action-btn" onclick="enableShopEdit('familyshop', ${idx})">✏️</button>
-                    <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('familyshop', ${idx})">${item.who}</span>
-                    <button class="action-btn delete-btn" onclick="familyShopData.splice(${idx},1); saveData(); renderShopping();">✕</button>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function cycleAssignee(type, index) {
@@ -978,19 +988,23 @@
         function renderPlacesView() {
             const container = document.getElementById('places-dynamic-list-container');
             const list = destinationsData[activePlacesTab] || [];
+            const filtered = list.filter(item => filterItem(item.who));
 
-            container.innerHTML = list.length === 0 ? `<div class="list-empty">No ${activePlacesTab} added yet.</div>` : list.map((item, idx) => `
-                <div class="list-card">
-                    <div>
-                        <h5>${activePlacesTab === 'places' ? '📍' : '🍽️'} ${item.title}</h5>
-                        ${item.postcode ? `<span style="font-size:0.7rem; color:var(--muted);">${item.postcode}</span>` : ''}
+            container.innerHTML = filtered.length === 0 ? `<div class="list-empty">No ${activePlacesTab} added yet.</div>` : list.map((item, idx) => {
+                if (!filterItem(item.who)) return '';
+                return `
+                    <div class="list-card">
+                        <div>
+                            <h5>${activePlacesTab === 'places' ? '📍' : '🍽️'} ${item.title}</h5>
+                            ${item.postcode ? `<span style="font-size:0.7rem; color:var(--muted);">${item.postcode}</span>` : ''}
+                        </div>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <span class="assign-tag bg-${item.who}">${item.who}</span>
+                            <button class="action-btn delete-btn" onclick="destinationsData['${activePlacesTab}'].splice(${idx},1); saveData(); renderPlacesView();">✕</button>
+                        </div>
                     </div>
-                    <div style="display:flex; align-items:center; gap:6px;">
-                        <span class="assign-tag bg-${item.who}">${item.who}</span>
-                        <button class="action-btn delete-btn" onclick="destinationsData['${activePlacesTab}'].splice(${idx},1); saveData(); renderPlacesView();">✕</button>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
 
             initMap();
         }
@@ -1023,7 +1037,7 @@
             const allLocations = [
                 ...(destinationsData.places || []).map(p => ({ ...p, type: 'place' })),
                 ...(destinationsData.restaurants || []).map(r => ({ ...r, type: 'restaurant' }))
-            ];
+            ].filter(item => filterItem(item.who));
 
             const bounds = [];
 
@@ -1081,20 +1095,24 @@
         }
 
         function renderTodos() {
-            document.getElementById('todo-list-container').innerHTML = todosData.length === 0 ? `<div class="list-empty">No tasks remaining.</div>` : todosData.map((t, idx) => `
-                <div class="todo-item ${t.done ? 'completed' : ''}">
-                    <div class="todo-left">
-                        <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodoCheck(${idx})">
-                        ${t.isEditing ? 
-                            `<input type="text" class="edit-inline-input" value="${t.text}" onkeypress="if(event.key==='Enter') saveTodoEdit(${idx}, this.value)" onblur="saveTodoEdit(${idx}, this.value)" autofocus>` : 
-                            `<span class="item-text-label">${t.text}</span>`
-                        }
+            const filtered = todosData.filter(t => filterItem(t.who));
+            document.getElementById('todo-list-container').innerHTML = filtered.length === 0 ? `<div class="list-empty">No tasks remaining.</div>` : todosData.map((t, idx) => {
+                if (!filterItem(t.who)) return '';
+                return `
+                    <div class="todo-item ${t.done ? 'completed' : ''}">
+                        <div class="todo-left">
+                            <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodoCheck(${idx})">
+                            ${t.isEditing ? 
+                                `<input type="text" class="edit-inline-input" value="${t.text}" onkeypress="if(event.key==='Enter') saveTodoEdit(${idx}, this.value)" onblur="saveTodoEdit(${idx}, this.value)" autofocus>` : 
+                                `<span class="item-text-label">${t.text}</span>`
+                            }
+                        </div>
+                        <button class="action-btn" onclick="enableTodoEdit(${idx})">✏️</button>
+                        <span class="assign-tag bg-${t.who}" onclick="cycleAssignee('todo', ${idx})">${t.who}</span>
+                        <button class="action-btn delete-btn" onclick="todosData.splice(${idx},1); saveData(); renderTodos();">✕</button>
                     </div>
-                    <button class="action-btn" onclick="enableTodoEdit(${idx})">✏️</button>
-                    <span class="assign-tag bg-${t.who}" onclick="cycleAssignee('todo', ${idx})">${t.who}</span>
-                    <button class="action-btn delete-btn" onclick="todosData.splice(${idx},1); saveData(); renderTodos();">✕</button>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         /* CHORES */
@@ -1149,15 +1167,19 @@
         }
 
         function renderWishlist() {
-            document.getElementById('wishlist-list-container').innerHTML = wishlistData.length === 0 ? `<div class="list-empty">Wishlist is empty.</div>` : wishlistData.map((w, idx) => `
-                <div class="wishlist-item">
-                    <span class="item-text-label">🎁 ${w.title}</span>
-                    <div style="display:flex; align-items:center; gap:6px;">
-                        <span class="assign-tag bg-${w.who}" onclick="cycleAssignee('wishlist', ${idx})">${w.who}</span>
-                        <button class="action-btn delete-btn" onclick="wishlistData.splice(${idx},1); saveData(); renderWishlist();">✕</button>
+            const filtered = wishlistData.filter(w => filterItem(w.who));
+            document.getElementById('wishlist-list-container').innerHTML = filtered.length === 0 ? `<div class="list-empty">Wishlist is empty.</div>` : wishlistData.map((w, idx) => {
+                if (!filterItem(w.who)) return '';
+                return `
+                    <div class="wishlist-item">
+                        <span class="item-text-label">🎁 ${w.title}</span>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <span class="assign-tag bg-${w.who}" onclick="cycleAssignee('wishlist', ${idx})">${w.who}</span>
+                            <button class="action-btn delete-btn" onclick="wishlistData.splice(${idx},1); saveData(); renderWishlist();">✕</button>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         /* WATCHLIST */
@@ -1174,25 +1196,34 @@
         }
 
         function renderWatchlist() {
-            document.getElementById('cinema-list-container').innerHTML = (destinationsData.cinema || []).length === 0 ? `<div class="list-empty">Cinema watchlist empty.</div>` : (destinationsData.cinema || []).map((item, idx) => `
-                <div class="list-card">
-                    <span class="item-text-label">🎬 ${item.title}</span>
-                    <div style="display:flex; align-items:center; gap:6px;">
-                        <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('cinema', ${idx})">${item.who}</span>
-                        <button class="action-btn delete-btn" onclick="destinationsData.cinema.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
-                    </div>
-                </div>
-            `).join('');
+            const cinemaList = (destinationsData.cinema || []).filter(item => filterItem(item.who));
+            const homeList = (destinationsData.home || []).filter(item => filterItem(item.who));
 
-            document.getElementById('home-list-container').innerHTML = (destinationsData.home || []).length === 0 ? `<div class="list-empty">Home watchlist empty.</div>` : (destinationsData.home || []).map((item, idx) => `
-                <div class="list-card">
-                    <span class="item-text-label">📺 ${item.title}</span>
-                    <div style="display:flex; align-items:center; gap:6px;">
-                        <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('home', ${idx})">${item.who}</span>
-                        <button class="action-btn delete-btn" onclick="destinationsData.home.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
+            document.getElementById('cinema-list-container').innerHTML = cinemaList.length === 0 ? `<div class="list-empty">Cinema watchlist empty.</div>` : (destinationsData.cinema || []).map((item, idx) => {
+                if (!filterItem(item.who)) return '';
+                return `
+                    <div class="list-card">
+                        <span class="item-text-label">🎬 ${item.title}</span>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('cinema', ${idx})">${item.who}</span>
+                            <button class="action-btn delete-btn" onclick="destinationsData.cinema.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
+
+            document.getElementById('home-list-container').innerHTML = homeList.length === 0 ? `<div class="list-empty">Home watchlist empty.</div>` : (destinationsData.home || []).map((item, idx) => {
+                if (!filterItem(item.who)) return '';
+                return `
+                    <div class="list-card">
+                        <span class="item-text-label">📺 ${item.title}</span>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('home', ${idx})">${item.who}</span>
+                            <button class="action-btn delete-btn" onclick="destinationsData.home.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         function handleQuickAdd(e) {
