@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Familiplan — Family life, organised</title>
+    <!-- Leaflet CSS for Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
             --bg: #f7f5f1;
@@ -33,47 +35,50 @@
               radial-gradient(ellipse at 12% 0%, rgba(109,92,232,.08), transparent 32rem),
               var(--bg);
             color: var(--text);
-            padding-top: 65px;
+            padding-top: 112px;
             padding-bottom: 75px;
             min-height: 100vh;
             line-height: 1.45;
             overflow-x: hidden;
         }
 
-        /* Fixed Header */
-        header {
+        /* Fixed Top Header Container */
+        .top-header-container {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            height: 60px;
-            background: rgba(255, 255, 255, 0.95);
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.96);
             border-bottom: 1px solid var(--border);
             box-shadow: 0 2px 12px rgba(30,35,50,.035);
             backdrop-filter: blur(14px);
+        }
+
+        header {
+            height: 56px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 1rem;
-            z-index: 1000;
         }
 
         .brand {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .brand-logo {
-            width: 32px;
-            height: 32px;
+            width: 30px;
+            height: 30px;
             display: grid;
             place-items: center;
         }
 
         .brand-text {
             font-weight: 800;
-            font-size: 1.12rem;
+            font-size: 1.05rem;
             letter-spacing: -0.5px;
             color: #28253b;
         }
@@ -82,15 +87,106 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            position: relative;
+        }
+
+        .user-selector-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f0edff;
+            border: 1px solid #dcd5ff;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .user-avatar-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .user-dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 42px;
+            right: 0;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 150px;
+            overflow: hidden;
+            z-index: 1001;
+        }
+
+        .user-dropdown-menu.open {
+            display: block;
+        }
+
+        .user-dropdown-item {
+            padding: 10px 12px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            border-bottom: 1px solid #f2eff8;
+        }
+
+        .user-dropdown-item:hover {
+            background: #faf9ff;
+        }
+
+        /* View Toggle Sub-bar */
+        .filter-toggle-bar {
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 1rem 8px 1rem;
+        }
+
+        .segmented-control {
+            display: flex;
+            background: #ede9f5;
+            padding: 3px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 380px;
+        }
+
+        .segmented-btn {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 6px 12px;
+            font-size: 0.76rem;
+            font-weight: 700;
+            color: var(--muted);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .segmented-btn.active {
+            background: #fff;
+            color: var(--accent);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
         }
 
         .logout-btn {
             background: #fff;
             border: 1px solid var(--border);
             color: var(--muted);
-            padding: 6px 10px;
+            padding: 5px 8px;
             border-radius: 8px;
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             font-weight: 700;
             cursor: pointer;
         }
@@ -164,6 +260,47 @@
         .nav-icon {
             font-size: 1.15rem;
             line-height: 1;
+        }
+
+        /* Toast Notification */
+        .toast-notification {
+            position: fixed;
+            bottom: 74px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: #1e293b;
+            color: #ffffff;
+            padding: 10px 18px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 2000;
+            white-space: nowrap;
+        }
+
+        .toast-notification.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast-icon {
+            background: #10b981;
+            color: #fff;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-size: 0.65rem;
+            font-weight: 800;
         }
 
         /* Cards & Inputs */
@@ -348,12 +485,20 @@
         .meal-day-name { font-size: 0.95rem; font-weight: 800; color: #5144b7; width: 50px; flex-shrink: 0; }
         .meal-input-inline { background: transparent; border: none; border-bottom: 1px dashed var(--border); font-size: 0.88rem; width: 100%; outline: none; }
 
-        /* Kids Chores Grid Responsive Fix */
         .chores-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 12px;
             width: 100%;
+        }
+
+        /* Leaflet Map Styling */
+        #places-map {
+            width: 100%;
+            height: 280px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            z-index: 1;
         }
 
         /* Calendar */
@@ -368,18 +513,46 @@
 </head>
 <body>
 
-    <!-- Header -->
-    <header>
-        <div class="brand">
-            <div class="brand-logo">
-                <svg viewBox="0 0 36 36" fill="none"><rect width="36" height="36" rx="10" fill="url(#lg)"/><path d="M18 8L25 13.5V23.5C25 25 23.5 26.5 22 26.5H14C12.5 26.5 11 25 11 23.5V13.5L18 8Z" stroke="white" stroke-width="2"/><circle cx="18" cy="18" r="3.5" fill="white"/><defs><linearGradient id="lg" x1="0" y1="0" x2="36" y2="36"><stop stop-color="#3b82f6"/><stop offset="1" stop-color="#a855f7"/></linearGradient></defs></svg>
+    <!-- Toast Banner Container -->
+    <div id="toast-banner" class="toast-notification">
+        <span class="toast-icon">✓</span>
+        <span id="toast-message">Item added successfully!</span>
+    </div>
+
+    <!-- Fixed Header & View Mode Switcher -->
+    <div class="top-header-container">
+        <header>
+            <div class="brand">
+                <div class="brand-logo">
+                    <svg viewBox="0 0 36 36" fill="none"><rect width="36" height="36" rx="10" fill="url(#lg)"/><path d="M18 8L25 13.5V23.5C25 25 23.5 26.5 22 26.5H14C12.5 26.5 11 25 11 23.5V13.5L18 8Z" stroke="white" stroke-width="2"/><circle cx="18" cy="18" r="3.5" fill="white"/><defs><linearGradient id="lg" x1="0" y1="0" x2="36" y2="36"><stop stop-color="#3b82f6"/><stop offset="1" stop-color="#a855f7"/></linearGradient></defs></svg>
+                </div>
+                <span class="brand-text">Familiplan</span>
             </div>
-            <span class="brand-text">Familiplan</span>
+            
+            <div class="header-actions">
+                <button class="user-selector-btn" onclick="toggleUserDropdown()">
+                    <span id="current-user-dot" class="user-avatar-dot bg-dad"></span>
+                    <span id="current-user-name">Dad</span>
+                    <span style="font-size:0.65rem;">▼</span>
+                </button>
+                <div id="user-dropdown" class="user-dropdown-menu">
+                    <div class="user-dropdown-item" onclick="selectUser('dad', 'Dad')"><span class="user-avatar-dot bg-dad"></span> Dad</div>
+                    <div class="user-dropdown-item" onclick="selectUser('mom', 'Mom')"><span class="user-avatar-dot bg-mom"></span> Mom</div>
+                    <div class="user-dropdown-item" onclick="selectUser('leo', 'Leo')"><span class="user-avatar-dot bg-leo"></span> Leo</div>
+                    <div class="user-dropdown-item" onclick="selectUser('mia', 'Mia')"><span class="user-avatar-dot bg-mia"></span> Mia</div>
+                </div>
+                <button class="logout-btn" onclick="showToast('Logged out successfully')">Log Out</button>
+            </div>
+        </header>
+
+        <!-- Toggle Switch between 'My Items' and 'Family View' -->
+        <div class="filter-toggle-bar">
+            <div class="segmented-control">
+                <button id="toggle-btn-user" class="segmented-btn" onclick="setViewMode('user')">👤 My Items</button>
+                <button id="toggle-btn-family" class="segmented-btn active" onclick="setViewMode('family')">👨‍👩‍👧‍👦 Family View</button>
+            </div>
         </div>
-        <div class="header-actions">
-            <button class="logout-btn" onclick="alert('Logged out')">Log Out</button>
-        </div>
-    </header>
+    </div>
 
     <!-- VIEW 1: Quick Add -->
     <div id="view-home" class="view active">
@@ -413,7 +586,7 @@
                     <input type="date" id="add-date" class="form-input input-full">
                 </div>
                 <div class="form-row" id="postcode-row" style="display:none;">
-                    <input type="text" id="add-postcode" class="form-input input-full" placeholder="Postcode (optional)">
+                    <input type="text" id="add-postcode" class="form-input input-full" placeholder="Postcode (e.g. YO25 5YR)">
                 </div>
                 <button type="submit" class="add-btn">Add to Plan</button>
             </form>
@@ -434,7 +607,7 @@
         </section>
     </div>
 
-    <!-- VIEW 3: Shopping (With Meal Planner) -->
+    <!-- VIEW 3: Shopping -->
     <div id="view-shopping" class="view">
         <section class="card" style="margin-bottom:1rem;">
             <div class="card-header"><div class="card-title">🍽️ Weekly Meal Planner</div></div>
@@ -460,19 +633,37 @@
         </section>
     </div>
 
-    <!-- VIEW 4: Places & Restaurants -->
+    <!-- VIEW 4: Places & Restaurants with Map & Section Toggle -->
     <div id="view-places" class="view">
+        <!-- Segmented Toggle between Places to Visit and Restaurants -->
+        <div style="margin-bottom: 1rem;">
+            <div class="segmented-control" style="max-width: 100%;">
+                <button id="places-tab-btn" class="segmented-btn active" onclick="switchPlacesSubTab('places')">📍 Places to Visit</button>
+                <button id="restaurants-tab-btn" class="segmented-btn" onclick="switchPlacesSubTab('restaurants')">🍽️ Restaurants</button>
+            </div>
+        </div>
+
+        <!-- Dynamic Places or Restaurants List Card -->
         <section class="card" style="margin-bottom:1rem;">
-            <div class="card-header"><div class="card-title">📍 Places to Visit</div></div>
-            <div id="places-list-container" class="list-container"></div>
+            <div class="card-header">
+                <div class="card-title" id="places-card-title">📍 Places to Visit</div>
+            </div>
+            <div class="inline-add-group">
+                <input type="text" id="places-name-input" class="form-input" style="flex:2;" placeholder="Name...">
+                <input type="text" id="places-postcode-input" class="form-input" style="flex:1;" placeholder="Postcode...">
+                <button class="inline-add-btn" onclick="addPlacesItem()">+ Add</button>
+            </div>
+            <div id="places-dynamic-list-container" class="list-container"></div>
         </section>
+
+        <!-- Interactive Map Card -->
         <section class="card">
-            <div class="card-header"><div class="card-title">🍽️ Restaurants</div></div>
-            <div id="restaurants-list-container" class="list-container"></div>
+            <div class="card-header"><div class="card-title">🗺️ Interactive Map</div></div>
+            <div id="places-map"></div>
         </section>
     </div>
 
-    <!-- VIEW 5: Watchlist (Split into Cinema & Home Watchlists) -->
+    <!-- VIEW 5: Watchlist -->
     <div id="view-watchlist" class="view">
         <section class="card" style="margin-bottom:1rem;">
             <div class="card-header"><div class="card-title">🎬 Cinema Watchlist</div></div>
@@ -547,10 +738,18 @@
         </button>
     </nav>
 
+    <!-- Leaflet JS Library for Map -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <script>
         let currentMonth = 9;
         let currentYear = 2026;
         const assignees = ['family', 'mom', 'dad', 'leo', 'mia'];
+
+        let currentUser = localStorage.getItem('fam_user') || 'dad';
+        let currentUserName = localStorage.getItem('fam_user_name') || 'Dad';
+        let viewMode = localStorage.getItem('fam_view_mode') || 'family';
+        let activePlacesTab = 'places'; // 'places' or 'restaurants'
 
         let mealsData = JSON.parse(localStorage.getItem('fam_meals')) || [
             { day: "Mon", meal: "" }, { day: "Tue", meal: "" }, { day: "Wed", meal: "" },
@@ -558,11 +757,26 @@
         ];
         let foodShopData = JSON.parse(localStorage.getItem('fam_foodshop')) || [];
         let familyShopData = JSON.parse(localStorage.getItem('fam_familyshop')) || [];
-        let destinationsData = JSON.parse(localStorage.getItem('fam_destinations')) || { places: [], restaurants: [], cinema: [], home: [] };
+        let destinationsData = JSON.parse(localStorage.getItem('fam_destinations')) || { 
+            places: [{ title: "Zoo", postcode: "YO25 5YR", who: "family" }], 
+            restaurants: [{ title: "5 guys", postcode: "", who: "family" }, { title: "Jodhpur", postcode: "", who: "family" }], 
+            cinema: [], home: [] 
+        };
         let choresData = JSON.parse(localStorage.getItem('fam_chores')) || [{ kid: "Leo", chores: [] }, { kid: "Mia", chores: [] }];
         let wishlistData = JSON.parse(localStorage.getItem('fam_wishlist')) || [];
         let todosData = JSON.parse(localStorage.getItem('fam_todos')) || [];
         let calendarEvents = JSON.parse(localStorage.getItem('fam_calendar')) || {};
+
+        let toastTimer = null;
+        function showToast(msg) {
+            const toast = document.getElementById('toast-banner');
+            document.getElementById('toast-message').textContent = msg;
+            toast.classList.add('show');
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
 
         function saveData() {
             localStorage.setItem('fam_meals', JSON.stringify(mealsData));
@@ -573,6 +787,39 @@
             localStorage.setItem('fam_wishlist', JSON.stringify(wishlistData));
             localStorage.setItem('fam_todos', JSON.stringify(todosData));
             localStorage.setItem('fam_calendar', JSON.stringify(calendarEvents));
+            localStorage.setItem('fam_user', currentUser);
+            localStorage.setItem('fam_user_name', currentUserName);
+            localStorage.setItem('fam_view_mode', viewMode);
+        }
+
+        /* USER PROFILE & VIEW MODE MANAGEMENT */
+        function toggleUserDropdown() {
+            document.getElementById('user-dropdown').classList.toggle('open');
+        }
+
+        function selectUser(userKey, userName) {
+            currentUser = userKey;
+            currentUserName = userName;
+            document.getElementById('current-user-name').textContent = userName;
+            const dot = document.getElementById('current-user-dot');
+            dot.className = `user-avatar-dot bg-${userKey}`;
+            toggleUserDropdown();
+            saveData();
+            renderAllViews();
+            showToast(`Switched to ${userName}`);
+        }
+
+        function setViewMode(mode) {
+            viewMode = mode;
+            document.getElementById('toggle-btn-user').classList.toggle('active', mode === 'user');
+            document.getElementById('toggle-btn-family').classList.toggle('active', mode === 'family');
+            saveData();
+            renderAllViews();
+        }
+
+        function filterItem(itemWho) {
+            if (viewMode === 'family') return true;
+            return itemWho === currentUser || itemWho === 'family';
         }
 
         function showView(viewId, navBtn) {
@@ -581,6 +828,10 @@
             document.getElementById(`view-${viewId}`).classList.add('active');
             if (navBtn) navBtn.classList.add('active');
             window.scrollTo(0, 0);
+
+            if (viewId === 'places') {
+                setTimeout(initMap, 100);
+            }
         }
 
         function handleCategoryChange(val) {
@@ -607,7 +858,7 @@
                 const dateKey = `${currentYear}-${mStr}-${dStr}`;
                 let eventsHtml = '';
                 if (calendarEvents[dateKey]) {
-                    calendarEvents[dateKey].forEach(ev => eventsHtml += `<div class="event-pill bg-${ev.who}">${ev.title}</div>`);
+                    calendarEvents[dateKey].filter(ev => filterItem(ev.who)).forEach(ev => eventsHtml += `<div class="event-pill bg-${ev.who}">${ev.title}</div>`);
                 }
                 html += `<div class="day-cell" onclick="jumpToAddEvent('${dateKey}')"><div class="day-num">${i}</div>${eventsHtml}</div>`;
             }
@@ -643,10 +894,11 @@
             const input = document.getElementById(inputId);
             if (!input || !input.value.trim()) return;
             const target = type === 'foodshop' ? foodShopData : familyShopData;
-            target.push({ text: input.value.trim(), who: 'family', done: false, isEditing: false });
+            target.push({ text: input.value.trim(), who: currentUser, done: false, isEditing: false });
             input.value = '';
             saveData();
             renderShopping();
+            showToast('Item added to list');
         }
 
         function toggleShopCheck(type, idx) {
@@ -674,35 +926,43 @@
             const foodCont = document.getElementById('foodshop-list-container');
             const famCont = document.getElementById('familyshop-list-container');
 
-            foodCont.innerHTML = foodShopData.length === 0 ? `<div class="list-empty">Food list empty.</div>` : foodShopData.map((item, idx) => `
-                <div class="shopping-item ${item.done ? 'completed' : ''}">
-                    <div class="shop-left">
-                        <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleShopCheck('foodshop', ${idx})">
-                        ${item.isEditing ? 
-                            `<input type="text" class="edit-inline-input" value="${item.text}" onkeypress="if(event.key==='Enter') saveShopEdit('foodshop', ${idx}, this.value)" onblur="saveShopEdit('foodshop', ${idx}, this.value)" autofocus>` : 
-                            `<span class="item-text-label">${item.text}</span>`
-                        }
+            const filteredFood = foodShopData.filter(item => filterItem(item.who));
+            foodCont.innerHTML = filteredFood.length === 0 ? `<div class="list-empty">Food list empty.</div>` : foodShopData.map((item, idx) => {
+                if (!filterItem(item.who)) return '';
+                return `
+                    <div class="shopping-item ${item.done ? 'completed' : ''}">
+                        <div class="shop-left">
+                            <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleShopCheck('foodshop', ${idx})">
+                            ${item.isEditing ? 
+                                `<input type="text" class="edit-inline-input" value="${item.text}" onkeypress="if(event.key==='Enter') saveShopEdit('foodshop', ${idx}, this.value)" onblur="saveShopEdit('foodshop', ${idx}, this.value)" autofocus>` : 
+                                `<span class="item-text-label">${item.text}</span>`
+                            }
+                        </div>
+                        <button class="action-btn" onclick="enableShopEdit('foodshop', ${idx})">✏️</button>
+                        <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('foodshop', ${idx})">${item.who}</span>
+                        <button class="action-btn delete-btn" onclick="foodShopData.splice(${idx},1); saveData(); renderShopping();">✕</button>
                     </div>
-                    <button class="action-btn" onclick="enableShopEdit('foodshop', ${idx})">✏️</button>
-                    <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('foodshop', ${idx})">${item.who}</span>
-                    <button class="action-btn delete-btn" onclick="foodShopData.splice(${idx},1); saveData(); renderShopping();">✕</button>
-                </div>
-            `).join('');
+                `;
+            }).join('');
 
-            famCont.innerHTML = familyShopData.length === 0 ? `<div class="list-empty">Family list empty.</div>` : familyShopData.map((item, idx) => `
-                <div class="shopping-item ${item.done ? 'completed' : ''}">
-                    <div class="shop-left">
-                        <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleShopCheck('familyshop', ${idx})">
-                        ${item.isEditing ? 
-                            `<input type="text" class="edit-inline-input" value="${item.text}" onkeypress="if(event.key==='Enter') saveShopEdit('familyshop', ${idx}, this.value)" onblur="saveShopEdit('familyshop', ${idx}, this.value)" autofocus>` : 
-                            `<span class="item-text-label">${item.text}</span>`
-                        }
+            const filteredFam = familyShopData.filter(item => filterItem(item.who));
+            famCont.innerHTML = filteredFam.length === 0 ? `<div class="list-empty">Family list empty.</div>` : familyShopData.map((item, idx) => {
+                if (!filterItem(item.who)) return '';
+                return `
+                    <div class="shopping-item ${item.done ? 'completed' : ''}">
+                        <div class="shop-left">
+                            <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleShopCheck('familyshop', ${idx})">
+                            ${item.isEditing ? 
+                                `<input type="text" class="edit-inline-input" value="${item.text}" onkeypress="if(event.key==='Enter') saveShopEdit('familyshop', ${idx}, this.value)" onblur="saveShopEdit('familyshop', ${idx}, this.value)" autofocus>` : 
+                                `<span class="item-text-label">${item.text}</span>`
+                            }
+                        </div>
+                        <button class="action-btn" onclick="enableShopEdit('familyshop', ${idx})">✏️</button>
+                        <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('familyshop', ${idx})">${item.who}</span>
+                        <button class="action-btn delete-btn" onclick="familyShopData.splice(${idx},1); saveData(); renderShopping();">✕</button>
                     </div>
-                    <button class="action-btn" onclick="enableShopEdit('familyshop', ${idx})">✏️</button>
-                    <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('familyshop', ${idx})">${item.who}</span>
-                    <button class="action-btn delete-btn" onclick="familyShopData.splice(${idx},1); saveData(); renderShopping();">✕</button>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function cycleAssignee(type, index) {
@@ -711,20 +971,116 @@
             const currentWho = data[index].who || 'family';
             data[index].who = assignees[(assignees.indexOf(currentWho) + 1) % assignees.length];
             saveData();
-            if (type === 'todo') renderTodos();
-            else if (type === 'wishlist') renderWishlist();
-            else if (type === 'cinema' || type === 'home') renderWatchlist();
-            else renderShopping();
+            renderAllViews();
+        }
+
+        /* PLACES & RESTAURANTS WITH MAP */
+        function switchPlacesSubTab(tab) {
+            activePlacesTab = tab;
+            document.getElementById('places-tab-btn').classList.toggle('active', tab === 'places');
+            document.getElementById('restaurants-tab-btn').classList.toggle('active', tab === 'restaurants');
+            document.getElementById('places-card-title').textContent = tab === 'places' ? '📍 Places to Visit' : '🍽️ Restaurants';
+            renderPlacesView();
+        }
+
+        function addPlacesItem() {
+            const nameInput = document.getElementById('places-name-input');
+            const pcInput = document.getElementById('places-postcode-input');
+            if (!nameInput || !nameInput.value.trim()) return;
+
+            destinationsData[activePlacesTab].push({
+                title: nameInput.value.trim(),
+                postcode: pcInput.value.trim(),
+                who: currentUser
+            });
+
+            nameInput.value = '';
+            pcInput.value = '';
+            saveData();
+            renderPlacesView();
+            showToast('Location added');
+        }
+
+        function renderPlacesView() {
+            const container = document.getElementById('places-dynamic-list-container');
+            const list = destinationsData[activePlacesTab] || [];
+            const filtered = list.filter(item => filterItem(item.who));
+
+            container.innerHTML = filtered.length === 0 ? `<div class="list-empty">No ${activePlacesTab} added yet.</div>` : list.map((item, idx) => {
+                if (!filterItem(item.who)) return '';
+                return `
+                    <div class="list-card">
+                        <div>
+                            <h5>${activePlacesTab === 'places' ? '📍' : '🍽️'} ${item.title}</h5>
+                            ${item.postcode ? `<span style="font-size:0.75rem; color:var(--muted);">${item.postcode}</span>` : ''}
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span class="assign-tag bg-${item.who}">${item.who}</span>
+                            <button class="action-btn delete-btn" onclick="destinationsData['${activePlacesTab}'].splice(${idx},1); saveData(); renderPlacesView();">✕</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            initMap();
+        }
+
+        let mapInstance = null;
+        let mapMarkers = [];
+
+        async function initMap() {
+            const mapContainer = document.getElementById('places-map');
+            if (!mapContainer) return;
+
+            if (!mapInstance) {
+                mapInstance = L.map('places-map').setView([53.84, -1.68], 10);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '© OpenStreetMap'
+                }).addTo(mapInstance);
+            }
+
+            mapMarkers.forEach(m => mapInstance.removeLayer(m));
+            mapMarkers = [];
+
+            const allLocations = [
+                ...(destinationsData.places || []).map(p => ({ ...p, type: 'place' })),
+                ...(destinationsData.restaurants || []).map(r => ({ ...r, type: 'restaurant' }))
+            ].filter(item => filterItem(item.who));
+
+            const bounds = [];
+
+            for (const item of allLocations) {
+                if (!item.postcode) continue;
+                try {
+                    const res = await fetch(`https://api.postcodes.io/postcodes/${encodeURIComponent(item.postcode)}`);
+                    const data = await res.json();
+                    if (data.status === 200) {
+                        const { latitude, longitude } = data.result;
+                        const marker = L.marker([latitude, longitude]).addTo(mapInstance);
+                        marker.bindPopup(`<b>${item.type === 'place' ? '📍' : '🍽️'} ${item.title}</b><br>${item.postcode}`);
+                        mapMarkers.push(marker);
+                        bounds.push([latitude, longitude]);
+                    }
+                } catch (e) {
+                    console.error("Geocoding error:", e);
+                }
+            }
+
+            if (bounds.length > 0) {
+                mapInstance.fitBounds(bounds, { padding: [30, 30] });
+            }
         }
 
         /* TO-DO */
         function addTodoItem() {
             const input = document.getElementById('todo-quick-input');
             if (!input || !input.value.trim()) return;
-            todosData.push({ text: input.value.trim(), who: 'family', done: false, isEditing: false });
+            todosData.push({ text: input.value.trim(), who: currentUser, done: false, isEditing: false });
             input.value = '';
             saveData();
             renderTodos();
+            showToast('Task added');
         }
 
         function toggleTodoCheck(idx) {
@@ -746,20 +1102,24 @@
         }
 
         function renderTodos() {
-            document.getElementById('todo-list-container').innerHTML = todosData.length === 0 ? `<div class="list-empty">No tasks remaining.</div>` : todosData.map((t, idx) => `
-                <div class="todo-item ${t.done ? 'completed' : ''}">
-                    <div class="todo-left">
-                        <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodoCheck(${idx})">
-                        ${t.isEditing ? 
-                            `<input type="text" class="edit-inline-input" value="${t.text}" onkeypress="if(event.key==='Enter') saveTodoEdit(${idx}, this.value)" onblur="saveTodoEdit(${idx}, this.value)" autofocus>` : 
-                            `<span class="item-text-label">${t.text}</span>`
-                        }
+            const filtered = todosData.filter(t => filterItem(t.who));
+            document.getElementById('todo-list-container').innerHTML = filtered.length === 0 ? `<div class="list-empty">No tasks remaining.</div>` : todosData.map((t, idx) => {
+                if (!filterItem(t.who)) return '';
+                return `
+                    <div class="todo-item ${t.done ? 'completed' : ''}">
+                        <div class="todo-left">
+                            <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodoCheck(${idx})">
+                            ${t.isEditing ? 
+                                `<input type="text" class="edit-inline-input" value="${t.text}" onkeypress="if(event.key==='Enter') saveTodoEdit(${idx}, this.value)" onblur="saveTodoEdit(${idx}, this.value)" autofocus>` : 
+                                `<span class="item-text-label">${t.text}</span>`
+                            }
+                        </div>
+                        <button class="action-btn" onclick="enableTodoEdit(${idx})">✏️</button>
+                        <span class="assign-tag bg-${t.who}" onclick="cycleAssignee('todo', ${idx})">${t.who}</span>
+                        <button class="action-btn delete-btn" onclick="todosData.splice(${idx},1); saveData(); renderTodos();">✕</button>
                     </div>
-                    <button class="action-btn" onclick="enableTodoEdit(${idx})">✏️</button>
-                    <span class="assign-tag bg-${t.who}" onclick="cycleAssignee('todo', ${idx})">${t.who}</span>
-                    <button class="action-btn delete-btn" onclick="todosData.splice(${idx},1); saveData(); renderTodos();">✕</button>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         /* CHORES */
@@ -770,6 +1130,7 @@
             input.value = '';
             saveData();
             renderChores();
+            showToast('Chore added');
         }
 
         function deleteKidChore(kidIndex, choreIndex) {
@@ -805,77 +1166,71 @@
         function addWishlistItem() {
             const input = document.getElementById('wishlist-quick-input');
             if (!input || !input.value.trim()) return;
-            wishlistData.push({ title: input.value.trim(), who: 'family' });
+            wishlistData.push({ title: input.value.trim(), who: currentUser });
             input.value = '';
             saveData();
             renderWishlist();
+            showToast('Added to wishlist');
         }
 
         function renderWishlist() {
-            document.getElementById('wishlist-list-container').innerHTML = wishlistData.length === 0 ? `<div class="list-empty">Wishlist is empty.</div>` : wishlistData.map((w, idx) => `
-                <div class="wishlist-item">
-                    <span class="item-text-label">🎁 ${w.title}</span>
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <span class="assign-tag bg-${w.who}" onclick="cycleAssignee('wishlist', ${idx})">${w.who}</span>
-                        <button class="action-btn delete-btn" onclick="wishlistData.splice(${idx},1); saveData(); renderWishlist();">✕</button>
+            const filtered = wishlistData.filter(w => filterItem(w.who));
+            document.getElementById('wishlist-list-container').innerHTML = filtered.length === 0 ? `<div class="list-empty">Wishlist is empty.</div>` : wishlistData.map((w, idx) => {
+                if (!filterItem(w.who)) return '';
+                return `
+                    <div class="wishlist-item">
+                        <span class="item-text-label">🎁 ${w.title}</span>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span class="assign-tag bg-${w.who}" onclick="cycleAssignee('wishlist', ${idx})">${w.who}</span>
+                            <button class="action-btn delete-btn" onclick="wishlistData.splice(${idx},1); saveData(); renderWishlist();">✕</button>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
-        /* SEPARATE CINEMA & HOME WATCHLISTS */
+        /* WATCHLIST */
         function addWatchlistItem(type) {
             const inputId = type === 'cinema' ? 'cinema-quick-input' : 'home-quick-input';
             const input = document.getElementById(inputId);
             if (!input || !input.value.trim()) return;
             if (!destinationsData[type]) destinationsData[type] = [];
-            destinationsData[type].push({ title: input.value.trim(), who: 'family' });
+            destinationsData[type].push({ title: input.value.trim(), who: currentUser });
             input.value = '';
             saveData();
             renderWatchlist();
+            showToast('Added to watchlist');
         }
 
         function renderWatchlist() {
-            const cinemaList = destinationsData.cinema || [];
-            const homeList = destinationsData.home || [];
+            const cinemaList = (destinationsData.cinema || []).filter(item => filterItem(item.who));
+            const homeList = (destinationsData.home || []).filter(item => filterItem(item.who));
 
-            document.getElementById('cinema-list-container').innerHTML = cinemaList.length === 0 ? `<div class="list-empty">Cinema watchlist empty.</div>` : cinemaList.map((item, idx) => `
-                <div class="list-card">
-                    <span class="item-text-label">🎬 ${item.title}</span>
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('cinema', ${idx})">${item.who}</span>
-                        <button class="action-btn delete-btn" onclick="destinationsData.cinema.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
+            document.getElementById('cinema-list-container').innerHTML = cinemaList.length === 0 ? `<div class="list-empty">Cinema watchlist empty.</div>` : (destinationsData.cinema || []).map((item, idx) => {
+                if (!filterItem(item.who)) return '';
+                return `
+                    <div class="list-card">
+                        <span class="item-text-label">🎬 ${item.title}</span>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('cinema', ${idx})">${item.who}</span>
+                            <button class="action-btn delete-btn" onclick="destinationsData.cinema.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
 
-            document.getElementById('home-list-container').innerHTML = homeList.length === 0 ? `<div class="list-empty">Home watchlist empty.</div>` : homeList.map((item, idx) => `
-                <div class="list-card">
-                    <span class="item-text-label">📺 ${item.title}</span>
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('home', ${idx})">${item.who}</span>
-                        <button class="action-btn delete-btn" onclick="destinationsData.home.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
+            document.getElementById('home-list-container').innerHTML = homeList.length === 0 ? `<div class="list-empty">Home watchlist empty.</div>` : (destinationsData.home || []).map((item, idx) => {
+                if (!filterItem(item.who)) return '';
+                return `
+                    <div class="list-card">
+                        <span class="item-text-label">📺 ${item.title}</span>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('home', ${idx})">${item.who}</span>
+                            <button class="action-btn delete-btn" onclick="destinationsData.home.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
+                        </div>
                     </div>
-                </div>
-            `).join('');
-        }
-
-        function renderPlaces() {
-            document.getElementById('places-list-container').innerHTML = destinationsData.places.length === 0 ? `<div class="list-empty">No places added.</div>` : destinationsData.places.map((item, idx) => `
-                <div class="list-card">
-                    <div><h5>📍 ${item.title}</h5><span style="font-size:0.75rem; color:var(--muted);">${item.postcode || ''}</span></div>
-                    <button class="action-btn delete-btn" onclick="destinationsData.places.splice(${idx},1); saveData(); renderPlaces();">✕</button>
-                </div>
-            `).join('');
-        }
-
-        function renderRestaurants() {
-            document.getElementById('restaurants-list-container').innerHTML = destinationsData.restaurants.length === 0 ? `<div class="list-empty">No restaurants added.</div>` : destinationsData.restaurants.map((item, idx) => `
-                <div class="list-card">
-                    <div><h5>🍽️ ${item.title}</h5><span style="font-size:0.75rem; color:var(--muted);">${item.postcode || ''}</span></div>
-                    <button class="action-btn delete-btn" onclick="destinationsData.restaurants.splice(${idx},1); saveData(); renderRestaurants();">✕</button>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function handleQuickAdd(e) {
@@ -889,7 +1244,6 @@
             if (category === 'calendar') {
                 if (!calendarEvents[dateVal]) calendarEvents[dateVal] = [];
                 calendarEvents[dateVal].push({ title, who: assignee });
-                renderCalendar();
             } else if (category === 'foodshop') foodShopData.push({ text: title, who: assignee, done: false, isEditing: false });
             else if (category === 'familyshop') familyShopData.push({ text: title, who: assignee, done: false, isEditing: false });
             else if (['places','restaurants'].includes(category)) destinationsData[category].push({ title, who: assignee, postcode });
@@ -902,29 +1256,36 @@
             else if (category === 'chores') {
                 const target = choresData.find(c => c.kid.toLowerCase() === assignee.toLowerCase()) || choresData[0];
                 target.chores.push({ text: title, done: false });
-                renderChores();
             } else if (category === 'meals') {
                 const emptyMeal = mealsData.find(m => !m.meal);
                 if (emptyMeal) emptyMeal.meal = title;
-                renderMeals();
             }
 
             saveData();
             document.getElementById('add-title').value = '';
             document.getElementById('add-postcode').value = '';
-            alert('Item added successfully!');
+            renderAllViews();
+            showToast('Item added successfully!');
+        }
+
+        function renderAllViews() {
+            renderCalendar();
+            renderMeals();
+            renderShopping();
+            renderTodos();
+            renderPlacesView();
+            renderWatchlist();
+            renderChores();
+            renderWishlist();
         }
 
         document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
-        renderCalendar();
-        renderMeals();
-        renderShopping();
-        renderTodos();
-        renderPlaces();
-        renderRestaurants();
-        renderWatchlist();
-        renderChores();
-        renderWishlist();
+        document.getElementById('current-user-name').textContent = currentUserName;
+        document.getElementById('current-user-dot').className = `user-avatar-dot bg-${currentUser}`;
+        document.getElementById('toggle-btn-user').classList.toggle('active', viewMode === 'user');
+        document.getElementById('toggle-btn-family').classList.toggle('active', viewMode === 'family');
+        
+        renderAllViews();
     </script>
 </body>
 </html>
