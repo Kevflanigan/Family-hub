@@ -19,7 +19,7 @@
             --leo: #159b75;
             --mia: #c47a08;
             --family: #805ad5;
-            --shadow-soft: 0 8px 24px rgba(36, 32, 64, .055);
+            --shadow-soft: 0 4px 16px rgba(36, 32, 64, .04);
         }
 
         * {
@@ -35,14 +35,14 @@
               radial-gradient(ellipse at 12% 0%, rgba(109,92,232,.08), transparent 32rem),
               var(--bg);
             color: var(--text);
-            padding-top: 112px;
-            padding-bottom: 75px;
+            padding-top: 62px;
+            padding-bottom: 65px;
             min-height: 100vh;
-            line-height: 1.45;
+            line-height: 1.35;
             overflow-x: hidden;
         }
 
-        /* Fixed Top Header Container */
+        /* Compact Unified Header Container */
         .top-header-container {
             position: fixed;
             top: 0;
@@ -51,75 +51,73 @@
             z-index: 1000;
             background: rgba(255, 255, 255, 0.96);
             border-bottom: 1px solid var(--border);
-            box-shadow: 0 2px 12px rgba(30,35,50,.035);
+            box-shadow: 0 2px 8px rgba(30,35,50,.03);
             backdrop-filter: blur(14px);
-        }
-
-        header {
-            height: 56px;
+            padding: 6px 10px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 1rem;
+            gap: 6px;
         }
 
         .brand {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            flex-shrink: 0;
         }
 
         .brand-logo {
-            width: 30px;
-            height: 30px;
+            width: 24px;
+            height: 24px;
             display: grid;
             place-items: center;
         }
 
         .brand-text {
             font-weight: 800;
-            font-size: 1.05rem;
-            letter-spacing: -0.5px;
+            font-size: 0.95rem;
+            letter-spacing: -0.4px;
             color: #28253b;
         }
 
         .header-actions {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             position: relative;
         }
 
         .user-selector-btn {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             background: #f0edff;
             border: 1px solid #dcd5ff;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.78rem;
+            padding: 3px 8px;
+            border-radius: 14px;
+            font-size: 0.72rem;
             font-weight: 700;
             color: var(--text);
             cursor: pointer;
         }
 
         .user-avatar-dot {
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
         }
 
         .user-dropdown-menu {
             display: none;
             position: absolute;
-            top: 42px;
+            top: 34px;
             right: 0;
             background: #fff;
             border: 1px solid var(--border);
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            width: 150px;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            width: 130px;
             overflow: hidden;
             z-index: 1001;
         }
@@ -129,12 +127,12 @@
         }
 
         .user-dropdown-item {
-            padding: 10px 12px;
-            font-size: 0.82rem;
+            padding: 8px 10px;
+            font-size: 0.78rem;
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             cursor: pointer;
             border-bottom: 1px solid #f2eff8;
         }
@@ -143,50 +141,43 @@
             background: #faf9ff;
         }
 
-        /* View Toggle Sub-bar */
-        .filter-toggle-bar {
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 1rem 8px 1rem;
-        }
-
+        /* Compact View Switcher */
         .segmented-control {
             display: flex;
             background: #ede9f5;
-            padding: 3px;
-            border-radius: 10px;
-            width: 100%;
-            max-width: 380px;
+            padding: 2px;
+            border-radius: 8px;
+            flex: 1;
+            max-width: 200px;
         }
 
         .segmented-btn {
             flex: 1;
             border: none;
             background: transparent;
-            padding: 6px 12px;
-            font-size: 0.76rem;
+            padding: 4px 6px;
+            font-size: 0.68rem;
             font-weight: 700;
             color: var(--muted);
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             transition: all 0.15s ease;
+            white-space: nowrap;
         }
 
         .segmented-btn.active {
             background: #fff;
             color: var(--accent);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
         }
 
         .logout-btn {
             background: #fff;
             border: 1px solid var(--border);
             color: var(--muted);
-            padding: 5px 8px;
-            border-radius: 8px;
-            font-size: 0.75rem;
+            padding: 3px 6px;
+            border-radius: 6px;
+            font-size: 0.7rem;
             font-weight: 700;
             cursor: pointer;
         }
@@ -197,7 +188,7 @@
             width: 100%;
             max-width: 800px;
             margin: 0 auto;
-            padding: 1rem;
+            padding: 0.6rem;
             animation: fadeIn 0.18s ease-in-out;
         }
 
@@ -206,7 +197,7 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(4px); }
+            from { opacity: 0; transform: translateY(3px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -216,14 +207,14 @@
             bottom: 0;
             left: 0;
             right: 0;
-            height: 62px;
+            height: 54px;
             background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(12px);
             border-top: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: space-around;
-            padding: 0 0.25rem;
+            padding: 0 0.2rem;
             z-index: 1000;
             overflow-x: auto;
         }
@@ -240,14 +231,14 @@
             background: none;
             border: none;
             color: var(--muted);
-            padding: 6px 4px;
-            font-size: 0.65rem;
+            padding: 4px 2px;
+            font-size: 0.62rem;
             font-weight: 600;
             cursor: pointer;
-            border-radius: 8px;
+            border-radius: 6px;
             flex: 1;
-            min-width: 52px;
-            gap: 2px;
+            min-width: 46px;
+            gap: 1px;
             transition: color 0.15s ease;
             flex-shrink: 0;
         }
@@ -258,29 +249,29 @@
         }
 
         .nav-icon {
-            font-size: 1.15rem;
+            font-size: 1rem;
             line-height: 1;
         }
 
         /* Toast Notification */
         .toast-notification {
             position: fixed;
-            bottom: 74px;
+            bottom: 64px;
             left: 50%;
             transform: translateX(-50%) translateY(20px);
             background: #1e293b;
             color: #ffffff;
-            padding: 10px 18px;
-            border-radius: 30px;
-            font-size: 0.85rem;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.78rem;
             font-weight: 600;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.18);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 2000;
             white-space: nowrap;
         }
@@ -294,12 +285,12 @@
         .toast-icon {
             background: #10b981;
             color: #fff;
-            width: 18px;
-            height: 18px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
             display: grid;
             place-items: center;
-            font-size: 0.65rem;
+            font-size: 0.55rem;
             font-weight: 800;
         }
 
@@ -307,10 +298,10 @@
         .card {
             background: rgba(255,255,255,.96);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: clamp(1rem, 2.3vw, 1.35rem);
+            border-radius: 12px;
+            padding: 0.75rem 0.85rem;
             box-shadow: var(--shadow-soft);
-            margin-bottom: 1rem;
+            margin-bottom: 0.6rem;
             width: 100%;
         }
 
@@ -318,48 +309,48 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
+            margin-bottom: 0.6rem;
         }
 
         .card-title {
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             font-weight: 800;
         }
 
         .add-form {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
         .form-row {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
         }
 
         .inline-add-group {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             width: 100%;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
 
         .form-input, .form-select {
             background: #fff;
             border: 1px solid #dcdfe6;
             color: var(--text);
-            padding: 10px 12px;
-            min-height: 42px;
-            font-size: 0.88rem;
-            border-radius: 10px;
+            padding: 6px 10px;
+            min-height: 34px;
+            font-size: 0.8rem;
+            border-radius: 8px;
             outline: none;
             width: 100%;
         }
 
         .form-input:focus, .form-select:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(109,92,232,.12);
+            box-shadow: 0 0 0 2px rgba(109,92,232,.12);
         }
 
         .input-full { flex: 1 1 100%; }
@@ -369,11 +360,11 @@
             background: var(--accent);
             color: #fff;
             border: none;
-            min-height: 42px;
-            padding: 10px 16px;
-            border-radius: 10px;
+            min-height: 34px;
+            padding: 6px 12px;
+            border-radius: 8px;
             font-weight: 700;
-            font-size: 0.88rem;
+            font-size: 0.8rem;
             cursor: pointer;
             white-space: nowrap;
             flex-shrink: 0;
@@ -384,31 +375,31 @@
         .list-container {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.4rem;
             width: 100%;
         }
 
         .list-empty {
             text-align: center;
-            padding: 1.5rem 1rem;
+            padding: 1rem 0.75rem;
             color: var(--muted);
-            font-size: 0.85rem;
+            font-size: 0.78rem;
             border: 1px dashed var(--border);
-            border-radius: 12px;
+            border-radius: 10px;
             background: #faf9ff;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
         }
 
         .todo-item, .shopping-item, .meal-card-row, .wishlist-item, .list-card, .chore-item-row {
             background: #fff;
             border: 1px solid #e8e5df;
-            border-radius: 11px;
-            padding: 8px 12px;
+            border-radius: 8px;
+            padding: 6px 10px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 8px;
-            margin-bottom: 6px;
+            gap: 6px;
+            margin-bottom: 4px;
             width: 100%;
         }
 
@@ -421,23 +412,23 @@
         .shop-left, .todo-left {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             flex: 1;
             min-width: 0;
         }
 
         .item-text-label {
-            font-size: 0.88rem;
+            font-size: 0.82rem;
             font-weight: 500;
             flex: 1;
             word-break: break-word;
         }
 
         .edit-inline-input {
-            font-size: 0.88rem;
-            padding: 4px 8px;
+            font-size: 0.82rem;
+            padding: 2px 6px;
             border: 1px solid var(--accent);
-            border-radius: 6px;
+            border-radius: 4px;
             outline: none;
             width: 100%;
         }
@@ -447,9 +438,9 @@
             border: none;
             color: var(--muted);
             cursor: pointer;
-            font-size: 0.85rem;
-            padding: 4px 6px;
-            border-radius: 6px;
+            font-size: 0.75rem;
+            padding: 2px 4px;
+            border-radius: 4px;
             flex-shrink: 0;
         }
 
@@ -464,10 +455,10 @@
         }
 
         .assign-tag {
-            font-size: 0.64rem;
+            font-size: 0.58rem;
             font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 20px;
+            padding: 2px 7px;
+            border-radius: 14px;
             color: #fff;
             text-transform: uppercase;
             cursor: pointer;
@@ -481,34 +472,34 @@
         .bg-mia { background-color: var(--mia); }
         .bg-family { background-color: var(--family); }
 
-        .meal-card-row { margin-bottom: 6px; }
-        .meal-day-name { font-size: 0.95rem; font-weight: 800; color: #5144b7; width: 50px; flex-shrink: 0; }
-        .meal-input-inline { background: transparent; border: none; border-bottom: 1px dashed var(--border); font-size: 0.88rem; width: 100%; outline: none; }
+        .meal-card-row { margin-bottom: 4px; }
+        .meal-day-name { font-size: 0.85rem; font-weight: 800; color: #5144b7; width: 42px; flex-shrink: 0; }
+        .meal-input-inline { background: transparent; border: none; border-bottom: 1px dashed var(--border); font-size: 0.82rem; width: 100%; outline: none; }
 
         .chores-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 8px;
             width: 100%;
         }
 
-        /* Leaflet Map Styling */
+        /* Expanded Leaflet Map Styling (300px) */
         #places-map {
             width: 100%;
-            height: 280px;
-            border-radius: 12px;
+            height: 300px;
+            border-radius: 10px;
             border: 1px solid var(--border);
             z-index: 1;
         }
 
         /* Calendar */
-        .calendar-nav { display: flex; align-items: center; gap: 8px; }
-        .cal-nav-btn { background: #fff; border: 1px solid var(--border); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; }
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-        .day-header { text-align: center; font-size: 0.7rem; font-weight: 700; color: var(--muted); text-transform: uppercase; }
-        .day-cell { background: #fff; border: 1px solid #e8e5df; border-radius: 8px; min-height: 75px; padding: 6px; cursor: pointer; }
-        .day-num { font-size: 0.75rem; font-weight: 600; color: #505868; }
-        .event-pill { margin-top: 3px; padding: 2px 4px; border-radius: 4px; font-size: 0.62rem; color: #fff; font-weight: 600; }
+        .calendar-nav { display: flex; align-items: center; gap: 6px; }
+        .cal-nav-btn { background: #fff; border: 1px solid var(--border); width: 26px; height: 26px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+        .day-header { text-align: center; font-size: 0.65rem; font-weight: 700; color: var(--muted); text-transform: uppercase; }
+        .day-cell { background: #fff; border: 1px solid #e8e5df; border-radius: 6px; min-height: 60px; padding: 4px; cursor: pointer; }
+        .day-num { font-size: 0.7rem; font-weight: 600; color: #505868; }
+        .event-pill { margin-top: 2px; padding: 1px 3px; border-radius: 3px; font-size: 0.58rem; color: #fff; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -519,38 +510,33 @@
         <span id="toast-message">Item added successfully!</span>
     </div>
 
-    <!-- Fixed Header & View Mode Switcher -->
+    <!-- Compact Top Header & Switcher Row -->
     <div class="top-header-container">
-        <header>
-            <div class="brand">
-                <div class="brand-logo">
-                    <svg viewBox="0 0 36 36" fill="none"><rect width="36" height="36" rx="10" fill="url(#lg)"/><path d="M18 8L25 13.5V23.5C25 25 23.5 26.5 22 26.5H14C12.5 26.5 11 25 11 23.5V13.5L18 8Z" stroke="white" stroke-width="2"/><circle cx="18" cy="18" r="3.5" fill="white"/><defs><linearGradient id="lg" x1="0" y1="0" x2="36" y2="36"><stop stop-color="#3b82f6"/><stop offset="1" stop-color="#a855f7"/></linearGradient></defs></svg>
-                </div>
-                <span class="brand-text">Familiplan</span>
+        <div class="brand">
+            <div class="brand-logo">
+                <svg viewBox="0 0 36 36" fill="none"><rect width="36" height="36" rx="10" fill="url(#lg)"/><path d="M18 8L25 13.5V23.5C25 25 23.5 26.5 22 26.5H14C12.5 26.5 11 25 11 23.5V13.5L18 8Z" stroke="white" stroke-width="2"/><circle cx="18" cy="18" r="3.5" fill="white"/><defs><linearGradient id="lg" x1="0" y1="0" x2="36" y2="36"><stop stop-color="#3b82f6"/><stop offset="1" stop-color="#a855f7"/></linearGradient></defs></svg>
             </div>
-            
-            <div class="header-actions">
-                <button class="user-selector-btn" onclick="toggleUserDropdown()">
-                    <span id="current-user-dot" class="user-avatar-dot bg-dad"></span>
-                    <span id="current-user-name">Dad</span>
-                    <span style="font-size:0.65rem;">▼</span>
-                </button>
-                <div id="user-dropdown" class="user-dropdown-menu">
-                    <div class="user-dropdown-item" onclick="selectUser('dad', 'Dad')"><span class="user-avatar-dot bg-dad"></span> Dad</div>
-                    <div class="user-dropdown-item" onclick="selectUser('mom', 'Mom')"><span class="user-avatar-dot bg-mom"></span> Mom</div>
-                    <div class="user-dropdown-item" onclick="selectUser('leo', 'Leo')"><span class="user-avatar-dot bg-leo"></span> Leo</div>
-                    <div class="user-dropdown-item" onclick="selectUser('mia', 'Mia')"><span class="user-avatar-dot bg-mia"></span> Mia</div>
-                </div>
-                <button class="logout-btn" onclick="showToast('Logged out successfully')">Log Out</button>
-            </div>
-        </header>
+            <span class="brand-text">Familiplan</span>
+        </div>
 
-        <!-- Toggle Switch between 'My Items' and 'Family View' -->
-        <div class="filter-toggle-bar">
-            <div class="segmented-control">
-                <button id="toggle-btn-user" class="segmented-btn" onclick="setViewMode('user')">👤 My Items</button>
-                <button id="toggle-btn-family" class="segmented-btn active" onclick="setViewMode('family')">👨‍👩‍👧‍👦 Family View</button>
+        <div class="segmented-control">
+            <button id="toggle-btn-user" class="segmented-btn" onclick="setViewMode('user')">👤 Mine</button>
+            <button id="toggle-btn-family" class="segmented-btn active" onclick="setViewMode('family')">👨‍👩‍👧‍👦 Family</button>
+        </div>
+
+        <div class="header-actions">
+            <button class="user-selector-btn" onclick="toggleUserDropdown()">
+                <span id="current-user-dot" class="user-avatar-dot bg-dad"></span>
+                <span id="current-user-name">Dad</span>
+                <span style="font-size:0.55rem;">▼</span>
+            </button>
+            <div id="user-dropdown" class="user-dropdown-menu">
+                <div class="user-dropdown-item" onclick="selectUser('dad', 'Dad')"><span class="user-avatar-dot bg-dad"></span> Dad</div>
+                <div class="user-dropdown-item" onclick="selectUser('mom', 'Mom')"><span class="user-avatar-dot bg-mom"></span> Mom</div>
+                <div class="user-dropdown-item" onclick="selectUser('leo', 'Leo')"><span class="user-avatar-dot bg-leo"></span> Leo</div>
+                <div class="user-dropdown-item" onclick="selectUser('mia', 'Mia')"><span class="user-avatar-dot bg-mia"></span> Mia</div>
             </div>
+            <button class="logout-btn" onclick="showToast('Logged out')">Exit</button>
         </div>
     </div>
 
@@ -609,12 +595,12 @@
 
     <!-- VIEW 3: Shopping -->
     <div id="view-shopping" class="view">
-        <section class="card" style="margin-bottom:1rem;">
+        <section class="card" style="margin-bottom:0.6rem;">
             <div class="card-header"><div class="card-title">🍽️ Weekly Meal Planner</div></div>
             <div id="meal-list-container" class="list-container"></div>
         </section>
 
-        <section class="card" style="margin-bottom:1rem;">
+        <section class="card" style="margin-bottom:0.6rem;">
             <div class="card-header"><div class="card-title">🛒 Food Shopping List</div></div>
             <div class="inline-add-group">
                 <input type="text" id="foodshop-quick-input" class="form-input input-full" placeholder="Add food item..." onkeypress="if(event.key==='Enter') addInlineShop('foodshop')">
@@ -635,16 +621,14 @@
 
     <!-- VIEW 4: Places & Restaurants with Map & Section Toggle -->
     <div id="view-places" class="view">
-        <!-- Segmented Toggle between Places to Visit and Restaurants -->
-        <div style="margin-bottom: 1rem;">
+        <div style="margin-bottom: 0.6rem;">
             <div class="segmented-control" style="max-width: 100%;">
                 <button id="places-tab-btn" class="segmented-btn active" onclick="switchPlacesSubTab('places')">📍 Places to Visit</button>
                 <button id="restaurants-tab-btn" class="segmented-btn" onclick="switchPlacesSubTab('restaurants')">🍽️ Restaurants</button>
             </div>
         </div>
 
-        <!-- Dynamic Places or Restaurants List Card -->
-        <section class="card" style="margin-bottom:1rem;">
+        <section class="card" style="margin-bottom:0.6rem;">
             <div class="card-header">
                 <div class="card-title" id="places-card-title">📍 Places to Visit</div>
             </div>
@@ -656,7 +640,6 @@
             <div id="places-dynamic-list-container" class="list-container"></div>
         </section>
 
-        <!-- Interactive Map Card -->
         <section class="card">
             <div class="card-header"><div class="card-title">🗺️ Interactive Map</div></div>
             <div id="places-map"></div>
@@ -665,10 +648,10 @@
 
     <!-- VIEW 5: Watchlist -->
     <div id="view-watchlist" class="view">
-        <section class="card" style="margin-bottom:1rem;">
+        <section class="card" style="margin-bottom:0.6rem;">
             <div class="card-header"><div class="card-title">🎬 Cinema Watchlist</div></div>
             <div class="inline-add-group">
-                <input type="text" id="cinema-quick-input" class="form-input input-full" placeholder="Add movie for cinema..." onkeypress="if(event.key==='Enter') addWatchlistItem('cinema')">
+                <input type="text" id="cinema-quick-input" class="form-input input-full" placeholder="Add movie..." onkeypress="if(event.key==='Enter') addWatchlistItem('cinema')">
                 <button class="inline-add-btn" onclick="addWatchlistItem('cinema')">+ Add</button>
             </div>
             <div id="cinema-list-container" class="list-container"></div>
@@ -677,7 +660,7 @@
         <section class="card">
             <div class="card-header"><div class="card-title">📺 Home Watchlist</div></div>
             <div class="inline-add-group">
-                <input type="text" id="home-quick-input" class="form-input input-full" placeholder="Add TV show or stream..." onkeypress="if(event.key==='Enter') addWatchlistItem('home')">
+                <input type="text" id="home-quick-input" class="form-input input-full" placeholder="Add TV show..." onkeypress="if(event.key==='Enter') addWatchlistItem('home')">
                 <button class="inline-add-btn" onclick="addWatchlistItem('home')">+ Add</button>
             </div>
             <div id="home-list-container" class="list-container"></div>
@@ -689,7 +672,7 @@
         <section class="card">
             <div class="card-header"><div class="card-title">📝 To-Do List</div></div>
             <div class="inline-add-group">
-                <input type="text" id="todo-quick-input" class="form-input input-full" placeholder="Add new task..." onkeypress="if(event.key==='Enter') addTodoItem()">
+                <input type="text" id="todo-quick-input" class="form-input input-full" placeholder="Add task..." onkeypress="if(event.key==='Enter') addTodoItem()">
                 <button class="inline-add-btn" onclick="addTodoItem()">+ Add</button>
             </div>
             <div id="todo-list-container" class="list-container"></div>
@@ -703,7 +686,7 @@
         <section class="card">
             <div class="card-header"><div class="card-title">🎁 Gift Wishlist</div></div>
             <div class="inline-add-group">
-                <input type="text" id="wishlist-quick-input" class="form-input input-full" placeholder="Add wishlist item..." onkeypress="if(event.key==='Enter') addWishlistItem()">
+                <input type="text" id="wishlist-quick-input" class="form-input input-full" placeholder="Add item..." onkeypress="if(event.key==='Enter') addWishlistItem()">
                 <button class="inline-add-btn" onclick="addWishlistItem()">+ Add</button>
             </div>
             <div id="wishlist-list-container" class="list-container"></div>
@@ -749,7 +732,7 @@
         let currentUser = localStorage.getItem('fam_user') || 'dad';
         let currentUserName = localStorage.getItem('fam_user_name') || 'Dad';
         let viewMode = localStorage.getItem('fam_view_mode') || 'family';
-        let activePlacesTab = 'places'; // 'places' or 'restaurants'
+        let activePlacesTab = 'places';
 
         let mealsData = JSON.parse(localStorage.getItem('fam_meals')) || [
             { day: "Mon", meal: "" }, { day: "Tue", meal: "" }, { day: "Wed", meal: "" },
@@ -1012,9 +995,9 @@
                     <div class="list-card">
                         <div>
                             <h5>${activePlacesTab === 'places' ? '📍' : '🍽️'} ${item.title}</h5>
-                            ${item.postcode ? `<span style="font-size:0.75rem; color:var(--muted);">${item.postcode}</span>` : ''}
+                            ${item.postcode ? `<span style="font-size:0.7rem; color:var(--muted);">${item.postcode}</span>` : ''}
                         </div>
-                        <div style="display:flex; align-items:center; gap:8px;">
+                        <div style="display:flex; align-items:center; gap:6px;">
                             <span class="assign-tag bg-${item.who}">${item.who}</span>
                             <button class="action-btn delete-btn" onclick="destinationsData['${activePlacesTab}'].splice(${idx},1); saveData(); renderPlacesView();">✕</button>
                         </div>
@@ -1032,12 +1015,15 @@
             const mapContainer = document.getElementById('places-map');
             if (!mapContainer) return;
 
+            // Default UK Map view [latitude, longitude], zoom level
             if (!mapInstance) {
-                mapInstance = L.map('places-map').setView([53.84, -1.68], 10);
+                mapInstance = L.map('places-map').setView([54.5, -3.5], 5);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     maxZoom: 19,
                     attribution: '© OpenStreetMap'
                 }).addTo(mapInstance);
+            } else {
+                mapInstance.invalidateSize();
             }
 
             mapMarkers.forEach(m => mapInstance.removeLayer(m));
@@ -1069,6 +1055,8 @@
 
             if (bounds.length > 0) {
                 mapInstance.fitBounds(bounds, { padding: [30, 30] });
+            } else {
+                mapInstance.setView([54.5, -3.5], 5);
             }
         }
 
@@ -1141,19 +1129,19 @@
 
         function renderChores() {
             document.getElementById('chores-list-container').innerHTML = choresData.map((k, kIdx) => `
-                <div class="card" style="margin-bottom:0; padding:12px;">
-                    <div style="font-weight:800; margin-bottom:8px;">${k.kid}</div>
-                    <div class="inline-add-group" style="margin-bottom:8px;">
-                        <input type="text" id="chore-input-${kIdx}" class="form-input input-full" placeholder="Add chore..." style="min-height:34px; font-size:0.8rem;" onkeypress="if(event.key==='Enter') addKidChore(${kIdx})">
-                        <button class="inline-add-btn" onclick="addKidChore(${kIdx})" style="min-height:34px; padding:4px 10px; font-size:0.78rem;">+</button>
+                <div class="card" style="margin-bottom:0; padding:10px;">
+                    <div style="font-weight:800; font-size:0.85rem; margin-bottom:6px;">${k.kid}</div>
+                    <div class="inline-add-group" style="margin-bottom:6px;">
+                        <input type="text" id="chore-input-${kIdx}" class="form-input input-full" placeholder="Add chore..." style="min-height:30px; font-size:0.75rem;" onkeypress="if(event.key==='Enter') addKidChore(${kIdx})">
+                        <button class="inline-add-btn" onclick="addKidChore(${kIdx})" style="min-height:30px; padding:2px 8px; font-size:0.75rem;">+</button>
                     </div>
                     <div class="list-container">
-                        ${k.chores.length === 0 ? '<span style="font-size:0.8rem; color:var(--muted);">No chores</span>' : k.chores.map((c, cIdx) => {
+                        ${k.chores.length === 0 ? '<span style="font-size:0.75rem; color:var(--muted);">No chores</span>' : k.chores.map((c, cIdx) => {
                             const choreText = typeof c === 'string' ? c : c.text;
                             return `
-                                <div class="chore-item-row" style="padding:6px 8px; font-size:0.82rem;">
-                                    <label style="display:flex; align-items:center; gap:6px;"><input type="checkbox"> ${choreText}</label>
-                                    <button class="action-btn delete-btn" onclick="deleteKidChore(${kIdx},${cIdx})" style="padding:0 4px;">✕</button>
+                                <div class="chore-item-row" style="padding:4px 6px; font-size:0.78rem;">
+                                    <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox"> ${choreText}</label>
+                                    <button class="action-btn delete-btn" onclick="deleteKidChore(${kIdx},${cIdx})" style="padding:0 3px;">✕</button>
                                 </div>
                             `;
                         }).join('')}
@@ -1180,7 +1168,7 @@
                 return `
                     <div class="wishlist-item">
                         <span class="item-text-label">🎁 ${w.title}</span>
-                        <div style="display:flex; align-items:center; gap:8px;">
+                        <div style="display:flex; align-items:center; gap:6px;">
                             <span class="assign-tag bg-${w.who}" onclick="cycleAssignee('wishlist', ${idx})">${w.who}</span>
                             <button class="action-btn delete-btn" onclick="wishlistData.splice(${idx},1); saveData(); renderWishlist();">✕</button>
                         </div>
@@ -1211,7 +1199,7 @@
                 return `
                     <div class="list-card">
                         <span class="item-text-label">🎬 ${item.title}</span>
-                        <div style="display:flex; align-items:center; gap:8px;">
+                        <div style="display:flex; align-items:center; gap:6px;">
                             <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('cinema', ${idx})">${item.who}</span>
                             <button class="action-btn delete-btn" onclick="destinationsData.cinema.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
                         </div>
@@ -1224,7 +1212,7 @@
                 return `
                     <div class="list-card">
                         <span class="item-text-label">📺 ${item.title}</span>
-                        <div style="display:flex; align-items:center; gap:8px;">
+                        <div style="display:flex; align-items:center; gap:6px;">
                             <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('home', ${idx})">${item.who}</span>
                             <button class="action-btn delete-btn" onclick="destinationsData.home.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
                         </div>
