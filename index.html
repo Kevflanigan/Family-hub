@@ -68,13 +68,24 @@
             flex-shrink: 0;
         }
 
-        .brand-logo {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
-            object-fit: cover;
+        /* Pure CSS/SVG Emblem Logo (Never Breaks) */
+        .brand-icon-emblem {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #6d5ce8, #805ad5);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 8px rgba(109, 92, 232, 0.35);
+            color: #ffffff;
             flex-shrink: 0;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+        }
+
+        .brand-icon-emblem svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
         }
 
         .brand-text {
@@ -525,10 +536,14 @@
         <span id="toast-message">Item added successfully!</span>
     </div>
 
-    <!-- Top Header Container with Logo -->
+    <!-- Top Header Container with Emblem Logo -->
     <div class="top-header-container">
         <div class="brand">
-            <img src="30640.png" alt="FamilyPlan Logo" class="brand-logo">
+            <div class="brand-icon-emblem">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19,4H18V2H16V4H8V2H6V4H5A2,2 0 0,0 3,6V20A2,2 0 0,0 5,22H19A2,2 0 0,0 21,20V6A2,2 0 0,0 19,4M19,20H5V9H19V20M12,12.5C10.5,11 8.5,12.5 8.5,14C8.5,15.5 12,18 12,18C12,18 15.5,15.5 15.5,14C15.5,12.5 13.5,11 12,12.5Z"/>
+                </svg>
+            </div>
             <span class="brand-text">FamilyPlan</span>
         </div>
 
