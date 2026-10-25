@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Familiplan — Family life, organised</title>
+    <title>FamilyPlan — Plan together. Make memories.</title>
     <!-- Leaflet CSS for Map -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
@@ -68,8 +68,10 @@
         }
 
         .brand-logo {
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            object-fit: contain;
             display: grid;
             place-items: center;
         }
@@ -78,7 +80,7 @@
             font-weight: 800;
             font-size: 0.95rem;
             letter-spacing: -0.4px;
-            color: #28253b;
+            color: #112244;
         }
 
         .header-actions {
@@ -184,11 +186,10 @@
             cursor: pointer;
         }
 
-        /* Views management */
+        /* Views management - Full width layout */
         .view {
             display: none;
             width: 100%;
-            max-width: 800px;
             margin: 0 auto;
             padding: 0.6rem;
             animation: fadeIn 0.18s ease-in-out;
@@ -515,10 +516,8 @@
     <!-- Compact Top Header & Switcher Row -->
     <div class="top-header-container">
         <div class="brand">
-            <div class="brand-logo">
-                <svg viewBox="0 0 36 36" fill="none"><rect width="36" height="36" rx="10" fill="url(#lg)"/><path d="M18 8L25 13.5V23.5C25 25 23.5 26.5 22 26.5H14C12.5 26.5 11 25 11 23.5V13.5L18 8Z" stroke="white" stroke-width="2"/><circle cx="18" cy="18" r="3.5" fill="white"/><defs><linearGradient id="lg" x1="0" y1="0" x2="36" y2="36"><stop stop-color="#3b82f6"/><stop offset="1" stop-color="#a855f7"/></linearGradient></defs></svg>
-            </div>
-            <span class="brand-text">Familiplan</span>
+            <img src="30640.png" alt="FamilyPlan Logo" class="brand-logo">
+            <span class="brand-text">FamilyPlan</span>
         </div>
 
         <div class="segmented-control">
@@ -1146,7 +1145,7 @@
                             return `
                                 <div class="chore-item-row" style="padding:4px 6px; font-size:0.78rem;">
                                     <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox"> ${choreText}</label>
-                                    <button class="action-btn delete-btn" onclick="deleteKidChore(${kIdx},${cIdx})" style="padding:0 3px;">✕</button>
+                                    <button class="action-btn delete-btn" onclick="deleteKidChore(${kIdx}, ${cIdx})" style="padding:0 3px;">✕</button>
                                 </div>
                             `;
                         }).join('')}
