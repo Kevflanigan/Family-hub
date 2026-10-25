@@ -10,16 +10,17 @@
         :root {
             --bg: #f7f5f1;
             --card: #ffffff;
-            --border: #e7e2da;
-            --text: #252b36;
-            --muted: #6f7785;
-            --accent: #6d5ce8;
+            --border: #dcd7ce;
+            --text: #1e2530;
+            --muted: #5e6675;
+            --accent: #5b48e0;
+            --accent-hover: #4836c9;
             --mom: #d9468d;
-            --dad: #3678d4;
-            --leo: #159b75;
-            --mia: #c47a08;
-            --family: #805ad5;
-            --shadow-soft: 0 4px 16px rgba(36, 32, 64, .04);
+            --dad: #2563eb;
+            --leo: #059669;
+            --mia: #d97706;
+            --family: #7c3aed;
+            --shadow-soft: 0 4px 18px rgba(30, 25, 60, .06);
         }
 
         * {
@@ -32,95 +33,82 @@
 
         body {
             background:
-              radial-gradient(ellipse at 12% 0%, rgba(109,92,232,.08), transparent 32rem),
+              radial-gradient(ellipse at 12% 0%, rgba(91,72,224,.09), transparent 32rem),
               var(--bg);
             color: var(--text);
-            padding-top: 66px;
-            padding-bottom: 65px;
+            padding-top: 76px;
+            padding-bottom: 84px;
             min-height: 100vh;
-            line-height: 1.35;
+            line-height: 1.45;
             overflow-x: hidden;
+            font-size: 16px; /* Scaled base font size */
         }
 
-        /* Compact Unified Header Container */
+        /* Top Header Container */
         .top-header-container {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 1000;
-            background: rgba(255, 255, 255, 0.96);
+            background: rgba(255, 255, 255, 0.98);
             border-bottom: 1px solid var(--border);
-            box-shadow: 0 2px 8px rgba(30,35,50,.03);
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
             backdrop-filter: blur(14px);
-            padding: 6px 10px;
+            padding: 12px 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 6px;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-shrink: 0;
-        }
-
-        .brand-logo {
-            width: 42px;
-            height: 42px;
-            border-radius: 10px;
-            object-fit: cover;
-            flex-shrink: 0;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+            gap: 12px;
         }
 
         .brand-text {
             font-weight: 800;
-            font-size: 0.95rem;
-            letter-spacing: -0.4px;
-            color: #112244;
+            font-size: 1.35rem; /* Larger Brand Title */
+            letter-spacing: -0.5px;
+            color: #0f172a;
             white-space: nowrap;
         }
 
         .header-actions {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 10px;
             position: relative;
         }
 
         .user-selector-btn {
             display: flex;
             align-items: center;
-            gap: 4px;
-            background: #f0edff;
-            border: 1px solid #dcd5ff;
-            padding: 3px 8px;
-            border-radius: 14px;
-            font-size: 0.72rem;
+            gap: 8px;
+            background: #eeeaff;
+            border: 1.5px solid #d5cbff;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.95rem; /* Larger user button text */
             font-weight: 700;
             color: var(--text);
             cursor: pointer;
+            min-height: 42px; /* Touch friendly */
         }
 
         .user-avatar-dot {
-            width: 8px;
-            height: 8px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
+            flex-shrink: 0;
         }
 
         .user-dropdown-menu {
             display: none;
             position: absolute;
-            top: 36px;
+            top: 50px;
             right: 0;
             background: #fff;
             border: 1px solid var(--border);
-            border-radius: 10px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            width: 130px;
+            border-radius: 12px;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+            width: 150px;
             overflow: hidden;
             z-index: 1001;
         }
@@ -130,69 +118,71 @@
         }
 
         .user-dropdown-item {
-            padding: 8px 10px;
-            font-size: 0.78rem;
+            padding: 12px 14px;
+            font-size: 0.95rem;
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             cursor: pointer;
             border-bottom: 1px solid #f2eff8;
         }
 
         .user-dropdown-item:hover {
-            background: #faf9ff;
+            background: #f5f3ff;
         }
 
-        /* Compact View Switcher */
+        /* Segmented View Switcher */
         .segmented-control {
             display: flex;
-            background: #ede9f5;
-            padding: 2px;
-            border-radius: 8px;
-            flex: 1;
-            max-width: 100px;
-            justify-content: center;
+            background: #eae5f7;
+            padding: 4px;
+            border-radius: 12px;
+            width: 100%;
+            gap: 4px;
         }
 
         .segmented-btn {
             flex: 1;
             border: none;
             background: transparent;
-            padding: 4px 6px;
-            font-size: 0.68rem;
+            padding: 10px 12px;
+            font-size: 0.95rem;
             font-weight: 700;
             color: var(--muted);
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.15s ease;
             white-space: nowrap;
             text-align: center;
+            min-height: 42px;
         }
 
         .segmented-btn.active {
             background: #fff;
             color: var(--accent);
-            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
         }
 
         .logout-btn {
             background: #fff;
-            border: 1px solid var(--border);
+            border: 1.5px solid var(--border);
             color: var(--muted);
-            padding: 3px 6px;
-            border-radius: 6px;
-            font-size: 0.7rem;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 0.9rem;
             font-weight: 700;
             cursor: pointer;
+            min-height: 42px;
         }
 
-        /* Views management - Full width layout */
+        /* View Containers */
         .view {
             display: none;
             width: 100%;
+            max-width: 640px;
             margin: 0 auto;
-            padding: 0.6rem;
+            padding: 0.85rem;
             animation: fadeIn 0.18s ease-in-out;
         }
 
@@ -201,7 +191,7 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(3px); }
+            from { opacity: 0; transform: translateY(4px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -211,14 +201,14 @@
             bottom: 0;
             left: 0;
             right: 0;
-            height: 54px;
+            height: 70px; /* Scaled up height */
             background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(14px);
             border-top: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: space-around;
-            padding: 0 0.2rem;
+            padding: 0 4px;
             z-index: 1000;
             overflow-x: auto;
         }
@@ -235,44 +225,45 @@
             background: none;
             border: none;
             color: var(--muted);
-            padding: 4px 2px;
-            font-size: 0.62rem;
+            padding: 6px 4px;
+            font-size: 0.75rem; /* Larger text */
             font-weight: 600;
             cursor: pointer;
-            border-radius: 6px;
+            border-radius: 8px;
             flex: 1;
-            min-width: 46px;
-            gap: 1px;
+            min-width: 54px;
+            gap: 3px;
             transition: color 0.15s ease;
             flex-shrink: 0;
+            height: 100%;
         }
 
         .nav-item.active {
             color: var(--accent);
-            font-weight: 700;
+            font-weight: 800;
         }
 
         .nav-icon {
-            font-size: 1rem;
+            font-size: 1.35rem; /* Larger icons */
             line-height: 1;
         }
 
         /* Toast Notification */
         .toast-notification {
             position: fixed;
-            bottom: 64px;
+            bottom: 80px;
             left: 50%;
             transform: translateX(-50%) translateY(20px);
-            background: #1e293b;
+            background: #0f172a;
             color: #ffffff;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.78rem;
+            padding: 10px 18px;
+            border-radius: 24px;
+            font-size: 0.95rem;
             font-weight: 600;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             opacity: 0;
             visibility: hidden;
             transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
@@ -289,23 +280,23 @@
         .toast-icon {
             background: #10b981;
             color: #fff;
-            width: 14px;
-            height: 14px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
             display: grid;
             place-items: center;
-            font-size: 0.55rem;
+            font-size: 0.7rem;
             font-weight: 800;
         }
 
         /* Cards & Inputs */
         .card {
-            background: rgba(255,255,255,.96);
+            background: rgba(255,255,255,.98);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 0.75rem 0.85rem;
+            border-radius: 16px;
+            padding: 1.1rem;
             box-shadow: var(--shadow-soft);
-            margin-bottom: 0.6rem;
+            margin-bottom: 1rem;
             width: 100%;
         }
 
@@ -313,126 +304,138 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.6rem;
+            margin-bottom: 0.85rem;
         }
 
         .card-title {
-            font-size: 0.95rem;
+            font-size: 1.15rem; /* Larger Section Titles */
             font-weight: 800;
+            color: #0f172a;
         }
 
         .add-form {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 12px;
         }
 
         .form-row {
             display: flex;
-            gap: 6px;
+            gap: 10px;
             flex-wrap: wrap;
         }
 
         .inline-add-group {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             width: 100%;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
 
         .form-input, .form-select {
             background: #fff;
-            border: 1px solid #dcdfe6;
+            border: 1.5px solid #dcdfe6;
             color: var(--text);
-            padding: 6px 10px;
-            min-height: 34px;
-            font-size: 0.8rem;
-            border-radius: 8px;
+            padding: 10px 14px;
+            min-height: 48px; /* High touch target */
+            font-size: 0.98rem; /* Scaled input text */
+            border-radius: 10px;
             outline: none;
             width: 100%;
         }
 
         .form-input:focus, .form-select:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 2px rgba(109,92,232,.12);
+            box-shadow: 0 0 0 3px rgba(91,72,224,.15);
         }
 
         .input-full { flex: 1 1 100%; }
-        .input-half { flex: 1 1 48%; }
+        .input-half { flex: 1 1 calc(50% - 5px); }
 
         .add-btn, .inline-add-btn {
             background: var(--accent);
             color: #fff;
             border: none;
-            min-height: 34px;
-            padding: 6px 12px;
-            border-radius: 8px;
+            min-height: 48px; /* High touch target */
+            padding: 10px 18px;
+            border-radius: 10px;
             font-weight: 700;
-            font-size: 0.8rem;
+            font-size: 0.98rem;
             cursor: pointer;
             white-space: nowrap;
             flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .add-btn:hover, .inline-add-btn:hover { background: #5948d0; }
+        .add-btn:hover, .inline-add-btn:hover { background: var(--accent-hover); }
 
         .list-container {
             display: flex;
             flex-direction: column;
-            gap: 0.4rem;
+            gap: 0.6rem;
             width: 100%;
         }
 
         .list-empty {
             text-align: center;
-            padding: 1rem 0.75rem;
+            padding: 1.25rem 1rem;
             color: var(--muted);
-            font-size: 0.78rem;
-            border: 1px dashed var(--border);
-            border-radius: 10px;
+            font-size: 0.92rem;
+            border: 1.5px dashed var(--border);
+            border-radius: 12px;
             background: #faf9ff;
             margin-bottom: 0.4rem;
         }
 
         .todo-item, .shopping-item, .meal-card-row, .wishlist-item, .list-card, .chore-item-row {
             background: #fff;
-            border: 1px solid #e8e5df;
-            border-radius: 8px;
-            padding: 6px 10px;
+            border: 1px solid #e2ded7;
+            border-radius: 12px;
+            padding: 10px 14px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 6px;
-            margin-bottom: 4px;
+            gap: 10px;
+            min-height: 48px;
             width: 100%;
         }
 
         .shopping-item.completed span, .todo-item.completed span {
             text-decoration: line-through;
             color: var(--muted);
-            opacity: 0.7;
+            opacity: 0.65;
         }
 
         .shop-left, .todo-left {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
             flex: 1;
             min-width: 0;
         }
 
+        /* Checkbox enlargement */
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
         .item-text-label {
-            font-size: 0.82rem;
+            font-size: 0.98rem;
             font-weight: 500;
             flex: 1;
             word-break: break-word;
         }
 
         .edit-inline-input {
-            font-size: 0.82rem;
-            padding: 2px 6px;
-            border: 1px solid var(--accent);
-            border-radius: 4px;
+            font-size: 0.95rem;
+            padding: 6px 8px;
+            border: 1.5px solid var(--accent);
+            border-radius: 6px;
             outline: none;
             width: 100%;
         }
@@ -442,10 +445,14 @@
             border: none;
             color: var(--muted);
             cursor: pointer;
-            font-size: 0.75rem;
-            padding: 2px 4px;
-            border-radius: 4px;
+            font-size: 0.95rem;
+            padding: 6px;
+            border-radius: 6px;
             flex-shrink: 0;
+            min-width: 36px;
+            min-height: 36px;
+            display: grid;
+            place-items: center;
         }
 
         .action-btn:hover {
@@ -459,15 +466,16 @@
         }
 
         .assign-tag {
-            font-size: 0.58rem;
+            font-size: 0.75rem;
             font-weight: 700;
-            padding: 2px 7px;
+            padding: 4px 10px;
             border-radius: 14px;
             color: #fff;
             text-transform: uppercase;
             cursor: pointer;
             user-select: none;
             flex-shrink: 0;
+            letter-spacing: 0.3px;
         }
 
         .bg-mom { background-color: var(--mom); }
@@ -477,33 +485,33 @@
         .bg-family { background-color: var(--family); }
 
         .meal-card-row { margin-bottom: 4px; }
-        .meal-day-name { font-size: 0.85rem; font-weight: 800; color: #5144b7; width: 42px; flex-shrink: 0; }
-        .meal-input-inline { background: transparent; border: none; border-bottom: 1px dashed var(--border); font-size: 0.82rem; width: 100%; outline: none; }
+        .meal-day-name { font-size: 1rem; font-weight: 800; color: #5144b7; width: 52px; flex-shrink: 0; }
+        .meal-input-inline { background: transparent; border: none; border-bottom: 1.5px dashed var(--border); font-size: 0.95rem; width: 100%; outline: none; padding: 4px 0; }
 
         .chores-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 8px;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 12px;
             width: 100%;
         }
 
         /* Leaflet Map Height */
         #places-map {
             width: 100%;
-            height: 300px;
-            border-radius: 10px;
+            height: 320px;
+            border-radius: 12px;
             border: 1px solid var(--border);
             z-index: 1;
         }
 
         /* Calendar */
-        .calendar-nav { display: flex; align-items: center; gap: 6px; }
-        .cal-nav-btn { background: #fff; border: 1px solid var(--border); width: 26px; height: 26px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-        .day-header { text-align: center; font-size: 0.65rem; font-weight: 700; color: var(--muted); text-transform: uppercase; }
-        .day-cell { background: #fff; border: 1px solid #e8e5df; border-radius: 6px; min-height: 60px; padding: 4px; cursor: pointer; }
-        .day-num { font-size: 0.7rem; font-weight: 600; color: #505868; }
-        .event-pill { margin-top: 2px; padding: 1px 3px; border-radius: 3px; font-size: 0.58rem; color: #fff; font-weight: 600; }
+        .calendar-nav { display: flex; align-items: center; gap: 8px; }
+        .cal-nav-btn { background: #fff; border: 1.5px solid var(--border); min-width: 36px; min-height: 36px; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 700; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+        .day-header { text-align: center; font-size: 0.78rem; font-weight: 700; color: var(--muted); text-transform: uppercase; padding-bottom: 4px; }
+        .day-cell { background: #fff; border: 1px solid #e2ded7; border-radius: 8px; min-height: 72px; padding: 6px; cursor: pointer; }
+        .day-num { font-size: 0.85rem; font-weight: 700; color: #334155; }
+        .event-pill { margin-top: 4px; padding: 2px 5px; border-radius: 4px; font-size: 0.68rem; color: #fff; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     </style>
 </head>
 <body>
@@ -514,22 +522,15 @@
         <span id="toast-message">Item added successfully!</span>
     </div>
 
-    <!-- Compact Top Header & Switcher Row -->
+    <!-- Top Header Bar -->
     <div class="top-header-container">
-        <div class="brand">
-            <img src="30640.png" alt="FamilyPlan Logo" class="brand-logo">
-            <span class="brand-text">FamilyPlan</span>
-        </div>
-
-        <div class="segmented-control">
-            <button id="toggle-btn-family" class="segmented-btn active" onclick="setViewMode('family')">👨‍👩‍👧‍👦 Family</button>
-        </div>
+        <span class="brand-text">FamilyPlan</span>
 
         <div class="header-actions">
             <button class="user-selector-btn" onclick="toggleUserDropdown()">
                 <span id="current-user-dot" class="user-avatar-dot bg-dad"></span>
                 <span id="current-user-name">Dad</span>
-                <span style="font-size:0.55rem;">▼</span>
+                <span style="font-size:0.7rem;">▼</span>
             </button>
             <div id="user-dropdown" class="user-dropdown-menu">
                 <div class="user-dropdown-item" onclick="selectUser('dad', 'Dad')"><span class="user-avatar-dot bg-dad"></span> Dad</div>
@@ -596,12 +597,12 @@
 
     <!-- VIEW 3: Shopping -->
     <div id="view-shopping" class="view">
-        <section class="card" style="margin-bottom:0.6rem;">
+        <section class="card">
             <div class="card-header"><div class="card-title">🍽️ Weekly Meal Planner</div></div>
             <div id="meal-list-container" class="list-container"></div>
         </section>
 
-        <section class="card" style="margin-bottom:0.6rem;">
+        <section class="card">
             <div class="card-header"><div class="card-title">🛒 Food Shopping List</div></div>
             <div class="inline-add-group">
                 <input type="text" id="foodshop-quick-input" class="form-input input-full" placeholder="Add food item..." onkeypress="if(event.key==='Enter') addInlineShop('foodshop')">
@@ -620,16 +621,16 @@
         </section>
     </div>
 
-    <!-- VIEW 4: Places & Restaurants with Map & Section Toggle -->
+    <!-- VIEW 4: Places & Restaurants -->
     <div id="view-places" class="view">
-        <div style="margin-bottom: 0.6rem;">
-            <div class="segmented-control" style="max-width: 100%;">
+        <div style="margin-bottom: 0.85rem;">
+            <div class="segmented-control">
                 <button id="places-tab-btn" class="segmented-btn active" onclick="switchPlacesSubTab('places')">📍 Places to Visit</button>
                 <button id="restaurants-tab-btn" class="segmented-btn" onclick="switchPlacesSubTab('restaurants')">🍽️ Restaurants</button>
             </div>
         </div>
 
-        <section class="card" style="margin-bottom:0.6rem;">
+        <section class="card">
             <div class="card-header">
                 <div class="card-title" id="places-card-title">📍 Places to Visit</div>
             </div>
@@ -649,7 +650,7 @@
 
     <!-- VIEW 5: Watchlist -->
     <div id="view-watchlist" class="view">
-        <section class="card" style="margin-bottom:0.6rem;">
+        <section class="card">
             <div class="card-header"><div class="card-title">🎬 Cinema Watchlist</div></div>
             <div class="inline-add-group">
                 <input type="text" id="cinema-quick-input" class="form-input input-full" placeholder="Add movie..." onkeypress="if(event.key==='Enter') addWatchlistItem('cinema')">
@@ -668,7 +669,7 @@
         </section>
     </div>
 
-    <!-- VIEW 6: To-Do & Tasks Hub -->
+    <!-- VIEW 6: To-Do & Tasks -->
     <div id="view-todo" class="view">
         <section class="card">
             <div class="card-header"><div class="card-title">📝 To-Do List</div></div>
@@ -776,7 +777,7 @@
             localStorage.setItem('fam_view_mode', viewMode);
         }
 
-        /* USER PROFILE & VIEW MODE MANAGEMENT */
+        /* PROFILE & VIEW MODES */
         function toggleUserDropdown() {
             document.getElementById('user-dropdown').classList.toggle('open');
         }
@@ -791,12 +792,6 @@
             saveData();
             renderAllViews();
             showToast(`Switched to ${userName}`);
-        }
-
-        function setViewMode(mode) {
-            viewMode = mode;
-            saveData();
-            renderAllViews();
         }
 
         function filterItem(itemWho) {
@@ -995,10 +990,10 @@
                 return `
                     <div class="list-card">
                         <div>
-                            <h5>${activePlacesTab === 'places' ? '📍' : '🍽️'} ${item.title}</h5>
-                            ${item.postcode ? `<span style="font-size:0.7rem; color:var(--muted);">${item.postcode}</span>` : ''}
+                            <h5 style="font-size:0.98rem; font-weight:700;">${activePlacesTab === 'places' ? '📍' : '🍽️'} ${item.title}</h5>
+                            ${item.postcode ? `<span style="font-size:0.8rem; color:var(--muted);">${item.postcode}</span>` : ''}
                         </div>
-                        <div style="display:flex; align-items:center; gap:6px;">
+                        <div style="display:flex; align-items:center; gap:8px;">
                             <span class="assign-tag bg-${item.who}">${item.who}</span>
                             <button class="action-btn delete-btn" onclick="destinationsData['${activePlacesTab}'].splice(${idx},1); saveData(); renderPlacesView();">✕</button>
                         </div>
@@ -1134,19 +1129,19 @@
 
         function renderChores() {
             document.getElementById('chores-list-container').innerHTML = choresData.map((k, kIdx) => `
-                <div class="card" style="margin-bottom:0; padding:10px;">
-                    <div style="font-weight:800; font-size:0.85rem; margin-bottom:6px;">${k.kid}</div>
-                    <div class="inline-add-group" style="margin-bottom:6px;">
-                        <input type="text" id="chore-input-${kIdx}" class="form-input input-full" placeholder="Add chore..." style="min-height:30px; font-size:0.75rem;" onkeypress="if(event.key==='Enter') addKidChore(${kIdx})">
-                        <button class="inline-add-btn" onclick="addKidChore(${kIdx})" style="min-height:30px; padding:2px 8px; font-size:0.75rem;">+</button>
+                <div class="card" style="margin-bottom:0; padding:12px;">
+                    <div style="font-weight:800; font-size:0.98rem; margin-bottom:8px;">${k.kid}</div>
+                    <div class="inline-add-group" style="margin-bottom:8px;">
+                        <input type="text" id="chore-input-${kIdx}" class="form-input input-full" placeholder="Add chore..." style="min-height:40px; font-size:0.88rem;" onkeypress="if(event.key==='Enter') addKidChore(${kIdx})">
+                        <button class="inline-add-btn" onclick="addKidChore(${kIdx})" style="min-height:40px; padding:4px 12px; font-size:0.88rem;">+</button>
                     </div>
                     <div class="list-container">
-                        ${k.chores.length === 0 ? '<span style="font-size:0.75rem; color:var(--muted);">No chores</span>' : k.chores.map((c, cIdx) => {
+                        ${k.chores.length === 0 ? '<span style="font-size:0.85rem; color:var(--muted);">No chores</span>' : k.chores.map((c, cIdx) => {
                             const choreText = typeof c === 'string' ? c : c.text;
                             return `
-                                <div class="chore-item-row" style="padding:4px 6px; font-size:0.78rem;">
-                                    <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox"> ${choreText}</label>
-                                    <button class="action-btn delete-btn" onclick="deleteKidChore(${kIdx}, ${cIdx})" style="padding:0 3px;">✕</button>
+                                <div class="chore-item-row" style="padding:6px 10px; font-size:0.9rem;">
+                                    <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox"> ${choreText}</label>
+                                    <button class="action-btn delete-btn" onclick="deleteKidChore(${kIdx}, ${cIdx})">✕</button>
                                 </div>
                             `;
                         }).join('')}
@@ -1173,7 +1168,7 @@
                 return `
                     <div class="wishlist-item">
                         <span class="item-text-label">🎁 ${w.title}</span>
-                        <div style="display:flex; align-items:center; gap:6px;">
+                        <div style="display:flex; align-items:center; gap:8px;">
                             <span class="assign-tag bg-${w.who}" onclick="cycleAssignee('wishlist', ${idx})">${w.who}</span>
                             <button class="action-btn delete-btn" onclick="wishlistData.splice(${idx},1); saveData(); renderWishlist();">✕</button>
                         </div>
@@ -1204,7 +1199,7 @@
                 return `
                     <div class="list-card">
                         <span class="item-text-label">🎬 ${item.title}</span>
-                        <div style="display:flex; align-items:center; gap:6px;">
+                        <div style="display:flex; align-items:center; gap:8px;">
                             <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('cinema', ${idx})">${item.who}</span>
                             <button class="action-btn delete-btn" onclick="destinationsData.cinema.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
                         </div>
@@ -1217,7 +1212,7 @@
                 return `
                     <div class="list-card">
                         <span class="item-text-label">📺 ${item.title}</span>
-                        <div style="display:flex; align-items:center; gap:6px;">
+                        <div style="display:flex; align-items:center; gap:8px;">
                             <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('home', ${idx})">${item.who}</span>
                             <button class="action-btn delete-btn" onclick="destinationsData.home.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
                         </div>
