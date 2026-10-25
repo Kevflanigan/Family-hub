@@ -35,15 +35,15 @@
               radial-gradient(ellipse at 12% 0%, rgba(109,92,232,.08), transparent 32rem),
               var(--bg);
             color: var(--text);
-            padding-top: 72px;
+            padding-top: 68px;
             padding-bottom: 78px;
             min-height: 100vh;
             line-height: 1.45;
             overflow-x: hidden;
-            font-size: 1.05rem;
+            font-size: 1rem;
         }
 
-        /* Scaled & Clear Top Header */
+        /* Top Header Container */
         .top-header-container {
             position: fixed;
             top: 0;
@@ -54,43 +54,33 @@
             border-bottom: 1px solid var(--border);
             box-shadow: 0 2px 10px rgba(30,35,50,.04);
             backdrop-filter: blur(14px);
-            padding: 10px 14px;
+            padding: 8px 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 8px;
+            gap: 6px;
         }
 
         .brand {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             flex-shrink: 0;
         }
 
-        /* Pure CSS/SVG Emblem Logo (Never Breaks) */
-        .brand-icon-emblem {
+        /* User's Exact Logo Image */
+        .brand-logo-img {
             width: 40px;
             height: 40px;
-            background: linear-gradient(135deg, #6d5ce8, #805ad5);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 3px 8px rgba(109, 92, 232, 0.35);
-            color: #ffffff;
+            border-radius: 10px;
+            object-fit: contain;
             flex-shrink: 0;
-        }
-
-        .brand-icon-emblem svg {
-            width: 22px;
-            height: 22px;
-            fill: currentColor;
+            background: #fff;
         }
 
         .brand-text {
             font-weight: 800;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             letter-spacing: -0.4px;
             color: #112244;
             white-space: nowrap;
@@ -99,41 +89,41 @@
         .header-actions {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             position: relative;
         }
 
         .user-selector-btn {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             background: #f0edff;
             border: 1px solid #dcd5ff;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.9rem;
+            padding: 6px 10px;
+            border-radius: 18px;
+            font-size: 0.85rem;
             font-weight: 700;
             color: var(--text);
             cursor: pointer;
-            min-height: 40px;
+            min-height: 36px;
         }
 
         .user-avatar-dot {
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
         }
 
         .user-dropdown-menu {
             display: none;
             position: absolute;
-            top: 48px;
+            top: 44px;
             right: 0;
             background: #fff;
             border: 1px solid var(--border);
             border-radius: 12px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.12);
-            width: 150px;
+            width: 140px;
             overflow: hidden;
             z-index: 1001;
         }
@@ -143,7 +133,7 @@
         }
 
         .user-dropdown-item {
-            padding: 12px 14px;
+            padding: 10px 12px;
             font-size: 0.95rem;
             font-weight: 700;
             display: flex;
@@ -161,22 +151,19 @@
         .segmented-control {
             display: flex;
             background: #ede9f5;
-            padding: 3px;
-            border-radius: 10px;
-            flex: 1;
-            max-width: 110px;
-            justify-content: center;
+            padding: 2px;
+            border-radius: 8px;
+            flex-shrink: 0;
         }
 
         .segmented-btn {
-            flex: 1;
             border: none;
             background: transparent;
-            padding: 6px 10px;
-            font-size: 0.82rem;
+            padding: 5px 8px;
+            font-size: 0.8rem;
             font-weight: 700;
             color: var(--muted);
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             transition: all 0.15s ease;
             white-space: nowrap;
@@ -187,18 +174,6 @@
             background: #fff;
             color: var(--accent);
             box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-        }
-
-        .logout-btn {
-            background: #fff;
-            border: 1px solid var(--border);
-            color: var(--muted);
-            padding: 6px 10px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
-            min-height: 40px;
         }
 
         /* Views management - Full width layout */
@@ -225,14 +200,14 @@
             bottom: 0;
             left: 0;
             right: 0;
-            height: 68px;
+            height: 64px;
             background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(12px);
             border-top: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: space-around;
-            padding: 0 0.4rem;
+            padding: 0 0.2rem;
             z-index: 1000;
             overflow-x: auto;
         }
@@ -249,13 +224,13 @@
             background: none;
             border: none;
             color: var(--muted);
-            padding: 6px 4px;
-            font-size: 0.75rem;
+            padding: 4px 2px;
+            font-size: 0.72rem;
             font-weight: 600;
             cursor: pointer;
             border-radius: 8px;
             flex: 1;
-            min-width: 52px;
+            min-width: 48px;
             gap: 2px;
             transition: color 0.15s ease;
             flex-shrink: 0;
@@ -267,21 +242,21 @@
         }
 
         .nav-icon {
-            font-size: 1.35rem;
+            font-size: 1.25rem;
             line-height: 1;
         }
 
         /* Toast Notification */
         .toast-notification {
             position: fixed;
-            bottom: 78px;
+            bottom: 74px;
             left: 50%;
             transform: translateX(-50%) translateY(20px);
             background: #1e293b;
             color: #ffffff;
             padding: 10px 18px;
             border-radius: 24px;
-            font-size: 0.92rem;
+            font-size: 0.9rem;
             font-weight: 600;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             display: flex;
@@ -331,20 +306,26 @@
         }
 
         .card-title {
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             font-weight: 800;
         }
 
         .add-form {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
 
         .form-row {
             display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
+            gap: 10px;
+            flex-direction: column;
+        }
+
+        @media (min-width: 480px) {
+            .form-row {
+                flex-direction: row;
+            }
         }
 
         .inline-add-group {
@@ -358,12 +339,14 @@
             background: #fff;
             border: 1px solid #dcdfe6;
             color: var(--text);
-            padding: 10px 14px;
-            min-height: 46px;
-            font-size: 0.98rem;
+            padding: 12px 14px;
+            min-height: 48px;
+            font-size: 1rem;
             border-radius: 10px;
             outline: none;
             width: 100%;
+            box-sizing: border-box;
+            text-overflow: ellipsis;
         }
 
         .form-input:focus, .form-select:focus {
@@ -372,20 +355,25 @@
         }
 
         .input-full { flex: 1 1 100%; }
-        .input-half { flex: 1 1 48%; }
+        .input-half { flex: 1 1 100%; }
+
+        @media (min-width: 480px) {
+            .input-half { flex: 1 1 48%; }
+        }
 
         .add-btn, .inline-add-btn {
             background: var(--accent);
             color: #fff;
             border: none;
-            min-height: 46px;
-            padding: 10px 16px;
+            min-height: 48px;
+            padding: 12px 18px;
             border-radius: 10px;
             font-weight: 700;
-            font-size: 0.98rem;
+            font-size: 1rem;
             cursor: pointer;
             white-space: nowrap;
             flex-shrink: 0;
+            width: 100%;
         }
 
         .add-btn:hover, .inline-add-btn:hover { background: #5948d0; }
@@ -536,14 +524,10 @@
         <span id="toast-message">Item added successfully!</span>
     </div>
 
-    <!-- Top Header Container with Emblem Logo -->
+    <!-- Top Header Container with Exact User Logo File -->
     <div class="top-header-container">
         <div class="brand">
-            <div class="brand-icon-emblem">
-                <svg viewBox="0 0 24 24">
-                    <path d="M19,4H18V2H16V4H8V2H6V4H5A2,2 0 0,0 3,6V20A2,2 0 0,0 5,22H19A2,2 0 0,0 21,20V6A2,2 0 0,0 19,4M19,20H5V9H19V20M12,12.5C10.5,11 8.5,12.5 8.5,14C8.5,15.5 12,18 12,18C12,18 15.5,15.5 15.5,14C15.5,12.5 13.5,11 12,12.5Z"/>
-                </svg>
-            </div>
+            <img src="30640.png" alt="FamilyPlan Logo" class="brand-logo-img">
             <span class="brand-text">FamilyPlan</span>
         </div>
 
@@ -553,8 +537,8 @@
 
         <div class="header-actions">
             <button class="user-selector-btn" onclick="toggleUserDropdown()">
-                <span id="current-user-dot" class="user-avatar-dot bg-dad"></span>
-                <span id="current-user-name">Dad</span>
+                <span id="current-user-dot" class="user-avatar-dot bg-mom"></span>
+                <span id="current-user-name">Mom</span>
                 <span style="font-size:0.6rem;">▼</span>
             </button>
             <div id="user-dropdown" class="user-dropdown-menu">
@@ -563,7 +547,6 @@
                 <div class="user-dropdown-item" onclick="selectUser('leo', 'Leo')"><span class="user-avatar-dot bg-leo"></span> Leo</div>
                 <div class="user-dropdown-item" onclick="selectUser('mia', 'Mia')"><span class="user-avatar-dot bg-mia"></span> Mia</div>
             </div>
-            <button class="logout-btn" onclick="showToast('Logged out')">Exit</button>
         </div>
     </div>
 
@@ -631,7 +614,7 @@
             <div class="card-header"><div class="card-title">🛒 Food Shopping List</div></div>
             <div class="inline-add-group">
                 <input type="text" id="foodshop-quick-input" class="form-input input-full" placeholder="Add food item..." onkeypress="if(event.key==='Enter') addInlineShop('foodshop')">
-                <button class="inline-add-btn" onclick="addInlineShop('foodshop')">+ Add</button>
+                <button class="inline-add-btn" onclick="addInlineShop('foodshop')" style="width:auto;">+ Add</button>
             </div>
             <div id="foodshop-list-container" class="list-container"></div>
         </section>
@@ -640,7 +623,7 @@
             <div class="card-header"><div class="card-title">🛍️ Family Shopping List</div></div>
             <div class="inline-add-group">
                 <input type="text" id="familyshop-quick-input" class="form-input input-full" placeholder="Add family item..." onkeypress="if(event.key==='Enter') addInlineShop('familyshop')">
-                <button class="inline-add-btn" onclick="addInlineShop('familyshop')">+ Add</button>
+                <button class="inline-add-btn" onclick="addInlineShop('familyshop')" style="width:auto;">+ Add</button>
             </div>
             <div id="familyshop-list-container" class="list-container"></div>
         </section>
@@ -649,7 +632,7 @@
     <!-- VIEW 4: Places & Restaurants with Map & Section Toggle -->
     <div id="view-places" class="view">
         <div style="margin-bottom: 0.8rem;">
-            <div class="segmented-control" style="max-width: 100%;">
+            <div class="segmented-control" style="width: 100%;">
                 <button id="places-tab-btn" class="segmented-btn active" onclick="switchPlacesSubTab('places')">📍 Places to Visit</button>
                 <button id="restaurants-tab-btn" class="segmented-btn" onclick="switchPlacesSubTab('restaurants')">🍽️ Restaurants</button>
             </div>
@@ -662,7 +645,7 @@
             <div class="inline-add-group">
                 <input type="text" id="places-name-input" class="form-input" style="flex:2;" placeholder="Name...">
                 <input type="text" id="places-postcode-input" class="form-input" style="flex:1;" placeholder="Postcode...">
-                <button class="inline-add-btn" onclick="addPlacesItem()">+ Add</button>
+                <button class="inline-add-btn" onclick="addPlacesItem()" style="width:auto;">+ Add</button>
             </div>
             <div id="places-dynamic-list-container" class="list-container"></div>
         </section>
@@ -679,7 +662,7 @@
             <div class="card-header"><div class="card-title">🎬 Cinema Watchlist</div></div>
             <div class="inline-add-group">
                 <input type="text" id="cinema-quick-input" class="form-input input-full" placeholder="Add movie..." onkeypress="if(event.key==='Enter') addWatchlistItem('cinema')">
-                <button class="inline-add-btn" onclick="addWatchlistItem('cinema')">+ Add</button>
+                <button class="inline-add-btn" onclick="addWatchlistItem('cinema')" style="width:auto;">+ Add</button>
             </div>
             <div id="cinema-list-container" class="list-container"></div>
         </section>
@@ -688,7 +671,7 @@
             <div class="card-header"><div class="card-title">📺 Home Watchlist</div></div>
             <div class="inline-add-group">
                 <input type="text" id="home-quick-input" class="form-input input-full" placeholder="Add TV show..." onkeypress="if(event.key==='Enter') addWatchlistItem('home')">
-                <button class="inline-add-btn" onclick="addWatchlistItem('home')">+ Add</button>
+                <button class="inline-add-btn" onclick="addWatchlistItem('home')" style="width:auto;">+ Add</button>
             </div>
             <div id="home-list-container" class="list-container"></div>
         </section>
@@ -700,7 +683,7 @@
             <div class="card-header"><div class="card-title">📝 To-Do List</div></div>
             <div class="inline-add-group">
                 <input type="text" id="todo-quick-input" class="form-input input-full" placeholder="Add task..." onkeypress="if(event.key==='Enter') addTodoItem()">
-                <button class="inline-add-btn" onclick="addTodoItem()">+ Add</button>
+                <button class="inline-add-btn" onclick="addTodoItem()" style="width:auto;">+ Add</button>
             </div>
             <div id="todo-list-container" class="list-container"></div>
         </section>
@@ -714,7 +697,7 @@
             <div class="card-header"><div class="card-title">🎁 Gift Wishlist</div></div>
             <div class="inline-add-group">
                 <input type="text" id="wishlist-quick-input" class="form-input input-full" placeholder="Add item..." onkeypress="if(event.key==='Enter') addWishlistItem()">
-                <button class="inline-add-btn" onclick="addWishlistItem()">+ Add</button>
+                <button class="inline-add-btn" onclick="addWishlistItem()" style="width:auto;">+ Add</button>
             </div>
             <div id="wishlist-list-container" class="list-container"></div>
         </section>
@@ -756,8 +739,8 @@
         let currentYear = 2026;
         const assignees = ['family', 'mom', 'dad', 'leo', 'mia'];
 
-        let currentUser = localStorage.getItem('fam_user') || 'dad';
-        let currentUserName = localStorage.getItem('fam_user_name') || 'Dad';
+        let currentUser = localStorage.getItem('fam_user') || 'mom';
+        let currentUserName = localStorage.getItem('fam_user_name') || 'Mom';
         let viewMode = localStorage.getItem('fam_view_mode') || 'family';
         let activePlacesTab = 'places';
 
@@ -1164,7 +1147,7 @@
                     <div style="font-weight:800; font-size:0.95rem; margin-bottom:8px;">${k.kid}</div>
                     <div class="inline-add-group" style="margin-bottom:8px;">
                         <input type="text" id="chore-input-${kIdx}" class="form-input input-full" placeholder="Add chore..." style="min-height:38px; font-size:0.85rem;" onkeypress="if(event.key==='Enter') addKidChore(${kIdx})">
-                        <button class="inline-add-btn" onclick="addKidChore(${kIdx})" style="min-height:38px; padding:4px 10px; font-size:0.85rem;">+</button>
+                        <button class="inline-add-btn" onclick="addKidChore(${kIdx})" style="width:auto; min-height:38px; padding:4px 10px; font-size:0.85rem;">+</button>
                     </div>
                     <div class="list-container">
                         ${k.chores.length === 0 ? '<span style="font-size:0.85rem; color:var(--muted);">No chores</span>' : k.chores.map((c, cIdx) => {
