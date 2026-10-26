@@ -68,7 +68,6 @@
             flex-shrink: 0;
         }
 
-        /* Larger Logo Styling */
         .brand-logo-img {
             height: 52px;
             width: auto;
@@ -139,36 +138,37 @@
             background: #faf9ff;
         }
 
-        /* View Switcher */
-        .segmented-control {
+        /* View Mode Switcher Toggle Button */
+        .filter-toggle-btn {
             display: flex;
-            background: #ede9f5;
-            padding: 2px;
-            border-radius: 8px;
-            flex-shrink: 0;
-        }
-
-        .segmented-btn {
-            border: none;
-            background: transparent;
-            padding: 5px 8px;
-            font-size: 0.8rem;
+            align-items: center;
+            gap: 5px;
+            border: 1px solid var(--border);
+            background: #ffffff;
+            padding: 6px 12px;
+            font-size: 0.82rem;
             font-weight: 700;
             color: var(--muted);
-            border-radius: 6px;
+            border-radius: 18px;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: all 0.2s ease;
             white-space: nowrap;
-            text-align: center;
+            min-height: 36px;
         }
 
-        .segmented-btn.active {
-            background: #fff;
-            color: var(--accent);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        .filter-toggle-btn.mode-family {
+            background: #f3e8ff;
+            border-color: #d8b4fe;
+            color: #6b21a8;
         }
 
-        /* Views management - Full width layout */
+        .filter-toggle-btn.mode-individual {
+            background: #e0f2fe;
+            border-color: #7dd3fc;
+            color: #0369a1;
+        }
+
+        /* Views management */
         .view {
             display: none;
             width: 100%;
@@ -516,15 +516,17 @@
         <span id="toast-message">Item added successfully!</span>
     </div>
 
-    <!-- Top Header Container with Larger Logo -->
+    <!-- Top Header Container -->
     <div class="top-header-container">
         <div class="brand">
             <img src="familiplan-icon.png" alt="FamilyPlan Logo" class="brand-logo-img">
         </div>
 
-        <div class="segmented-control">
-            <button id="toggle-btn-family" class="segmented-btn active" onclick="setViewMode('family')">👨‍👩‍👧‍👦 Family</button>
-        </div>
+        <!-- Filter View Mode Button -->
+        <button id="view-mode-toggle" class="filter-toggle-btn mode-family" onclick="toggleViewMode()">
+            <span id="view-mode-icon">👨‍👩‍👧‍👦</span>
+            <span id="view-mode-text">Family</span>
+        </button>
 
         <div class="header-actions">
             <button class="user-selector-btn" onclick="toggleUserDropdown()">
@@ -623,9 +625,9 @@
     <!-- VIEW 4: Places & Restaurants with Map & Section Toggle -->
     <div id="view-places" class="view">
         <div style="margin-bottom: 0.8rem;">
-            <div class="segmented-control" style="width: 100%;">
-                <button id="places-tab-btn" class="segmented-btn active" onclick="switchPlacesSubTab('places')">📍 Places to Visit</button>
-                <button id="restaurants-tab-btn" class="segmented-btn" onclick="switchPlacesSubTab('restaurants')">🍽️ Restaurants</button>
+            <div style="display:flex; background:#ede9f5; padding:2px; border-radius:8px; width:100%;">
+                <button id="places-tab-btn" class="segmented-btn active" style="flex:1;" onclick="switchPlacesSubTab('places')">📍 Places to Visit</button>
+                <button id="restaurants-tab-btn" class="segmented-btn" style="flex:1;" onclick="switchPlacesSubTab('restaurants')">🍽️ Restaurants</button>
             </div>
         </div>
 
@@ -732,7 +734,7 @@
 
         let currentUser = localStorage.getItem('fam_user') || 'mom';
         let currentUserName = localStorage.getItem('fam_user_name') || 'Mom';
-        let viewMode = localStorage.getItem('fam_view_mode') || 'family';
+        let viewMode = localStorage.getItem('fam_view_mode') || 'family'; // 'family' or 'individual'
         let activePlacesTab = 'places';
 
         let mealsData = JSON.parse(localStorage.getItem('fam_meals')) || [
@@ -776,32 +778,55 @@
             localStorage.setItem('fam_view_mode', viewMode);
         }
 
-        /* USER PROFILE & VIEW MODE MANAGEMENT */
-        function toggleUserDropdown() {
-            document.getElementById('user-dropdown').classList.toggle('open');
+        /* TOGGLE BETWEEN EVERYONE (FAMILY) AND INDIVIDUAL (CURRENT USER) */
+        function toggleViewMode() {
+            viewMode = (viewMode === 'family') ? 'individual' : 'family';
+            updateViewModeUI();
+            saveData();
+            renderAllViews();
+            showToast(viewMode === 'family' ? "Showing Family Plans" : `Showing ${currentUserName}'s Plans`);
+        }
+
+        function updateViewModeUI() {
+            const btn = document.getElementById('view-mode-toggle');
+            const icon = document.getElementById('view-mode-icon');
+            const text = document.getElementById('view-mode-text');
+
+            if (viewMode === 'family') {
+                btn.className = "filter-toggle-btn mode-family";
+                icon.textContent = "👨‍👩‍👧‍👦";
+                text.textContent = "Family";
+            } else {
+                btn.className = "filter-toggle-btn mode-individual";
+                icon.textContent = "👤";
+                text.textContent = currentUserName;
+            }
         }
 
         function selectUser(userKey, userName) {
             currentUser = userKey;
             currentUserName = userName;
             document.getElementById('current-user-name').textContent = userName;
-            const dot = document.getElementById('current-user-dot');
-            dot.className = `user-avatar-dot bg-${userKey}`;
+            document.getElementById('current-user-dot').className = `user-avatar-dot bg-${userKey}`;
+            
+            // If in individual mode, update button text to match selected user
+            if (viewMode === 'individual') {
+                document.getElementById('view-mode-text').textContent = currentUserName;
+            }
+
             toggleUserDropdown();
             saveData();
             renderAllViews();
-            showToast(`Switched to ${userName}`);
+            showToast(`Switched user to ${userName}`);
         }
 
-        function setViewMode(mode) {
-            viewMode = mode;
-            saveData();
-            renderAllViews();
+        function toggleUserDropdown() {
+            document.getElementById('user-dropdown').classList.toggle('open');
         }
 
         function filterItem(itemWho) {
             if (viewMode === 'family') return true;
-            return itemWho === currentUser || itemWho === 'family';
+            return itemWho === currentUser;
         }
 
         function showView(viewId, navBtn) {
@@ -1276,6 +1301,7 @@
         document.getElementById('current-user-name').textContent = currentUserName;
         document.getElementById('current-user-dot').className = `user-avatar-dot bg-${currentUser}`;
         
+        updateViewModeUI();
         renderAllViews();
     </script>
 </body>
