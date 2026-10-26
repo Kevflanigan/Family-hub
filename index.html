@@ -1,25 +1,27 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FamilyPlan — Plan together. Make memories.</title>
+    <title>FamilyPlan — Organized Together</title>
     <!-- Leaflet CSS for Map -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
-            --bg: #f7f5f1;
+            --bg: #f8f6f0;
             --card: #ffffff;
-            --border: #e7e2da;
-            --text: #252b36;
-            --muted: #6f7785;
+            --border: #e6e1d8;
+            --text: #1f242e;
+            --muted: #6b7280;
             --accent: #6d5ce8;
+            --accent-hover: #5846d6;
             --mom: #d9468d;
-            --dad: #3678d4;
-            --leo: #159b75;
-            --mia: #c47a08;
-            --family: #805ad5;
-            --shadow-soft: 0 4px 16px rgba(36, 32, 64, .05);
+            --dad: #2563eb;
+            --leo: #059669;
+            --mia: #d97706;
+            --family: #7c3aed;
+            --shadow-soft: 0 4px 20px rgba(109, 92, 232, 0.08);
         }
 
         * {
@@ -32,10 +34,11 @@
 
         body {
             background:
-              radial-gradient(ellipse at 12% 0%, rgba(109,92,232,.08), transparent 32rem),
+              radial-gradient(ellipse at 10% 0%, rgba(109,92,232,0.1), transparent 30rem),
+              radial-gradient(ellipse at 90% 100%, rgba(217,70,141,0.06), transparent 25rem),
               var(--bg);
             color: var(--text);
-            padding-top: 76px;
+            padding-top: 68px;
             padding-bottom: 78px;
             min-height: 100vh;
             line-height: 1.45;
@@ -50,59 +53,108 @@
             left: 0;
             right: 0;
             z-index: 1000;
-            background: rgba(255, 255, 255, 0.98);
+            background: rgba(255, 255, 255, 0.96);
             border-bottom: 1px solid var(--border);
-            box-shadow: 0 2px 10px rgba(30,35,50,.04);
+            box-shadow: 0 2px 12px rgba(30,35,50,0.05);
             backdrop-filter: blur(14px);
-            padding: 10px 16px;
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            align-items: center;
-            gap: 12px;
-        }
-
-        /* Left Account / User Selector Icon */
-        .header-left {
+            padding: 8px 14px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* SVG Emblem Logo */
+        .brand-logo-svg {
+            width: 38px;
+            height: 38px;
+            flex-shrink: 0;
+            filter: drop-shadow(0 4px 10px rgba(109, 92, 232, 0.3));
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .brand:hover .brand-logo-svg {
+            transform: scale(1.05);
+        }
+
+        .brand-text-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        .brand-text {
+            font-weight: 850;
+            font-size: 1.25rem;
+            letter-spacing: -0.6px;
+            background: linear-gradient(135deg, #1e1b4b 0%, #4338ca 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            white-space: nowrap;
+        }
+
+        .brand-tagline {
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            color: #6d5ce8;
+            text-transform: uppercase;
+            margin-top: 1px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
             position: relative;
         }
 
-        .account-icon-btn {
-            background: #f0edff;
-            border: 1px solid #dcd5ff;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
+        .user-selector-btn {
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 6px;
+            background: #f0edff;
+            border: 1px solid #dcd5ff;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text);
             cursor: pointer;
-            box-shadow: 0 2px 6px rgba(109, 92, 232, 0.15);
-            transition: transform 0.1s ease;
+            min-height: 38px;
+            transition: background 0.15s ease;
         }
 
-        .account-icon-btn:active {
-            transform: scale(0.95);
+        .user-selector-btn:hover {
+            background: #e5deff;
         }
 
-        .account-avatar-dot {
-            width: 16px;
-            height: 16px;
+        .user-avatar-dot {
+            width: 9px;
+            height: 9px;
             border-radius: 50%;
-            border: 2px solid #fff;
         }
 
         .user-dropdown-menu {
             display: none;
             position: absolute;
-            top: 52px;
-            left: 0;
+            top: 46px;
+            right: 0;
             background: #fff;
             border: 1px solid var(--border);
             border-radius: 12px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.12);
-            width: 185px;
+            width: 140px;
             overflow: hidden;
             z-index: 1001;
         }
@@ -112,61 +164,59 @@
         }
 
         .user-dropdown-item {
-            padding: 11px 14px;
-            font-size: 0.92rem;
+            padding: 10px 14px;
+            font-size: 0.95rem;
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             cursor: pointer;
             border-bottom: 1px solid #f2eff8;
+            transition: background 0.15s ease;
+        }
+
+        .user-dropdown-item:last-child {
+            border-bottom: none;
         }
 
         .user-dropdown-item:hover {
             background: #faf9ff;
         }
 
-        /* Center Logo */
-        .header-center {
+        /* View Switcher Controls */
+        .segmented-control {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
+            background: #ede9f5;
+            padding: 3px;
+            border-radius: 10px;
+            flex-shrink: 0;
         }
 
-        .brand-logo-img {
-            height: 50px;
-            width: auto;
-            max-width: 190px;
-            object-fit: contain;
-            display: block;
-        }
-
-        /* Right Header Indicator / Label */
-        .header-right {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-        }
-
-        .current-user-badge {
-            background: #f8fafc;
-            border: 1px solid var(--border);
-            padding: 7px 14px;
-            border-radius: 18px;
-            font-size: 0.85rem;
+        .segmented-btn {
+            border: none;
+            background: transparent;
+            padding: 6px 10px;
+            font-size: 0.82rem;
             font-weight: 700;
             color: var(--muted);
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s ease;
             white-space: nowrap;
+            text-align: center;
         }
 
-        /* Views management */
+        .segmented-btn.active {
+            background: #fff;
+            color: var(--accent);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+
+        /* Views Container */
         .view {
             display: none;
             width: 100%;
+            max-width: 768px;
             margin: 0 auto;
             padding: 0.8rem;
             animation: fadeIn 0.18s ease-in-out;
@@ -188,7 +238,7 @@
             left: 0;
             right: 0;
             height: 64px;
-            background: rgba(255, 255, 255, 0.98);
+            background: rgba(255, 255, 255, 0.96);
             backdrop-filter: blur(12px);
             border-top: 1px solid var(--border);
             display: flex;
@@ -214,6 +264,7 @@
             flex: 1;
             min-width: 48px;
             gap: 2px;
+            transition: color 0.15s ease;
         }
 
         .nav-item.active {
@@ -226,7 +277,7 @@
             line-height: 1;
         }
 
-        /* Toast Notification */
+        /* Toast Banner */
         .toast-notification {
             position: fixed;
             bottom: 74px;
@@ -267,14 +318,14 @@
             font-weight: 800;
         }
 
-        /* Standard Cards & Inputs for rest of app */
+        /* Card Container & Form Fields */
         .card {
-            background: rgba(255,255,255,.96);
+            background: var(--card);
             border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 1rem 1.1rem;
+            border-radius: 16px;
+            padding: 1.1rem;
             box-shadow: var(--shadow-soft);
-            margin-bottom: 0.8rem;
+            margin-bottom: 0.9rem;
             width: 100%;
         }
 
@@ -282,218 +333,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.8rem;
+            margin-bottom: 0.9rem;
         }
 
         .card-title {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             font-weight: 800;
-        }
-
-        .add-form {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 10px;
-            flex-direction: column;
-        }
-
-        @media (min-width: 480px) {
-            .form-row {
-                flex-direction: row;
-            }
-        }
-
-        .inline-add-group {
-            display: flex;
-            gap: 8px;
-            width: 100%;
-            margin-bottom: 10px;
-        }
-
-        .form-input, .form-select {
-            background: #fff;
-            border: 1px solid #dcdfe6;
-            color: var(--text);
-            padding: 12px 14px;
-            min-height: 48px;
-            font-size: 1rem;
-            border-radius: 10px;
-            outline: none;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .form-input:focus, .form-select:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(109,92,232,.12);
-        }
-
-        .input-full { flex: 1 1 100%; }
-        .input-half { flex: 1 1 100%; }
-
-        @media (min-width: 480px) {
-            .input-half { flex: 1 1 48%; }
-        }
-
-        .add-btn, .inline-add-btn {
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            min-height: 48px;
-            padding: 12px 18px;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-            white-space: nowrap;
-            flex-shrink: 0;
-            width: 100%;
-        }
-
-        .add-btn:hover, .inline-add-btn:hover { background: #5948d0; }
-
-        .list-container {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            width: 100%;
-        }
-
-        .list-empty {
-            text-align: center;
-            padding: 1.2rem 1rem;
-            color: var(--muted);
-            font-size: 0.92rem;
-            border: 1px dashed var(--border);
-            border-radius: 12px;
-            background: #faf9ff;
-            margin-bottom: 0.4rem;
-        }
-
-        .todo-item, .shopping-item, .meal-card-row, .wishlist-item, .list-card, .chore-item-row {
-            background: #fff;
-            border: 1px solid #e8e5df;
-            border-radius: 10px;
-            padding: 10px 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-            margin-bottom: 6px;
-            width: 100%;
-            min-height: 48px;
-        }
-
-        .shopping-item input[type="checkbox"], .todo-item input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            accent-color: var(--accent);
-            cursor: pointer;
-        }
-
-        .shopping-item.completed span, .todo-item.completed span {
-            text-decoration: line-through;
-            color: var(--muted);
-            opacity: 0.7;
-        }
-
-        .shop-left, .todo-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex: 1;
-            min-width: 0;
-        }
-
-        .item-text-label {
-            font-size: 1rem;
-            font-weight: 500;
-            flex: 1;
-            word-break: break-word;
-        }
-
-        .edit-inline-input {
-            font-size: 1rem;
-            padding: 6px 8px;
-            border: 1px solid var(--accent);
-            border-radius: 6px;
-            outline: none;
-            width: 100%;
-        }
-
-        .action-btn {
-            background: transparent;
-            border: none;
-            color: var(--muted);
-            cursor: pointer;
-            font-size: 0.95rem;
-            padding: 6px;
-            border-radius: 6px;
-            flex-shrink: 0;
-        }
-
-        .action-btn:hover {
-            color: var(--text);
-            background: #f0f0f5;
-        }
-
-        .delete-btn:hover {
-            color: #ef4444;
-            background: #fef2f2;
-        }
-
-        .assign-tag {
-            font-size: 0.72rem;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 14px;
-            color: #fff;
-            text-transform: uppercase;
-            cursor: pointer;
-            user-select: none;
-            flex-shrink: 0;
-        }
-
-        .bg-mom { background-color: var(--mom); }
-        .bg-dad { background-color: var(--dad); }
-        .bg-leo { background-color: var(--leo); }
-        .bg-mia { background-color: var(--mia); }
-        .bg-family { background-color: var(--family); }
-
-        .meal-card-row { margin-bottom: 6px; }
-        .meal-day-name { font-size: 1rem; font-weight: 800; color: #5144b7; width: 48px; flex-shrink: 0; }
-        .meal-input-inline { background: transparent; border: none; border-bottom: 1px dashed var(--border); font-size: 0.98rem; width: 100%; outline: none; padding: 4px 0; }
-
-        .chores-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 10px;
-            width: 100%;
-        }
-
-        /* Leaflet Map Height */
-        #places-map {
-            width: 100%;
-            height: 320px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            z-index: 1;
-        }
-
-        /* Calendar */
-        .calendar-nav { display: flex; align-items: center; gap: 8px; }
-        .cal-nav-btn { background: #fff; border: 1px solid var(--border); width: 34px; height: 34px; border-radius: 8px; cursor: pointer; font-size: 1rem; display: grid; place-items: center; }
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-        .day-header { text-align: center; font-size: 0.75rem; font-weight: 700; color: var(--muted); text-transform: uppercase; }
-        .day-cell { background: #fff; border: 1px solid #e8e5df; border-radius: 8px; min-height: 75px; padding: 6px; cursor: pointer; }
-        .day-num { font-size: 0.82rem; font-weight: 600; color: #505868; }
-        .event-pill { margin-top: 3px; padding: 2px 4px; border-radius: 4px; font-size: 0.68rem; color: #fff; font-weight: 600; }
-
         /* ==========================================================
            ISOLATED SCOPED STYLES JUST FOR THE TO-DO SECTION
            ========================================================== */
@@ -508,7 +353,7 @@
         }
 
         .todo-scoped-title {
-            font-size: 0.92rem;
+            font-size: 0.85rem;
             font-weight: 800;
             margin-bottom: 0.5rem;
         }
@@ -526,7 +371,7 @@
             color: var(--text);
             padding: 6px 10px;
             min-height: 36px;
-            font-size: 0.84rem;
+            font-size: 0.85rem;
             border-radius: 7px;
             outline: none;
             width: 100%;
@@ -541,7 +386,7 @@
             padding: 6px 14px;
             border-radius: 7px;
             font-weight: 700;
-            font-size: 0.84rem;
+            font-size: 0.85rem;
             cursor: pointer;
             white-space: nowrap;
             flex-shrink: 0;
@@ -599,7 +444,7 @@
         }
 
         .todo-scoped-tag {
-            font-size: 0.62rem;
+            font-size: 0.85rem;
             font-weight: 700;
             padding: 2px 7px;
             border-radius: 10px;
@@ -609,50 +454,204 @@
             user-select: none;
             flex-shrink: 0;
         }
+
+        /* ==========================================================
+           ISOLATED SCOPED STYLES JUST FOR THE WATCHLIST SECTION
+           ========================================================== */
+        .watchlist-scoped-card {
+            background: rgba(255,255,255,.98);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.6rem 0.75rem;
+            box-shadow: 0 2px 8px rgba(36, 32, 64, .03);
+            margin-bottom: 0.5rem;
+            width: 100%;
+        }
+
+        .watchlist-scoped-title {
+            font-size: 0.85rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .watchlist-scoped-add-group {
+            display: flex;
+            gap: 6px;
+            width: 100%;
+            margin-bottom: 6px;
+        }
+
+        .watchlist-scoped-input {
+            background: #fff;
+            border: 1px solid #dcdfe6;
+            color: var(--text);
+            padding: 6px 10px;
+            min-height: 36px;
+            font-size: 0.85rem;
+            border-radius: 7px;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .watchlist-scoped-add-btn {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            min-height: 36px;
+            padding: 6px 14px;
+            border-radius: 7px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .watchlist-scoped-item {
+            background: #fff;
+            border: 1px solid #eae7e1;
+            border-radius: 7px;
+            padding: 4px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            margin-bottom: 4px;
+            width: 100%;
+            min-height: 36px;
+        }
+
+        .watchlist-scoped-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            flex: 1;
+            word-break: break-word;
+        }
+
+        .watchlist-scoped-tag {
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 10px;
+            color: #fff;
+            text-transform: uppercase;
+            cursor: pointer;
+            user-select: none;
+            flex-shrink: 0;
+        }
+
+        .watchlist-scoped-empty {
+            text-align: center;
+            padding: 0.6rem 0.8rem;
+            color: var(--muted);
+            font-size: 0.85rem;
+            border: 1px dashed var(--border);
+            border-radius: 7px;
+            background: #faf9ff;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Toast Banner Container -->
+    <!-- Toast Notification Banner -->
     <div id="toast-banner" class="toast-notification">
         <span class="toast-icon">✓</span>
         <span id="toast-message">Item added successfully!</span>
     </div>
 
-    <!-- Top Header Container -->
+    <!-- Top Header Container with Emblem SVG Logo -->
     <div class="top-header-container">
-        <!-- Left: Account / Switcher Icon -->
-        <div class="header-left">
-            <button class="account-icon-btn" onclick="toggleUserDropdown()" title="Switch User / View">
-                <span id="account-indicator" class="account-avatar-dot bg-family"></span>
-            </button>
-            <div id="user-dropdown" class="user-dropdown-menu">
-                <div class="user-dropdown-item" onclick="selectFamilyView()">
-                    <span style="font-size:1.1rem;">👨‍👩‍👧‍👦</span> Family (Everyone)
-                </div>
-                <div style="height:1px; background:#f2eff8; margin:2px 0;"></div>
-                <div class="user-dropdown-item" onclick="selectUser('dad', 'Dad')"><span class="account-avatar-dot bg-dad"></span> Dad</div>
-                <div class="user-dropdown-item" onclick="selectUser('mom', 'Mom')"><span class="account-avatar-dot bg-mom"></span> Mom</div>
-                <div class="user-dropdown-item" onclick="selectUser('leo', 'Leo')"><span class="account-avatar-dot bg-leo"></span> Leo</div>
-                <div class="user-dropdown-item" onclick="selectUser('mia', 'Mia')"><span class="account-avatar-dot bg-mia"></span> Mia</div>
+        <div class="brand" onclick="showView('home', document.getElementById('nav-btn-home'))">
+            <!-- SVG Logo: Stylized House Silhouette + Calendar + Heart Accent -->
+            <svg class="brand-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="fpGradient" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="#7c3aed"/>
+                        <stop offset="50%" stop-color="#6d5ce8"/>
+                        <stop offset="100%" stop-color="#9333ea"/>
+                    </linearGradient>
+                    <linearGradient id="heartGrad" x1="0" y1="0" x2="0" y2="100" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="#ff6b95"/>
+                        <stop offset="100%" stop-color="#d9468d"/>
+                    </linearGradient>
+                    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#4c1d95" flood-opacity="0.25"/>
+                    </filter>
+                </defs>
+                
+                <!-- Base House Shape Silhouette -->
+                <path d="M 50 8 
+                         C 53 8, 56 10, 58 12 
+                         L 90 38 
+                         C 94 41, 94 47, 90 50 
+                         L 86 53 
+                         V 82 
+                         C 86 89, 81 94, 74 94 
+                         H 26 
+                         C 19 94, 14 89, 14 82 
+                         V 53 
+                         L 10 50 
+                         C 6 47, 6 41, 10 38 
+                         L 42 12 
+                         C 44 10, 47 8, 50 8 Z" 
+                      fill="url(#fpGradient)" 
+                      filter="url(#glow)"/>
+
+                <!-- Calendar Sheet Accent -->
+                <rect x="26" y="38" width="48" height="42" rx="8" fill="#ffffff" fill-opacity="0.96"/>
+                <path d="M 26 38 H 74 V 49 H 26 Z" fill="#eeddff"/>
+                
+                <!-- Calendar Binder Rings -->
+                <circle cx="37" cy="33" r="3.5" fill="#ffffff"/>
+                <circle cx="63" cy="33" r="3.5" fill="#ffffff"/>
+                <rect x="35.5" y="28" width="3" height="7" rx="1.5" fill="#5b21b6"/>
+                <rect x="61.5" y="28" width="3" height="7" rx="1.5" fill="#5b21b6"/>
+
+                <!-- Calendar Grid Dots -->
+                <circle cx="36" cy="56" r="2.5" fill="#a78bfa"/>
+                <circle cx="50" cy="56" r="2.5" fill="#a78bfa"/>
+                <circle cx="64" cy="56" r="2.5" fill="#a78bfa"/>
+                <circle cx="36" cy="66" r="2.5" fill="#a78bfa"/>
+
+                <!-- Heart Emblem Accent -->
+                <path d="M 50 63.5 
+                         C 50 63.5, 43 59, 43 54.5 
+                         C 43 51.5, 45.5 49.5, 48.2 49.5 
+                         C 49.8 49.5, 51.2 50.3, 52 51.5 
+                         C 52.8 50.3, 54.2 49.5, 55.8 49.5 
+                         C 58.5 49.5, 61 51.5, 61 54.5 
+                         C 61 59, 54 63.5, 54 63.5 
+                         L 52 65 Z" 
+                      fill="url(#heartGrad)" 
+                      transform="translate(-2, 5) scale(1.1)"/>
+            </svg>
+            <div class="brand-text-container">
+                <span class="brand-text">FamilyPlan</span>
+                <span class="brand-tagline">Organized Together</span>
             </div>
         </div>
 
-        <!-- Center: Logo -->
-        <div class="header-center">
-            <img src="familiplan-icon.png" alt="FamilyPlan Logo" class="brand-logo-img">
+        <div class="segmented-control">
+            <button id="toggle-btn-family" class="segmented-btn active" onclick="setViewMode('family')">👨‍👩‍👧‍👦 Family</button>
         </div>
 
-        <!-- Right: Active View Label -->
-        <div class="header-right">
-            <div class="current-user-badge">
-                <span id="active-badge-dot" class="account-avatar-dot bg-family" style="width:8px; height:8px;"></span>
-                <span id="active-badge-text">Family</span>
+        <div class="header-actions">
+            <button class="user-selector-btn" onclick="toggleUserDropdown()">
+                <span id="current-user-dot" class="user-avatar-dot bg-mom"></span>
+                <span id="current-user-name">Mom</span>
+                <span style="font-size:0.6rem;">▼</span>
+            </button>
+            <div id="user-dropdown" class="user-dropdown-menu">
+                <div class="user-dropdown-item" onclick="selectUser('dad', 'Dad')"><span class="user-avatar-dot bg-dad"></span> Dad</div>
+                <div class="user-dropdown-item" onclick="selectUser('mom', 'Mom')"><span class="user-avatar-dot bg-mom"></span> Mom</div>
+                <div class="user-dropdown-item" onclick="selectUser('leo', 'Leo')"><span class="user-avatar-dot bg-leo"></span> Leo</div>
+                <div class="user-dropdown-item" onclick="selectUser('mia', 'Mia')"><span class="user-avatar-dot bg-mia"></span> Mia</div>
             </div>
         </div>
     </div>
 
-    <!-- VIEW 1: Quick Add -->
+    <!-- VIEW 1: Quick Add Item -->
     <div id="view-home" class="view active">
         <section class="card" style="border-color: var(--accent);">
             <div class="card-header"><div class="card-title">Quick Add Item</div></div>
@@ -670,24 +669,24 @@
                         <option value="home">Home Watchlist</option>
                         <option value="todo">To-Do Task</option>
                         <option value="chores">Kid Chore</option>
-                        <option value="wishlist">Gift Wishlist</option>
-                    </select>
-                    <select id="add-assignee" class="form-select input-half">
-                        <option value="family">Family</option>
-                        <option value="mom">Mom</option>
-                        <option value="dad">Dad</option>
-                        <option value="leo">Leo</option>
-                        <option value="mia">Mia</option>
-                    </select>
-                </div>
-                <div class="form-row" id="date-row">
-                    <input type="date" id="add-date" class="form-input input-full">
-                </div>
-                <div class="form-row" id="postcode-row" style="display:none;">
-                    <input type="text" id="add-postcode" class="form-input input-full" placeholder="Postcode (e.g. YO25 5YR)">
-                </div>
-                <button type="submit" class="add-btn">Add to Plan</button>
-            </form>
+    <!-- VIEW 5: Watchlist (COMPLETELY ISOLATED STYLES) -->
+    <div id="view-watchlist" class="view">
+        <section class="watchlist-scoped-card">
+            <div class="watchlist-scoped-title">🎬 Cinema Watchlist</div>
+            <div class="watchlist-scoped-add-group">
+                <input type="text" id="cinema-quick-input" class="watchlist-scoped-input" placeholder="Add movie..." onkeypress="if(event.key==='Enter') addWatchlistItem('cinema')">
+                <button class="watchlist-scoped-add-btn" onclick="addWatchlistItem('cinema')">+ Add</button>
+            </div>
+            <div id="cinema-list-container" style="display:flex; flex-direction:column;"></div>
+        </section>
+
+        <section class="watchlist-scoped-card">
+            <div class="watchlist-scoped-title">📺 Home Watchlist</div>
+            <div class="watchlist-scoped-add-group">
+                <input type="text" id="home-quick-input" class="watchlist-scoped-input" placeholder="Add TV show..." onkeypress="if(event.key==='Enter') addWatchlistItem('home')">
+                <button class="watchlist-scoped-add-btn" onclick="addWatchlistItem('home')">+ Add</button>
+            </div>
+            <div id="home-list-container" style="display:flex; flex-direction:column;"></div>
         </section>
     </div>
 
@@ -705,14 +704,14 @@
         </section>
     </div>
 
-    <!-- VIEW 3: Shopping -->
+    <!-- VIEW 3: Shopping & Meals -->
     <div id="view-shopping" class="view">
-        <section class="card" style="margin-bottom:0.8rem;">
+        <section class="card" style="margin-bottom:0.9rem;">
             <div class="card-header"><div class="card-title">🍽️ Weekly Meal Planner</div></div>
             <div id="meal-list-container" class="list-container"></div>
         </section>
 
-        <section class="card" style="margin-bottom:0.8rem;">
+        <section class="card" style="margin-bottom:0.9rem;">
             <div class="card-header"><div class="card-title">🛒 Food Shopping List</div></div>
             <div class="inline-add-group">
                 <input type="text" id="foodshop-quick-input" class="form-input input-full" placeholder="Add food item..." onkeypress="if(event.key==='Enter') addInlineShop('foodshop')">
@@ -731,16 +730,16 @@
         </section>
     </div>
 
-    <!-- VIEW 4: Places & Restaurants with Map & Section Toggle -->
+    <!-- VIEW 4: Places & Restaurants -->
     <div id="view-places" class="view">
-        <div style="margin-bottom: 0.8rem;">
-            <div style="display:flex; background:#ede9f5; padding:2px; border-radius:8px; width:100%;">
-                <button id="places-tab-btn" class="segmented-btn active" style="flex:1; border:none; background:#fff; color:var(--accent); padding:6px; font-weight:700; border-radius:6px;" onclick="switchPlacesSubTab('places')">📍 Places to Visit</button>
-                <button id="restaurants-tab-btn" class="segmented-btn" style="flex:1; border:none; background:transparent; color:var(--muted); padding:6px; font-weight:700; border-radius:6px;" onclick="switchPlacesSubTab('restaurants')">🍽️ Restaurants</button>
+        <div style="margin-bottom: 0.9rem;">
+            <div class="segmented-control" style="width: 100%;">
+                <button id="places-tab-btn" class="segmented-btn active" onclick="switchPlacesSubTab('places')">📍 Places to Visit</button>
+                <button id="restaurants-tab-btn" class="segmented-btn" onclick="switchPlacesSubTab('restaurants')">🍽️ Restaurants</button>
             </div>
         </div>
 
-        <section class="card" style="margin-bottom:0.8rem;">
+        <section class="card" style="margin-bottom:0.9rem;">
             <div class="card-header">
                 <div class="card-title" id="places-card-title">📍 Places to Visit</div>
             </div>
@@ -760,7 +759,7 @@
 
     <!-- VIEW 5: Watchlist -->
     <div id="view-watchlist" class="view">
-        <section class="card" style="margin-bottom:0.8rem;">
+        <section class="card" style="margin-bottom:0.9rem;">
             <div class="card-header"><div class="card-title">🎬 Cinema Watchlist</div></div>
             <div class="inline-add-group">
                 <input type="text" id="cinema-quick-input" class="form-input input-full" placeholder="Add movie..." onkeypress="if(event.key==='Enter') addWatchlistItem('cinema')">
@@ -779,15 +778,15 @@
         </section>
     </div>
 
-    <!-- VIEW 6: To-Do & Tasks Hub (COMPLETELY ISOLATED STYLES) -->
+    <!-- VIEW 6: To-Do Hub -->
     <div id="view-todo" class="view">
-        <section class="todo-scoped-card">
-            <div class="todo-scoped-title">📝 To-Do List</div>
-            <div class="todo-scoped-add-group">
-                <input type="text" id="todo-quick-input" class="todo-scoped-input" placeholder="Add task..." onkeypress="if(event.key==='Enter') addTodoItem()">
-                <button class="todo-scoped-add-btn" onclick="addTodoItem()">+ Add</button>
+        <section class="card">
+            <div class="card-header"><div class="card-title">📝 To-Do List</div></div>
+            <div class="inline-add-group">
+                <input type="text" id="todo-quick-input" class="form-input input-full" placeholder="Add task..." onkeypress="if(event.key==='Enter') addTodoItem()">
+                <button class="inline-add-btn" onclick="addTodoItem()" style="width:auto;">+ Add</button>
             </div>
-            <div id="todo-list-container" style="display:flex; flex-direction:column;"></div>
+            <div id="todo-list-container" class="list-container"></div>
         </section>
 
         <section class="card">
@@ -847,20 +846,35 @@
         let activePlacesTab = 'places';
 
         let mealsData = JSON.parse(localStorage.getItem('fam_meals')) || [
-            { day: "Mon", meal: "" }, { day: "Tue", meal: "" }, { day: "Wed", meal: "" },
-            { day: "Thu", meal: "" }, { day: "Fri", meal: "" }, { day: "Sat", meal: "" }, { day: "Sun", meal: "" }
+            { day: "Mon", meal: "Pasta Bake" }, { day: "Tue", meal: "Tacos" }, { day: "Wed", meal: "" },
+            { day: "Thu", meal: "" }, { day: "Fri", meal: "Pizza Night" }, { day: "Sat", meal: "" }, { day: "Sun", meal: "Roast Dinner" }
         ];
-        let foodShopData = JSON.parse(localStorage.getItem('fam_foodshop')) || [];
-        let familyShopData = JSON.parse(localStorage.getItem('fam_familyshop')) || [];
+        let foodShopData = JSON.parse(localStorage.getItem('fam_foodshop')) || [
+            { text: "Organic Milk", who: "family", done: false, isEditing: false },
+            { text: "Apples & Bananas", who: "mom", done: true, isEditing: false }
+        ];
+        let familyShopData = JSON.parse(localStorage.getItem('fam_familyshop')) || [
+            { text: "Batteries (AA)", who: "dad", done: false, isEditing: false }
+        ];
         let destinationsData = JSON.parse(localStorage.getItem('fam_destinations')) || { 
-            places: [{ title: "Zoo", postcode: "YO25 5YR", who: "family" }, { title: "Nicky", postcode: "NG4 1BA", who: "dad" }], 
-            restaurants: [{ title: "5 guys", postcode: "", who: "family" }, { title: "Jodhpur", postcode: "", who: "family" }], 
-            cinema: [], home: [] 
+            places: [{ title: "Yorkshire Wildlife Park", postcode: "DN9 3HQ", who: "family" }], 
+            restaurants: [{ title: "The Italian Kitchen", postcode: "LS1 1AZ", who: "family" }], 
+            cinema: [{ title: "Inside Out 2", who: "family" }], 
+            home: [{ title: "Bluey S3", who: "leo" }] 
         };
-        let choresData = JSON.parse(localStorage.getItem('fam_chores')) || [{ kid: "Leo", chores: [] }, { kid: "Mia", chores: [] }];
-        let wishlistData = JSON.parse(localStorage.getItem('fam_wishlist')) || [];
-        let todosData = JSON.parse(localStorage.getItem('fam_todos')) || [];
-        let calendarEvents = JSON.parse(localStorage.getItem('fam_calendar')) || {};
+        let choresData = JSON.parse(localStorage.getItem('fam_chores')) || [
+            { kid: "Leo", chores: [{ text: "Tidy bedroom", done: false }, { text: "Feed the cat", done: true }] },
+            { kid: "Mia", chores: [{ text: "Clear dinner table", done: false }] }
+        ];
+        let wishlistData = JSON.parse(localStorage.getItem('fam_wishlist')) || [
+            { title: "LEGO Star Wars Set", who: "leo" }
+        ];
+        let todosData = JSON.parse(localStorage.getItem('fam_todos')) || [
+            { text: "Book car service", who: "dad", done: false, isEditing: false }
+        ];
+        let calendarEvents = JSON.parse(localStorage.getItem('fam_calendar')) || {
+            "2026-10-25": [{ title: "Family Picnic", who: "family" }]
+        };
 
         let toastTimer = null;
         function showToast(msg) {
@@ -887,44 +901,27 @@
             localStorage.setItem('fam_view_mode', viewMode);
         }
 
+        /* User Selector Switcher */
         function toggleUserDropdown() {
             document.getElementById('user-dropdown').classList.toggle('open');
-        }
-
-        function selectFamilyView() {
-            viewMode = 'family';
-            toggleUserDropdown();
-            updateHeaderDisplay();
-            saveData();
-            renderAllViews();
-            showToast("Showing Family Plans");
         }
 
         function selectUser(userKey, userName) {
             currentUser = userKey;
             currentUserName = userName;
-            viewMode = 'individual';
+            document.getElementById('current-user-name').textContent = userName;
+            const dot = document.getElementById('current-user-dot');
+            dot.className = `user-avatar-dot bg-${userKey}`;
             toggleUserDropdown();
-            updateHeaderDisplay();
             saveData();
             renderAllViews();
-            showToast(`Showing ${userName}'s Plans`);
+            showToast(`Switched user to ${userName}`);
         }
 
-        function updateHeaderDisplay() {
-            const indicatorEl = document.getElementById('account-indicator');
-            const badgeDotEl = document.getElementById('active-badge-dot');
-            const badgeTextEl = document.getElementById('active-badge-text');
-
-            if (viewMode === 'family') {
-                indicatorEl.className = "account-avatar-dot bg-family";
-                badgeDotEl.className = "account-avatar-dot bg-family";
-                badgeTextEl.textContent = "Family";
-            } else {
-                indicatorEl.className = `account-avatar-dot bg-${currentUser}`;
-                badgeDotEl.className = `account-avatar-dot bg-${currentUser}`;
-                badgeTextEl.textContent = currentUserName;
-            }
+        function setViewMode(mode) {
+            viewMode = mode;
+            saveData();
+            renderAllViews();
         }
 
         function filterItem(itemWho) {
@@ -951,6 +948,7 @@
             document.getElementById('postcode-row').style.display = (val === 'places' || val === 'restaurants') ? 'flex' : 'none';
         }
 
+        /* Calendar Render Functionality */
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid');
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -1000,7 +998,7 @@
             `).join('');
         }
 
-        /* SHOPPING */
+        /* Shopping Lists */
         function addInlineShop(type) {
             const inputId = type === 'foodshop' ? 'foodshop-quick-input' : 'familyshop-quick-input';
             const input = document.getElementById(inputId);
@@ -1010,7 +1008,7 @@
             input.value = '';
             saveData();
             renderShopping();
-            showToast('Item added to list');
+            showToast('Item added to shopping list');
         }
 
         function toggleShopCheck(type, idx) {
@@ -1086,13 +1084,11 @@
             renderAllViews();
         }
 
-        /* PLACES & RESTAURANTS WITH MAP */
+        /* Places & Restaurants with Map Integration */
         function switchPlacesSubTab(tab) {
             activePlacesTab = tab;
-            document.getElementById('places-tab-btn').style.background = tab === 'places' ? '#fff' : 'transparent';
-            document.getElementById('places-tab-btn').style.color = tab === 'places' ? 'var(--accent)' : 'var(--muted)';
-            document.getElementById('restaurants-tab-btn').style.background = tab === 'restaurants' ? '#fff' : 'transparent';
-            document.getElementById('restaurants-tab-btn').style.color = tab === 'restaurants' ? 'var(--accent)' : 'var(--muted)';
+            document.getElementById('places-tab-btn').classList.toggle('active', tab === 'places');
+            document.getElementById('restaurants-tab-btn').classList.toggle('active', tab === 'restaurants');
             document.getElementById('places-card-title').textContent = tab === 'places' ? '📍 Places to Visit' : '🍽️ Restaurants';
             renderPlacesView();
         }
@@ -1112,7 +1108,7 @@
             pcInput.value = '';
             saveData();
             renderPlacesView();
-            showToast('Location added');
+            showToast('Destination added');
         }
 
         function renderPlacesView() {
@@ -1125,7 +1121,7 @@
                 return `
                     <div class="list-card">
                         <div>
-                            <h5>${activePlacesTab === 'places' ? '📍' : '🍽️'} ${item.title}</h5>
+                            <h5 style="font-size:0.98rem; font-weight:700;">${activePlacesTab === 'places' ? '📍' : '🍽️'} ${item.title}</h5>
                             ${item.postcode ? `<span style="font-size:0.75rem; color:var(--muted);">${item.postcode}</span>` : ''}
                         </div>
                         <div style="display:flex; align-items:center; gap:8px;">
@@ -1189,13 +1185,13 @@
             }
 
             if (bounds.length > 0) {
-                mapInstance.fitBounds(bounds, { padding: [50, 50], maxZoom: 7 });
+                mapInstance.fitBounds(bounds, { padding: [50, 50], maxZoom: 8 });
             } else {
                 mapInstance.setView([54.0, -2.5], 5);
             }
         }
 
-        /* ISOLATED SCOPED TO-DO FUNCTIONS */
+        /* Tasks & Chores */
         function addTodoItem() {
             const input = document.getElementById('todo-quick-input');
             if (!input || !input.value.trim()) return;
@@ -1225,29 +1221,26 @@
         }
 
         function renderTodos() {
-            const container = document.getElementById('todo-list-container');
             const filtered = todosData.filter(t => filterItem(t.who));
-            
-            container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.82rem; padding:0.8rem;">No tasks remaining.</div>` : todosData.map((t, idx) => {
+            document.getElementById('todo-list-container').innerHTML = filtered.length === 0 ? `<div class="list-empty">No tasks remaining.</div>` : todosData.map((t, idx) => {
                 if (!filterItem(t.who)) return '';
                 return `
-                    <div class="todo-scoped-item ${t.done ? 'completed' : ''}">
-                        <div class="todo-scoped-left">
-                            <input type="checkbox" class="todo-scoped-checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodoCheck(${idx})">
+                    <div class="todo-item ${t.done ? 'completed' : ''}">
+                        <div class="todo-left">
+                            <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodoCheck(${idx})">
                             ${t.isEditing ? 
-                                `<input type="text" class="todo-scoped-edit-input" value="${t.text}" onkeypress="if(event.key==='Enter') saveTodoEdit(${idx}, this.value)" onblur="saveTodoEdit(${idx}, this.value)" autofocus>` : 
-                                `<span class="todo-scoped-label">${t.text}</span>`
+                                `<input type="text" class="edit-inline-input" value="${t.text}" onkeypress="if(event.key==='Enter') saveTodoEdit(${idx}, this.value)" onblur="saveTodoEdit(${idx}, this.value)" autofocus>` : 
+                                `<span class="item-text-label">${t.text}</span>`
                             }
                         </div>
                         <button class="action-btn" onclick="enableTodoEdit(${idx})">✏️</button>
-                        <span class="todo-scoped-tag bg-${t.who}" onclick="cycleAssignee('todo', ${idx})">${t.who}</span>
+                        <span class="assign-tag bg-${t.who}" onclick="cycleAssignee('todo', ${idx})">${t.who}</span>
                         <button class="action-btn delete-btn" onclick="todosData.splice(${idx},1); saveData(); renderTodos();">✕</button>
                     </div>
                 `;
             }).join('');
         }
 
-        /* CHORES */
         function addKidChore(kidIndex) {
             const input = document.getElementById(`chore-input-${kidIndex}`);
             if (!input || !input.value.trim()) return;
@@ -1287,7 +1280,7 @@
             `).join('');
         }
 
-        /* WISHLIST */
+        /* Wishlist */
         function addWishlistItem() {
             const input = document.getElementById('wishlist-quick-input');
             if (!input || !input.value.trim()) return;
@@ -1331,26 +1324,26 @@
             const cinemaList = (destinationsData.cinema || []).filter(item => filterItem(item.who));
             const homeList = (destinationsData.home || []).filter(item => filterItem(item.who));
 
-            document.getElementById('cinema-list-container').innerHTML = cinemaList.length === 0 ? `<div class="list-empty">Cinema watchlist empty.</div>` : (destinationsData.cinema || []).map((item, idx) => {
+            document.getElementById('cinema-list-container').innerHTML = cinemaList.length === 0 ? `<div class="watchlist-scoped-empty">Cinema watchlist empty.</div>` : (destinationsData.cinema || []).map((item, idx) => {
                 if (!filterItem(item.who)) return '';
                 return `
-                    <div class="list-card">
-                        <span class="item-text-label">🎬 ${item.title}</span>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('cinema', ${idx})">${item.who}</span>
+                    <div class="watchlist-scoped-item">
+                        <span class="watchlist-scoped-label">🎬 ${item.title}</span>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <span class="watchlist-scoped-tag bg-${item.who}" onclick="cycleAssignee('cinema', ${idx})">${item.who}</span>
                             <button class="action-btn delete-btn" onclick="destinationsData.cinema.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
                         </div>
                     </div>
                 `;
             }).join('');
 
-            document.getElementById('home-list-container').innerHTML = homeList.length === 0 ? `<div class="list-empty">Home watchlist empty.</div>` : (destinationsData.home || []).map((item, idx) => {
+            document.getElementById('home-list-container').innerHTML = homeList.length === 0 ? `<div class="watchlist-scoped-empty">Home watchlist empty.</div>` : (destinationsData.home || []).map((item, idx) => {
                 if (!filterItem(item.who)) return '';
                 return `
-                    <div class="list-card">
-                        <span class="item-text-label">📺 ${item.title}</span>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('home', ${idx})">${item.who}</span>
+                    <div class="watchlist-scoped-item">
+                        <span class="watchlist-scoped-label">📺 ${item.title}</span>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <span class="watchlist-scoped-tag bg-${item.who}" onclick="cycleAssignee('home', ${idx})">${item.who}</span>
                             <button class="action-btn delete-btn" onclick="destinationsData.home.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
                         </div>
                     </div>
@@ -1358,6 +1351,7 @@
             }).join('');
         }
 
+        /* Quick Add Submit Form */
         function handleQuickAdd(e) {
             e.preventDefault();
             const title = document.getElementById('add-title').value.trim();
@@ -1404,10 +1398,15 @@
             renderWishlist();
         }
 
-        document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
-        
-        updateHeaderDisplay();
-        renderAllViews();
+        /* App Initialization */
+        window.onload = function() {
+            document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('current-user-name').textContent = currentUserName;
+            document.getElementById('current-user-dot').className = `user-avatar-dot bg-${currentUser}`;
+            
+            renderAllViews();
+        };
     </script>
 </body>
 </html>
+```
