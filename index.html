@@ -267,7 +267,7 @@
             font-weight: 800;
         }
 
-        /* Cards & Inputs */
+        /* Standard Cards & Inputs for rest of app */
         .card {
             background: rgba(255,255,255,.96);
             border: 1px solid var(--border);
@@ -493,6 +493,122 @@
         .day-cell { background: #fff; border: 1px solid #e8e5df; border-radius: 8px; min-height: 75px; padding: 6px; cursor: pointer; }
         .day-num { font-size: 0.82rem; font-weight: 600; color: #505868; }
         .event-pill { margin-top: 3px; padding: 2px 4px; border-radius: 4px; font-size: 0.68rem; color: #fff; font-weight: 600; }
+
+        /* ==========================================================
+           ISOLATED SCOPED STYLES JUST FOR THE TO-DO SECTION
+           ========================================================== */
+        .todo-scoped-card {
+            background: rgba(255,255,255,.98);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.6rem 0.75rem;
+            box-shadow: 0 2px 8px rgba(36, 32, 64, .03);
+            margin-bottom: 0.5rem;
+            width: 100%;
+        }
+
+        .todo-scoped-title {
+            font-size: 0.92rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .todo-scoped-add-group {
+            display: flex;
+            gap: 6px;
+            width: 100%;
+            margin-bottom: 6px;
+        }
+
+        .todo-scoped-input {
+            background: #fff;
+            border: 1px solid #dcdfe6;
+            color: var(--text);
+            padding: 6px 10px;
+            min-height: 36px;
+            font-size: 0.84rem;
+            border-radius: 7px;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .todo-scoped-add-btn {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            min-height: 36px;
+            padding: 6px 14px;
+            border-radius: 7px;
+            font-weight: 700;
+            font-size: 0.84rem;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .todo-scoped-item {
+            background: #fff;
+            border: 1px solid #eae7e1;
+            border-radius: 7px;
+            padding: 4px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            margin-bottom: 4px;
+            width: 100%;
+            min-height: 36px;
+        }
+
+        .todo-scoped-item.completed span {
+            text-decoration: line-through;
+            color: var(--muted);
+            opacity: 0.65;
+        }
+
+        .todo-scoped-left {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .todo-scoped-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            flex: 1;
+            word-break: break-word;
+        }
+
+        .todo-scoped-checkbox {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+        .todo-scoped-edit-input {
+            font-size: 0.85rem;
+            padding: 3px 5px;
+            border: 1px solid var(--accent);
+            border-radius: 5px;
+            outline: none;
+            width: 100%;
+        }
+
+        .todo-scoped-tag {
+            font-size: 0.62rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 10px;
+            color: #fff;
+            text-transform: uppercase;
+            cursor: pointer;
+            user-select: none;
+            flex-shrink: 0;
+        }
     </style>
 </head>
 <body>
@@ -663,15 +779,15 @@
         </section>
     </div>
 
-    <!-- VIEW 6: To-Do & Tasks Hub -->
+    <!-- VIEW 6: To-Do & Tasks Hub (COMPLETELY ISOLATED STYLES) -->
     <div id="view-todo" class="view">
-        <section class="card">
-            <div class="card-header"><div class="card-title">📝 To-Do List</div></div>
-            <div class="inline-add-group">
-                <input type="text" id="todo-quick-input" class="form-input input-full" placeholder="Add task..." onkeypress="if(event.key==='Enter') addTodoItem()">
-                <button class="inline-add-btn" onclick="addTodoItem()" style="width:auto;">+ Add</button>
+        <section class="todo-scoped-card">
+            <div class="todo-scoped-title">📝 To-Do List</div>
+            <div class="todo-scoped-add-group">
+                <input type="text" id="todo-quick-input" class="todo-scoped-input" placeholder="Add task..." onkeypress="if(event.key==='Enter') addTodoItem()">
+                <button class="todo-scoped-add-btn" onclick="addTodoItem()">+ Add</button>
             </div>
-            <div id="todo-list-container" class="list-container"></div>
+            <div id="todo-list-container" style="display:flex; flex-direction:column;"></div>
         </section>
 
         <section class="card">
@@ -1079,7 +1195,7 @@
             }
         }
 
-        /* TO-DO */
+        /* ISOLATED SCOPED TO-DO FUNCTIONS */
         function addTodoItem() {
             const input = document.getElementById('todo-quick-input');
             if (!input || !input.value.trim()) return;
@@ -1109,20 +1225,22 @@
         }
 
         function renderTodos() {
+            const container = document.getElementById('todo-list-container');
             const filtered = todosData.filter(t => filterItem(t.who));
-            document.getElementById('todo-list-container').innerHTML = filtered.length === 0 ? `<div class="list-empty">No tasks remaining.</div>` : todosData.map((t, idx) => {
+            
+            container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.82rem; padding:0.8rem;">No tasks remaining.</div>` : todosData.map((t, idx) => {
                 if (!filterItem(t.who)) return '';
                 return `
-                    <div class="todo-item ${t.done ? 'completed' : ''}">
-                        <div class="todo-left">
-                            <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodoCheck(${idx})">
+                    <div class="todo-scoped-item ${t.done ? 'completed' : ''}">
+                        <div class="todo-scoped-left">
+                            <input type="checkbox" class="todo-scoped-checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodoCheck(${idx})">
                             ${t.isEditing ? 
-                                `<input type="text" class="edit-inline-input" value="${t.text}" onkeypress="if(event.key==='Enter') saveTodoEdit(${idx}, this.value)" onblur="saveTodoEdit(${idx}, this.value)" autofocus>` : 
-                                `<span class="item-text-label">${t.text}</span>`
+                                `<input type="text" class="todo-scoped-edit-input" value="${t.text}" onkeypress="if(event.key==='Enter') saveTodoEdit(${idx}, this.value)" onblur="saveTodoEdit(${idx}, this.value)" autofocus>` : 
+                                `<span class="todo-scoped-label">${t.text}</span>`
                             }
                         </div>
                         <button class="action-btn" onclick="enableTodoEdit(${idx})">✏️</button>
-                        <span class="assign-tag bg-${t.who}" onclick="cycleAssignee('todo', ${idx})">${t.who}</span>
+                        <span class="todo-scoped-tag bg-${t.who}" onclick="cycleAssignee('todo', ${idx})">${t.who}</span>
                         <button class="action-btn delete-btn" onclick="todosData.splice(${idx},1); saveData(); renderTodos();">✕</button>
                     </div>
                 `;
