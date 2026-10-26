@@ -84,37 +84,44 @@
             position: relative;
         }
 
+        /* Unified View/User Selector Button */
         .user-selector-btn {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
             background: #f0edff;
             border: 1px solid #dcd5ff;
-            padding: 6px 10px;
-            border-radius: 18px;
-            font-size: 0.85rem;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.88rem;
             font-weight: 700;
             color: var(--text);
             cursor: pointer;
-            min-height: 36px;
+            min-height: 38px;
         }
 
         .user-avatar-dot {
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .user-mode-icon {
+            font-size: 1rem;
+            line-height: 1;
         }
 
         .user-dropdown-menu {
             display: none;
             position: absolute;
-            top: 44px;
+            top: 46px;
             right: 0;
             background: #fff;
             border: 1px solid var(--border);
             border-radius: 12px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.12);
-            width: 140px;
+            width: 175px;
             overflow: hidden;
             z-index: 1001;
         }
@@ -124,48 +131,18 @@
         }
 
         .user-dropdown-item {
-            padding: 10px 12px;
-            font-size: 0.95rem;
+            padding: 11px 14px;
+            font-size: 0.92rem;
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             cursor: pointer;
             border-bottom: 1px solid #f2eff8;
         }
 
         .user-dropdown-item:hover {
             background: #faf9ff;
-        }
-
-        /* View Mode Switcher Toggle Button */
-        .filter-toggle-btn {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            border: 1px solid var(--border);
-            background: #ffffff;
-            padding: 6px 12px;
-            font-size: 0.82rem;
-            font-weight: 700;
-            color: var(--muted);
-            border-radius: 18px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-            min-height: 36px;
-        }
-
-        .filter-toggle-btn.mode-family {
-            background: #f3e8ff;
-            border-color: #d8b4fe;
-            color: #6b21a8;
-        }
-
-        .filter-toggle-btn.mode-individual {
-            background: #e0f2fe;
-            border-color: #7dd3fc;
-            color: #0369a1;
         }
 
         /* Views management */
@@ -522,19 +499,18 @@
             <img src="familiplan-icon.png" alt="FamilyPlan Logo" class="brand-logo-img">
         </div>
 
-        <!-- Filter View Mode Button -->
-        <button id="view-mode-toggle" class="filter-toggle-btn mode-family" onclick="toggleViewMode()">
-            <span id="view-mode-icon">👨‍👩‍👧‍👦</span>
-            <span id="view-mode-text">Family</span>
-        </button>
-
         <div class="header-actions">
+            <!-- Unified Selector Button -->
             <button class="user-selector-btn" onclick="toggleUserDropdown()">
-                <span id="current-user-dot" class="user-avatar-dot bg-mom"></span>
-                <span id="current-user-name">Mom</span>
+                <span id="current-user-indicator" class="user-mode-icon">👨‍👩‍👧‍👦</span>
+                <span id="current-user-name">Family</span>
                 <span style="font-size:0.6rem;">▼</span>
             </button>
             <div id="user-dropdown" class="user-dropdown-menu">
+                <div class="user-dropdown-item" onclick="selectFamilyView()">
+                    <span class="user-mode-icon">👨‍👩‍👧‍👦</span> Family (Everyone)
+                </div>
+                <div style="height:1px; background:#f2eff8; margin:2px 0;"></div>
                 <div class="user-dropdown-item" onclick="selectUser('dad', 'Dad')"><span class="user-avatar-dot bg-dad"></span> Dad</div>
                 <div class="user-dropdown-item" onclick="selectUser('mom', 'Mom')"><span class="user-avatar-dot bg-mom"></span> Mom</div>
                 <div class="user-dropdown-item" onclick="selectUser('leo', 'Leo')"><span class="user-avatar-dot bg-leo"></span> Leo</div>
@@ -626,8 +602,8 @@
     <div id="view-places" class="view">
         <div style="margin-bottom: 0.8rem;">
             <div style="display:flex; background:#ede9f5; padding:2px; border-radius:8px; width:100%;">
-                <button id="places-tab-btn" class="segmented-btn active" style="flex:1;" onclick="switchPlacesSubTab('places')">📍 Places to Visit</button>
-                <button id="restaurants-tab-btn" class="segmented-btn" style="flex:1;" onclick="switchPlacesSubTab('restaurants')">🍽️ Restaurants</button>
+                <button id="places-tab-btn" class="segmented-btn active" style="flex:1; border:none; background:#fff; color:var(--accent); padding:6px; font-weight:700; border-radius:6px;" onclick="switchPlacesSubTab('places')">📍 Places to Visit</button>
+                <button id="restaurants-tab-btn" class="segmented-btn" style="flex:1; border:none; background:transparent; color:var(--muted); padding:6px; font-weight:700; border-radius:6px;" onclick="switchPlacesSubTab('restaurants')">🍽️ Restaurants</button>
             </div>
         </div>
 
@@ -778,55 +754,48 @@
             localStorage.setItem('fam_view_mode', viewMode);
         }
 
-        /* TOGGLE BETWEEN EVERYONE (FAMILY) AND INDIVIDUAL (CURRENT USER) */
-        function toggleViewMode() {
-            viewMode = (viewMode === 'family') ? 'individual' : 'family';
-            updateViewModeUI();
-            saveData();
-            renderAllViews();
-            showToast(viewMode === 'family' ? "Showing Family Plans" : `Showing ${currentUserName}'s Plans`);
+        function toggleUserDropdown() {
+            document.getElementById('user-dropdown').classList.toggle('open');
         }
 
-        function updateViewModeUI() {
-            const btn = document.getElementById('view-mode-toggle');
-            const icon = document.getElementById('view-mode-icon');
-            const text = document.getElementById('view-mode-text');
-
-            if (viewMode === 'family') {
-                btn.className = "filter-toggle-btn mode-family";
-                icon.textContent = "👨‍👩‍👧‍👦";
-                text.textContent = "Family";
-            } else {
-                btn.className = "filter-toggle-btn mode-individual";
-                icon.textContent = "👤";
-                text.textContent = currentUserName;
-            }
+        function selectFamilyView() {
+            viewMode = 'family';
+            toggleUserDropdown();
+            updateHeaderButton();
+            saveData();
+            renderAllViews();
+            showToast("Showing Family Plans");
         }
 
         function selectUser(userKey, userName) {
             currentUser = userKey;
             currentUserName = userName;
-            document.getElementById('current-user-name').textContent = userName;
-            document.getElementById('current-user-dot').className = `user-avatar-dot bg-${userKey}`;
-            
-            // If in individual mode, update button text to match selected user
-            if (viewMode === 'individual') {
-                document.getElementById('view-mode-text').textContent = currentUserName;
-            }
-
+            viewMode = 'individual';
             toggleUserDropdown();
+            updateHeaderButton();
             saveData();
             renderAllViews();
-            showToast(`Switched user to ${userName}`);
+            showToast(`Showing ${userName}'s Plans`);
         }
 
-        function toggleUserDropdown() {
-            document.getElementById('user-dropdown').classList.toggle('open');
+        function updateHeaderButton() {
+            const nameEl = document.getElementById('current-user-name');
+            const indicatorEl = document.getElementById('current-user-indicator');
+
+            if (viewMode === 'family') {
+                indicatorEl.className = "user-mode-icon";
+                indicatorEl.textContent = "👨‍👩‍👧‍👦";
+                nameEl.textContent = "Family";
+            } else {
+                indicatorEl.className = `user-avatar-dot bg-${currentUser}`;
+                indicatorEl.textContent = "";
+                nameEl.textContent = currentUserName;
+            }
         }
 
         function filterItem(itemWho) {
             if (viewMode === 'family') return true;
-            return itemWho === currentUser;
+            return itemWho === currentUser || itemWho === 'family';
         }
 
         function showView(viewId, navBtn) {
@@ -986,8 +955,10 @@
         /* PLACES & RESTAURANTS WITH MAP */
         function switchPlacesSubTab(tab) {
             activePlacesTab = tab;
-            document.getElementById('places-tab-btn').classList.toggle('active', tab === 'places');
-            document.getElementById('restaurants-tab-btn').classList.toggle('active', tab === 'restaurants');
+            document.getElementById('places-tab-btn').style.background = tab === 'places' ? '#fff' : 'transparent';
+            document.getElementById('places-tab-btn').style.color = tab === 'places' ? 'var(--accent)' : 'var(--muted)';
+            document.getElementById('restaurants-tab-btn').style.background = tab === 'restaurants' ? '#fff' : 'transparent';
+            document.getElementById('restaurants-tab-btn').style.color = tab === 'restaurants' ? 'var(--accent)' : 'var(--muted)';
             document.getElementById('places-card-title').textContent = tab === 'places' ? '📍 Places to Visit' : '🍽️ Restaurants';
             renderPlacesView();
         }
@@ -1298,10 +1269,8 @@
         }
 
         document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
-        document.getElementById('current-user-name').textContent = currentUserName;
-        document.getElementById('current-user-dot').className = `user-avatar-dot bg-${currentUser}`;
         
-        updateViewModeUI();
+        updateHeaderButton();
         renderAllViews();
     </script>
 </body>
