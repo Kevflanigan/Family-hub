@@ -495,6 +495,55 @@
         .event-pill { margin-top: 3px; padding: 2px 4px; border-radius: 4px; font-size: 0.68rem; color: #fff; font-weight: 600; }
 
         /* ==========================================================
+           COMPACT SCOPED STYLES FOR HOME (QUICK ADD)
+           ========================================================== */
+        .home-scoped-card {
+            background: rgba(255,255,255,.98);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.65rem 0.8rem;
+            box-shadow: 0 2px 8px rgba(36, 32, 64, .03);
+            margin-bottom: 0.6rem;
+            width: 100%;
+        }
+
+        .home-scoped-input, .home-scoped-select {
+            background: #fff;
+            border: 1px solid #dcdfe6;
+            color: var(--text);
+            padding: 4px 10px;
+            min-height: 38px;
+            height: 38px;
+            font-size: 0.85rem;
+            border-radius: 7px;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .home-scoped-input:focus, .home-scoped-select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(109,92,232,.12);
+        }
+
+        .home-scoped-btn {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            min-height: 38px;
+            height: 38px;
+            padding: 4px 14px;
+            border-radius: 7px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            white-space: nowrap;
+            width: 100%;
+        }
+
+        .home-scoped-btn:hover { background: #5948d0; }
+
+        /* ==========================================================
            COMPACT SCOPED STYLES FOR TO-DO & WATCHLIST
            ========================================================== */
         .compact-scoped-card {
@@ -750,7 +799,7 @@
             </button>
             <div id="user-dropdown" class="user-dropdown-menu">
                 <div class="user-dropdown-item" onclick="selectFamilyView()">
-                    <span style="font-size:1.1rem;">👨‍gsub</span> Family (Everyone)
+                    <span style="font-size:1.1rem;">👨‍👩‍👧‍👦</span> Family (Everyone)
                 </div>
                 <div style="height:1px; background:#f2eff8; margin:2px 0;"></div>
                 <div class="user-dropdown-item" onclick="selectUser('dad', 'Dad')"><span class="account-avatar-dot bg-dad"></span> Dad</div>
@@ -774,14 +823,14 @@
         </div>
     </div>
 
-    <!-- VIEW 1: Quick Add -->
+    <!-- VIEW 1: Quick Add (COMPACT SCOPED UI) -->
     <div id="view-home" class="view active">
-        <section class="card" style="border-color: var(--accent);">
-            <div class="card-header"><div class="card-title">Quick Add Item</div></div>
-            <form class="add-form" onsubmit="handleQuickAdd(event)">
-                <input type="text" id="add-title" class="form-input input-full" placeholder="Enter title / item / task..." required>
-                <div class="form-row">
-                    <select id="add-category" class="form-select input-half" onchange="handleCategoryChange(this.value)">
+        <section class="home-scoped-card" style="border-color: var(--accent);">
+            <div class="card-header" style="margin-bottom:8px;"><div class="card-title">Quick Add Item</div></div>
+            <form class="add-form" style="gap:8px;" onsubmit="handleQuickAdd(event)">
+                <input type="text" id="add-title" class="home-scoped-input input-full" placeholder="Enter title / item / task..." required>
+                <div class="form-row" style="gap:8px;">
+                    <select id="add-category" class="home-scoped-select input-half" onchange="handleCategoryChange(this.value)">
                         <option value="calendar">Calendar Event</option>
                         <option value="meals">Weekly Meal</option>
                         <option value="foodshop">Food Shopping</option>
@@ -794,7 +843,7 @@
                         <option value="chores">Kid Chore</option>
                         <option value="wishlist">Gift Wishlist</option>
                     </select>
-                    <select id="add-assignee" class="form-select input-half">
+                    <select id="add-assignee" class="home-scoped-select input-half">
                         <option value="family">Family</option>
                         <option value="mom">Mom</option>
                         <option value="dad">Dad</option>
@@ -802,13 +851,13 @@
                         <option value="mia">Mia</option>
                     </select>
                 </div>
-                <div class="form-row" id="date-row">
-                    <input type="date" id="add-date" class="form-input input-full">
+                <div class="form-row" id="date-row" style="gap:8px;">
+                    <input type="date" id="add-date" class="home-scoped-input input-full">
                 </div>
-                <div class="form-row" id="postcode-row" style="display:none;">
-                    <input type="text" id="add-postcode" class="form-input input-full" placeholder="Postcode (e.g. YO25 5YR)">
+                <div class="form-row" id="postcode-row" style="display:none; gap:8px;">
+                    <input type="text" id="add-postcode" class="home-scoped-input input-full" placeholder="Postcode (e.g. YO25 5YR)">
                 </div>
-                <button type="submit" class="add-btn">Add to Plan</button>
+                <button type="submit" class="home-scoped-btn">Add to Plan</button>
             </form>
         </section>
     </div>
