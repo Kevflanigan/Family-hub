@@ -514,7 +514,7 @@
             margin-bottom: 8px;
         }
 
-        /* TO-DO TITLE MATCHED TO WATCHLIST (1.1rem / 800 weight) */
+        /* TO-DO TITLE MATCHED TO WATCHLIST */
         .todo-scoped-title {
             font-size: 1.1rem;
             font-weight: 800;
@@ -609,6 +609,74 @@
             cursor: pointer;
             user-select: none;
             flex-shrink: 0;
+        }
+
+        /* ==========================================================
+           COMPACT SCOPED STYLES FOR PLACES PAGE (ISOLATED)
+           ========================================================== */
+        .places-scoped-card {
+            background: rgba(255,255,255,.98);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.65rem 0.8rem;
+            box-shadow: 0 2px 8px rgba(36, 32, 64, .03);
+            margin-bottom: 0.6rem;
+            width: 100%;
+        }
+
+        .places-scoped-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .places-scoped-input {
+            background: #fff;
+            border: 1px solid #dcdfe6;
+            color: var(--text);
+            padding: 4px 10px;
+            min-height: 38px;
+            font-size: 0.85rem;
+            border-radius: 7px;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .places-scoped-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(109,92,232,.12);
+        }
+
+        .places-scoped-add-btn {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            min-height: 38px;
+            padding: 4px 14px;
+            border-radius: 7px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .places-scoped-add-btn:hover { background: #5948d0; }
+
+        .places-scoped-item {
+            background: #fff;
+            border: 1px solid #eae7e1;
+            border-radius: 7px;
+            padding: 6px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            margin-bottom: 4px;
+            width: 100%;
+            min-height: 36px;
+            font-size: 0.88rem;
         }
     </style>
 </head>
@@ -732,29 +800,27 @@
         </section>
     </div>
 
-    <!-- VIEW 4: Places & Restaurants with Map & Section Toggle -->
+    <!-- VIEW 4: Places & Restaurants with Map & Section Toggle (TIDIED COMPACT UI) -->
     <div id="view-places" class="view">
-        <div style="margin-bottom: 0.8rem;">
+        <div style="margin-bottom: 0.6rem;">
             <div style="display:flex; background:#ede9f5; padding:2px; border-radius:8px; width:100%;">
-                <button id="places-tab-btn" class="segmented-btn active" style="flex:1; border:none; background:#fff; color:var(--accent); padding:6px; font-weight:700; border-radius:6px;" onclick="switchPlacesSubTab('places')">📍 Places to Visit</button>
-                <button id="restaurants-tab-btn" class="segmented-btn" style="flex:1; border:none; background:transparent; color:var(--muted); padding:6px; font-weight:700; border-radius:6px;" onclick="switchPlacesSubTab('restaurants')">🍽️ Restaurants</button>
+                <button id="places-tab-btn" class="segmented-btn active" style="flex:1; border:none; background:#fff; color:var(--accent); padding:6px; font-weight:700; border-radius:6px; font-size:0.85rem;" onclick="switchPlacesSubTab('places')">📍 Places to Visit</button>
+                <button id="restaurants-tab-btn" class="segmented-btn" style="flex:1; border:none; background:transparent; color:var(--muted); padding:6px; font-weight:700; border-radius:6px; font-size:0.85rem;" onclick="switchPlacesSubTab('restaurants')">🍽️ Restaurants</button>
             </div>
         </div>
 
-        <section class="card" style="margin-bottom:0.8rem;">
-            <div class="card-header">
-                <div class="card-title" id="places-card-title">📍 Places to Visit</div>
+        <section class="places-scoped-card">
+            <div class="places-scoped-title" id="places-card-title">📍 Places to Visit</div>
+            <div class="compact-scoped-add-group">
+                <input type="text" id="places-name-input" class="places-scoped-input" style="flex:2;" placeholder="Name...">
+                <input type="text" id="places-postcode-input" class="places-scoped-input" style="flex:1.2;" placeholder="Postcode...">
+                <button class="places-scoped-add-btn" onclick="addPlacesItem()">+ Add</button>
             </div>
-            <div class="inline-add-group">
-                <input type="text" id="places-name-input" class="form-input" style="flex:2;" placeholder="Name...">
-                <input type="text" id="places-postcode-input" class="form-input" style="flex:1;" placeholder="Postcode...">
-                <button class="inline-add-btn" onclick="addPlacesItem()" style="width:auto;">+ Add</button>
-            </div>
-            <div id="places-dynamic-list-container" class="list-container"></div>
+            <div id="places-dynamic-list-container" style="display:flex; flex-direction:column;"></div>
         </section>
 
-        <section class="card">
-            <div class="card-header"><div class="card-title">🗺️ Interactive Map</div></div>
+        <section class="places-scoped-card">
+            <div class="places-scoped-title">🗺️ Interactive Map</div>
             <div id="places-map"></div>
         </section>
     </div>
@@ -780,7 +846,7 @@
         </section>
     </div>
 
-    <!-- VIEW 6: To-Do & Tasks Hub (HEADING MATCHED TO WATCHLIST) -->
+    <!-- VIEW 6: To-Do & Tasks Hub -->
     <div id="view-todo" class="view">
         <section class="compact-scoped-card">
             <div class="todo-scoped-title">📝 To-Do List</div>
@@ -1121,16 +1187,16 @@
             const list = destinationsData[activePlacesTab] || [];
             const filtered = list.filter(item => filterItem(item.who));
 
-            container.innerHTML = filtered.length === 0 ? `<div class="list-empty">No ${activePlacesTab} added yet.</div>` : list.map((item, idx) => {
+            container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No ${activePlacesTab} added yet.</div>` : list.map((item, idx) => {
                 if (!filterItem(item.who)) return '';
                 return `
-                    <div class="list-card">
+                    <div class="places-scoped-item">
                         <div>
-                            <h5>${activePlacesTab === 'places' ? '📍' : '🍽️'} ${item.title}</h5>
-                            ${item.postcode ? `<span style="font-size:0.75rem; color:var(--muted);">${item.postcode}</span>` : ''}
+                            <span style="font-weight:700;">${activePlacesTab === 'places' ? '📍' : '🍽️'} ${item.title}</span>
+                            ${item.postcode ? `<span style="font-size:0.75rem; color:var(--muted); margin-left:6px;">(${item.postcode})</span>` : ''}
                         </div>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            <span class="assign-tag bg-${item.who}">${item.who}</span>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <span class="compact-scoped-tag bg-${item.who}">${item.who}</span>
                             <button class="action-btn delete-btn" onclick="destinationsData['${activePlacesTab}'].splice(${idx},1); saveData(); renderPlacesView();">✕</button>
                         </div>
                     </div>
