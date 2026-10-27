@@ -93,6 +93,18 @@
             border: 2px solid #fff;
         }
 
+        .user-silhouette-icon {
+            width: 22px;
+            height: 22px;
+            transition: color 0.2s ease;
+        }
+
+        .text-mom { color: var(--mom); }
+        .text-dad { color: var(--dad); }
+        .text-leo { color: var(--leo); }
+        .text-mia { color: var(--mia); }
+        .text-family { color: var(--family); }
+
         .user-dropdown-menu {
             display: none;
             position: absolute;
@@ -795,7 +807,9 @@
         <!-- Left: Account / Switcher Icon -->
         <div class="header-left">
             <button class="account-icon-btn" onclick="toggleUserDropdown()" title="Switch User / View">
-                <span id="account-indicator" class="account-avatar-dot bg-family"></span>
+                <svg id="account-indicator" class="user-silhouette-icon text-family" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
             </button>
             <div id="user-dropdown" class="user-dropdown-menu">
                 <div class="user-dropdown-item" onclick="selectFamilyView()">
@@ -1086,11 +1100,11 @@
             const badgeTextEl = document.getElementById('active-badge-text');
 
             if (viewMode === 'family') {
-                indicatorEl.className = "account-avatar-dot bg-family";
+                indicatorEl.setAttribute('class', 'user-silhouette-icon text-family');
                 badgeDotEl.className = "account-avatar-dot bg-family";
                 badgeTextEl.textContent = "Family";
             } else {
-                indicatorEl.className = `account-avatar-dot bg-${currentUser}`;
+                indicatorEl.setAttribute('class', `user-silhouette-icon text-${currentUser}`);
                 badgeDotEl.className = `account-avatar-dot bg-${currentUser}`;
                 badgeTextEl.textContent = currentUserName;
             }
