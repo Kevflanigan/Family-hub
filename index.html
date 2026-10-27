@@ -267,7 +267,7 @@
             font-weight: 800;
         }
 
-        /* Standard Cards & Inputs for rest of app */
+        /* Standard Cards & Inputs */
         .card {
             background: rgba(255,255,255,.96);
             border: 1px solid var(--border);
@@ -495,7 +495,7 @@
         .event-pill { margin-top: 3px; padding: 2px 4px; border-radius: 4px; font-size: 0.68rem; color: #fff; font-weight: 600; }
 
         /* ==========================================================
-           ISOLATED SCOPED STYLES FOR TO-DO & WATCHLIST (MATCHING CHORES)
+           COMPACT SCOPED STYLES FOR TO-DO & WATCHLIST
            ========================================================== */
         .compact-scoped-card {
             background: rgba(255,255,255,.98);
@@ -507,7 +507,15 @@
             width: 100%;
         }
 
-        .compact-scoped-title {
+        /* WATCHLIST TITLE MATCHED TO KIDS' CHORES (1.1rem / 800 weight) */
+        .watchlist-scoped-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        /* TO-DO TITLE */
+        .todo-scoped-title {
             font-size: 0.95rem;
             font-weight: 800;
             margin-bottom: 8px;
@@ -751,10 +759,10 @@
         </section>
     </div>
 
-    <!-- VIEW 5: Watchlist (MATCHING CHORES STYLES) -->
+    <!-- VIEW 5: Watchlist (ISOLATED TITLE TYPOGRAPHY MATCHED TO KIDS' CHORES) -->
     <div id="view-watchlist" class="view">
         <section class="compact-scoped-card">
-            <div class="compact-scoped-title">🎬 Cinema Watchlist</div>
+            <div class="watchlist-scoped-title">🎬 Cinema Watchlist</div>
             <div class="compact-scoped-add-group">
                 <input type="text" id="cinema-quick-input" class="compact-scoped-input" placeholder="Add movie..." onkeypress="if(event.key==='Enter') addWatchlistItem('cinema')">
                 <button class="compact-scoped-add-btn" onclick="addWatchlistItem('cinema')">+</button>
@@ -763,7 +771,7 @@
         </section>
 
         <section class="compact-scoped-card">
-            <div class="compact-scoped-title">📺 Home Watchlist</div>
+            <div class="watchlist-scoped-title">📺 Home Watchlist</div>
             <div class="compact-scoped-add-group">
                 <input type="text" id="home-quick-input" class="compact-scoped-input" placeholder="Add TV show..." onkeypress="if(event.key==='Enter') addWatchlistItem('home')">
                 <button class="compact-scoped-add-btn" onclick="addWatchlistItem('home')">+</button>
@@ -772,10 +780,10 @@
         </section>
     </div>
 
-    <!-- VIEW 6: To-Do & Tasks Hub (MATCHING CHORES STYLES) -->
+    <!-- VIEW 6: To-Do & Tasks Hub -->
     <div id="view-todo" class="view">
         <section class="compact-scoped-card">
-            <div class="compact-scoped-title">📝 To-Do List</div>
+            <div class="todo-scoped-title">📝 To-Do List</div>
             <div class="compact-scoped-add-group">
                 <input type="text" id="todo-quick-input" class="compact-scoped-input" placeholder="Add task..." onkeypress="if(event.key==='Enter') addTodoItem()">
                 <button class="compact-scoped-add-btn" onclick="addTodoItem()">+</button>
@@ -1122,7 +1130,7 @@
                             ${item.postcode ? `<span style="font-size:0.75rem; color:var(--muted);">${item.postcode}</span>` : ''}
                         </div>
                         <div style="display:flex; align-items:center; gap:8px;">
-                            <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('${activePlacesTab}', ${idx})">${item.who}</span>
+                            <span class="assign-tag bg-${item.who}">${item.who}</span>
                             <button class="action-btn delete-btn" onclick="destinationsData['${activePlacesTab}'].splice(${idx},1); saveData(); renderPlacesView();">✕</button>
                         </div>
                     </div>
