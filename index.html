@@ -592,6 +592,14 @@
             word-break: break-word;
         }
 
+        /* SCOPED TO-DO TASK LABEL (SMALLER FONT SIZE) */
+        .todo-item-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            flex: 1;
+            word-break: break-word;
+        }
+
         .compact-scoped-checkbox {
             width: 16px;
             height: 16px;
@@ -800,7 +808,7 @@
         </section>
     </div>
 
-    <!-- VIEW 4: Places & Restaurants with Map & Section Toggle (TIDIED COMPACT UI) -->
+    <!-- VIEW 4: Places & Restaurants with Map & Section Toggle -->
     <div id="view-places" class="view">
         <div style="margin-bottom: 0.6rem;">
             <div style="display:flex; background:#ede9f5; padding:2px; border-radius:8px; width:100%;">
@@ -1303,7 +1311,7 @@
                             <input type="checkbox" class="compact-scoped-checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodoCheck(${idx})">
                             ${t.isEditing ? 
                                 `<input type="text" class="compact-scoped-input" value="${t.text}" onkeypress="if(event.key==='Enter') saveTodoEdit(${idx}, this.value)" onblur="saveTodoEdit(${idx}, this.value)" autofocus>` : 
-                                `<span class="compact-scoped-label">${t.text}</span>`
+                                `<span class="todo-item-label">${t.text}</span>`
                             }
                         </div>
                         <button class="action-btn" onclick="enableTodoEdit(${idx})">✏️</button>
