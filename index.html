@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FamilyPlan — Plan together. Make memories.</title>
     <!-- Leaflet CSS for Map -->
-    <link rel="stylesheet" href="[https://unpkg.com/leaflet@1.9.4/dist/leaflet.css](https://unpkg.com/leaflet@1.9.4/dist/leaflet.css)" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
             --bg: #f7f5f1;
@@ -375,7 +375,7 @@
             margin-bottom: 0.4rem;
         }
 
-        .todo-item, .shopping-item, .meal-card-row, .wishlist-item, .list-card, .chore-item-row {
+        .shopping-item, .meal-card-row, .wishlist-item, .list-card {
             background: #fff;
             border: 1px solid #e8e5df;
             border-radius: 10px;
@@ -389,20 +389,20 @@
             min-height: 48px;
         }
 
-        .shopping-item input[type="checkbox"], .todo-item input[type="checkbox"] {
+        .shopping-item input[type="checkbox"] {
             width: 20px;
             height: 20px;
             accent-color: var(--accent);
             cursor: pointer;
         }
 
-        .shopping-item.completed span, .todo-item.completed span {
+        .shopping-item.completed span {
             text-decoration: line-through;
             color: var(--muted);
             opacity: 0.7;
         }
 
-        .shop-left, .todo-left {
+        .shop-left {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -495,7 +495,7 @@
         .event-pill { margin-top: 3px; padding: 2px 4px; border-radius: 4px; font-size: 0.68rem; color: #fff; font-weight: 600; }
 
         /* ==========================================================
-           ISOLATED SCOPED STYLES FOR TO-DO & WATCHLIST (COMPACT)
+           ISOLATED SCOPED STYLES FOR TO-DO & WATCHLIST (MATCHING CHORES)
            ========================================================== */
         .compact-scoped-card {
             background: rgba(255,255,255,.98);
@@ -508,24 +508,24 @@
         }
 
         .compact-scoped-title {
-            font-size: 0.92rem;
+            font-size: 0.95rem;
             font-weight: 800;
-            margin-bottom: 0.5rem;
+            margin-bottom: 8px;
         }
 
         .compact-scoped-add-group {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             width: 100%;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .compact-scoped-input {
             background: #fff;
             border: 1px solid #dcdfe6;
             color: var(--text);
-            padding: 6px 10px;
-            min-height: 36px;
+            padding: 4px 10px;
+            min-height: 38px;
             font-size: 0.85rem;
             border-radius: 7px;
             outline: none;
@@ -537,21 +537,22 @@
             background: var(--accent);
             color: #fff;
             border: none;
-            min-height: 36px;
-            padding: 6px 14px;
+            min-height: 38px;
+            padding: 4px 10px;
             border-radius: 7px;
             font-weight: 700;
             font-size: 0.85rem;
             cursor: pointer;
             white-space: nowrap;
             flex-shrink: 0;
+            width: auto;
         }
 
         .compact-scoped-item {
             background: #fff;
             border: 1px solid #eae7e1;
             border-radius: 7px;
-            padding: 4px 8px;
+            padding: 6px 8px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -559,6 +560,13 @@
             margin-bottom: 4px;
             width: 100%;
             min-height: 36px;
+            font-size: 0.88rem;
+        }
+
+        .compact-scoped-item.completed span {
+            text-decoration: line-through;
+            color: var(--muted);
+            opacity: 0.65;
         }
 
         .compact-scoped-left {
@@ -570,7 +578,7 @@
         }
 
         .compact-scoped-label {
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             font-weight: 500;
             flex: 1;
             word-break: break-word;
@@ -743,13 +751,13 @@
         </section>
     </div>
 
-    <!-- VIEW 5: Watchlist (ISOLATED COMPACT STYLES) -->
+    <!-- VIEW 5: Watchlist (MATCHING CHORES STYLES) -->
     <div id="view-watchlist" class="view">
         <section class="compact-scoped-card">
             <div class="compact-scoped-title">🎬 Cinema Watchlist</div>
             <div class="compact-scoped-add-group">
                 <input type="text" id="cinema-quick-input" class="compact-scoped-input" placeholder="Add movie..." onkeypress="if(event.key==='Enter') addWatchlistItem('cinema')">
-                <button class="compact-scoped-add-btn" onclick="addWatchlistItem('cinema')">+ Add</button>
+                <button class="compact-scoped-add-btn" onclick="addWatchlistItem('cinema')">+</button>
             </div>
             <div id="cinema-list-container" style="display:flex; flex-direction:column;"></div>
         </section>
@@ -758,19 +766,19 @@
             <div class="compact-scoped-title">📺 Home Watchlist</div>
             <div class="compact-scoped-add-group">
                 <input type="text" id="home-quick-input" class="compact-scoped-input" placeholder="Add TV show..." onkeypress="if(event.key==='Enter') addWatchlistItem('home')">
-                <button class="compact-scoped-add-btn" onclick="addWatchlistItem('home')">+ Add</button>
+                <button class="compact-scoped-add-btn" onclick="addWatchlistItem('home')">+</button>
             </div>
             <div id="home-list-container" style="display:flex; flex-direction:column;"></div>
         </section>
     </div>
 
-    <!-- VIEW 6: To-Do & Tasks Hub (ISOLATED COMPACT STYLES) -->
+    <!-- VIEW 6: To-Do & Tasks Hub (MATCHING CHORES STYLES) -->
     <div id="view-todo" class="view">
         <section class="compact-scoped-card">
             <div class="compact-scoped-title">📝 To-Do List</div>
             <div class="compact-scoped-add-group">
                 <input type="text" id="todo-quick-input" class="compact-scoped-input" placeholder="Add task..." onkeypress="if(event.key==='Enter') addTodoItem()">
-                <button class="compact-scoped-add-btn" onclick="addTodoItem()">+ Add</button>
+                <button class="compact-scoped-add-btn" onclick="addTodoItem()">+</button>
             </div>
             <div id="todo-list-container" style="display:flex; flex-direction:column;"></div>
         </section>
@@ -819,7 +827,7 @@
     </nav>
 
     <!-- Leaflet JS Library for Map -->
-    <script src="[https://unpkg.com/leaflet@1.9.4/dist/leaflet.js](https://unpkg.com/leaflet@1.9.4/dist/leaflet.js)"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
         let currentMonth = 9;
@@ -1159,7 +1167,7 @@
             for (const item of allLocations) {
                 if (!item.postcode) continue;
                 try {
-                    const res = await fetch(`[https://api.postcodes.io/postcodes/$](https://api.postcodes.io/postcodes/$){encodeURIComponent(item.postcode)}`);
+                    const res = await fetch(`https://api.postcodes.io/postcodes/${encodeURIComponent(item.postcode)}`);
                     const data = await res.json();
                     if (data.status === 200) {
                         const { latitude, longitude } = data.result;
@@ -1213,7 +1221,7 @@
             const container = document.getElementById('todo-list-container');
             const filtered = todosData.filter(t => filterItem(t.who));
             
-            container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.82rem; padding:0.8rem;">No tasks remaining.</div>` : todosData.map((t, idx) => {
+            container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No tasks remaining.</div>` : todosData.map((t, idx) => {
                 if (!filterItem(t.who)) return '';
                 return `
                     <div class="compact-scoped-item ${t.done ? 'completed' : ''}">
@@ -1252,7 +1260,7 @@
             const cinemaList = (destinationsData.cinema || []).filter(item => filterItem(item.who));
             const homeList = (destinationsData.home || []).filter(item => filterItem(item.who));
 
-            cinemaCont.innerHTML = cinemaList.length === 0 ? `<div class="list-empty" style="font-size:0.82rem; padding:0.8rem;">Cinema watchlist empty.</div>` : (destinationsData.cinema || []).map((item, idx) => {
+            cinemaCont.innerHTML = cinemaList.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">Cinema watchlist empty.</div>` : (destinationsData.cinema || []).map((item, idx) => {
                 if (!filterItem(item.who)) return '';
                 return `
                     <div class="compact-scoped-item">
@@ -1265,7 +1273,7 @@
                 `;
             }).join('');
 
-            homeCont.innerHTML = homeList.length === 0 ? `<div class="list-empty" style="font-size:0.82rem; padding:0.8rem;">Home watchlist empty.</div>` : (destinationsData.home || []).map((item, idx) => {
+            homeCont.innerHTML = homeList.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">Home watchlist empty.</div>` : (destinationsData.home || []).map((item, idx) => {
                 if (!filterItem(item.who)) return '';
                 return `
                     <div class="compact-scoped-item">
@@ -1305,7 +1313,7 @@
                         <button class="inline-add-btn" onclick="addKidChore(${kIdx})" style="width:auto; min-height:38px; padding:4px 10px; font-size:0.85rem;">+</button>
                     </div>
                     <div class="list-container">
-                        ${k.chores.length === 0 ? '<span style="font-size:0.85rem; color:var(--muted);">No chores</span>' : k.chores.map((c, cIdx) => {
+                        ${k.chores.length === 0 ? '<span style="font-size:0.88rem; color:var(--muted);">No chores</span>' : k.chores.map((c, cIdx) => {
                             const choreText = typeof c === 'string' ? c : c.text;
                             return `
                                 <div class="chore-item-row" style="padding:6px 8px; font-size:0.88rem;">
