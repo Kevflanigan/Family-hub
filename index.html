@@ -375,7 +375,7 @@
             margin-bottom: 0.4rem;
         }
 
-        .shopping-item, .meal-card-row, .wishlist-item, .list-card {
+        .shopping-item, .meal-card-row, .list-card {
             background: #fff;
             border: 1px solid #e8e5df;
             border-radius: 10px;
@@ -620,6 +620,51 @@
         }
 
         /* ==========================================================
+           SCOPED STYLES FOR GIFT WISHLIST
+           ========================================================== */
+        .wishlist-scoped-input {
+            background: #fff;
+            border: 1px solid #dcdfe6;
+            color: var(--text);
+            padding: 4px 10px;
+            min-height: 38px;
+            font-size: 0.85rem;
+            border-radius: 7px;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .wishlist-scoped-add-btn {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            min-height: 38px;
+            padding: 4px 14px;
+            border-radius: 7px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .wishlist-scoped-item {
+            background: #fff;
+            border: 1px solid #eae7e1;
+            border-radius: 7px;
+            padding: 6px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            margin-bottom: 4px;
+            width: 100%;
+            min-height: 36px;
+            font-size: 0.8rem;
+        }
+
+        /* ==========================================================
            COMPACT SCOPED STYLES FOR PLACES PAGE (ISOLATED)
            ========================================================== */
         .places-scoped-card {
@@ -705,7 +750,7 @@
             </button>
             <div id="user-dropdown" class="user-dropdown-menu">
                 <div class="user-dropdown-item" onclick="selectFamilyView()">
-                    <span style="font-size:1.1rem;">👨‍👩‍👧‍👦</span> Family (Everyone)
+                    <span style="font-size:1.1rem;">👨‍gsub</span> Family (Everyone)
                 </div>
                 <div style="height:1px; background:#f2eff8; margin:2px 0;"></div>
                 <div class="user-dropdown-item" onclick="selectUser('dad', 'Dad')"><span class="account-avatar-dot bg-dad"></span> Dad</div>
@@ -865,18 +910,18 @@
             <div id="todo-list-container" style="display:flex; flex-direction:column;"></div>
         </section>
 
-        <section class="card">
-            <div class="card-header"><div class="card-title">⭐ Kids' Chores</div></div>
+        <section class="compact-scoped-card">
+            <div class="todo-scoped-title">⭐ Kids' Chores</div>
             <div id="chores-list-container" class="chores-grid"></div>
         </section>
 
-        <section class="card">
-            <div class="card-header"><div class="card-title">🎁 Gift Wishlist</div></div>
-            <div class="inline-add-group">
-                <input type="text" id="wishlist-quick-input" class="form-input input-full" placeholder="Add item..." onkeypress="if(event.key==='Enter') addWishlistItem()">
-                <button class="inline-add-btn" onclick="addWishlistItem()" style="width:auto;">+ Add</button>
+        <section class="compact-scoped-card">
+            <div class="todo-scoped-title">🎁 Gift Wishlist</div>
+            <div class="compact-scoped-add-group">
+                <input type="text" id="wishlist-quick-input" class="wishlist-scoped-input" placeholder="Add item..." onkeypress="if(event.key==='Enter') addWishlistItem()">
+                <button class="wishlist-scoped-add-btn" onclick="addWishlistItem()">+ Add</button>
             </div>
-            <div id="wishlist-list-container" class="list-container"></div>
+            <div id="wishlist-list-container" style="display:flex; flex-direction:column;"></div>
         </section>
     </div>
 
@@ -1388,18 +1433,21 @@
 
         function renderChores() {
             document.getElementById('chores-list-container').innerHTML = choresData.map((k, kIdx) => `
-                <div class="card" style="margin-bottom:0; padding:12px;">
-                    <div style="font-weight:800; font-size:0.95rem; margin-bottom:8px;">${k.kid}</div>
-                    <div class="inline-add-group" style="margin-bottom:8px;">
-                        <input type="text" id="chore-input-${kIdx}" class="form-input input-full" placeholder="Add chore..." style="min-height:38px; font-size:0.85rem;" onkeypress="if(event.key==='Enter') addKidChore(${kIdx})">
-                        <button class="inline-add-btn" onclick="addKidChore(${kIdx})" style="width:auto; min-height:38px; padding:4px 10px; font-size:0.85rem;">+</button>
+                <div style="background:#faf9ff; border:1px solid #eae7e1; border-radius:8px; padding:8px 10px; margin-bottom:6px;">
+                    <div style="font-weight:800; font-size:0.88rem; margin-bottom:6px;">${k.kid}</div>
+                    <div class="compact-scoped-add-group" style="margin-bottom:6px;">
+                        <input type="text" id="chore-input-${kIdx}" class="compact-scoped-input" placeholder="Add chore..." onkeypress="if(event.key==='Enter') addKidChore(${kIdx})">
+                        <button class="compact-scoped-add-btn" onclick="addKidChore(${kIdx})">+</button>
                     </div>
-                    <div class="list-container">
-                        ${k.chores.length === 0 ? '<span style="font-size:0.88rem; color:var(--muted);">No chores</span>' : k.chores.map((c, cIdx) => {
+                    <div style="display:flex; flex-direction:column;">
+                        ${k.chores.length === 0 ? '<span style="font-size:0.8rem; color:var(--muted); padding:2px 0;">No chores</span>' : k.chores.map((c, cIdx) => {
                             const choreText = typeof c === 'string' ? c : c.text;
                             return `
-                                <div class="chore-item-row" style="padding:6px 8px; font-size:0.88rem;">
-                                    <label style="display:flex; align-items:center; gap:6px;"><input type="checkbox" style="width:16px; height:16px; accent-color:var(--accent);"> ${choreText}</label>
+                                <div class="compact-scoped-item">
+                                    <div class="compact-scoped-left">
+                                        <input type="checkbox" class="compact-scoped-checkbox">
+                                        <span class="todo-item-label">${choreText}</span>
+                                    </div>
                                     <button class="action-btn delete-btn" onclick="deleteKidChore(${kIdx}, ${cIdx})" style="padding:2px 6px;">✕</button>
                                 </div>
                             `;
@@ -1422,13 +1470,13 @@
 
         function renderWishlist() {
             const filtered = wishlistData.filter(w => filterItem(w.who));
-            document.getElementById('wishlist-list-container').innerHTML = filtered.length === 0 ? `<div class="list-empty">Wishlist is empty.</div>` : wishlistData.map((w, idx) => {
+            document.getElementById('wishlist-list-container').innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">Wishlist is empty.</div>` : wishlistData.map((w, idx) => {
                 if (!filterItem(w.who)) return '';
                 return `
-                    <div class="wishlist-item">
-                        <span class="item-text-label">🎁 ${w.title}</span>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            <span class="assign-tag bg-${w.who}" onclick="cycleAssignee('wishlist', ${idx})">${w.who}</span>
+                    <div class="wishlist-scoped-item">
+                        <span class="todo-item-label">🎁 ${w.title}</span>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <span class="compact-scoped-tag bg-${w.who}" onclick="cycleAssignee('wishlist', ${idx})">${w.who}</span>
                             <button class="action-btn delete-btn" onclick="wishlistData.splice(${idx},1); saveData(); renderWishlist();">✕</button>
                         </div>
                     </div>
