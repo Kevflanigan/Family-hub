@@ -13,13 +13,13 @@
             --border: #e7e2da;
             --text: #252b36;
             --muted: #6f7785;
-            --accent: #6d5ce8;
+            --accent: #1e3a8a; /* Changed from purple to navy */
             --mom: #d9468d;
             --dad: #3678d4;
             --leo: #159b75;
             --mia: #c47a08;
-            --family: #805ad5;
-            --shadow-soft: 0 4px 16px rgba(36, 32, 64, .05);
+            --family: #1e3a8a; /* Changed family color to navy */
+            --shadow-soft: 0 4px 16px rgba(30, 58, 138, .05);
         }
 
         * {
@@ -32,7 +32,7 @@
 
         body {
             background:
-              radial-gradient(ellipse at 12% 0%, rgba(109,92,232,.08), transparent 32rem),
+              radial-gradient(ellipse at 12% 0%, rgba(30,58,138,.08), transparent 32rem),
               var(--bg);
             color: var(--text);
             padding-top: 76px;
@@ -69,8 +69,8 @@
         }
 
         .account-icon-btn {
-            background: #f0edff;
-            border: 1px solid #dcd5ff;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
             width: 44px;
             height: 44px;
             border-radius: 50%;
@@ -78,7 +78,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 2px 6px rgba(109, 92, 232, 0.15);
+            box-shadow: 0 2px 6px rgba(30, 58, 138, 0.15);
             transition: transform 0.1s ease;
         }
 
@@ -131,11 +131,11 @@
             align-items: center;
             gap: 10px;
             cursor: pointer;
-            border-bottom: 1px solid #f2eff8;
+            border-bottom: 1px solid #eff6ff;
         }
 
         .user-dropdown-item:hover {
-            background: #faf9ff;
+            background: #f8fafc;
         }
 
         /* Center Logo */
@@ -342,7 +342,7 @@
 
         .form-input:focus, .form-select:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(109,92,232,.12);
+            box-shadow: 0 0 0 3px rgba(30,58,138,.12);
         }
 
         .input-full { flex: 1 1 100%; }
@@ -367,7 +367,7 @@
             width: 100%;
         }
 
-        .add-btn:hover, .inline-add-btn:hover { background: #5948d0; }
+        .add-btn:hover, .inline-add-btn:hover { background: #1e40af; }
 
         .list-container {
             display: flex;
@@ -383,7 +383,7 @@
             font-size: 0.92rem;
             border: 1px dashed var(--border);
             border-radius: 12px;
-            background: #faf9ff;
+            background: #f8fafc;
             margin-bottom: 0.4rem;
         }
 
@@ -478,7 +478,7 @@
         .bg-family { background-color: var(--family); }
 
         .meal-card-row { margin-bottom: 6px; }
-        .meal-day-name { font-size: 1rem; font-weight: 800; color: #5144b7; width: 48px; flex-shrink: 0; }
+        .meal-day-name { font-size: 1rem; font-weight: 800; color: #1e3a8a; width: 48px; flex-shrink: 0; }
         .meal-input-inline { background: transparent; border: none; border-bottom: 1px dashed var(--border); font-size: 0.98rem; width: 100%; outline: none; padding: 4px 0; }
 
         .chores-grid {
@@ -535,7 +535,7 @@
 
         .home-scoped-input:focus, .home-scoped-select:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(109,92,232,.12);
+            box-shadow: 0 0 0 3px rgba(30,58,138,.12);
         }
 
         .home-scoped-btn {
@@ -553,7 +553,7 @@
             width: 100%;
         }
 
-        .home-scoped-btn:hover { background: #5948d0; }
+        .home-scoped-btn:hover { background: #1e40af; }
 
         /* ==========================================================
            COMPACT SCOPED STYLES FOR TO-DO & WATCHLIST
@@ -759,7 +759,7 @@
 
         .places-scoped-input:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(109,92,232,.12);
+            box-shadow: 0 0 0 3px rgba(30,58,138,.12);
         }
 
         .places-scoped-add-btn {
@@ -776,7 +776,7 @@
             flex-shrink: 0;
         }
 
-        .places-scoped-add-btn:hover { background: #5948d0; }
+        .places-scoped-add-btn:hover { background: #1e40af; }
 
         .places-scoped-item {
             background: #fff;
@@ -794,19 +794,19 @@
         }
 
         /* Firebase sign-in and household setup */
-        #auth-gate { position:fixed; inset:0; z-index:5000; display:flex; align-items:center; justify-content:center; padding:20px; background:radial-gradient(ellipse at 15% 0%,rgba(109,92,232,.16),transparent 34rem),#f7f5f1; overflow-y:auto; }
+        #auth-gate { position:fixed; inset:0; z-index:5000; display:flex; align-items:center; justify-content:center; padding:20px; background:radial-gradient(ellipse at 15% 0%,rgba(30,58,138,.16),transparent 34rem),#f7f5f1; overflow-y:auto; }
         #auth-gate[hidden] { display:none; }
-        .auth-card { width:min(100%,440px); background:#fff; border:1px solid var(--border); border-radius:22px; padding:26px; box-shadow:0 20px 60px rgba(36,32,64,.14); }
-        .auth-brand { display:flex; align-items:center; justify-content:center; margin-bottom:12px; }
-        .auth-brand-mark { width:220px; height:220px; flex-shrink:0; object-fit:contain; }
-        .auth-subtitle { text-align:center;color:var(--muted);margin-bottom:22px;font-size:.94rem; }
-        .auth-tabs { display:flex;gap:6px;background:#f4f2fb;padding:4px;border-radius:10px;margin-bottom:16px; }
+        .auth-card { width:min(100%,440px); background:#fff; border:1px solid var(--border); border-radius:22px; padding:20px 26px 26px 26px; box-shadow:0 20px 60px rgba(36,32,64,.14); }
+        .auth-brand { display:flex; align-items:center; justify-content:center; margin-bottom:0px; padding:0; line-height:0; }
+        .auth-brand-mark { width:220px; height:220px; flex-shrink:0; object-fit:contain; display:block; margin: -10px auto -15px auto; }
+        .auth-subtitle { text-align:center;color:var(--muted);margin-bottom:16px;font-size:.94rem; }
+        .auth-tabs { display:flex;gap:6px;background:#f8fafc;padding:4px;border-radius:10px;margin-bottom:16px; }
         .auth-tabs button { flex:1;border:0;border-radius:7px;padding:10px;background:transparent;font-weight:750;color:var(--muted);cursor:pointer; }
         .auth-tabs button.active { background:#fff;color:var(--accent);box-shadow:0 1px 4px #00000010; }
         .auth-field { display:block;font-size:.86rem;font-weight:700;margin:12px 0 6px; }
         .auth-input { width:100%;padding:12px 13px;border:1px solid #dcdfe6;border-radius:9px;font-size:1rem;min-height:46px; }
         .auth-primary { width:100%;border:0;border-radius:10px;padding:13px;background:var(--accent);color:white;font-weight:800;font-size:1rem;cursor:pointer;margin-top:16px; }
-        .auth-secondary { width:100%;border:1px solid #dcd5ff;border-radius:10px;padding:11px;background:#f8f6ff;color:#5144b7;font-weight:750;cursor:pointer;margin-top:9px; }
+        .auth-secondary { width:100%;border:1px solid #bfdbfe;border-radius:10px;padding:11px;background:#eff6ff;color:#1e3a8a;font-weight:750;cursor:pointer;margin-top:9px; }
         .auth-message { margin-top:12px;font-size:.88rem;line-height:1.45;color:#b42318;white-space:pre-wrap; }
         .auth-message.ok { color:#087443; }
         .household-panel { display:none; }
@@ -815,7 +815,7 @@
         .auth-small { color:var(--muted);font-size:.82rem;margin-top:8px;line-height:1.45; }
         .auth-user-line { display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.84rem;color:var(--muted); }
         .auth-user-line button { margin-left:auto;border:1px solid var(--border);background:white;border-radius:8px;padding:7px 10px;font-weight:700;cursor:pointer; }
-        @media(max-width:420px){ .auth-card{padding:20px} }
+        @media(max-width:420px){ .auth-card{padding:16px 20px 20px 20px} }
 
     </style>
 </head>
@@ -890,7 +890,7 @@
                 <div class="user-dropdown-item" onclick="selectFamilyView()">
                     <span style="font-size:1.1rem;">👨‍👩‍👧‍👦</span> Family (Everyone)
                 </div>
-                <div style="height:1px; background:#f2eff8; margin:2px 0;"></div>
+                <div style="height:1px; background:#eff6ff; margin:2px 0;"></div>
                 <div class="user-dropdown-item" onclick="selectUser('dad', 'Dad')"><span class="account-avatar-dot bg-dad"></span> Dad</div>
                 <div class="user-dropdown-item" onclick="selectUser('mom', 'Mom')"><span class="account-avatar-dot bg-mom"></span> Mom</div>
                 <div class="user-dropdown-item" onclick="selectUser('leo', 'Leo')"><span class="account-avatar-dot bg-leo"></span> Leo</div>
@@ -994,7 +994,7 @@
     <!-- VIEW 4: Places & Restaurants with Map & Section Toggle -->
     <div id="view-places" class="view">
         <div style="margin-bottom: 0.6rem;">
-            <div style="display:flex; background:#ede9f5; padding:2px; border-radius:8px; width:100%;">
+            <div style="display:flex; background:#eff6ff; padding:2px; border-radius:8px; width:100%;">
                 <button id="places-tab-btn" class="segmented-btn active" style="flex:1; border:none; background:#fff; color:var(--accent); padding:6px; font-weight:700; border-radius:6px; font-size:0.85rem;" onclick="switchPlacesSubTab('places')">📍 Places to Visit</button>
                 <button id="restaurants-tab-btn" class="segmented-btn" style="flex:1; border:none; background:transparent; color:var(--muted); padding:6px; font-weight:700; border-radius:6px; font-size:0.85rem;" onclick="switchPlacesSubTab('restaurants')">🍽️ Restaurants</button>
             </div>
@@ -1571,7 +1571,7 @@
 
         function renderChores() {
             document.getElementById('chores-list-container').innerHTML = choresData.map((k, kIdx) => `
-                <div style="background:#faf9ff; border:1px solid #eae7e1; border-radius:8px; padding:8px 10px; margin-bottom:6px;">
+                <div style="background:#f8fafc; border:1px solid #eae7e1; border-radius:8px; padding:8px 10px; margin-bottom:6px;">
                     <div style="font-weight:800; font-size:0.88rem; margin-bottom:6px;">${k.kid}</div>
                     <div class="compact-scoped-add-group" style="margin-bottom:6px;">
                         <input type="text" id="chore-input-${kIdx}" class="compact-scoped-input" placeholder="Add chore..." onkeypress="if(event.key==='Enter') addKidChore(${kIdx})">
