@@ -114,7 +114,7 @@
             border: 1px solid var(--border);
             border-radius: 12px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.12);
-            width: 185px;
+            width: 210px;
             overflow: hidden;
             z-index: 1001;
         }
@@ -136,6 +136,11 @@
 
         .user-dropdown-item:hover {
             background: #f8fafc;
+        }
+
+        .user-dropdown-item.active-mode {
+            background: #eff6ff;
+            color: var(--accent);
         }
 
         /* Center Logo */
@@ -869,7 +874,7 @@
           <div class="household-choice">
             <strong>Create a new household</strong>
             <label class="auth-field" for="household-name">Household name</label>
-            <input class="auth-input" id="household-name" maxlength="60" placeholder="e.g. The Parker Family">
+            <input class="auth-input" id="household-name" maxlength="60" placeholder="e.g. Parker Flanigan">
             <button class="auth-primary" type="button" onclick="window.fpCreateHousehold()">Create household</button>
           </div>
           <div class="household-choice">
@@ -900,14 +905,21 @@
                 </svg>
             </button>
             <div id="user-dropdown" class="user-dropdown-menu">
-                <div class="user-dropdown-item" onclick="selectFamilyView()">
+                <div class="user-dropdown-item" style="cursor:default; background:#f8fafc; font-size:0.8rem; color:var(--muted); flex-direction:column; align-items:flex-start; gap:2px; padding:8px 12px;">
+                    <span style="font-weight:800; color:var(--text);" id="dropdown-user-name">Kevin</span>
+                    <span id="dropdown-household-name" style="font-size:0.75rem;">Parker Flanigan</span>
+                </div>
+                <div style="height:1px; background:#eff6ff;"></div>
+                <div id="opt-family" class="user-dropdown-item" onclick="selectFamilyView()">
                     <span style="font-size:1.1rem;">👨‍👩‍👧‍👦</span> Family (Everyone)
                 </div>
-                <div style="height:1px; background:#eff6ff; margin:2px 0;"></div>
-                <div class="user-dropdown-item" onclick="selectUser('dad', 'Dad')"><span class="account-avatar-dot bg-dad"></span> Dad</div>
-                <div class="user-dropdown-item" onclick="selectUser('mom', 'Mom')"><span class="account-avatar-dot bg-mom"></span> Mom</div>
-                <div class="user-dropdown-item" onclick="selectUser('leo', 'Leo')"><span class="account-avatar-dot bg-leo"></span> Leo</div>
-                <div class="user-dropdown-item" onclick="selectUser('mia', 'Mia')"><span class="account-avatar-dot bg-mia"></span> Mia</div>
+                <div id="opt-user" class="user-dropdown-item" onclick="selectUser('dad', 'Kevin')">
+                    <span class="account-avatar-dot bg-dad"></span> <span id="opt-user-name">Kevin's Plan</span>
+                </div>
+                <div style="height:1px; background:#eff6ff;"></div>
+                <div class="user-dropdown-item" onclick="window.fpSignOut()" style="color:#ef4444;">
+                    ↪ Sign out
+                </div>
             </div>
         </div>
 
@@ -920,7 +932,7 @@
         <div class="header-right">
             <div class="current-user-badge">
                 <span id="active-badge-dot" class="account-avatar-dot bg-family" style="width:8px; height:8px;"></span>
-                <span id="active-badge-text">Kevin</span>
+                <span id="active-badge-text">Family</span>
             </div>
         </div>
     </div>
@@ -947,8 +959,8 @@
                     </select>
                     <select id="add-assignee" class="home-scoped-select input-half">
                         <option value="family">Family</option>
-                        <option value="mom">Mom</option>
-                        <option value="dad">Dad</option>
+                        <option value="mom">Harriet</option>
+                        <option value="dad">Kevin</option>
                         <option value="leo">Leo</option>
                         <option value="mia">Mia</option>
                     </select>
@@ -1124,8 +1136,8 @@
         let currentYear = 2026;
         const assignees = ['family', 'mom', 'dad', 'leo', 'mia'];
 
-        let currentUser = localStorage.getItem('fam_user') || 'mom';
-        let currentUserName = localStorage.getItem('fam_user_name') || 'Mom';
+        let currentUser = localStorage.getItem('fam_user') || 'dad';
+        let currentUserName = localStorage.getItem('fam_user_name') || 'Kevin';
         let viewMode = localStorage.getItem('fam_view_mode') || 'family';
         let activePlacesTab = 'places';
 
@@ -1180,7 +1192,7 @@
             updateHeaderDisplay();
             saveData();
             renderAllViews();
-            showToast("Showing Family Plans");
+            showToast("Showing Family Plans (Everyone)");
         }
 
         function selectUser(userKey, userName) {
@@ -1191,7 +1203,7 @@
             updateHeaderDisplay();
             saveData();
             renderAllViews();
-            showToast(`Showing ${userName}'s Plans`);
+            showToast(`Showing ${userName}'s Personal View`);
         }
 
         function updateHeaderDisplay() {
@@ -1199,10 +1211,18 @@
             const badgeDotEl = document.getElementById('active-badge-dot');
             const badgeTextEl = document.getElementById('active-badge-text');
 
+            const optFamily = document.getElementById('opt-family');
+            const optUser = document.getElementById('opt-user');
+
+            if (optFamily && optUser) {
+                optFamily.classList.toggle('active-mode', viewMode === 'family');
+                optUser.classList.toggle('active-mode', viewMode === 'individual');
+            }
+
             if (viewMode === 'family') {
                 indicatorEl.setAttribute('class', 'user-silhouette-icon text-family');
                 badgeDotEl.className = "account-avatar-dot bg-family";
-                badgeTextEl.textContent = "Kevin";
+                badgeTextEl.textContent = "Family";
             } else {
                 indicatorEl.setAttribute('class', `user-silhouette-icon text-${currentUser}`);
                 badgeDotEl.className = `account-avatar-dot bg-${currentUser}`;
@@ -1212,7 +1232,7 @@
 
         function filterItem(itemWho) {
             if (viewMode === 'family') return true;
-            return itemWho === currentUser || itemWho === 'family';
+            return itemWho === currentUser || itemWho === 'family' || itemWho === 'dad';
         }
 
         function showView(viewId, navBtn) {
@@ -1764,20 +1784,21 @@
       }
       function enterApp(profile) {
         gate.hidden = true;
-        // Keep each account's current planner view distinct on this device.
         const fullName = profile.displayName || signedInUser?.displayName || signedInUser?.email?.split("@")[0] || "Member";
         const firstName = fullName.split(" ")[0];
-        document.getElementById("active-badge-text").textContent = firstName;
-        document.getElementById("auth-heading").textContent = "Your family life, planned together.";
-        // The old role selector represented pretend users. Hide it for authenticated accounts.
-        const dropdown = document.getElementById("user-dropdown");
-        if (dropdown) dropdown.innerHTML = `
-          <div class="user-dropdown-item" style="cursor:default">Signed in as ${escapeHtml(fullName)}</div>
-          <div class="user-dropdown-item" style="cursor:default;font-size:.8rem;color:#6f7785">${escapeHtml(profile.householdName || "Household")}</div>
-          <div class="user-dropdown-item" onclick="window.fpSignOut()">↪ Sign out</div>`;
-        const accountBtn = document.querySelector(".account-icon-btn");
-        if (accountBtn) accountBtn.title = "Account and sign out";
+        const householdName = profile.householdName || "Household";
+
+        const dropdownName = document.getElementById("dropdown-user-name");
+        const dropdownHouse = document.getElementById("dropdown-household-name");
+        const optUserName = document.getElementById("opt-user-name");
+
+        if (dropdownName) dropdownName.textContent = fullName;
+        if (dropdownHouse) dropdownHouse.textContent = householdName;
+        if (optUserName) optUserName.textContent = `${firstName}'s Plan`;
+
+        updateHeaderDisplay();
       }
+
       function escapeHtml(value) {
         return String(value).replace(/[&<>"']/g, ch => ({
           "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
@@ -1862,7 +1883,6 @@
           userProfile = { ...(userProfile || {}), householdId: householdRef.id, householdName: name };
           message(householdMessage, `Household created. Household ID: ${householdRef.id}. Copy and share this ID only with people you want to join.`, true);
           enterApp(userProfile);
-          // Show the ID once in a browser alert as a convenient copyable record.
           alert(`Household created: ${name}\n\nHousehold ID:\n${householdRef.id}\n\nSave this ID to invite other members.`);
         } catch (error) { message(householdMessage, friendlyError(error)); }
       };
