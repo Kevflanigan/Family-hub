@@ -797,10 +797,8 @@
         #auth-gate { position:fixed; inset:0; z-index:5000; display:flex; align-items:center; justify-content:center; padding:20px; background:radial-gradient(ellipse at 15% 0%,rgba(109,92,232,.16),transparent 34rem),#f7f5f1; overflow-y:auto; }
         #auth-gate[hidden] { display:none; }
         .auth-card { width:min(100%,440px); background:#fff; border:1px solid var(--border); border-radius:22px; padding:26px; box-shadow:0 20px 60px rgba(36,32,64,.14); }
-        .auth-brand { display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:8px; }
-        .auth-brand-mark { width:54px;height:54px;flex-shrink:0; }
-        .auth-brand-name { font-size:1.8rem;line-height:1;font-weight:900;letter-spacing:-.06em;color:#252b36; }
-        .auth-brand-name span { color:#6d5ce8; }
+        .auth-brand { display:flex; align-items:center; justify-content:center; margin-bottom:12px; }
+        .auth-brand-mark { width:96px; height:96px; flex-shrink:0; object-fit:contain; }
         .auth-subtitle { text-align:center;color:var(--muted);margin-bottom:22px;font-size:.94rem; }
         .auth-tabs { display:flex;gap:6px;background:#f4f2fb;padding:4px;border-radius:10px;margin-bottom:16px; }
         .auth-tabs button { flex:1;border:0;border-radius:7px;padding:10px;background:transparent;font-weight:750;color:var(--muted);cursor:pointer; }
@@ -817,7 +815,7 @@
         .auth-small { color:var(--muted);font-size:.82rem;margin-top:8px;line-height:1.45; }
         .auth-user-line { display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.84rem;color:var(--muted); }
         .auth-user-line button { margin-left:auto;border:1px solid var(--border);background:white;border-radius:8px;padding:7px 10px;font-weight:700;cursor:pointer; }
-        @media(max-width:420px){ .auth-card{padding:20px}.auth-brand-name{font-size:1.55rem} }
+        @media(max-width:420px){ .auth-card{padding:20px} }
 
     </style>
 </head>
@@ -828,8 +826,7 @@
     <div id="auth-gate">
       <section class="auth-card" aria-labelledby="auth-heading">
         <div class="auth-brand">
-          <img src="familiplan-icon.png" alt="Family Plan logo" class="auth-brand-mark" style="width:54px;height:54px;object-fit:contain;flex-shrink:0;">
-          <div class="auth-brand-name">Family <span>Plan</span></div>
+          <img src="familiplan-icon.png" alt="Family Plan logo" class="auth-brand-mark">
         </div>
         <p class="auth-subtitle" id="auth-heading">Your family life, planned together.</p>
 
