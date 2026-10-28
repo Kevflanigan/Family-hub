@@ -799,12 +799,16 @@
         .auth-card { width:min(100%,440px); background:#fff; border:1px solid var(--border); border-radius:22px; padding:12px 20px 20px 20px; box-shadow:0 20px 60px rgba(36,32,64,.14); }
         .auth-brand { display:flex; align-items:center; justify-content:center; margin-bottom:0px; padding:0; line-height:0; height: 110px; overflow: hidden; }
         .auth-brand-mark { width:220px; height:220px; flex-shrink:0; object-fit:contain; display:block; margin: 0 auto; transform: translateY(-5px); }
-        .auth-subtitle { text-align:center;color:var(--muted);margin-bottom:12px;font-size:.92rem; margin-top: -5px; }
+        .auth-subtitle { text-align:center;color:var(--muted);margin-bottom:12px;font-size:.92rem; margin-top: 6px; }
         .auth-tabs { display:flex;gap:6px;background:#f8fafc;padding:4px;border-radius:10px;margin-bottom:12px; }
         .auth-tabs button { flex:1;border:0;border-radius:7px;padding:8px;background:transparent;font-weight:750;color:var(--muted);cursor:pointer; }
         .auth-tabs button.active { background:#fff;color:var(--accent);box-shadow:0 1px 4px #00000010; }
         .auth-field { display:block;font-size:.84rem;font-weight:700;margin:8px 0 4px; }
         .auth-input { width:100%;padding:10px 12px;border:1px solid #dcdfe6;border-radius:9px;font-size:0.95rem;min-height:42px; }
+        .password-container { position: relative; display: flex; align-items: center; width: 100%; }
+        .password-container .auth-input { padding-right: 44px; }
+        .password-toggle-btn { position: absolute; right: 12px; background: none; border: none; cursor: pointer; color: var(--muted); display: flex; align-items: center; justify-content: center; padding: 4px; }
+        .password-toggle-btn:hover { color: var(--text); }
         .auth-primary { width:100%;border:0;border-radius:10px;padding:12px;background:var(--accent);color:white;font-weight:800;font-size:0.95rem;cursor:pointer;margin-top:12px; }
         .auth-secondary { width:100%;border:1px solid #bfdbfe;border-radius:10px;padding:10px;background:#eff6ff;color:#1e3a8a;font-weight:750;cursor:pointer;margin-top:8px; }
         .auth-message { margin-top:8px;font-size:.84rem;line-height:1.35;color:#b42318;white-space:pre-wrap; }
@@ -841,7 +845,15 @@
             <label class="auth-field" for="auth-email">Email address</label>
             <input class="auth-input" id="auth-email" type="email" autocomplete="email" required placeholder="you@example.com">
             <label class="auth-field" for="auth-password">Password</label>
-            <input class="auth-input" id="auth-password" type="password" autocomplete="current-password" minlength="6" required placeholder="At least 6 characters">
+            <div class="password-container">
+                <input class="auth-input" id="auth-password" type="password" autocomplete="current-password" minlength="6" required placeholder="At least 6 characters">
+                <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility()" title="Show/Hide password">
+                    <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </div>
             <button class="auth-primary" id="auth-submit" type="submit">Sign in</button>
             <button class="auth-secondary" type="button" id="auth-reset" onclick="window.fpResetPassword()">Forgot password?</button>
           </form>
@@ -1095,6 +1107,18 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('auth-password');
+            const eyeIcon = document.getElementById('eye-icon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+            }
+        }
+
         let currentMonth = 9;
         let currentYear = 2026;
         const assignees = ['family', 'mom', 'dad', 'leo', 'mia'];
