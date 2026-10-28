@@ -792,9 +792,93 @@
             min-height: 36px;
             font-size: 0.88rem;
         }
+
+        /* Firebase sign-in and household setup */
+        #auth-gate { position:fixed; inset:0; z-index:5000; display:flex; align-items:center; justify-content:center; padding:20px; background:radial-gradient(ellipse at 15% 0%,rgba(109,92,232,.16),transparent 34rem),#f7f5f1; overflow-y:auto; }
+        #auth-gate[hidden] { display:none; }
+        .auth-card { width:min(100%,440px); background:#fff; border:1px solid var(--border); border-radius:22px; padding:26px; box-shadow:0 20px 60px rgba(36,32,64,.14); }
+        .auth-brand { display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:8px; }
+        .auth-brand-mark { width:54px;height:54px;flex-shrink:0; }
+        .auth-brand-name { font-size:1.8rem;line-height:1;font-weight:900;letter-spacing:-.06em;color:#252b36; }
+        .auth-brand-name span { color:#6d5ce8; }
+        .auth-subtitle { text-align:center;color:var(--muted);margin-bottom:22px;font-size:.94rem; }
+        .auth-tabs { display:flex;gap:6px;background:#f4f2fb;padding:4px;border-radius:10px;margin-bottom:16px; }
+        .auth-tabs button { flex:1;border:0;border-radius:7px;padding:10px;background:transparent;font-weight:750;color:var(--muted);cursor:pointer; }
+        .auth-tabs button.active { background:#fff;color:var(--accent);box-shadow:0 1px 4px #00000010; }
+        .auth-field { display:block;font-size:.86rem;font-weight:700;margin:12px 0 6px; }
+        .auth-input { width:100%;padding:12px 13px;border:1px solid #dcdfe6;border-radius:9px;font-size:1rem;min-height:46px; }
+        .auth-primary { width:100%;border:0;border-radius:10px;padding:13px;background:var(--accent);color:white;font-weight:800;font-size:1rem;cursor:pointer;margin-top:16px; }
+        .auth-secondary { width:100%;border:1px solid #dcd5ff;border-radius:10px;padding:11px;background:#f8f6ff;color:#5144b7;font-weight:750;cursor:pointer;margin-top:9px; }
+        .auth-message { margin-top:12px;font-size:.88rem;line-height:1.45;color:#b42318;white-space:pre-wrap; }
+        .auth-message.ok { color:#087443; }
+        .household-panel { display:none; }
+        .household-panel.visible { display:block; }
+        .household-choice { border:1px solid var(--border);border-radius:12px;padding:14px;margin-top:12px; }
+        .auth-small { color:var(--muted);font-size:.82rem;margin-top:8px;line-height:1.45; }
+        .auth-user-line { display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.84rem;color:var(--muted); }
+        .auth-user-line button { margin-left:auto;border:1px solid var(--border);background:white;border-radius:8px;padding:7px 10px;font-weight:700;cursor:pointer; }
+        @media(max-width:420px){ .auth-card{padding:20px}.auth-brand-name{font-size:1.55rem} }
+
     </style>
 </head>
 <body>
+
+
+    <!-- Firebase account gate: the app is hidden until a signed-in user has a household -->
+    <div id="auth-gate">
+      <section class="auth-card" aria-labelledby="auth-heading">
+        <div class="auth-brand">
+          <svg class="auth-brand-mark" viewBox="0 0 64 64" role="img" aria-label="Family Plan logo">
+            <rect x="2" y="2" width="60" height="60" rx="19" fill="#6d5ce8"/>
+            <path d="M13 29 32 14 51 29" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M19 28v21h26V28" fill="none" stroke="#fff" stroke-width="3.5" stroke-linejoin="round"/>
+            <circle cx="26" cy="34" r="3.5" fill="#f8c65c"/><circle cx="38" cy="34" r="3.5" fill="#f8c65c"/>
+            <path d="M23 43c2-5 7-5 9 0m0 0c2-5 7-5 9 0" fill="none" stroke="#fff" stroke-width="2.7" stroke-linecap="round"/>
+          </svg>
+          <div class="auth-brand-name">Family <span>Plan</span></div>
+        </div>
+        <p class="auth-subtitle" id="auth-heading">Your family life, planned together.</p>
+
+        <div id="auth-account-panel">
+          <div class="auth-tabs">
+            <button type="button" id="auth-signin-tab" class="active" onclick="window.fpSetAuthMode('signin')">Sign in</button>
+            <button type="button" id="auth-signup-tab" onclick="window.fpSetAuthMode('signup')">Create account</button>
+          </div>
+          <form id="firebase-auth-form">
+            <label class="auth-field" for="auth-name" id="auth-name-label" hidden>Your name</label>
+            <input class="auth-input" id="auth-name" type="text" autocomplete="name" placeholder="Your name" hidden>
+            <label class="auth-field" for="auth-email">Email address</label>
+            <input class="auth-input" id="auth-email" type="email" autocomplete="email" required placeholder="you@example.com">
+            <label class="auth-field" for="auth-password">Password</label>
+            <input class="auth-input" id="auth-password" type="password" autocomplete="current-password" minlength="6" required placeholder="At least 6 characters">
+            <button class="auth-primary" id="auth-submit" type="submit">Sign in</button>
+            <button class="auth-secondary" type="button" id="auth-reset" onclick="window.fpResetPassword()">Forgot password?</button>
+          </form>
+          <div class="auth-message" id="auth-message" role="status" aria-live="polite"></div>
+          <p class="auth-small">Each adult or family member has their own account. After signing in, create a household or join one using its household ID.</p>
+        </div>
+
+        <div id="household-panel" class="household-panel">
+          <div class="auth-user-line"><span id="auth-signed-in-email"></span><button type="button" onclick="window.fpSignOut()">Sign out</button></div>
+          <h2 style="font-size:1.2rem;margin-top:18px;">Set up your household</h2>
+          <p class="auth-small">A household connects separate accounts to the same family space. Keep the household ID private and share it only with people you want to join.</p>
+          <div class="household-choice">
+            <strong>Create a new household</strong>
+            <label class="auth-field" for="household-name">Household name</label>
+            <input class="auth-input" id="household-name" maxlength="60" placeholder="e.g. The Parker Family">
+            <button class="auth-primary" type="button" onclick="window.fpCreateHousehold()">Create household</button>
+          </div>
+          <div class="household-choice">
+            <strong>Join an existing household</strong>
+            <label class="auth-field" for="household-id">Household ID</label>
+            <input class="auth-input" id="household-id" autocomplete="off" placeholder="Paste the household ID">
+            <button class="auth-secondary" type="button" onclick="window.fpJoinHousehold()">Join household</button>
+          </div>
+          <div class="auth-message" id="household-message" role="status" aria-live="polite"></div>
+          <p class="auth-small">This starter connects login and household membership. Your existing planner items are still stored in this browser only; cloud syncing those items is a separate step.</p>
+        </div>
+      </section>
+    </div>
 
     <!-- Toast Banner Container -->
     <div id="toast-banner" class="toast-notification">
@@ -825,7 +909,14 @@
 
         <!-- Center: Logo -->
         <div class="header-center">
-            <img src="familiplan-icon.png" alt="FamilyPlan Logo" class="brand-logo-img">
+            <div style="display:flex;align-items:center;gap:7px;font-weight:900;letter-spacing:-.04em;font-size:1.15rem;color:#252b36;">
+                <svg viewBox="0 0 40 40" style="width:36px;height:36px" aria-label="Family Plan logo">
+                  <rect x="1" y="1" width="38" height="38" rx="12" fill="#6d5ce8"/>
+                  <path d="M8 19 20 9 32 19M12 18v13h16V18" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="16" cy="22" r="2" fill="#f8c65c"/><circle cx="24" cy="22" r="2" fill="#f8c65c"/>
+                </svg>
+                <span>Family <span style="color:#6d5ce8">Plan</span></span>
+            </div>
         </div>
 
         <!-- Right: Active View Label -->
@@ -1598,5 +1689,234 @@
         updateHeaderDisplay();
         renderAllViews();
     </script>
+
+    <script type="module">
+      /*
+       * FAMILY PLAN FIREBASE STARTER
+       */
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+      import {
+        getAuth, onAuthStateChanged, createUserWithEmailAndPassword,
+        signInWithEmailAndPassword, signOut, sendPasswordResetEmail,
+        updateProfile
+      } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+      import {
+        getFirestore, doc, getDoc, setDoc, collection, addDoc,
+        serverTimestamp
+      } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyAeLviH8AqXY9BdvRwR6g8YhaTarM00v1Y",
+        authDomain: "family-plan-f5168.firebaseapp.com",
+        databaseURL: "https://family-plan-f5168-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "family-plan-f5168",
+        storageBucket: "family-plan-f5168.firebasestorage.app",
+        messagingSenderId: "114463971604",
+        appId: "1:114463971604:web:f29686947d4f2282f68a01",
+        measurementId: "G-RKJSNJRHP0"
+      };
+
+      const configReady = Object.values(firebaseConfig).every(v =>
+        typeof v === "string" && v.length > 0 &&
+        !v.startsWith("PASTE_") && !v.includes("PASTE_")
+      );
+      let auth = null;
+      let db = null;
+      let signedInUser = null;
+      let userProfile = null;
+      let authMode = "signin";
+
+      const gate = document.getElementById("auth-gate");
+      const accountPanel = document.getElementById("auth-account-panel");
+      const householdPanel = document.getElementById("household-panel");
+      const authMessage = document.getElementById("auth-message");
+      const householdMessage = document.getElementById("household-message");
+
+      function message(el, text, ok=false) {
+        el.textContent = text;
+        el.classList.toggle("ok", ok);
+      }
+      function friendlyError(error) {
+        const messages = {
+          "auth/email-already-in-use": "That email already has an account. Try signing in instead.",
+          "auth/invalid-email": "Enter a valid email address.",
+          "auth/invalid-credential": "Email or password is incorrect.",
+          "auth/weak-password": "Choose a stronger password (at least 6 characters).",
+          "auth/too-many-requests": "Too many attempts. Wait a while and try again.",
+          "permission-denied": "Firebase denied this action. Check that the Firestore security rules have been published.",
+          "unavailable": "Firebase is temporarily unavailable. Please try again."
+        };
+        return messages[error.code] || error.message || "Something went wrong. Please try again.";
+      }
+      function showGate(which) {
+        gate.hidden = false;
+        accountPanel.style.display = which === "account" ? "block" : "none";
+        householdPanel.classList.toggle("visible", which === "household");
+      }
+      function enterApp(profile) {
+        gate.hidden = true;
+        // Keep each account's current planner view distinct on this device.
+        const name = profile.displayName || signedInUser?.displayName || signedInUser?.email?.split("@")[0] || "Member";
+        document.getElementById("active-badge-text").textContent = name;
+        document.getElementById("auth-heading").textContent = "Your family life, planned together.";
+        // The old role selector represented pretend users. Hide it for authenticated accounts.
+        const dropdown = document.getElementById("user-dropdown");
+        if (dropdown) dropdown.innerHTML = `
+          <div class="user-dropdown-item" style="cursor:default">Signed in as ${escapeHtml(name)}</div>
+          <div class="user-dropdown-item" style="cursor:default;font-size:.8rem;color:#6f7785">${escapeHtml(profile.householdName || "Household")}</div>
+          <div class="user-dropdown-item" onclick="window.fpSignOut()">↪ Sign out</div>`;
+        const accountBtn = document.querySelector(".account-icon-btn");
+        if (accountBtn) accountBtn.title = "Account and sign out";
+      }
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, ch => ({
+          "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+        }[ch]));
+      }
+
+      window.fpSetAuthMode = (mode) => {
+        authMode = mode;
+        document.getElementById("auth-signin-tab").classList.toggle("active", mode === "signin");
+        document.getElementById("auth-signup-tab").classList.toggle("active", mode === "signup");
+        const signup = mode === "signup";
+        document.getElementById("auth-name").hidden = !signup;
+        document.getElementById("auth-name-label").hidden = !signup;
+        document.getElementById("auth-password").autocomplete = signup ? "new-password" : "current-password";
+        document.getElementById("auth-submit").textContent = signup ? "Create account" : "Sign in";
+        document.getElementById("auth-reset").hidden = signup;
+        message(authMessage, "");
+      };
+
+      document.getElementById("firebase-auth-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (!configReady || !auth || !db) {
+          message(authMessage, "Firebase is not configured yet. Follow the setup steps supplied with this file, then replace the placeholder firebaseConfig values.");
+          return;
+        }
+        const email = document.getElementById("auth-email").value.trim();
+        const password = document.getElementById("auth-password").value;
+        const name = document.getElementById("auth-name").value.trim();
+        const submit = document.getElementById("auth-submit");
+        submit.disabled = true;
+        try {
+          if (authMode === "signup") {
+            const credential = await createUserWithEmailAndPassword(auth, email, password);
+            if (name) await updateProfile(credential.user, { displayName: name });
+            await setDoc(doc(db, "users", credential.user.uid), {
+              uid: credential.user.uid, email, displayName: name || email.split("@")[0],
+              householdId: null, createdAt: serverTimestamp()
+            });
+          } else {
+            await signInWithEmailAndPassword(auth, email, password);
+          }
+        } catch (error) {
+          message(authMessage, friendlyError(error));
+        } finally {
+          submit.disabled = false;
+        }
+      });
+
+      window.fpResetPassword = async () => {
+        if (!configReady || !auth) {
+          message(authMessage, "Configure Firebase first, then use password reset.");
+          return;
+        }
+        const email = document.getElementById("auth-email").value.trim();
+        if (!email) return message(authMessage, "Enter your email address first.");
+        try {
+          await sendPasswordResetEmail(auth, email);
+          message(authMessage, "If an account exists for that email, a password reset email has been sent.", true);
+        } catch (error) { message(authMessage, friendlyError(error)); }
+      };
+
+      window.fpSignOut = async () => {
+        if (auth) await signOut(auth);
+      };
+
+      window.fpCreateHousehold = async () => {
+        if (!signedInUser || !db) return;
+        const name = document.getElementById("household-name").value.trim();
+        if (!name) return message(householdMessage, "Enter a household name.");
+        try {
+          const householdRef = await addDoc(collection(db, "households"), {
+            name, ownerUid: signedInUser.uid, createdAt: serverTimestamp()
+          });
+          await setDoc(doc(db, "households", householdRef.id, "members", signedInUser.uid), {
+            uid: signedInUser.uid, email: signedInUser.email,
+            displayName: signedInUser.displayName || signedInUser.email.split("@")[0],
+            role: "owner", joinedAt: serverTimestamp()
+          });
+          await setDoc(doc(db, "users", signedInUser.uid), {
+            householdId: householdRef.id, householdName: name
+          }, { merge: true });
+          userProfile = { ...(userProfile || {}), householdId: householdRef.id, householdName: name };
+          message(householdMessage, `Household created. Household ID: ${householdRef.id}. Copy and share this ID only with people you want to join.`, true);
+          enterApp(userProfile);
+          // Show the ID once in a browser alert as a convenient copyable record.
+          alert(`Household created: ${name}\n\nHousehold ID:\n${householdRef.id}\n\nSave this ID to invite other members.`);
+        } catch (error) { message(householdMessage, friendlyError(error)); }
+      };
+
+      window.fpJoinHousehold = async () => {
+        if (!signedInUser || !db) return;
+        const householdId = document.getElementById("household-id").value.trim();
+        if (!householdId) return message(householdMessage, "Paste the household ID you were given.");
+        try {
+          const householdRef = doc(db, "households", householdId);
+          const householdSnap = await getDoc(householdRef);
+          if (!householdSnap.exists()) return message(householdMessage, "That household ID was not found. Check it and try again.");
+          const household = householdSnap.data();
+          await setDoc(doc(db, "households", householdId, "members", signedInUser.uid), {
+            uid: signedInUser.uid, email: signedInUser.email,
+            displayName: signedInUser.displayName || signedInUser.email.split("@")[0],
+            role: "member", joinedAt: serverTimestamp()
+          });
+          await setDoc(doc(db, "users", signedInUser.uid), {
+            householdId, householdName: household.name || "Household"
+          }, { merge: true });
+          userProfile = { ...(userProfile || {}), householdId, householdName: household.name || "Household" };
+          enterApp(userProfile);
+        } catch (error) { message(householdMessage, friendlyError(error)); }
+      };
+
+      if (!configReady) {
+        showGate("account");
+        message(authMessage, "Setup required: add your Firebase web app configuration in the script near the bottom of index.html.");
+      } else {
+        try {
+          const app = initializeApp(firebaseConfig);
+          auth = getAuth(app);
+          db = getFirestore(app);
+          onAuthStateChanged(auth, async (user) => {
+            signedInUser = user;
+            if (!user) {
+              userProfile = null;
+              showGate("account");
+              window.fpSetAuthMode("signin");
+              return;
+            }
+            try {
+              const profileRef = doc(db, "users", user.uid);
+              const profileSnap = await getDoc(profileRef);
+              userProfile = profileSnap.exists() ? profileSnap.data() : {};
+              if (!userProfile.householdId) {
+                document.getElementById("auth-signed-in-email").textContent = user.email || "";
+                showGate("household");
+                message(householdMessage, "");
+              } else {
+                enterApp(userProfile);
+              }
+            } catch (error) {
+              showGate("account");
+              message(authMessage, "Could not load your account profile: " + friendlyError(error));
+            }
+          });
+        } catch (error) {
+          showGate("account");
+          message(authMessage, "Firebase could not initialize: " + friendlyError(error));
+        }
+      }
+    </script>
+
 </body>
 </html>
