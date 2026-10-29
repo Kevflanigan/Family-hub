@@ -1172,20 +1172,7 @@
                 <span class="badge">Today</span>
             </div>
             <div id="dash-schedule">
-                <div class="dashboard-item">
-                    <div>
-                        <strong>School Drop-off & Pick-up</strong>
-                        <div class="sub-text">Kevin • 08:30 AM & 03:15 PM</div>
-                    </div>
-                    <span>🏫</span>
-                </div>
-                <div class="dashboard-item">
-                    <div>
-                        <strong>Swimming Lessons</strong>
-                        <div class="sub-text">Harriet • Rawdon Leisure Centre • 04:30 PM</div>
-                    </div>
-                    <span>🏊‍♂️</span>
-                </div>
+                <div class="list-empty">No events scheduled for today.</div>
             </div>
         </section>
 
@@ -1196,13 +1183,7 @@
                 <span class="badge">Tonight</span>
             </div>
             <div id="dash-dinner">
-                <div class="dashboard-item">
-                    <div>
-                        <strong>Homemade Chicken & Veg Traybake</strong>
-                        <div class="sub-text">Prep time: 15 mins • Prepared by Kevin</div>
-                    </div>
-                    <span>🥘</span>
-                </div>
+                <div class="list-empty">No dinner plan set for tonight.</div>
             </div>
         </section>
 
@@ -1212,20 +1193,7 @@
                 <span>📝 Tasks & Shopping Needed</span>
             </div>
             <div id="dash-tasks">
-                <div class="dashboard-item">
-                    <div>
-                        <strong>Semi-skimmed Milk & Eggs</strong>
-                        <div class="sub-text">Food Shopping List</div>
-                    </div>
-                    <span>🛒</span>
-                </div>
-                <div class="dashboard-item">
-                    <div>
-                        <strong>Submit School Form</strong>
-                        <div class="sub-text">To-Do Task • High Priority</div>
-                    </div>
-                    <span>✅</span>
-                </div>
+                <div class="list-empty">No outstanding tasks or shopping items.</div>
             </div>
         </section>
 
@@ -1235,20 +1203,7 @@
                 <span>🎂 Birthdays & Term Dates</span>
             </div>
             <div id="dash-dates">
-                <div class="dashboard-item">
-                    <div>
-                        <strong>Autumn Half-Term School Holiday</strong>
-                        <div class="sub-text">Oct 30 - Nov 03 • School Term Date</div>
-                    </div>
-                    <span>🍂</span>
-                </div>
-                <div class="dashboard-item">
-                    <div>
-                        <strong>Uncle's Birthday</strong>
-                        <div class="sub-text">Nov 12 • Annual Birthday</div>
-                    </div>
-                    <span>🎁</span>
-                </div>
+                <div class="list-empty">No upcoming birthdays or term dates.</div>
             </div>
         </section>
     </div>
@@ -1380,7 +1335,7 @@
     </div>
 
     <!-- Bottom Navigation Bar -->
-    <nav class="bottom-nav">
+    <nav class="bottom-bar">
         <button id="nav-btn-home" class="nav-item active" onclick="showView('dashboard', this)">
             <span class="nav-icon">🏠</span>
             <span>Home</span>
@@ -1447,28 +1402,20 @@
         let viewMode = localStorage.getItem('fam_view_mode') || 'family';
 
         let mealsData = JSON.parse(localStorage.getItem('fam_meals')) || [
-            { day: "Mon", meal: "Homemade Chicken & Veg Traybake" }, { day: "Tue", meal: "" }, { day: "Wed", meal: "" },
+            { day: "Mon", meal: "" }, { day: "Tue", meal: "" }, { day: "Wed", meal: "" },
             { day: "Thu", meal: "" }, { day: "Fri", meal: "" }, { day: "Sat", meal: "" }, { day: "Sun", meal: "" }
         ];
-        let foodShopData = JSON.parse(localStorage.getItem('fam_foodshop')) || [
-            { text: "Semi-skimmed Milk & Eggs", who: "family", done: false, isEditing: false }
-        ];
+        let foodShopData = JSON.parse(localStorage.getItem('fam_foodshop')) || [];
         let familyShopData = JSON.parse(localStorage.getItem('fam_familyshop')) || [];
         let destinationsData = JSON.parse(localStorage.getItem('fam_destinations')) || { 
-            places: [{ title: "Zoo", postcode: "YO25 5YR", who: "family" }], 
-            restaurants: [{ title: "Tori Nori Japanese Grill", postcode: "LS1 6AG", who: "family", image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60" }], 
+            places: [], 
+            restaurants: [], 
             cinema: [], home: [] 
         };
         let choresData = JSON.parse(localStorage.getItem('fam_chores')) || [{ kid: "Leo", chores: [] }, { kid: "Mia", chores: [] }];
         let wishlistData = JSON.parse(localStorage.getItem('fam_wishlist')) || [];
-        let todosData = JSON.parse(localStorage.getItem('fam_todos')) || [
-            { text: "Submit School Form", who: "family", done: false, isEditing: false }
-        ];
-        let calendarEvents = JSON.parse(localStorage.getItem('fam_calendar')) || {
-            '2026-10-29': [{ title: "School Drop-off & Pick-up", who: "dad" }, { title: "Swimming Lessons", who: "mom" }],
-            '2026-10-30': [{ title: "Autumn Half-Term Holiday", who: "family" }],
-            '2026-11-12': [{ title: "Uncle's Birthday 🎂", who: "family" }]
-        };
+        let todosData = JSON.parse(localStorage.getItem('fam_todos')) || [];
+        let calendarEvents = JSON.parse(localStorage.getItem('fam_calendar')) || {};
 
         let toastTimer = null;
         function showToast(msg) {
