@@ -505,7 +505,7 @@
             z-index: 1;
         }
 
-        /* Calendar */
+        /* Calendar Controls */
         .calendar-controls { display: flex; align-items: center; gap: 8px; }
         .calendar-view-toggle { display: flex; background: #eff6ff; padding: 2px; border-radius: 8px; }
         .cal-toggle-btn { border: none; background: transparent; color: var(--muted); padding: 5px 12px; font-weight: 700; border-radius: 6px; font-size: 0.8rem; cursor: pointer; transition: all 0.15s ease; }
@@ -514,15 +514,36 @@
         .calendar-nav { display: flex; align-items: center; gap: 6px; }
         .cal-nav-btn { background: #fff; border: 1px solid var(--border); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 0.95rem; display: grid; place-items: center; }
         
-        /* Updated Calendar Grid Matching Reference Aspect Ratio & Layout */
+        /* Full-Width Calendar Grid (Spans screen edges like Image 2) */
+        .card-calendar-wrapper {
+            background: rgba(255,255,255,.96);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1rem 0;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 0.8rem;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .card-calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            padding: 0 1rem;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
         .calendar-grid { 
             display: grid; 
             grid-template-columns: repeat(7, 1fr); 
             gap: 1px;
-            background: #e2e8f0;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            overflow: hidden;
+            background: #cbd5e1;
+            border-top: 1px solid #cbd5e1;
+            border-bottom: 1px solid #cbd5e1;
+            width: 100%;
         }
         
         .day-header { 
@@ -532,18 +553,24 @@
             color: var(--muted); 
             text-transform: uppercase; 
             background: #f8fafc;
-            padding: 6px 2px;
+            padding: 6px 0;
         }
         
         .day-cell { 
             background: #ffffff; 
             min-height: 110px; 
-            padding: 4px 3px; 
+            padding: 4px 2px; 
             cursor: pointer; 
             display: flex;
             flex-direction: column;
             align-items: flex-end;
             position: relative;
+            overflow: hidden;
+            transition: background 0.15s ease;
+        }
+
+        .day-cell:hover {
+            background: #f1f5f9;
         }
 
         .day-cell.empty-cell {
@@ -565,22 +592,112 @@
             display: flex;
             flex-direction: column;
             gap: 2px;
-            align-items: flex-start;
+            align-items: stretch;
+            overflow: hidden;
         }
 
+        /* Strict Truncated Event Badges */
         .event-pill { 
             width: 100%;
-            padding: 2px 4px; 
+            padding: 2px 3px; 
             border-radius: 4px; 
             font-size: 0.65rem; 
             color: #fff; 
             font-weight: 600; 
-            line-height: 1.25;
+            line-height: 1.2;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             box-sizing: border-box;
             text-align: left;
+            display: block;
+        }
+
+        /* Hover / Tap Details Popover Bubble */
+        .day-popover-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.35);
+            backdrop-filter: blur(2px);
+            z-index: 3000;
+        }
+
+        .day-popover-backdrop.active {
+            display: block;
+        }
+
+        .day-detail-bubble {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.22);
+            padding: 16px 18px;
+            width: min(90vw, 320px);
+            z-index: 3001;
+            animation: popIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .day-detail-bubble.active {
+            display: block;
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: translate(-50%, -46%) scale(0.95); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .bubble-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eff6ff;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+
+        .bubble-title {
+            font-weight: 800;
+            font-size: 1rem;
+            color: var(--accent);
+        }
+
+        .bubble-close-btn {
+            background: #f1f5f9;
+            border: none;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--muted);
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+        }
+
+        .bubble-event-item {
+            background: #f8fafc;
+            border-left: 4px solid var(--accent);
+            border-radius: 6px;
+            padding: 8px 10px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .bubble-event-title {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text);
+            word-break: break-word;
         }
 
         /* Calendar Weekly Mode Row (matches Meal Planner) */
@@ -998,6 +1115,17 @@
         <span id="toast-message">Item added successfully!</span>
     </div>
 
+    <!-- Day Events Detail Popover Bubble & Backdrop -->
+    <div id="day-popover-backdrop" class="day-popover-backdrop" onclick="closeDayPopover()"></div>
+    <div id="day-detail-bubble" class="day-detail-bubble">
+        <div class="bubble-header">
+            <div id="bubble-date-title" class="bubble-title">1 November 2026</div>
+            <button class="bubble-close-btn" onclick="closeDayPopover()">✕</button>
+        </div>
+        <div id="bubble-events-list" style="display:flex; flex-direction:column; gap:4px; max-height:220px; overflow-y:auto;"></div>
+        <button id="bubble-add-btn" class="home-scoped-btn" style="margin-top:10px;" onclick="addEventFromPopover()">+ Add Event to Day</button>
+    </div>
+
     <!-- Top Header Container -->
     <div class="top-header-container">
         <!-- Left: Account / Switcher Icon -->
@@ -1080,9 +1208,9 @@
     </div>
 
     <!-- VIEW 2: Calendar -->
-    <div id="view-calendar" class="view">
-        <section class="card">
-            <div class="card-header">
+    <div id="view-calendar" class="view" style="padding-left:0; padding-right:0;">
+        <section class="card-calendar-wrapper">
+            <div class="card-calendar-header">
                 <div class="card-title" id="calendar-month-label">October 2026</div>
                 <div class="calendar-controls">
                     <div class="calendar-view-toggle">
@@ -1247,6 +1375,7 @@
         let currentYear = 2026;
         let calendarMode = localStorage.getItem('fam_cal_mode') || 'week';
         let currentWeekStartDate = getMonday(new Date(2026, 9, 26));
+        let selectedPopoverDateKey = null;
 
         function getMonday(d) {
             const date = new Date(d);
@@ -1276,7 +1405,15 @@
         let choresData = JSON.parse(localStorage.getItem('fam_chores')) || [{ kid: "Leo", chores: [] }, { kid: "Mia", chores: [] }];
         let wishlistData = JSON.parse(localStorage.getItem('fam_wishlist')) || [];
         let todosData = JSON.parse(localStorage.getItem('fam_todos')) || [];
-        let calendarEvents = JSON.parse(localStorage.getItem('fam_calendar')) || {};
+        let calendarEvents = JSON.parse(localStorage.getItem('fam_calendar')) || {
+            '2026-10-01': [{ title: "Jophur", who: "family" }],
+            '2026-10-03': [{ title: "Har removal", who: "mom" }, { title: "Graces bday", who: "family" }],
+            '2026-10-12': [{ title: "Kev beer", who: "dad" }],
+            '2026-10-17': [{ title: "H out with friends", who: "mom" }, { title: "Meet Lee", who: "dad" }],
+            '2026-10-23': [{ title: "Payment due", who: "family" }, { title: "Pre wedding", who: "family" }],
+            '2026-10-27': [{ title: "Out with team", who: "dad" }],
+            '2026-10-31': [{ title: "Beer for party", who: "dad" }]
+        };
 
         let toastTimer = null;
         function showToast(msg) {
@@ -1408,11 +1545,11 @@
                     let eventsHtml = '';
                     if (calendarEvents[dateKey]) {
                         calendarEvents[dateKey].filter(ev => filterItem(ev.who)).forEach(ev => {
-                            eventsHtml += `<div class="event-pill bg-${ev.who}">${ev.title}</div>`;
+                            eventsHtml += `<div class="event-pill bg-${ev.who}" title="${ev.title}">${ev.title}</div>`;
                         });
                     }
                     html += `
-                        <div class="day-cell" onclick="jumpToAddEvent('${dateKey}')">
+                        <div class="day-cell" onclick="openDayPopover('${dateKey}', ${i})" onmouseenter="handleDayHover('${dateKey}', ${i})">
                             <div class="day-num">${i}</div>
                             <div class="events-container">${eventsHtml}</div>
                         </div>
@@ -1436,7 +1573,7 @@
                 }
                 document.getElementById('calendar-month-label').textContent = rangeText;
 
-                let html = `<div class="list-container">`;
+                let html = `<div class="list-container" style="padding: 0 12px;">`;
                 for (let i = 0; i < 7; i++) {
                     const d = new Date(currentWeekStartDate);
                     d.setDate(d.getDate() + i);
@@ -1462,6 +1599,55 @@
                 }
                 html += `</div>`;
                 container.innerHTML = html;
+            }
+        }
+
+        /* DAY DETAILS POPOVER / TOOLTIP */
+        function openDayPopover(dateKey, dayNum) {
+            selectedPopoverDateKey = dateKey;
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const formattedDate = `${dayNum} ${monthNames[currentMonth]} ${currentYear}`;
+            
+            document.getElementById('bubble-date-title').textContent = formattedDate;
+            const events = (calendarEvents[dateKey] || []).filter(ev => filterItem(ev.who));
+            const listCont = document.getElementById('bubble-events-list');
+
+            if (events.length === 0) {
+                listCont.innerHTML = `<div style="font-size:0.85rem; color:var(--muted); text-align:center; padding:12px 0;">No events scheduled for this day.</div>`;
+            } else {
+                listCont.innerHTML = events.map((ev, idx) => `
+                    <div class="bubble-event-item" style="border-left-color: var(--${ev.who});">
+                        <div class="bubble-event-title">${ev.title}</div>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <span class="compact-scoped-tag bg-${ev.who}">${ev.who}</span>
+                            <button class="action-btn delete-btn" onclick="deleteCalEvent('${dateKey}', ${idx}); openDayPopover('${dateKey}', ${dayNum});">✕</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            document.getElementById('day-popover-backdrop').classList.add('active');
+            document.getElementById('day-detail-bubble').classList.add('active');
+        }
+
+        function handleDayHover(dateKey, dayNum) {
+            // Mobile-first touch devices trigger click; desktop hover shows details if events exist
+            if (window.innerWidth > 768 && calendarEvents[dateKey] && calendarEvents[dateKey].length > 0) {
+                openDayPopover(dateKey, dayNum);
+            }
+        }
+
+        function closeDayPopover() {
+            document.getElementById('day-popover-backdrop').classList.remove('active');
+            document.getElementById('day-detail-bubble').classList.remove('active');
+            selectedPopoverDateKey = null;
+        }
+
+        function addEventFromPopover() {
+            const dateKey = selectedPopoverDateKey;
+            closeDayPopover();
+            if (dateKey) {
+                jumpToAddEvent(dateKey);
             }
         }
 
