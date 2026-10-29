@@ -236,50 +236,54 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Bottom Navigation Bar */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 64px;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(12px);
-            border-top: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            padding: 0 0.1rem;
-            z-index: 1000;
+        /* FIXED Bottom Navigation Bar Structure */
+        nav.bottom-nav, .bottom-nav {
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            height: 64px !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            backdrop-filter: blur(12px) !important;
+            border-top: 1px solid var(--border) !important;
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: space-around !important;
+            padding: 0 4px !important;
+            z-index: 1000 !important;
+            box-sizing: border-box !important;
         }
 
         .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: none;
-            border: none;
-            color: var(--muted);
-            padding: 4px 1px;
-            font-size: 0.65rem;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 8px;
-            flex: 1;
-            min-width: 40px;
-            gap: 2px;
-            white-space: nowrap;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: none !important;
+            border: none !important;
+            color: var(--muted) !important;
+            padding: 4px 1px !important;
+            font-size: 0.65rem !important;
+            font-weight: 600 !important;
+            cursor: pointer !important;
+            border-radius: 8px !important;
+            flex: 1 1 0% !important;
+            min-width: 0 !important;
+            gap: 2px !important;
+            white-space: nowrap !important;
+            line-height: 1 !important;
         }
 
         .nav-item.active {
-            color: var(--accent);
-            font-weight: 700;
+            color: var(--accent) !important;
+            font-weight: 700 !important;
         }
 
         .nav-icon {
-            font-size: 1.1rem;
-            line-height: 1;
+            font-size: 1.15rem !important;
+            line-height: 1 !important;
+            display: block !important;
         }
 
         /* Toast Notification */
@@ -1171,9 +1175,7 @@
                 <span>📍 Today's Schedule & Locations</span>
                 <span class="badge">Today</span>
             </div>
-            <div id="dash-schedule">
-                <div class="list-empty">No events scheduled for today.</div>
-            </div>
+            <div id="dash-schedule"></div>
         </section>
 
         <!-- 2. What's for Dinner -->
@@ -1182,9 +1184,7 @@
                 <span>🍽️ What's for Dinner</span>
                 <span class="badge">Tonight</span>
             </div>
-            <div id="dash-dinner">
-                <div class="list-empty">No dinner plan set for tonight.</div>
-            </div>
+            <div id="dash-dinner"></div>
         </section>
 
         <!-- 3. Outstanding Tasks & Shopping Items -->
@@ -1192,9 +1192,7 @@
             <div class="card-title">
                 <span>📝 Tasks & Shopping Needed</span>
             </div>
-            <div id="dash-tasks">
-                <div class="list-empty">No outstanding tasks or shopping items.</div>
-            </div>
+            <div id="dash-tasks"></div>
         </section>
 
         <!-- 4. Birthdays & School Term Dates -->
@@ -1202,9 +1200,7 @@
             <div class="card-title">
                 <span>🎂 Birthdays & Term Dates</span>
             </div>
-            <div id="dash-dates">
-                <div class="list-empty">No upcoming birthdays or term dates.</div>
-            </div>
+            <div id="dash-dates"></div>
         </section>
     </div>
 
@@ -1334,8 +1330,8 @@
         </section>
     </div>
 
-    <!-- Bottom Navigation Bar -->
-    <nav class="bottom-bar">
+    <!-- FIXED Bottom Navigation Bar -->
+    <nav class="bottom-nav">
         <button id="nav-btn-home" class="nav-item active" onclick="showView('dashboard', this)">
             <span class="nav-icon">🏠</span>
             <span>Home</span>
@@ -1612,6 +1608,96 @@
             }
         }
 
+        function renderDashboard() {
+            const todayStr = new Date().toISOString().split('T')[0];
+            
+            // 1. Schedule & Locations Today
+            const schedCont = document.getElementById('dash-schedule');
+            const todayEvents = (calendarEvents[todayStr] || []).filter(ev => filterItem(ev.who));
+            if (todayEvents.length === 0) {
+                schedCont.innerHTML = `<div class="list-empty">No events scheduled for today.</div>`;
+            } else {
+                schedCont.innerHTML = todayEvents.map(ev => `
+                    <div class="dashboard-item">
+                        <div>
+                            <strong>${ev.title}</strong>
+                            <div class="sub-text">Assigned to: ${ev.who}</div>
+                        </div>
+                        <span>📅</span>
+                    </div>
+                `).join('');
+            }
+
+            // 2. What's for Dinner
+            const dinnerCont = document.getElementById('dash-dinner');
+            const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+            const todayDay = dayNames[new Date().getDay()];
+            const todayMeal = mealsData.find(m => m.day === todayDay);
+
+            if (!todayMeal || !todayMeal.meal) {
+                dinnerCont.innerHTML = `<div class="list-empty">No dinner plan set for tonight.</div>`;
+            } else {
+                dinnerCont.innerHTML = `
+                    <div class="dashboard-item">
+                        <div>
+                            <strong>${todayMeal.meal}</strong>
+                            <div class="sub-text">Planned for ${todayDay}</div>
+                        </div>
+                        <span>🥘</span>
+                    </div>
+                `;
+            }
+
+            // 3. Outstanding Tasks & Shopping Items
+            const tasksCont = document.getElementById('dash-tasks');
+            const uncompletedTasks = todosData.filter(t => !t.done && filterItem(t.who));
+            const uncompletedFood = foodShopData.filter(s => !s.done && filterItem(s.who));
+            
+            let combinedItems = [];
+            uncompletedFood.forEach(f => combinedItems.push({ text: f.text, sub: "Food Shopping List", icon: "🛒" }));
+            uncompletedTasks.forEach(t => combinedItems.push({ text: t.text, sub: "To-Do Task", icon: "✅" }));
+
+            if (combinedItems.length === 0) {
+                tasksCont.innerHTML = `<div class="list-empty">No outstanding tasks or shopping items.</div>`;
+            } else {
+                tasksCont.innerHTML = combinedItems.slice(0, 5).map(item => `
+                    <div class="dashboard-item">
+                        <div>
+                            <strong>${item.text}</strong>
+                            <div class="sub-text">${item.sub}</div>
+                        </div>
+                        <span>${item.icon}</span>
+                    </div>
+                `).join('');
+            }
+
+            // 4. Upcoming Birthdays & Key Dates
+            const datesCont = document.getElementById('dash-dates');
+            let upcomingDates = [];
+            
+            Object.keys(calendarEvents).forEach(dateStr => {
+                calendarEvents[dateStr].forEach(ev => {
+                    if (ev.title.includes('Birthday') || ev.title.includes('🎂') || ev.title.includes('Term') || ev.title.includes('School')) {
+                        upcomingDates.push({ date: dateStr, title: ev.title });
+                    }
+                });
+            });
+
+            if (upcomingDates.length === 0) {
+                datesCont.innerHTML = `<div class="list-empty">No upcoming birthdays or term dates.</div>`;
+            } else {
+                datesCont.innerHTML = upcomingDates.slice(0, 4).map(d => `
+                    <div class="dashboard-item">
+                        <div>
+                            <strong>${d.title}</strong>
+                            <div class="sub-text">${d.date}</div>
+                        </div>
+                        <span>🎂</span>
+                    </div>
+                `).join('');
+            }
+        }
+
         function openDayPopover(dateKey, dayNum) {
             selectedPopoverDateKey = dateKey;
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -1661,6 +1747,7 @@
             calendarEvents[dateStr].push({ title, who: currentUser });
             saveData();
             renderCalendar();
+            renderDashboard();
             showToast("Event added to calendar");
         }
 
@@ -1669,6 +1756,7 @@
                 calendarEvents[dateStr].splice(index, 1);
                 saveData();
                 renderCalendar();
+                renderDashboard();
             }
         }
 
@@ -1687,7 +1775,7 @@
             document.getElementById('meal-list-container').innerHTML = mealsData.map((m, idx) => `
                 <div class="meal-card-row">
                     <div class="meal-day-name">${m.day}</div>
-                    <input type="text" class="meal-input-inline" placeholder="Enter meal..." value="${m.meal}" onchange="mealsData[${idx}].meal = this.value; saveData();">
+                    <input type="text" class="meal-input-inline" placeholder="Enter meal..." value="${m.meal}" onchange="mealsData[${idx}].meal = this.value; saveData(); renderDashboard();">
                 </div>
             `).join('');
         }
@@ -1701,6 +1789,7 @@
             input.value = '';
             saveData();
             renderShopping();
+            renderDashboard();
             showToast('Item added to list');
         }
 
@@ -1709,6 +1798,7 @@
             target[idx].done = !target[idx].done;
             saveData();
             renderShopping();
+            renderDashboard();
         }
 
         function enableShopEdit(type, idx) {
@@ -1723,6 +1813,7 @@
             target[idx].isEditing = false;
             saveData();
             renderShopping();
+            renderDashboard();
         }
 
         function renderShopping() {
@@ -1743,7 +1834,7 @@
                         </div>
                         <button class="action-btn" onclick="enableShopEdit('foodshop', ${idx})">✏️</button>
                         <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('foodshop', ${idx})">${item.who}</span>
-                        <button class="action-btn delete-btn" onclick="foodShopData.splice(${idx},1); saveData(); renderShopping();">✕</button>
+                        <button class="action-btn delete-btn" onclick="foodShopData.splice(${idx},1); saveData(); renderShopping(); renderDashboard();">✕</button>
                     </div>
                 `;
             }).join('');
@@ -1762,7 +1853,7 @@
                         </div>
                         <button class="action-btn" onclick="enableShopEdit('familyshop', ${idx})">✏️</button>
                         <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('familyshop', ${idx})">${item.who}</span>
-                        <button class="action-btn delete-btn" onclick="familyShopData.splice(${idx},1); saveData(); renderShopping();">✕</button>
+                        <button class="action-btn delete-btn" onclick="familyShopData.splice(${idx},1); saveData(); renderShopping(); renderDashboard();">✕</button>
                     </div>
                 `;
             }).join('');
@@ -1925,6 +2016,7 @@
             input.value = '';
             saveData();
             renderTodos();
+            renderDashboard();
             showToast('Task added');
         }
 
@@ -1932,6 +2024,7 @@
             todosData[idx].done = !todosData[idx].done;
             saveData();
             renderTodos();
+            renderDashboard();
         }
 
         function enableTodoEdit(idx) {
@@ -1944,6 +2037,7 @@
             todosData[idx].isEditing = false;
             saveData();
             renderTodos();
+            renderDashboard();
         }
 
         function renderTodos() {
@@ -1963,7 +2057,7 @@
                         </div>
                         <button class="action-btn" onclick="enableTodoEdit(${idx})">✏️</button>
                         <span class="compact-scoped-tag bg-${t.who}" onclick="cycleAssignee('todo', ${idx})">${t.who}</span>
-                        <button class="action-btn delete-btn" onclick="todosData.splice(${idx},1); saveData(); renderTodos();">✕</button>
+                        <button class="action-btn delete-btn" onclick="todosData.splice(${idx},1); saveData(); renderTodos(); renderDashboard();">✕</button>
                     </div>
                 `;
             }).join('');
@@ -2134,6 +2228,7 @@
             renderWatchlist();
             renderChores();
             renderWishlist();
+            renderDashboard();
         }
 
         document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
