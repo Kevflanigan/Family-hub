@@ -1081,6 +1081,7 @@
                 <div class="form-row" style="gap:8px;">
                     <select id="add-category" class="form-select input-half" onchange="handleCategoryChange(this.value)">
                         <option value="calendar">Calendar Event</option>
+                        <option value="birthday">Birthday 🎂</option>
                         <option value="foodshop">Food Shopping</option>
                         <option value="familyshop">Family Shopping</option>
                         <option value="places">Place to Visit</option>
@@ -1108,6 +1109,7 @@
                         <option value="none">Does not repeat</option>
                         <option value="weekly">Weekly</option>
                         <option value="monthly">Monthly</option>
+                        <option value="birthday">Annual Birthday 🎂</option>
                         <option value="school-term">School Term / Half-Term 🏫</option>
                         <option value="custom">Custom Recurrence...</option>
                     </select>
@@ -1193,10 +1195,10 @@
             <div id="dash-tasks"></div>
         </section>
 
-        <!-- 4. Term Dates -->
+        <!-- 4. Birthdays & Term Dates -->
         <section class="card">
             <div class="card-title">
-                <span>🏫 School Term Dates</span>
+                <span>🎂 Birthdays & Term Dates</span>
             </div>
             <div id="dash-dates"></div>
         </section>
@@ -1513,8 +1515,12 @@
         }
 
         function handleCategoryChange(val) {
-            document.getElementById('date-row').style.display = (val === 'calendar') ? 'flex' : 'none';
-            document.getElementById('recurring-row').style.display = (val === 'calendar') ? 'flex' : 'none';
+            const isCal = (val === 'calendar' || val === 'birthday');
+            document.getElementById('date-row').style.display = isCal ? 'flex' : 'none';
+            document.getElementById('recurring-row').style.display = isCal ? 'flex' : 'none';
+            if (val === 'birthday') {
+                document.getElementById('add-recurring').value = 'birthday';
+            }
             document.getElementById('postcode-row').style.display = (val === 'places' || val === 'restaurants') ? 'flex' : 'none';
         }
 
@@ -1669,20 +1675,20 @@
                 `).join('');
             }
 
-            // 4. Term Dates
+            // 4. Birthdays & Term Dates
             const datesCont = document.getElementById('dash-dates');
             let upcomingDates = [];
             
             Object.keys(calendarEvents).forEach(dateStr => {
                 calendarEvents[dateStr].forEach(ev => {
-                    if (ev.title.includes('Term') || ev.title.includes('School')) {
+                    if (ev.title.includes('Birthday') || ev.title.includes('🎂') || ev.title.includes('Term') || ev.title.includes('School')) {
                         upcomingDates.push({ date: dateStr, title: ev.title });
                     }
                 });
             });
 
             if (upcomingDates.length === 0) {
-                datesCont.innerHTML = `<div class="list-empty">No upcoming term dates.</div>`;
+                datesCont.innerHTML = `<div class="list-empty">No upcoming birthdays or term dates.</div>`;
             } else {
                 datesCont.innerHTML = upcomingDates.slice(0, 4).map(d => `
                     <div class="dashboard-item">
@@ -1690,7 +1696,7 @@
                             <strong>${d.title}</strong>
                             <div class="sub-text">${d.date}</div>
                         </div>
-                        <span>🏫</span>
+                        <span>🎂</span>
                     </div>
                 `).join('');
             }
@@ -2177,17 +2183,22 @@
 
         function handleQuickAdd(e) {
             e.preventDefault();
-            const title = document.getElementById('add-title').value.trim();
+            const rawTitle = document.getElementById('add-title').value.trim();
             const category = document.getElementById('add-category').value;
             const assignee = document.getElementById('add-assignee').value;
             const dateVal = document.getElementById('add-date').value;
             const recurring = document.getElementById('add-recurring').value;
             const postcode = document.getElementById('add-postcode').value.trim();
 
+            let title = rawTitle;
+            if (category === 'birthday' && !title.includes('🎂')) {
+                title = '🎂 ' + title + ' Birthday';
+            }
+
             const recLabel = recurring !== 'none' ? ` [${recurring}]` : '';
             const finalTitle = title + recLabel;
 
-            if (category === 'calendar') {
+            if (category === 'calendar' || category === 'birthday') {
                 if (!calendarEvents[dateVal]) calendarEvents[dateVal] = [];
                 calendarEvents[dateVal].push({ title: finalTitle, who: assignee });
             } else if (category === 'foodshop') foodShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
