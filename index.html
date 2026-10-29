@@ -508,8 +508,8 @@
         /* Calendar */
         .calendar-controls { display: flex; align-items: center; gap: 8px; }
         .calendar-view-toggle { display: flex; background: #eff6ff; padding: 2px; border-radius: 8px; }
-        .cal-toggle-btn { border: none; background: transparent; color: var(--muted); padding: 5px 10px; font-weight: 700; border-radius: 6px; font-size: 0.78rem; cursor: pointer; }
-        .cal-toggle-btn.active { background: #fff; color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .cal-toggle-btn { border: none; background: transparent; color: var(--muted); padding: 5px 12px; font-weight: 700; border-radius: 6px; font-size: 0.8rem; cursor: pointer; transition: all 0.15s ease; }
+        .cal-toggle-btn.active { background: var(--accent); color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
 
         .calendar-nav { display: flex; align-items: center; gap: 6px; }
         .cal-nav-btn { background: #fff; border: 1px solid var(--border); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 0.95rem; display: grid; place-items: center; }
@@ -1022,8 +1022,8 @@
                 <div class="card-title" id="calendar-month-label">October 2026</div>
                 <div class="calendar-controls">
                     <div class="calendar-view-toggle">
-                        <button id="cal-toggle-month" class="cal-toggle-btn active" onclick="setCalendarMode('month')">Month</button>
-                        <button id="cal-toggle-week" class="cal-toggle-btn" onclick="setCalendarMode('week')">Week</button>
+                        <button id="cal-toggle-week" class="cal-toggle-btn active" onclick="setCalendarMode('week')">Week</button>
+                        <button id="cal-toggle-month" class="cal-toggle-btn" onclick="setCalendarMode('month')">Month</button>
                     </div>
                     <div class="calendar-nav">
                         <button class="cal-nav-btn" onclick="navigateCalendar(-1)">‹</button>
@@ -1181,7 +1181,7 @@
 
         let currentMonth = 9;
         let currentYear = 2026;
-        let calendarMode = localStorage.getItem('fam_cal_mode') || 'month';
+        let calendarMode = localStorage.getItem('fam_cal_mode') || 'week';
         let currentWeekStartDate = getMonday(new Date(2026, 9, 26));
 
         function getMonday(d) {
@@ -1314,8 +1314,8 @@
 
         function setCalendarMode(mode) {
             calendarMode = mode;
-            document.getElementById('cal-toggle-month').classList.toggle('active', mode === 'month');
             document.getElementById('cal-toggle-week').classList.toggle('active', mode === 'week');
+            document.getElementById('cal-toggle-month').classList.toggle('active', mode === 'month');
             saveData();
             renderCalendar();
         }
