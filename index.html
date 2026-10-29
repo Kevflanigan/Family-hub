@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FamilyPlan — Plan together. Make memories.</title>
     <!-- Leaflet CSS for Map -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -61,7 +61,6 @@
             gap: 6px;
         }
 
-        /* Left Account / User Selector Icon */
         .header-left {
             display: flex;
             align-items: center;
@@ -82,9 +81,7 @@
             transition: transform 0.1s ease;
         }
 
-        .account-icon-btn:active {
-            transform: scale(0.95);
-        }
+        .account-icon-btn:active { transform: scale(0.95); }
 
         .account-avatar-dot {
             width: 14px;
@@ -119,9 +116,7 @@
             z-index: 1001;
         }
 
-        .user-dropdown-menu.open {
-            display: block;
-        }
+        .user-dropdown-menu.open { display: block; }
 
         .user-dropdown-item {
             padding: 11px 14px;
@@ -134,16 +129,9 @@
             border-bottom: 1px solid #eff6ff;
         }
 
-        .user-dropdown-item:hover {
-            background: #f8fafc;
-        }
+        .user-dropdown-item:hover { background: #f8fafc; }
+        .user-dropdown-item.active-mode { background: #eff6ff; color: var(--accent); }
 
-        .user-dropdown-item.active-mode {
-            background: #eff6ff;
-            color: var(--accent);
-        }
-
-        /* Top Header Add Button (Between Account Icon and Logo) */
         .top-add-btn {
             background: var(--accent);
             color: #fff;
@@ -162,17 +150,15 @@
             flex-shrink: 0;
         }
 
-        .top-add-btn:active {
-            transform: scale(0.92);
-        }
+        .top-add-btn:active { transform: scale(0.92); }
 
-        /* Center Logo (Even More Prominent) */
         .header-center {
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
             padding: 0 2px;
+            cursor: pointer;
         }
 
         .brand-logo-img {
@@ -183,7 +169,6 @@
             display: block;
         }
 
-        /* Right Header Indicator / Label */
         .header-right {
             display: flex;
             justify-content: flex-end;
@@ -204,7 +189,7 @@
             white-space: nowrap;
         }
 
-        /* Quick Add Modal Overlay */
+        /* Modal Overlay */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -217,9 +202,7 @@
             padding: 16px;
         }
 
-        .modal-overlay.active {
-            display: flex;
-        }
+        .modal-overlay.active { display: flex; }
 
         .modal-card {
             background: #fff;
@@ -240,21 +223,20 @@
         .view {
             display: none;
             width: 100%;
+            max-width: 480px;
             margin: 0 auto;
             padding: 0.8rem;
             animation: fadeIn 0.18s ease-in-out;
         }
 
-        .view.active {
-            display: block;
-        }
+        .view.active { display: block; }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(3px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Bottom Navigation Bar (Streamlined) */
+        /* Bottom Navigation Bar */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -280,12 +262,12 @@
             border: none;
             color: var(--muted);
             padding: 4px 1px;
-            font-size: 0.68rem;
+            font-size: 0.65rem;
             font-weight: 600;
             cursor: pointer;
             border-radius: 8px;
             flex: 1;
-            min-width: 42px;
+            min-width: 40px;
             gap: 2px;
             white-space: nowrap;
         }
@@ -296,7 +278,7 @@
         }
 
         .nav-icon {
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             line-height: 1;
         }
 
@@ -352,6 +334,8 @@
             width: 100%;
         }
 
+        .card:first-child { margin-top: 0; }
+
         .card-header {
             display: flex;
             justify-content: space-between;
@@ -362,8 +346,40 @@
         }
 
         .card-title {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge {
+            background: #e0f2fe;
+            color: #0369a1;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        .dashboard-item {
+            padding: 10px 12px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.92rem;
+        }
+
+        .dashboard-item:last-child { margin-bottom: 0; }
+
+        .sub-text {
+            font-size: 0.78rem;
+            color: var(--muted);
+            margin-top: 2px;
         }
 
         .add-form {
@@ -379,9 +395,7 @@
         }
 
         @media (min-width: 480px) {
-            .form-row {
-                flex-direction: row;
-            }
+            .form-row { flex-direction: row; }
         }
 
         .inline-add-group {
@@ -397,7 +411,7 @@
             color: var(--text);
             padding: 12px 14px;
             min-height: 48px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             border-radius: 10px;
             outline: none;
             width: 100%;
@@ -470,14 +484,14 @@
         }
 
         .item-text-label {
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 500;
             flex: 1;
             word-break: break-word;
         }
 
         .edit-inline-input {
-            font-size: 1rem;
+            font-size: 0.95rem;
             padding: 6px 8px;
             border: 1px solid var(--accent);
             border-radius: 6px;
@@ -496,18 +510,11 @@
             flex-shrink: 0;
         }
 
-        .action-btn:hover {
-            color: var(--text);
-            background: #f0f0f5;
-        }
-
-        .delete-btn:hover {
-            color: #ef4444;
-            background: #fef2f2;
-        }
+        .action-btn:hover { color: var(--text); background: #f0f0f5; }
+        .delete-btn:hover { color: #ef4444; background: #fef2f2; }
 
         .assign-tag {
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             font-weight: 700;
             padding: 4px 10px;
             border-radius: 14px;
@@ -525,8 +532,8 @@
         .bg-family { background-color: var(--family); }
 
         .meal-card-row { margin-bottom: 6px; }
-        .meal-day-name { font-size: 1rem; font-weight: 800; color: #1e3a8a; width: 48px; flex-shrink: 0; }
-        .meal-input-inline { background: transparent; border: none; border-bottom: 1px dashed var(--border); font-size: 0.98rem; width: 100%; outline: none; padding: 4px 0; }
+        .meal-day-name { font-size: 0.95rem; font-weight: 800; color: #1e3a8a; width: 48px; flex-shrink: 0; }
+        .meal-input-inline { background: transparent; border: none; border-bottom: 1px dashed var(--border); font-size: 0.95rem; width: 100%; outline: none; padding: 4px 0; }
 
         .chores-grid {
             display: grid;
@@ -535,7 +542,6 @@
             width: 100%;
         }
 
-        /* Leaflet Map Height */
         #places-map {
             width: 100%;
             height: 320px;
@@ -544,7 +550,6 @@
             z-index: 1;
         }
 
-        /* Calendar Controls */
         .calendar-controls { display: flex; align-items: center; gap: 8px; }
         .calendar-view-toggle { display: flex; background: #eff6ff; padding: 2px; border-radius: 8px; }
         .cal-toggle-btn { border: none; background: transparent; color: var(--muted); padding: 5px 12px; font-weight: 700; border-radius: 6px; font-size: 0.8rem; cursor: pointer; transition: all 0.15s ease; }
@@ -553,7 +558,6 @@
         .calendar-nav { display: flex; align-items: center; gap: 6px; }
         .cal-nav-btn { background: #fff; border: 1px solid var(--border); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 0.95rem; display: grid; place-items: center; }
         
-        /* Full-Width Calendar Grid */
         .card-calendar-wrapper {
             background: rgba(255,255,255,.96);
             border: 1px solid var(--border);
@@ -608,17 +612,11 @@
             transition: background 0.15s ease;
         }
 
-        .day-cell:hover {
-            background: #f1f5f9;
-        }
-
-        .day-cell.empty-cell {
-            background: #f8fafc;
-            cursor: default;
-        }
+        .day-cell:hover { background: #f1f5f9; }
+        .day-cell.empty-cell { background: #f8fafc; cursor: default; }
 
         .day-num { 
-            font-size: 0.88rem; 
+            font-size: 0.85rem; 
             font-weight: 700; 
             color: var(--text);
             margin-bottom: 4px;
@@ -651,7 +649,6 @@
             display: block;
         }
 
-        /* Day Details Popover Bubble */
         .day-popover-backdrop {
             display: none;
             position: fixed;
@@ -661,9 +658,7 @@
             z-index: 3000;
         }
 
-        .day-popover-backdrop.active {
-            display: block;
-        }
+        .day-popover-backdrop.active { display: block; }
 
         .day-detail-bubble {
             display: none;
@@ -681,9 +676,7 @@
             animation: popIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .day-detail-bubble.active {
-            display: block;
-        }
+        .day-detail-bubble.active { display: block; }
 
         @keyframes popIn {
             from { opacity: 0; transform: translate(-50%, -46%) scale(0.95); }
@@ -701,7 +694,7 @@
 
         .bubble-title {
             font-weight: 800;
-            font-size: 1rem;
+            font-size: 0.98rem;
             color: var(--accent);
         }
 
@@ -738,7 +731,6 @@
             word-break: break-word;
         }
 
-        /* Calendar Weekly Mode Row */
         .cal-week-row {
             background: #fff;
             border: 1px solid #e8e5df;
@@ -754,7 +746,7 @@
         }
 
         .cal-week-day {
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             font-weight: 800;
             color: #1e3a8a;
             width: 72px;
@@ -770,7 +762,6 @@
             align-items: center;
         }
 
-        /* Modal Quick Add Button & Inputs */
         .modal-add-btn {
             background: var(--accent);
             color: #fff;
@@ -779,14 +770,13 @@
             padding: 10px 18px;
             border-radius: 10px;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.95rem;
             cursor: pointer;
             width: 100%;
             margin-top: 4px;
         }
         .modal-add-btn:hover { background: #1e40af; }
 
-        /* Compact Cards for To-Do & Watchlist */
         .compact-scoped-card {
             background: rgba(255,255,255,.98);
             border: 1px solid var(--border);
@@ -797,8 +787,8 @@
             width: 100%;
         }
 
-        .watchlist-scoped-title, .todo-scoped-title {
-            font-size: 1.1rem;
+        .watchlist-scoped-title, .todo-scoped-title, .places-scoped-title, .restaurants-scoped-title {
+            font-size: 1.05rem;
             font-weight: 800;
             margin-bottom: 8px;
         }
@@ -873,7 +863,7 @@
             flex: 1;
             word-break: break-word;
         }
-        .todo-item-label { font-size: 0.8rem; }
+        .todo-item-label { font-size: 0.82rem; }
 
         .compact-scoped-checkbox {
             width: 16px;
@@ -894,7 +884,7 @@
             flex-shrink: 0;
         }
 
-        .wishlist-scoped-input {
+        .wishlist-scoped-input, .places-scoped-input, .restaurants-scoped-input {
             background: #fff;
             border: 1px solid #dcdfe6;
             color: var(--text);
@@ -907,7 +897,7 @@
             box-sizing: border-box;
         }
 
-        .wishlist-scoped-add-btn {
+        .wishlist-scoped-add-btn, .places-scoped-add-btn, .restaurants-scoped-add-btn {
             background: var(--accent);
             color: #fff;
             border: none;
@@ -921,7 +911,7 @@
             flex-shrink: 0;
         }
 
-        .wishlist-scoped-item {
+        .wishlist-scoped-item, .places-scoped-item {
             background: #fff;
             border: 1px solid #eae7e1;
             border-radius: 7px;
@@ -933,10 +923,9 @@
             margin-bottom: 4px;
             width: 100%;
             min-height: 36px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
         }
 
-        /* Places & Restaurants Cards */
         .places-scoped-card, .restaurants-scoped-card {
             background: rgba(255,255,255,.98);
             border: 1px solid var(--border);
@@ -945,61 +934,6 @@
             box-shadow: 0 2px 8px rgba(36, 32, 64, .03);
             margin-bottom: 0.6rem;
             width: 100%;
-        }
-
-        .places-scoped-title, .restaurants-scoped-title {
-            font-size: 1.1rem;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-
-        .places-scoped-input, .restaurants-scoped-input {
-            background: #fff;
-            border: 1px solid #dcdfe6;
-            color: var(--text);
-            padding: 4px 10px;
-            min-height: 38px;
-            font-size: 0.85rem;
-            border-radius: 7px;
-            outline: none;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .places-scoped-input:focus, .restaurants-scoped-input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(30,58,138,.12);
-        }
-
-        .places-scoped-add-btn, .restaurants-scoped-add-btn {
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            min-height: 38px;
-            padding: 4px 14px;
-            border-radius: 7px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            cursor: pointer;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-
-        .places-scoped-add-btn:hover, .restaurants-scoped-add-btn:hover { background: #1e40af; }
-
-        .places-scoped-item {
-            background: #fff;
-            border: 1px solid #eae7e1;
-            border-radius: 7px;
-            padding: 6px 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 6px;
-            margin-bottom: 4px;
-            width: 100%;
-            min-height: 36px;
-            font-size: 0.88rem;
         }
 
         .restaurant-card-item {
@@ -1025,7 +959,7 @@
             background: #f1f5f9;
         }
 
-        /* Firebase sign-in and household setup */
+        /* Firebase Auth Gate */
         #auth-gate { position:fixed; inset:0; z-index:5000; display:flex; align-items:center; justify-content:center; padding:12px; background:radial-gradient(ellipse at 15% 0%,rgba(30,58,138,.16),transparent 34rem),#f7f5f1; overflow-y:auto; }
         #auth-gate[hidden] { display:none; }
         .auth-card { width:min(100%,440px); background:#fff; border:1px solid var(--border); border-radius:22px; padding:12px 20px 20px 20px; box-shadow:0 20px 60px rgba(36,32,64,.14); }
@@ -1109,7 +1043,7 @@
             <button class="auth-secondary" type="button" onclick="window.fpJoinHousehold()">Join household</button>
           </div>
           <div class="auth-message" id="household-message" role="status" aria-live="polite"></div>
-          <p class="auth-small">This starter connects login and household membership. Your existing planner items are still stored in this browser only; cloud syncing those items is a separate step.</p>
+          <p class="auth-small">This starter connects login and household membership. Your existing planner items are stored locally in this browser.</p>
         </div>
       </section>
     </div>
@@ -1155,7 +1089,7 @@
                         <option value="wishlist">Gift Wishlist</option>
                     </select>
                     <select id="add-assignee" class="form-select input-half">
-                        <option value="family">Family</option>
+                        <option value="family">Family (Everyone)</option>
                         <option value="mom">Harriet</option>
                         <option value="dad">Kevin</option>
                         <option value="leo">Leo</option>
@@ -1164,6 +1098,17 @@
                 </div>
                 <div class="form-row" id="date-row" style="gap:8px;">
                     <input type="date" id="add-date" class="form-input input-full">
+                </div>
+                <!-- Recurring Dropdown Field -->
+                <div class="form-row" id="recurring-row" style="gap:8px;">
+                    <select id="add-recurring" class="form-select input-full">
+                        <option value="none">Does not repeat</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="birthday">Annual Birthday 🎂</option>
+                        <option value="school-term">School Term / Half-Term 🏫</option>
+                        <option value="custom">Custom Recurrence...</option>
+                    </select>
                 </div>
                 <div class="form-row" id="postcode-row" style="display:none; gap:8px;">
                     <input type="text" id="add-postcode" class="form-input input-full" placeholder="Postcode (e.g. YO25 5YR)">
@@ -1204,8 +1149,8 @@
         <!-- Top Header Add Button -->
         <button class="top-add-btn" onclick="toggleQuickAddModal()" title="Add Event / Item">+</button>
 
-        <!-- Center: Logo (Prominent) -->
-        <div class="header-center">
+        <!-- Center: Logo -->
+        <div class="header-center" onclick="showView('dashboard', document.getElementById('nav-btn-home'))">
             <img src="familiplan-icon.png" alt="FamilyPlan Logo" class="brand-logo-img">
         </div>
 
@@ -1218,8 +1163,98 @@
         </div>
     </div>
 
+    <!-- VIEW 0: HOME DASHBOARD (Default Opening Screen) -->
+    <div id="view-dashboard" class="view active">
+        <!-- 1. Today's Schedule & Locations -->
+        <section class="card">
+            <div class="card-title">
+                <span>📍 Today's Schedule & Locations</span>
+                <span class="badge">Today</span>
+            </div>
+            <div id="dash-schedule">
+                <div class="dashboard-item">
+                    <div>
+                        <strong>School Drop-off & Pick-up</strong>
+                        <div class="sub-text">Kevin • 08:30 AM & 03:15 PM</div>
+                    </div>
+                    <span>🏫</span>
+                </div>
+                <div class="dashboard-item">
+                    <div>
+                        <strong>Swimming Lessons</strong>
+                        <div class="sub-text">Harriet • Rawdon Leisure Centre • 04:30 PM</div>
+                    </div>
+                    <span>🏊‍♂️</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. What's for Dinner -->
+        <section class="card">
+            <div class="card-title">
+                <span>🍽️ What's for Dinner</span>
+                <span class="badge">Tonight</span>
+            </div>
+            <div id="dash-dinner">
+                <div class="dashboard-item">
+                    <div>
+                        <strong>Homemade Chicken & Veg Traybake</strong>
+                        <div class="sub-text">Prep time: 15 mins • Prepared by Kevin</div>
+                    </div>
+                    <span>🥘</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Outstanding Tasks & Shopping Items -->
+        <section class="card">
+            <div class="card-title">
+                <span>📝 Tasks & Shopping Needed</span>
+            </div>
+            <div id="dash-tasks">
+                <div class="dashboard-item">
+                    <div>
+                        <strong>Semi-skimmed Milk & Eggs</strong>
+                        <div class="sub-text">Food Shopping List</div>
+                    </div>
+                    <span>🛒</span>
+                </div>
+                <div class="dashboard-item">
+                    <div>
+                        <strong>Submit School Form</strong>
+                        <div class="sub-text">To-Do Task • High Priority</div>
+                    </div>
+                    <span>✅</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Birthdays & School Term Dates -->
+        <section class="card">
+            <div class="card-title">
+                <span>🎂 Birthdays & Term Dates</span>
+            </div>
+            <div id="dash-dates">
+                <div class="dashboard-item">
+                    <div>
+                        <strong>Autumn Half-Term School Holiday</strong>
+                        <div class="sub-text">Oct 30 - Nov 03 • School Term Date</div>
+                    </div>
+                    <span>🍂</span>
+                </div>
+                <div class="dashboard-item">
+                    <div>
+                        <strong>Uncle's Birthday</strong>
+                        <div class="sub-text">Nov 12 • Annual Birthday</div>
+                    </div>
+                    <span>🎁</span>
+                </div>
+            </div>
+        </section>
+    </div>
+
     <!-- VIEW 1: Calendar -->
-    <div id="view-calendar" class="view active" style="padding-left:0; padding-right:0;">
+    <div id="view-calendar" class="view" style="padding-left:0; padding-right:0;">
         <section class="card-calendar-wrapper">
             <div class="card-calendar-header">
                 <div class="card-title" id="calendar-month-label">October 2026</div>
@@ -1266,7 +1301,7 @@
         </section>
     </div>
 
-    <!-- VIEW 3: Places to Visit (Keeps Interactive Map) -->
+    <!-- VIEW 3: Places to Visit -->
     <div id="view-places" class="view">
         <section class="places-scoped-card">
             <div class="places-scoped-title">📍 Places to Visit</div>
@@ -1284,7 +1319,7 @@
         </section>
     </div>
 
-    <!-- VIEW 4: Restaurants (List Only with Postcodes & Image Previews) -->
+    <!-- VIEW 4: Restaurants -->
     <div id="view-restaurants" class="view">
         <section class="restaurants-scoped-card">
             <div class="restaurants-scoped-title">🍽️ Restaurants List</div>
@@ -1344,9 +1379,13 @@
         </section>
     </div>
 
-    <!-- Bottom Navigation Bar (Streamlined) -->
+    <!-- Bottom Navigation Bar -->
     <nav class="bottom-nav">
-        <button id="nav-btn-calendar" class="nav-item active" onclick="showView('calendar', this)">
+        <button id="nav-btn-home" class="nav-item active" onclick="showView('dashboard', this)">
+            <span class="nav-icon">🏠</span>
+            <span>Home</span>
+        </button>
+        <button id="nav-btn-calendar" class="nav-item" onclick="showView('calendar', this)">
             <span class="nav-icon">📅</span>
             <span>Calendar</span>
         </button>
@@ -1360,7 +1399,7 @@
         </button>
         <button id="nav-btn-restaurants" class="nav-item" onclick="showView('restaurants', this)">
             <span class="nav-icon">🍽️</span>
-            <span>Restaurants</span>
+            <span>Dining</span>
         </button>
         <button id="nav-btn-watchlist" class="nav-item" onclick="showView('watchlist', this)">
             <span class="nav-icon">🎬</span>
@@ -1408,27 +1447,27 @@
         let viewMode = localStorage.getItem('fam_view_mode') || 'family';
 
         let mealsData = JSON.parse(localStorage.getItem('fam_meals')) || [
-            { day: "Mon", meal: "" }, { day: "Tue", meal: "" }, { day: "Wed", meal: "" },
+            { day: "Mon", meal: "Homemade Chicken & Veg Traybake" }, { day: "Tue", meal: "" }, { day: "Wed", meal: "" },
             { day: "Thu", meal: "" }, { day: "Fri", meal: "" }, { day: "Sat", meal: "" }, { day: "Sun", meal: "" }
         ];
-        let foodShopData = JSON.parse(localStorage.getItem('fam_foodshop')) || [];
+        let foodShopData = JSON.parse(localStorage.getItem('fam_foodshop')) || [
+            { text: "Semi-skimmed Milk & Eggs", who: "family", done: false, isEditing: false }
+        ];
         let familyShopData = JSON.parse(localStorage.getItem('fam_familyshop')) || [];
         let destinationsData = JSON.parse(localStorage.getItem('fam_destinations')) || { 
-            places: [{ title: "Zoo", postcode: "YO25 5YR", who: "family" }, { title: "Nicky", postcode: "NG4 1BA", who: "dad" }], 
-            restaurants: [{ title: "5 guys", postcode: "", who: "family", image: "" }, { title: "Jodhpur", postcode: "", who: "family", image: "" }], 
+            places: [{ title: "Zoo", postcode: "YO25 5YR", who: "family" }], 
+            restaurants: [{ title: "Tori Nori Japanese Grill", postcode: "LS1 6AG", who: "family", image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60" }], 
             cinema: [], home: [] 
         };
         let choresData = JSON.parse(localStorage.getItem('fam_chores')) || [{ kid: "Leo", chores: [] }, { kid: "Mia", chores: [] }];
         let wishlistData = JSON.parse(localStorage.getItem('fam_wishlist')) || [];
-        let todosData = JSON.parse(localStorage.getItem('fam_todos')) || [];
+        let todosData = JSON.parse(localStorage.getItem('fam_todos')) || [
+            { text: "Submit School Form", who: "family", done: false, isEditing: false }
+        ];
         let calendarEvents = JSON.parse(localStorage.getItem('fam_calendar')) || {
-            '2026-10-01': [{ title: "Jophur", who: "family" }],
-            '2026-10-03': [{ title: "Har removal", who: "mom" }, { title: "Graces bday", who: "family" }],
-            '2026-10-12': [{ title: "Kev beer", who: "dad" }],
-            '2026-10-17': [{ title: "H out with friends", who: "mom" }, { title: "Meet Lee", who: "dad" }],
-            '2026-10-23': [{ title: "Payment due", who: "family" }, { title: "Pre wedding", who: "family" }],
-            '2026-10-27': [{ title: "Out with team", who: "dad" }],
-            '2026-10-31': [{ title: "Beer for party", who: "dad" }]
+            '2026-10-29': [{ title: "School Drop-off & Pick-up", who: "dad" }, { title: "Swimming Lessons", who: "mom" }],
+            '2026-10-30': [{ title: "Autumn Half-Term Holiday", who: "family" }],
+            '2026-11-12': [{ title: "Uncle's Birthday 🎂", who: "family" }]
         };
 
         let toastTimer = null;
@@ -1534,6 +1573,7 @@
 
         function handleCategoryChange(val) {
             document.getElementById('date-row').style.display = (val === 'calendar') ? 'flex' : 'none';
+            document.getElementById('recurring-row').style.display = (val === 'calendar') ? 'flex' : 'none';
             document.getElementById('postcode-row').style.display = (val === 'places' || val === 'restaurants') ? 'flex' : 'none';
         }
 
@@ -1573,7 +1613,7 @@
                         });
                     }
                     html += `
-                        <div class="day-cell" onclick="openDayPopover('${dateKey}', ${i})" onmouseenter="handleDayHover('${dateKey}', ${i})">
+                        <div class="day-cell" onclick="openDayPopover('${dateKey}', ${i})">
                             <div class="day-num">${i}</div>
                             <div class="events-container">${eventsHtml}</div>
                         </div>
@@ -1625,7 +1665,6 @@
             }
         }
 
-        /* Day Details Popover Bubble */
         function openDayPopover(dateKey, dayNum) {
             selectedPopoverDateKey = dateKey;
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -1651,12 +1690,6 @@
 
             document.getElementById('day-popover-backdrop').classList.add('active');
             document.getElementById('day-detail-bubble').classList.add('active');
-        }
-
-        function handleDayHover(dateKey, dayNum) {
-            if (window.innerWidth > 768 && calendarEvents[dateKey] && calendarEvents[dateKey].length > 0) {
-                openDayPopover(dateKey, dayNum);
-            }
         }
 
         function closeDayPopover() {
@@ -1712,7 +1745,6 @@
             `).join('');
         }
 
-        /* Shopping */
         function addInlineShop(type) {
             const inputId = type === 'foodshop' ? 'foodshop-quick-input' : 'familyshop-quick-input';
             const input = document.getElementById(inputId);
@@ -1798,7 +1830,6 @@
             renderAllViews();
         }
 
-        /* Places to Visit (With Map) */
         function addPlacesItem() {
             const nameInput = document.getElementById('places-name-input');
             const pcInput = document.getElementById('places-postcode-input');
@@ -1893,7 +1924,6 @@
             }
         }
 
-        /* Restaurants (List Only with Postcodes & Image Previews) */
         async function addRestaurantItem() {
             const nameInput = document.getElementById('restaurants-name-input');
             const pcInput = document.getElementById('restaurants-postcode-input');
@@ -1901,25 +1931,7 @@
 
             const title = nameInput.value.trim();
             const postcode = pcInput.value.trim();
-            let imageUrl = '';
-
-            try {
-                const wikiRes = await fetch(`https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&format=json&pithumbsize=200&titles=${encodeURIComponent(title)}&origin=*`);
-                const wikiData = await wikiRes.json();
-                const pages = wikiData.query?.pages;
-                if (pages) {
-                    const pageKey = Object.keys(pages)[0];
-                    if (pages[pageKey]?.thumbnail?.source) {
-                        imageUrl = pages[pageKey].thumbnail.source;
-                    }
-                }
-            } catch (e) {
-                console.error("Image fetch error:", e);
-            }
-
-            if (!imageUrl) {
-                imageUrl = `https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60`;
-            }
+            let imageUrl = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60';
 
             destinationsData.restaurants.push({
                 title,
@@ -1959,7 +1971,6 @@
             }).join('');
         }
 
-        /* To-Do & Tasks */
         function addTodoItem() {
             const input = document.getElementById('todo-quick-input');
             if (!input || !input.value.trim()) return;
@@ -2011,7 +2022,6 @@
             }).join('');
         }
 
-        /* Watchlist */
         function addWatchlistItem(type) {
             const inputId = type === 'cinema' ? 'cinema-quick-input' : 'home-quick-input';
             const input = document.getElementById(inputId);
@@ -2058,7 +2068,6 @@
             }).join('');
         }
 
-        /* Chores */
         function addKidChore(kidIndex) {
             const input = document.getElementById(`chore-input-${kidIndex}`);
             if (!input || !input.value.trim()) return;
@@ -2101,7 +2110,6 @@
             `).join('');
         }
 
-        /* Wishlist */
         function addWishlistItem() {
             const input = document.getElementById('wishlist-quick-input');
             if (!input || !input.value.trim()) return;
@@ -2134,27 +2142,31 @@
             const category = document.getElementById('add-category').value;
             const assignee = document.getElementById('add-assignee').value;
             const dateVal = document.getElementById('add-date').value;
+            const recurring = document.getElementById('add-recurring').value;
             const postcode = document.getElementById('add-postcode').value.trim();
+
+            const recLabel = recurring !== 'none' ? ` [${recurring}]` : '';
+            const finalTitle = title + recLabel;
 
             if (category === 'calendar') {
                 if (!calendarEvents[dateVal]) calendarEvents[dateVal] = [];
-                calendarEvents[dateVal].push({ title, who: assignee });
-            } else if (category === 'foodshop') foodShopData.push({ text: title, who: assignee, done: false, isEditing: false });
-            else if (category === 'familyshop') familyShopData.push({ text: title, who: assignee, done: false, isEditing: false });
-            else if (category === 'places') destinationsData.places.push({ title, who: assignee, postcode });
-            else if (category === 'restaurants') destinationsData.restaurants.push({ title, who: assignee, postcode, image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60' });
+                calendarEvents[dateVal].push({ title: finalTitle, who: assignee });
+            } else if (category === 'foodshop') foodShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
+            else if (category === 'familyshop') familyShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
+            else if (category === 'places') destinationsData.places.push({ title: finalTitle, who: assignee, postcode });
+            else if (category === 'restaurants') destinationsData.restaurants.push({ title: finalTitle, who: assignee, postcode, image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60' });
             else if (['cinema','home'].includes(category)) {
                 if (!destinationsData[category]) destinationsData[category] = [];
-                destinationsData[category].push({ title, who: assignee });
+                destinationsData[category].push({ title: finalTitle, who: assignee });
             }
-            else if (category === 'todo') todosData.push({ text: title, who: assignee, done: false, isEditing: false });
-            else if (category === 'wishlist') wishlistData.push({ title, who: assignee });
+            else if (category === 'todo') todosData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
+            else if (category === 'wishlist') wishlistData.push({ title: finalTitle, who: assignee });
             else if (category === 'chores') {
                 const target = choresData.find(c => c.kid.toLowerCase() === assignee.toLowerCase()) || choresData[0];
-                target.chores.push({ text: title, done: false });
+                target.chores.push({ text: finalTitle, done: false });
             } else if (category === 'meals') {
                 const emptyMeal = mealsData.find(m => !m.meal);
-                if (emptyMeal) emptyMeal.meal = title;
+                if (emptyMeal) emptyMeal.meal = finalTitle;
             }
 
             saveData();
@@ -2234,7 +2246,7 @@
           "auth/invalid-credential": "Email or password is incorrect.",
           "auth/weak-password": "Choose a stronger password (at least 6 characters).",
           "auth/too-many-requests": "Too many attempts. Wait a while and try again.",
-          "permission-denied": "Firebase denied this action. Check that the Firestore security rules have been published.",
+          "permission-denied": "Firebase denied this action. Check Firestore security rules.",
           "unavailable": "Firebase is temporarily unavailable. Please try again."
         };
         return messages[error.code] || error.message || "Something went wrong. Please try again.";
@@ -2305,7 +2317,7 @@
 
       window.fpResetPassword = async () => {
         if (!configReady || !auth) {
-          message(authMessage, "Configure Firebase first, then use password reset.");
+          message(authMessage, "Configure Firebase first.");
           return;
         }
         const email = document.getElementById("auth-email").value.trim();
@@ -2345,11 +2357,11 @@
       window.fpJoinHousehold = async () => {
         if (!signedInUser || !db) return;
         const householdId = document.getElementById("household-id").value.trim();
-        if (!householdId) return message(householdMessage, "Paste the household ID you were given.");
+        if (!householdId) return message(householdMessage, "Paste the household ID given.");
         try {
           const householdRef = doc(db, "households", householdId);
           const householdSnap = await getDoc(householdRef);
-          if (!householdSnap.exists()) return message(householdMessage, "That household ID was not found.");
+          if (!householdSnap.exists()) return message(householdMessage, "Household ID not found.");
           const household = householdSnap.data();
           await setDoc(doc(db, "households", householdId, "members", signedInUser.uid), {
             uid: signedInUser.uid, email: signedInUser.email,
