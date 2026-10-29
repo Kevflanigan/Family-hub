@@ -1081,7 +1081,6 @@
                 <div class="form-row" style="gap:8px;">
                     <select id="add-category" class="form-select input-half" onchange="handleCategoryChange(this.value)">
                         <option value="calendar">Calendar Event</option>
-                        <option value="meals">Weekly Meal</option>
                         <option value="foodshop">Food Shopping</option>
                         <option value="familyshop">Family Shopping</option>
                         <option value="places">Place to Visit</option>
@@ -1109,7 +1108,6 @@
                         <option value="none">Does not repeat</option>
                         <option value="weekly">Weekly</option>
                         <option value="monthly">Monthly</option>
-                        <option value="birthday">Annual Birthday 🎂</option>
                         <option value="school-term">School Term / Half-Term 🏫</option>
                         <option value="custom">Custom Recurrence...</option>
                     </select>
@@ -1195,10 +1193,10 @@
             <div id="dash-tasks"></div>
         </section>
 
-        <!-- 4. Birthdays & School Term Dates -->
+        <!-- 4. Term Dates -->
         <section class="card">
             <div class="card-title">
-                <span>🎂 Birthdays & Term Dates</span>
+                <span>🏫 School Term Dates</span>
             </div>
             <div id="dash-dates"></div>
         </section>
@@ -1671,20 +1669,20 @@
                 `).join('');
             }
 
-            // 4. Upcoming Birthdays & Key Dates
+            // 4. Term Dates
             const datesCont = document.getElementById('dash-dates');
             let upcomingDates = [];
             
             Object.keys(calendarEvents).forEach(dateStr => {
                 calendarEvents[dateStr].forEach(ev => {
-                    if (ev.title.includes('Birthday') || ev.title.includes('🎂') || ev.title.includes('Term') || ev.title.includes('School')) {
+                    if (ev.title.includes('Term') || ev.title.includes('School')) {
                         upcomingDates.push({ date: dateStr, title: ev.title });
                     }
                 });
             });
 
             if (upcomingDates.length === 0) {
-                datesCont.innerHTML = `<div class="list-empty">No upcoming birthdays or term dates.</div>`;
+                datesCont.innerHTML = `<div class="list-empty">No upcoming term dates.</div>`;
             } else {
                 datesCont.innerHTML = upcomingDates.slice(0, 4).map(d => `
                     <div class="dashboard-item">
@@ -1692,7 +1690,7 @@
                             <strong>${d.title}</strong>
                             <div class="sub-text">${d.date}</div>
                         </div>
-                        <span>🎂</span>
+                        <span>🏫</span>
                     </div>
                 `).join('');
             }
@@ -2205,9 +2203,6 @@
             else if (category === 'chores') {
                 const target = choresData.find(c => c.kid.toLowerCase() === assignee.toLowerCase()) || choresData[0];
                 target.chores.push({ text: finalTitle, done: false });
-            } else if (category === 'meals') {
-                const emptyMeal = mealsData.find(m => !m.meal);
-                if (emptyMeal) emptyMeal.meal = finalTitle;
             }
 
             saveData();
