@@ -514,7 +514,7 @@
         .calendar-nav { display: flex; align-items: center; gap: 6px; }
         .cal-nav-btn { background: #fff; border: 1px solid var(--border); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 0.95rem; display: grid; place-items: center; }
         
-        /* Full-Width Calendar Grid (Spans screen edges like Image 2) */
+        /* Full-Width Calendar Grid */
         .card-calendar-wrapper {
             background: rgba(255,255,255,.96);
             border: 1px solid var(--border);
@@ -596,7 +596,6 @@
             overflow: hidden;
         }
 
-        /* Strict Truncated Event Badges */
         .event-pill { 
             width: 100%;
             padding: 2px 3px; 
@@ -613,7 +612,7 @@
             display: block;
         }
 
-        /* Hover / Tap Details Popover Bubble */
+        /* Day Details Popover Bubble & Backdrop */
         .day-popover-backdrop {
             display: none;
             position: fixed;
@@ -700,7 +699,7 @@
             word-break: break-word;
         }
 
-        /* Calendar Weekly Mode Row (matches Meal Planner) */
+        /* Calendar Weekly Mode Row */
         .cal-week-row {
             background: #fff;
             border: 1px solid #e8e5df;
@@ -732,9 +731,7 @@
             align-items: center;
         }
 
-        /* ==========================================================
-           COMPACT SCOPED STYLES FOR HOME (QUICK ADD)
-           ========================================================== */
+        /* Home Quick Add */
         .home-scoped-card {
             background: rgba(255,255,255,.98);
             border: 1px solid var(--border);
@@ -781,11 +778,9 @@
 
         .home-scoped-btn:hover { background: #1e40af; }
 
-        /* ==========================================================
-           COMPACT SCOPED STYLES FOR TO-DO & WATCHLIST
-           ========================================================== */
+        /* Compact Cards for To-Do & Watchlist */
         .compact-scoped-card {
-            background: rgba(255,255,255,.98);
+            background: rgba(255,255,258,.98);
             border: 1px solid var(--border);
             border-radius: 10px;
             padding: 0.6rem 0.75rem;
@@ -794,15 +789,7 @@
             width: 100%;
         }
 
-        /* WATCHLIST TITLE */
-        .watchlist-scoped-title {
-            font-size: 1.1rem;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-
-        /* TO-DO TITLE MATCHED TO WATCHLIST */
-        .todo-scoped-title {
+        .watchlist-scoped-title, .todo-scoped-title {
             font-size: 1.1rem;
             font-weight: 800;
             margin-bottom: 8px;
@@ -872,20 +859,13 @@
             min-width: 0;
         }
 
-        .compact-scoped-label {
+        .compact-scoped-label, .todo-item-label {
             font-size: 0.88rem;
             font-weight: 500;
             flex: 1;
             word-break: break-word;
         }
-
-        /* SCOPED TO-DO TASK LABEL (SMALLER FONT SIZE) */
-        .todo-item-label {
-            font-size: 0.8rem;
-            font-weight: 500;
-            flex: 1;
-            word-break: break-word;
-        }
+        .todo-item-label { font-size: 0.8rem; }
 
         .compact-scoped-checkbox {
             width: 16px;
@@ -906,9 +886,6 @@
             flex-shrink: 0;
         }
 
-        /* ==========================================================
-           SCOPED STYLES FOR GIFT WISHLIST
-           ========================================================== */
         .wishlist-scoped-input {
             background: #fff;
             border: 1px solid #dcdfe6;
@@ -951,10 +928,8 @@
             font-size: 0.8rem;
         }
 
-        /* ==========================================================
-           COMPACT SCOPED STYLES FOR PLACES PAGE (ISOLATED)
-           ========================================================== */
-        .places-scoped-card {
+        /* Places & Restaurants Cards */
+        .places-scoped-card, .restaurants-scoped-card {
             background: rgba(255,255,255,.98);
             border: 1px solid var(--border);
             border-radius: 10px;
@@ -964,13 +939,13 @@
             width: 100%;
         }
 
-        .places-scoped-title {
+        .places-scoped-title, .restaurants-scoped-title {
             font-size: 1.1rem;
             font-weight: 800;
             margin-bottom: 8px;
         }
 
-        .places-scoped-input {
+        .places-scoped-input, .restaurants-scoped-input {
             background: #fff;
             border: 1px solid #dcdfe6;
             color: var(--text);
@@ -983,12 +958,12 @@
             box-sizing: border-box;
         }
 
-        .places-scoped-input:focus {
+        .places-scoped-input:focus, .restaurants-scoped-input:focus {
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(30,58,138,.12);
         }
 
-        .places-scoped-add-btn {
+        .places-scoped-add-btn, .restaurants-scoped-add-btn {
             background: var(--accent);
             color: #fff;
             border: none;
@@ -1002,7 +977,7 @@
             flex-shrink: 0;
         }
 
-        .places-scoped-add-btn:hover { background: #1e40af; }
+        .places-scoped-add-btn:hover, .restaurants-scoped-add-btn:hover { background: #1e40af; }
 
         .places-scoped-item {
             background: #fff;
@@ -1017,6 +992,30 @@
             width: 100%;
             min-height: 36px;
             font-size: 0.88rem;
+        }
+
+        /* Restaurant List Card with Image Thumbnail */
+        .restaurant-card-item {
+            background: #fff;
+            border: 1px solid #eae7e1;
+            border-radius: 10px;
+            padding: 8px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 6px;
+            width: 100%;
+        }
+
+        .restaurant-thumb {
+            width: 52px;
+            height: 52px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid var(--border);
+            flex-shrink: 0;
+            background: #f1f5f9;
         }
 
         /* Firebase sign-in and household setup */
@@ -1050,7 +1049,6 @@
     </style>
 </head>
 <body>
-
 
     <!-- Firebase account gate -->
     <div id="auth-gate">
@@ -1168,7 +1166,7 @@
         </div>
     </div>
 
-    <!-- VIEW 1: Quick Add (COMPACT SCOPED UI) -->
+    <!-- VIEW 1: Quick Add -->
     <div id="view-home" class="view active">
         <section class="home-scoped-card" style="border-color: var(--accent);">
             <div class="card-header" style="margin-bottom:8px;"><div class="card-title">Quick Add Item</div></div>
@@ -1255,19 +1253,12 @@
         </section>
     </div>
 
-    <!-- VIEW 4: Places & Restaurants with Map & Section Toggle -->
+    <!-- VIEW 4: Places to Visit (Keeps Interactive Map) -->
     <div id="view-places" class="view">
-        <div style="margin-bottom: 0.6rem;">
-            <div style="display:flex; background:#eff6ff; padding:2px; border-radius:8px; width:100%;">
-                <button id="places-tab-btn" class="segmented-btn active" style="flex:1; border:none; background:#fff; color:var(--accent); padding:6px; font-weight:700; border-radius:6px; font-size:0.85rem;" onclick="switchPlacesSubTab('places')">📍 Places to Visit</button>
-                <button id="restaurants-tab-btn" class="segmented-btn" style="flex:1; border:none; background:transparent; color:var(--muted); padding:6px; font-weight:700; border-radius:6px; font-size:0.85rem;" onclick="switchPlacesSubTab('restaurants')">🍽️ Restaurants</button>
-            </div>
-        </div>
-
         <section class="places-scoped-card">
-            <div class="places-scoped-title" id="places-card-title">📍 Places to Visit</div>
+            <div class="places-scoped-title">📍 Places to Visit</div>
             <div class="compact-scoped-add-group">
-                <input type="text" id="places-name-input" class="places-scoped-input" style="flex:2;" placeholder="Name...">
+                <input type="text" id="places-name-input" class="places-scoped-input" style="flex:2;" placeholder="Place name...">
                 <input type="text" id="places-postcode-input" class="places-scoped-input" style="flex:1.2;" placeholder="Postcode...">
                 <button class="places-scoped-add-btn" onclick="addPlacesItem()">+ Add</button>
             </div>
@@ -1280,7 +1271,20 @@
         </section>
     </div>
 
-    <!-- VIEW 5: Watchlist -->
+    <!-- VIEW 5: Restaurants (List Only with Postcodes & Google/Wiki Image Previews) -->
+    <div id="view-restaurants" class="view">
+        <section class="restaurants-scoped-card">
+            <div class="restaurants-scoped-title">🍽️ Restaurants List</div>
+            <div class="compact-scoped-add-group">
+                <input type="text" id="restaurants-name-input" class="restaurants-scoped-input" style="flex:2;" placeholder="Restaurant name...">
+                <input type="text" id="restaurants-postcode-input" class="restaurants-scoped-input" style="flex:1.2;" placeholder="Postcode...">
+                <button class="restaurants-scoped-add-btn" onclick="addRestaurantItem()">+ Add</button>
+            </div>
+            <div id="restaurants-dynamic-list-container" style="display:flex; flex-direction:column;"></div>
+        </section>
+    </div>
+
+    <!-- VIEW 6: Watchlist -->
     <div id="view-watchlist" class="view">
         <section class="compact-scoped-card">
             <div class="watchlist-scoped-title">🎬 Cinema Watchlist</div>
@@ -1301,7 +1305,7 @@
         </section>
     </div>
 
-    <!-- VIEW 6: To-Do & Tasks Hub -->
+    <!-- VIEW 7: To-Do & Tasks Hub -->
     <div id="view-todo" class="view">
         <section class="compact-scoped-card">
             <div class="todo-scoped-title">📝 To-Do List</div>
@@ -1344,6 +1348,10 @@
         <button id="nav-btn-places" class="nav-item" onclick="showView('places', this)">
             <span class="nav-icon">📍</span>
             <span>Places</span>
+        </button>
+        <button id="nav-btn-restaurants" class="nav-item" onclick="showView('restaurants', this)">
+            <span class="nav-icon">🍽️</span>
+            <span>Restaurants</span>
         </button>
         <button id="nav-btn-watchlist" class="nav-item" onclick="showView('watchlist', this)">
             <span class="nav-icon">🎬</span>
@@ -1389,7 +1397,6 @@
         let currentUser = localStorage.getItem('fam_user') || 'dad';
         let currentUserName = localStorage.getItem('fam_user_name') || 'Kevin';
         let viewMode = localStorage.getItem('fam_view_mode') || 'family';
-        let activePlacesTab = 'places';
 
         let mealsData = JSON.parse(localStorage.getItem('fam_meals')) || [
             { day: "Mon", meal: "" }, { day: "Tue", meal: "" }, { day: "Wed", meal: "" },
@@ -1399,7 +1406,7 @@
         let familyShopData = JSON.parse(localStorage.getItem('fam_familyshop')) || [];
         let destinationsData = JSON.parse(localStorage.getItem('fam_destinations')) || { 
             places: [{ title: "Zoo", postcode: "YO25 5YR", who: "family" }, { title: "Nicky", postcode: "NG4 1BA", who: "dad" }], 
-            restaurants: [{ title: "5 guys", postcode: "", who: "family" }, { title: "Jodhpur", postcode: "", who: "family" }], 
+            restaurants: [{ title: "5 guys", postcode: "", who: "family", image: "" }, { title: "Jodhpur", postcode: "", who: "family", image: "" }], 
             cinema: [], home: [] 
         };
         let choresData = JSON.parse(localStorage.getItem('fam_chores')) || [{ kid: "Leo", chores: [] }, { kid: "Mia", chores: [] }];
@@ -1558,7 +1565,6 @@
                 html += `</div>`;
                 container.innerHTML = html;
             } else {
-                // WEEK MODE - Stacked rows similar to Weekly Meal Planner
                 const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
                 const startMonth = monthNames[currentWeekStartDate.getMonth()].slice(0,3);
                 const endDate = new Date(currentWeekStartDate);
@@ -1602,7 +1608,7 @@
             }
         }
 
-        /* DAY DETAILS POPOVER / TOOLTIP */
+        /* Day Details Popover Bubble */
         function openDayPopover(dateKey, dayNum) {
             selectedPopoverDateKey = dateKey;
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -1631,7 +1637,6 @@
         }
 
         function handleDayHover(dateKey, dayNum) {
-            // Mobile-first touch devices trigger click; desktop hover shows details if events exist
             if (window.innerWidth > 768 && calendarEvents[dateKey] && calendarEvents[dateKey].length > 0) {
                 openDayPopover(dateKey, dayNum);
             }
@@ -1694,7 +1699,7 @@
             `).join('');
         }
 
-        /* SHOPPING */
+        /* Shopping */
         function addInlineShop(type) {
             const inputId = type === 'foodshop' ? 'foodshop-quick-input' : 'familyshop-quick-input';
             const input = document.getElementById(inputId);
@@ -1780,23 +1785,13 @@
             renderAllViews();
         }
 
-        /* PLACES & RESTAURANTS WITH MAP */
-        function switchPlacesSubTab(tab) {
-            activePlacesTab = tab;
-            document.getElementById('places-tab-btn').style.background = tab === 'places' ? '#fff' : 'transparent';
-            document.getElementById('places-tab-btn').style.color = tab === 'places' ? 'var(--accent)' : 'var(--muted)';
-            document.getElementById('restaurants-tab-btn').style.background = tab === 'restaurants' ? '#fff' : 'transparent';
-            document.getElementById('restaurants-tab-btn').style.color = tab === 'restaurants' ? 'var(--accent)' : 'var(--muted)';
-            document.getElementById('places-card-title').textContent = tab === 'places' ? '📍 Places to Visit' : '🍽️ Restaurants';
-            renderPlacesView();
-        }
-
+        /* Places to Visit (With Map) */
         function addPlacesItem() {
             const nameInput = document.getElementById('places-name-input');
             const pcInput = document.getElementById('places-postcode-input');
             if (!nameInput || !nameInput.value.trim()) return;
 
-            destinationsData[activePlacesTab].push({
+            destinationsData.places.push({
                 title: nameInput.value.trim(),
                 postcode: pcInput.value.trim(),
                 who: currentUser
@@ -1806,25 +1801,25 @@
             pcInput.value = '';
             saveData();
             renderPlacesView();
-            showToast('Location added');
+            showToast('Place added');
         }
 
         function renderPlacesView() {
             const container = document.getElementById('places-dynamic-list-container');
-            const list = destinationsData[activePlacesTab] || [];
+            const list = destinationsData.places || [];
             const filtered = list.filter(item => filterItem(item.who));
 
-            container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No ${activePlacesTab} added yet.</div>` : list.map((item, idx) => {
+            container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No places added yet.</div>` : list.map((item, idx) => {
                 if (!filterItem(item.who)) return '';
                 return `
                     <div class="places-scoped-item">
                         <div>
-                            <span style="font-weight:700;">${activePlacesTab === 'places' ? '📍' : '🍽️'} ${item.title}</span>
+                            <span style="font-weight:700;">📍 ${item.title}</span>
                             ${item.postcode ? `<span style="font-size:0.75rem; color:var(--muted); margin-left:6px;">(${item.postcode})</span>` : ''}
                         </div>
                         <div style="display:flex; align-items:center; gap:6px;">
                             <span class="compact-scoped-tag bg-${item.who}">${item.who}</span>
-                            <button class="action-btn delete-btn" onclick="destinationsData['${activePlacesTab}'].splice(${idx},1); saveData(); renderPlacesView();">✕</button>
+                            <button class="action-btn delete-btn" onclick="destinationsData.places.splice(${idx},1); saveData(); renderPlacesView();">✕</button>
                         </div>
                     </div>
                 `;
@@ -1858,11 +1853,7 @@
             mapMarkers.forEach(m => mapInstance.removeLayer(m));
             mapMarkers = [];
 
-            const allLocations = [
-                ...(destinationsData.places || []).map(p => ({ ...p, type: 'place' })),
-                ...(destinationsData.restaurants || []).map(r => ({ ...r, type: 'restaurant' }))
-            ].filter(item => filterItem(item.who));
-
+            const allLocations = (destinationsData.places || []).filter(item => filterItem(item.who));
             const bounds = [];
 
             for (const item of allLocations) {
@@ -1873,7 +1864,7 @@
                     if (data.status === 200) {
                         const { latitude, longitude } = data.result;
                         const marker = L.marker([latitude, longitude]).addTo(mapInstance);
-                        marker.bindPopup(`<b>${item.type === 'place' ? '📍' : '🍽️'} ${item.title}</b><br>${item.postcode}`);
+                        marker.bindPopup(`<b>📍 ${item.title}</b><br>${item.postcode}`);
                         mapMarkers.push(marker);
                         bounds.push([latitude, longitude]);
                     }
@@ -1889,7 +1880,74 @@
             }
         }
 
-        /* COMPACT SCOPED FUNCTIONS FOR TO-DO & WATCHLIST */
+        /* Restaurants (List Only with Postcodes & Image Previews) */
+        async function addRestaurantItem() {
+            const nameInput = document.getElementById('restaurants-name-input');
+            const pcInput = document.getElementById('restaurants-postcode-input');
+            if (!nameInput || !nameInput.value.trim()) return;
+
+            const title = nameInput.value.trim();
+            const postcode = pcInput.value.trim();
+            let imageUrl = '';
+
+            // Attempt to fetch a thumbnail preview from Wikipedia/Wikivoyage metadata or placeholder generator
+            try {
+                const wikiRes = await fetch(`https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&format=json&pithumbsize=200&titles=${encodeURIComponent(title)}&origin=*`);
+                const wikiData = await wikiRes.json();
+                const pages = wikiData.query?.pages;
+                if (pages) {
+                    const pageKey = Object.keys(pages)[0];
+                    if (pages[pageKey]?.thumbnail?.source) {
+                        imageUrl = pages[pageKey].thumbnail.source;
+                    }
+                }
+            } catch (e) {
+                console.error("Image fetch error:", e);
+            }
+
+            if (!imageUrl) {
+                imageUrl = `https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60`;
+            }
+
+            destinationsData.restaurants.push({
+                title,
+                postcode,
+                who: currentUser,
+                image: imageUrl
+            });
+
+            nameInput.value = '';
+            pcInput.value = '';
+            saveData();
+            renderRestaurantsView();
+            showToast('Restaurant added');
+        }
+
+        function renderRestaurantsView() {
+            const container = document.getElementById('restaurants-dynamic-list-container');
+            const list = destinationsData.restaurants || [];
+            const filtered = list.filter(item => filterItem(item.who));
+
+            container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No restaurants added yet.</div>` : list.map((item, idx) => {
+                if (!filterItem(item.who)) return '';
+                const img = item.image || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60';
+                return `
+                    <div class="restaurant-card-item">
+                        <img src="${img}" alt="${item.title}" class="restaurant-thumb">
+                        <div style="flex:1; min-width:0; padding-left:4px;">
+                            <div style="font-weight:700; font-size:0.92rem; color:var(--text);">${item.title}</div>
+                            ${item.postcode ? `<div style="font-size:0.75rem; color:var(--muted);">Postcode: ${item.postcode}</div>` : ''}
+                        </div>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <span class="compact-scoped-tag bg-${item.who}">${item.who}</span>
+                            <button class="action-btn delete-btn" onclick="destinationsData.restaurants.splice(${idx},1); saveData(); renderRestaurantsView();">✕</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        /* To-Do & Tasks */
         function addTodoItem() {
             const input = document.getElementById('todo-quick-input');
             if (!input || !input.value.trim()) return;
@@ -1941,7 +1999,7 @@
             }).join('');
         }
 
-        /* WATCHLIST RENDER & FUNCTIONS */
+        /* Watchlist */
         function addWatchlistItem(type) {
             const inputId = type === 'cinema' ? 'cinema-quick-input' : 'home-quick-input';
             const input = document.getElementById(inputId);
@@ -1988,7 +2046,7 @@
             }).join('');
         }
 
-        /* CHORES */
+        /* Chores */
         function addKidChore(kidIndex) {
             const input = document.getElementById(`chore-input-${kidIndex}`);
             if (!input || !input.value.trim()) return;
@@ -2031,7 +2089,7 @@
             `).join('');
         }
 
-        /* WISHLIST */
+        /* Wishlist */
         function addWishlistItem() {
             const input = document.getElementById('wishlist-quick-input');
             if (!input || !input.value.trim()) return;
@@ -2071,7 +2129,8 @@
                 calendarEvents[dateVal].push({ title, who: assignee });
             } else if (category === 'foodshop') foodShopData.push({ text: title, who: assignee, done: false, isEditing: false });
             else if (category === 'familyshop') familyShopData.push({ text: title, who: assignee, done: false, isEditing: false });
-            else if (['places','restaurants'].includes(category)) destinationsData[category].push({ title, who: assignee, postcode });
+            else if (category === 'places') destinationsData.places.push({ title, who: assignee, postcode });
+            else if (category === 'restaurants') destinationsData.restaurants.push({ title, who: assignee, postcode, image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60' });
             else if (['cinema','home'].includes(category)) {
                 if (!destinationsData[category]) destinationsData[category] = [];
                 destinationsData[category].push({ title, who: assignee });
@@ -2099,6 +2158,7 @@
             renderShopping();
             renderTodos();
             renderPlacesView();
+            renderRestaurantsView();
             renderWatchlist();
             renderChores();
             renderWishlist();
@@ -2110,10 +2170,8 @@
         renderAllViews();
     </script>
 
+    <!-- Firebase Starter Script -->
     <script type="module">
-      /*
-       * FAMILY PLAN FIREBASE STARTER
-       */
       import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
       import {
         getAuth, onAuthStateChanged, createUserWithEmailAndPassword,
