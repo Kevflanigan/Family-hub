@@ -301,6 +301,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 0.8rem;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .card-title {
@@ -504,13 +506,50 @@
         }
 
         /* Calendar */
-        .calendar-nav { display: flex; align-items: center; gap: 8px; }
-        .cal-nav-btn { background: #fff; border: 1px solid var(--border); width: 34px; height: 34px; border-radius: 8px; cursor: pointer; font-size: 1rem; display: grid; place-items: center; }
+        .calendar-controls { display: flex; align-items: center; gap: 8px; }
+        .calendar-view-toggle { display: flex; background: #eff6ff; padding: 2px; border-radius: 8px; }
+        .cal-toggle-btn { border: none; background: transparent; color: var(--muted); padding: 5px 10px; font-weight: 700; border-radius: 6px; font-size: 0.78rem; cursor: pointer; }
+        .cal-toggle-btn.active { background: #fff; color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+
+        .calendar-nav { display: flex; align-items: center; gap: 6px; }
+        .cal-nav-btn { background: #fff; border: 1px solid var(--border); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 0.95rem; display: grid; place-items: center; }
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
         .day-header { text-align: center; font-size: 0.75rem; font-weight: 700; color: var(--muted); text-transform: uppercase; }
         .day-cell { background: #fff; border: 1px solid #e8e5df; border-radius: 8px; min-height: 75px; padding: 6px; cursor: pointer; }
         .day-num { font-size: 0.82rem; font-weight: 600; color: #505868; }
         .event-pill { margin-top: 3px; padding: 2px 4px; border-radius: 4px; font-size: 0.68rem; color: #fff; font-weight: 600; }
+
+        /* Calendar Weekly Mode Row (matches Meal Planner) */
+        .cal-week-row {
+            background: #fff;
+            border: 1px solid #e8e5df;
+            border-radius: 10px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 6px;
+            width: 100%;
+            min-height: 48px;
+        }
+
+        .cal-week-day {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: #1e3a8a;
+            width: 72px;
+            flex-shrink: 0;
+            line-height: 1.2;
+        }
+
+        .cal-week-content {
+            flex: 1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            align-items: center;
+        }
 
         /* ==========================================================
            COMPACT SCOPED STYLES FOR HOME (QUICK ADD)
@@ -832,7 +871,7 @@
 <body>
 
 
-    <!-- Firebase account gate: the app is hidden until a signed-in user has a household -->
+    <!-- Firebase account gate -->
     <div id="auth-gate">
       <section class="auth-card" aria-labelledby="auth-heading">
         <div class="auth-brand">
@@ -981,12 +1020,20 @@
         <section class="card">
             <div class="card-header">
                 <div class="card-title" id="calendar-month-label">October 2026</div>
-                <div class="calendar-nav">
-                    <button class="cal-nav-btn" onclick="navigateCalendar(-1)">‹</button>
-                    <button class="cal-nav-btn" onclick="navigateCalendar(1)">›</button>
+                <div class="calendar-controls">
+                    <div class="calendar-view-toggle">
+                        <button id="cal-toggle-month" class="cal-toggle-btn active" onclick="setCalendarMode('month')">Month</button>
+                        <button id="cal-toggle-week" class="cal-toggle-btn" onclick="setCalendarMode('week')">Week</button>
+                    </div>
+                    <div class="calendar-nav">
+                        <button class="cal-nav-btn" onclick="navigateCalendar(-1)">‹</button>
+                        <button class="cal-nav-btn" onclick="navigateCalendar(1)">›</button>
+                    </div>
                 </div>
             </div>
-            <div class="calendar-grid" id="calendar-grid"></div>
+            <div id="calendar-grid-container">
+                <div class="calendar-grid" id="calendar-grid"></div>
+            </div>
         </section>
     </div>
 
@@ -1134,6 +1181,16 @@
 
         let currentMonth = 9;
         let currentYear = 2026;
+        let calendarMode = localStorage.getItem('fam_cal_mode') || 'month';
+        let currentWeekStartDate = getMonday(new Date(2026, 9, 26));
+
+        function getMonday(d) {
+            const date = new Date(d);
+            const day = date.getDay();
+            const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+            return new Date(date.setDate(diff));
+        }
+
         const assignees = ['family', 'mom', 'dad', 'leo', 'mia'];
 
         let currentUser = localStorage.getItem('fam_user') || 'dad';
@@ -1180,6 +1237,7 @@
             localStorage.setItem('fam_user', currentUser);
             localStorage.setItem('fam_user_name', currentUserName);
             localStorage.setItem('fam_view_mode', viewMode);
+            localStorage.setItem('fam_cal_mode', calendarMode);
         }
 
         function toggleUserDropdown() {
@@ -1254,30 +1312,100 @@
             document.getElementById('postcode-row').style.display = (val === 'places' || val === 'restaurants') ? 'flex' : 'none';
         }
 
+        function setCalendarMode(mode) {
+            calendarMode = mode;
+            document.getElementById('cal-toggle-month').classList.toggle('active', mode === 'month');
+            document.getElementById('cal-toggle-week').classList.toggle('active', mode === 'week');
+            saveData();
+            renderCalendar();
+        }
+
         function renderCalendar() {
-            const grid = document.getElementById('calendar-grid');
+            const container = document.getElementById('calendar-grid-container');
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            document.getElementById('calendar-month-label').textContent = `${monthNames[currentMonth]} ${currentYear}`;
+            
+            if (calendarMode === 'month') {
+                document.getElementById('calendar-month-label').textContent = `${monthNames[currentMonth]} ${currentYear}`;
+                
+                let html = `<div class="calendar-grid"><div class="day-header">Mon</div><div class="day-header">Tue</div><div class="day-header">Wed</div><div class="day-header">Thu</div><div class="day-header">Fri</div><div class="day-header">Sat</div><div class="day-header">Sun</div>`;
+                const firstDay = new Date(currentYear, currentMonth, 1);
+                let startDay = firstDay.getDay() - 1;
+                if (startDay === -1) startDay = 6;
+                const totalDays = new Date(currentYear, currentMonth + 1, 0).getDate();
 
-            let html = `<div class="day-header">Mon</div><div class="day-header">Tue</div><div class="day-header">Wed</div><div class="day-header">Thu</div><div class="day-header">Fri</div><div class="day-header">Sat</div><div class="day-header">Sun</div>`;
-            const firstDay = new Date(currentYear, currentMonth, 1);
-            let startDay = firstDay.getDay() - 1;
-            if (startDay === -1) startDay = 6;
-            const totalDays = new Date(currentYear, currentMonth + 1, 0).getDate();
+                for (let i = 0; i < startDay; i++) html += `<div class="day-cell" style="background:transparent; border:none;"></div>`;
 
-            for (let i = 0; i < startDay; i++) html += `<div class="day-cell" style="background:transparent; border:none;"></div>`;
-
-            for (let i = 1; i <= totalDays; i++) {
-                const mStr = String(currentMonth + 1).padStart(2, '0');
-                const dStr = String(i).padStart(2, '0');
-                const dateKey = `${currentYear}-${mStr}-${dStr}`;
-                let eventsHtml = '';
-                if (calendarEvents[dateKey]) {
-                    calendarEvents[dateKey].filter(ev => filterItem(ev.who)).forEach(ev => eventsHtml += `<div class="event-pill bg-${ev.who}">${ev.title}</div>`);
+                for (let i = 1; i <= totalDays; i++) {
+                    const mStr = String(currentMonth + 1).padStart(2, '0');
+                    const dStr = String(i).padStart(2, '0');
+                    const dateKey = `${currentYear}-${mStr}-${dStr}`;
+                    let eventsHtml = '';
+                    if (calendarEvents[dateKey]) {
+                        calendarEvents[dateKey].filter(ev => filterItem(ev.who)).forEach(ev => eventsHtml += `<div class="event-pill bg-${ev.who}">${ev.title}</div>`);
+                    }
+                    html += `<div class="day-cell" onclick="jumpToAddEvent('${dateKey}')"><div class="day-num">${i}</div>${eventsHtml}</div>`;
                 }
-                html += `<div class="day-cell" onclick="jumpToAddEvent('${dateKey}')"><div class="day-num">${i}</div>${eventsHtml}</div>`;
+                html += `</div>`;
+                container.innerHTML = html;
+            } else {
+                // WEEK MODE - Stacked rows similar to Weekly Meal Planner
+                const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+                const startMonth = monthNames[currentWeekStartDate.getMonth()].slice(0,3);
+                const endDate = new Date(currentWeekStartDate);
+                endDate.setDate(endDate.getDate() + 6);
+                const endMonth = monthNames[endDate.getMonth()].slice(0,3);
+
+                let rangeText = `${currentWeekStartDate.getDate()} ${startMonth}`;
+                if (startMonth !== endMonth || currentWeekStartDate.getFullYear() !== endDate.getFullYear()) {
+                    rangeText += ` - ${endDate.getDate()} ${endMonth} ${endDate.getFullYear()}`;
+                } else {
+                    rangeText += ` - ${endDate.getDate()} ${startMonth} ${currentWeekStartDate.getFullYear()}`;
+                }
+                document.getElementById('calendar-month-label').textContent = rangeText;
+
+                let html = `<div class="list-container">`;
+                for (let i = 0; i < 7; i++) {
+                    const d = new Date(currentWeekStartDate);
+                    d.setDate(d.getDate() + i);
+                    const yyyy = d.getFullYear();
+                    const mm = String(d.getMonth() + 1).padStart(2, '0');
+                    const dd = String(d.getDate()).padStart(2, '0');
+                    const dateKey = `${yyyy}-${mm}-${dd}`;
+                    
+                    let eventsHtml = '';
+                    if (calendarEvents[dateKey]) {
+                        calendarEvents[dateKey].filter(ev => filterItem(ev.who)).forEach((ev, evIdx) => {
+                            eventsHtml += `<span class="event-pill bg-${ev.who}" style="margin:2px 3px; font-size:0.75rem; padding:3px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:4px;">${ev.title} <button onclick="event.stopPropagation(); deleteCalEvent('${dateKey}', ${evIdx})" style="background:none; border:none; color:#fff; font-size:0.75rem; cursor:pointer;">✕</button></span>`;
+                        });
+                    }
+
+                    html += `
+                        <div class="cal-week-row">
+                            <div class="cal-week-day">${weekDays[i]} ${d.getDate()}</div>
+                            <div class="cal-week-content">${eventsHtml}</div>
+                            <input type="text" class="meal-input-inline" style="flex:1; max-width:140px; font-size:0.85rem;" placeholder="+ Quick add..." onkeypress="if(event.key==='Enter' && this.value.trim()){ addQuickCalEvent('${dateKey}', this.value.trim()); this.value=''; }">
+                        </div>
+                    `;
+                }
+                html += `</div>`;
+                container.innerHTML = html;
             }
-            grid.innerHTML = html;
+        }
+
+        function addQuickCalEvent(dateStr, title) {
+            if (!calendarEvents[dateStr]) calendarEvents[dateStr] = [];
+            calendarEvents[dateStr].push({ title, who: currentUser });
+            saveData();
+            renderCalendar();
+            showToast("Event added to calendar");
+        }
+
+        function deleteCalEvent(dateStr, index) {
+            if (calendarEvents[dateStr]) {
+                calendarEvents[dateStr].splice(index, 1);
+                saveData();
+                renderCalendar();
+            }
         }
 
         function jumpToAddEvent(dateStr) {
@@ -1288,9 +1416,13 @@
         }
 
         function navigateCalendar(dir) {
-            currentMonth += dir;
-            if (currentMonth > 11) { currentMonth = 0; currentYear++; }
-            else if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+            if (calendarMode === 'month') {
+                currentMonth += dir;
+                if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+                else if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+            } else {
+                currentWeekStartDate.setDate(currentWeekStartDate.getDate() + (dir * 7));
+            }
             renderCalendar();
         }
 
@@ -1703,7 +1835,7 @@
         }
 
         function renderAllViews() {
-            renderCalendar();
+            setCalendarMode(calendarMode);
             renderMeals();
             renderShopping();
             renderTodos();
@@ -1799,12 +1931,6 @@
         updateHeaderDisplay();
       }
 
-      function escapeHtml(value) {
-        return String(value).replace(/[&<>"']/g, ch => ({
-          "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-        }[ch]));
-      }
-
       window.fpSetAuthMode = (mode) => {
         authMode = mode;
         document.getElementById("auth-signin-tab").classList.toggle("active", mode === "signin");
@@ -1821,7 +1947,7 @@
       document.getElementById("firebase-auth-form").addEventListener("submit", async (event) => {
         event.preventDefault();
         if (!configReady || !auth || !db) {
-          message(authMessage, "Firebase is not configured yet. Follow the setup steps supplied with this file, then replace the placeholder firebaseConfig values.");
+          message(authMessage, "Firebase is not configured yet.");
           return;
         }
         const email = document.getElementById("auth-email").value.trim();
@@ -1856,7 +1982,7 @@
         if (!email) return message(authMessage, "Enter your email address first.");
         try {
           await sendPasswordResetEmail(auth, email);
-          message(authMessage, "If an account exists for that email, a password reset email has been sent.", true);
+          message(authMessage, "Password reset email sent if an account exists.", true);
         } catch (error) { message(authMessage, friendlyError(error)); }
       };
 
@@ -1881,9 +2007,8 @@
             householdId: householdRef.id, householdName: name
           }, { merge: true });
           userProfile = { ...(userProfile || {}), householdId: householdRef.id, householdName: name };
-          message(householdMessage, `Household created. Household ID: ${householdRef.id}. Copy and share this ID only with people you want to join.`, true);
+          message(householdMessage, `Household created! ID: ${householdRef.id}`, true);
           enterApp(userProfile);
-          alert(`Household created: ${name}\n\nHousehold ID:\n${householdRef.id}\n\nSave this ID to invite other members.`);
         } catch (error) { message(householdMessage, friendlyError(error)); }
       };
 
@@ -1894,7 +2019,7 @@
         try {
           const householdRef = doc(db, "households", householdId);
           const householdSnap = await getDoc(householdRef);
-          if (!householdSnap.exists()) return message(householdMessage, "That household ID was not found. Check it and try again.");
+          if (!householdSnap.exists()) return message(householdMessage, "That household ID was not found.");
           const household = householdSnap.data();
           await setDoc(doc(db, "households", householdId, "members", signedInUser.uid), {
             uid: signedInUser.uid, email: signedInUser.email,
@@ -1911,7 +2036,6 @@
 
       if (!configReady) {
         showGate("account");
-        message(authMessage, "Setup required: add your Firebase web app configuration in the script near the bottom of index.html.");
       } else {
         try {
           const app = initializeApp(firebaseConfig);
@@ -1938,12 +2062,12 @@
               }
             } catch (error) {
               showGate("account");
-              message(authMessage, "Could not load your account profile: " + friendlyError(error));
+              message(authMessage, "Could not load profile: " + friendlyError(error));
             }
           });
         } catch (error) {
           showGate("account");
-          message(authMessage, "Firebase could not initialize: " + friendlyError(error));
+          message(authMessage, "Firebase error: " + friendlyError(error));
         }
       }
     </script>
