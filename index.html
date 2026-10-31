@@ -1156,7 +1156,7 @@
                 <div class="card-title">🎙️ Voice Transcription Review</div>
                 <button class="bubble-close-btn" onclick="toggleVoicePreviewModal()">✕</button>
             </div>
-            <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px;">Review what was heard, adjust details if needed, and approve to add directly as a monthly bill.</p>
+            <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px;">Review what was heard, adjust parsed details if needed, and approve to save.</p>
             <div class="add-form" style="gap:8px;">
                 <label class="auth-field" style="margin:0;">Bill Provider / Title:</label>
                 <input type="text" id="voice-preview-input" class="form-input input-full" placeholder="Transcribed text...">
@@ -1168,7 +1168,7 @@
 
                 <label class="auth-field" style="margin:0;">Bill For / Assignee:</label>
                 <select id="voice-preview-assignee" class="form-select input-full">
-                    <option value="family">Family (Everyone / Shared)</option>
+                    <option value="family">Family (Shared / All)</option>
                     <option value="dad">Kevin</option>
                     <option value="mom">Harriet</option>
                     <option value="leo">Leo</option>
@@ -1317,7 +1317,7 @@
     <div id="view-budget" class="view">
         <section class="budget-scoped-card">
             <!-- Header title with Voice Mic Button positioned right next to it -->
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <div style="display:flex; justify-space-between; align-items:center; margin-bottom:8px;">
                 <div class="budget-scoped-title" style="margin-bottom:0;">💳 Monthly Budget & Bills</div>
                 <button id="mic-voice-btn" onclick="toggleVoiceRecognition()" title="Voice Add Bill" style="background:#0d9488; color:#fff; border:none; width:36px; height:36px; border-radius:50%; font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(13,148,136,0.3);">🎙️</button>
             </div>
@@ -1614,12 +1614,47 @@
             recognition.onstart = () => {
                 isListening = true;
                 micBtn.style.background = '#ef4444';
-                showToast("Listening... Speak your bill name.");
+                showToast("Listening... Speak your bill details.");
             };
 
             recognition.onresult = (event) => {
                 const speechText = event.results[0][0].transcript;
+                
+                // Clear inputs
                 document.getElementById('voice-preview-input').value = speechText;
+                document.getElementById('voice-preview-cost').value = '';
+                document.getElementById('voice-preview-duedate').value = '';
+                document.getElementById('voice-preview-assignee').value = 'family';
+
+                // Smart parse cost (£ / pounds / quid)
+                const moneyMatch = speechText.match(/(?:£|pounds?|\bcost\b[:\s]*)(\d+(?:\.\d{2})?)/i) || speechText.match(/(\d+(?:\.\d{2})?)\s*(?:pounds?|quid)/i);
+                if (moneyMatch) {
+                    document.getElementById('voice-preview-cost').value = moneyMatch[1];
+                }
+
+                // Smart parse due date
+                const dueMatch = speechText.match(/(?:due\s*(?:on\s*(?:the)?)?|day)\s*(\d{1,2})(?:st|nd|rd|th)?/i);
+                if (dueMatch) {
+                    document.getElementById('voice-preview-duedate').value = dueMatch[1];
+                }
+
+                // Smart parse assignee / target person
+                if (/kevin/i.test(speechText)) {
+                    document.getElementById('voice-preview-assignee').value = 'dad';
+                } else if (/harriet/i.test(speechText)) {
+                    document.getElementById('voice-preview-assignee').value = 'mom';
+                }
+
+                // Clean title input
+                let cleanTitle = speechText;
+                if (moneyMatch) cleanTitle = cleanTitle.replace(moneyMatch[0], '');
+                if (dueMatch) cleanTitle = cleanTitle.replace(dueMatch[0], '');
+                cleanTitle = cleanTitle.replace(/(?:new bill|bill for|for kevin|for harriet|bill is|every month|is when this is billed|billed|due on the|due on)/gi, '').trim();
+                
+                if (cleanTitle) {
+                    document.getElementById('voice-preview-input').value = cleanTitle.charAt(0).toUpperCase() + cleanTitle.slice(1);
+                }
+
                 toggleVoicePreviewModal();
             };
 
@@ -1645,19 +1680,19 @@
         }
 
         function approveVoiceTranscription() {
-            const text = document.getElementById('voice-preview-input').value.trim();
+            const provider = document.getElementById('voice-preview-input').value.trim();
             const cost = parseFloat(document.getElementById('voice-preview-cost').value) || 0;
             const due = parseInt(document.getElementById('voice-preview-duedate').value) || 1;
             const assignee = document.getElementById('voice-preview-assignee').value;
             
             toggleVoicePreviewModal();
 
-            if (!text) return;
+            if (!provider) return;
 
-            budgetData.push({ provider: text, cost: cost, due: due, type: "actual", who: assignee });
+            budgetData.push({ provider, cost, due, type: "actual", who: assignee });
             saveData();
             renderBudgetView();
-            showToast("Voice bill successfully added!");
+            showToast(`Added: ${provider} (£${cost.toFixed(2)})`);
         }
 
         function toggleUserDropdown() {
