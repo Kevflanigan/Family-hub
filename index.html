@@ -2318,46 +2318,51 @@
 
         function handleQuickAdd(e) {
             e.preventDefault();
-            const rawTitle = document.getElementById('add-title').value.trim();
-            const category = document.getElementById('add-category').value;
-            const assignee = document.getElementById('add-assignee').value;
-            const dateVal = document.getElementById('add-date').value;
-            const recurring = document.getElementById('add-recurring').value;
-            const postcode = document.getElementById('add-postcode').value.trim();
-            const budgetCost = parseFloat(document.getElementById('add-budget-cost').value) || 0;
-            const budgetDue = parseInt(document.getElementById('add-budget-duedate').value) || 1;
-            const budgetType = document.getElementById('add-budget-type').value;
+            try {
+                const rawTitle = document.getElementById('add-title').value.trim();
+                const category = document.getElementById('add-category').value;
+                const assignee = document.getElementById('add-assignee').value;
+                const dateVal = document.getElementById('add-date').value;
+                const recurring = document.getElementById('add-recurring').value;
+                const postcode = document.getElementById('add-postcode').value.trim();
+                const budgetCost = parseFloat(document.getElementById('add-budget-cost').value) || 0;
+                const budgetDue = parseInt(document.getElementById('add-budget-duedate').value) || 1;
+                const budgetType = document.getElementById('add-budget-type').value;
 
-            let title = rawTitle;
-            if (category === 'birthday' && !title.includes('🎂')) {
-                title = '🎂 ' + title + ' Birthday';
+                let title = rawTitle;
+                if (category === 'birthday' && !title.includes('🎂')) {
+                    title = '🎂 ' + title + ' Birthday';
+                }
+
+                const recLabel = recurring !== 'none' ? ` [${recurring}]` : '';
+                const finalTitle = title + recLabel;
+
+                if (category === 'calendar' || category === 'birthday') {
+                    if (!calendarEvents[dateVal]) calendarEvents[dateVal] = [];
+                    calendarEvents[dateVal].push({ title: finalTitle, who: assignee });
+                } else if (category === 'foodshop') foodShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
+                else if (category === 'familyshop') familyShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
+                else if (category === 'budget') budgetData.push({ provider: rawTitle, cost: budgetCost, due: budgetDue, type: budgetType, who: assignee });
+                else if (category === 'places') destinationsData.places.push({ title: finalTitle, who: assignee, postcode });
+                else if (['cinema','home'].includes(category)) {
+                    if (!destinationsData[category]) destinationsData[category] = [];
+                    destinationsData[category].push({ title: finalTitle, who: assignee });
+                }
+                else if (category === 'todo') todosData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
+                else if (category === 'wishlist') wishlistData.push({ title: finalTitle, who: assignee });
+
+                saveData();
+                document.getElementById('add-title').value = '';
+                document.getElementById('add-postcode').value = '';
+                document.getElementById('add-budget-cost').value = '';
+                document.getElementById('add-budget-duedate').value = '';
+                toggleQuickAddModal();
+                renderAllViews();
+                showToast('Item added successfully!');
+            } catch (err) {
+                console.error("Quick add error:", err);
+                showToast("Error adding item. Please check inputs.");
             }
-
-            const recLabel = recurring !== 'none' ? ` [${recurring}]` : '';
-            const finalTitle = title + recLabel;
-
-            if (category === 'calendar' || category === 'birthday') {
-                if (!calendarEvents[dateVal]) calendarEvents[dateVal] = [];
-                calendarEvents[dateVal].push({ title: finalTitle, who: assignee });
-            } else if (category === 'foodshop') foodShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
-            else if (category === 'familyshop') familyShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
-            else if (category === 'budget') budgetData.push({ provider: rawTitle, cost: budgetCost, due: budgetDue, type: budgetType, who: assignee });
-            else if (category === 'places') destinationsData.places.push({ title: finalTitle, who: assignee, postcode });
-            else if (['cinema','home'].includes(category)) {
-                if (!destinationsData[category]) destinationsData[category] = [];
-                destinationsData[category].push({ title: finalTitle, who: assignee });
-            }
-            else if (category === 'todo') todosData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
-            else if (category === 'wishlist') wishlistData.push({ title: finalTitle, who: assignee });
-
-            saveData();
-            document.getElementById('add-title').value = '';
-            document.getElementById('add-postcode').value = '';
-            document.getElementById('add-budget-cost').value = '';
-            document.getElementById('add-budget-duedate').value = '';
-            toggleQuickAddModal();
-            renderAllViews();
-            showToast('Item added successfully!');
         }
 
         function renderAllViews() {
