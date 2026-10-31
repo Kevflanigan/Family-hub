@@ -250,9 +250,10 @@
             flex-direction: row !important;
             align-items: center !important;
             justify-content: space-around !important;
-            padding: 0 4px !important;
+            padding: 0 2px !important;
             z-index: 1000 !important;
             box-sizing: border-box !important;
+            overflow-x: auto;
         }
 
         .nav-item {
@@ -264,7 +265,7 @@
             border: none !important;
             color: var(--muted) !important;
             padding: 4px 1px !important;
-            font-size: 0.65rem !important;
+            font-size: 0.60rem !important;
             font-weight: 600 !important;
             cursor: pointer !important;
             border-radius: 8px !important;
@@ -281,7 +282,7 @@
         }
 
         .nav-icon {
-            font-size: 1.15rem !important;
+            font-size: 1.1rem !important;
             line-height: 1 !important;
             display: block !important;
         }
@@ -415,6 +416,7 @@
             gap: 8px;
             width: 100%;
             margin-bottom: 10px;
+            flex-wrap: wrap;
         }
 
         .form-input, .form-select {
@@ -799,7 +801,7 @@
             width: 100%;
         }
 
-        .watchlist-scoped-title, .todo-scoped-title, .places-scoped-title, .restaurants-scoped-title {
+        .watchlist-scoped-title, .todo-scoped-title, .places-scoped-title, .restaurants-scoped-title, .budget-scoped-title {
             font-size: 1.05rem;
             font-weight: 800;
             margin-bottom: 8px;
@@ -810,6 +812,7 @@
             gap: 8px;
             width: 100%;
             margin-bottom: 8px;
+            flex-wrap: wrap;
         }
 
         .compact-scoped-input {
@@ -938,7 +941,7 @@
             font-size: 0.85rem;
         }
 
-        .places-scoped-card, .restaurants-scoped-card {
+        .places-scoped-card, .restaurants-scoped-card, .budget-scoped-card {
             background: rgba(255,255,255,.98);
             border: 1px solid var(--border);
             border-radius: 10px;
@@ -970,6 +973,34 @@
             flex-shrink: 0;
             background: #f1f5f9;
         }
+
+        /* Budget Summary Total Box */
+        .budget-total-summary {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 10px;
+            padding: 12px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .budget-total-amount {
+            font-size: 1.2rem;
+            font-weight: 800;
+        }
+
+        .budget-type-badge {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+        .badge-actual { background: #d1fae5; color: #065f46; }
+        .badge-estimated { background: #fef3c7; color: #92400e; }
 
         /* Firebase Auth Gate */
         #auth-gate { position:fixed; inset:0; z-index:5000; display:flex; align-items:center; justify-content:center; padding:12px; background:radial-gradient(ellipse at 15% 0%,rgba(30,58,138,.16),transparent 34rem),#f7f5f1; overflow-y:auto; }
@@ -1085,13 +1116,14 @@
                 <button class="bubble-close-btn" onclick="toggleQuickAddModal()">✕</button>
             </div>
             <form class="add-form" style="gap:8px;" onsubmit="handleQuickAdd(event)">
-                <input type="text" id="add-title" class="form-input input-full" placeholder="Enter title / item / task..." required>
+                <input type="text" id="add-title" class="form-input input-full" placeholder="Enter title / item / task / provider..." required>
                 <div class="form-row" style="gap:8px;">
                     <select id="add-category" class="form-select input-half" onchange="handleCategoryChange(this.value)">
                         <option value="calendar">Calendar Event</option>
                         <option value="birthday">Birthday 🎂</option>
                         <option value="foodshop">Food Shopping</option>
                         <option value="familyshop">Family Shopping</option>
+                        <option value="budget">Monthly Budget / Bill 💳</option>
                         <option value="places">Place to Visit</option>
                         <option value="restaurants">Restaurant</option>
                         <option value="cinema">Cinema Film</option>
@@ -1106,6 +1138,17 @@
                         <option value="dad">Kevin</option>
                         <option value="leo">Leo</option>
                         <option value="mia">Mia</option>
+                    </select>
+                </div>
+                <!-- Budget Cost, Due Date & Type Specific Fields -->
+                <div class="form-row" id="budget-fields-row" style="display:none; gap:8px;">
+                    <input type="number" step="0.01" id="add-budget-cost" class="form-input input-half" placeholder="Cost (£ e.g. 150.00)">
+                    <input type="number" min="1" max="31" id="add-budget-duedate" class="form-input input-half" placeholder="Due Day (1-31)">
+                </div>
+                <div class="form-row" id="budget-type-row" style="display:none; gap:8px;">
+                    <select id="add-budget-type" class="form-select input-full">
+                        <option value="actual">Actual Cost</option>
+                        <option value="estimated">Estimated Cost (e.g. Shopping)</option>
                     </select>
                 </div>
                 <div class="form-row" id="date-row" style="gap:8px;">
@@ -1175,7 +1218,7 @@
         </div>
     </div>
 
-    <!-- VIEW 0: HOME DASHBOARD (Default Opening Screen) -->
+    <!-- VIEW 0: HOME DASHBOARD -->
     <div id="view-dashboard" class="view active">
         <!-- 1. Today's Schedule & Locations -->
         <section class="card">
@@ -1260,7 +1303,38 @@
         </section>
     </div>
 
-    <!-- VIEW 3: Places to Visit -->
+    <!-- VIEW 3: Monthly Budgets & Bills -->
+    <div id="view-budget" class="view">
+        <section class="budget-scoped-card">
+            <div class="budget-scoped-title">💳 Monthly Budget & Bills</div>
+            
+            <!-- Monthly Total Banner -->
+            <div class="budget-total-summary">
+                <span>Total Monthly Outgoings</span>
+                <span id="budget-total-amount" class="budget-total-amount">£0.00</span>
+            </div>
+
+            <!-- Inline Add Form -->
+            <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px;">
+                <div style="font-weight: 700; font-size: 0.85rem; color: var(--muted);">Add New Bill / Estimate</div>
+                <input type="text" id="budget-provider-input" class="compact-scoped-input" placeholder="Provider / Category name (e.g. Food Shopping, Energy)...">
+                <div style="display: flex; gap: 8px;">
+                    <input type="number" step="0.01" id="budget-cost-input" class="compact-scoped-input" placeholder="Cost (£)">
+                    <input type="number" min="1" max="31" id="budget-duedate-input" class="compact-scoped-input" placeholder="Due Day (1-31)">
+                </div>
+                <select id="budget-type-input" class="compact-scoped-input">
+                    <option value="actual">Actual Cost</option>
+                    <option value="estimated">Estimated Cost (e.g. Shopping)</option>
+                </select>
+                <button class="wishlist-scoped-add-btn" style="width: 100%; min-height: 40px; margin-top: 4px;" onclick="addBudgetCardItem()">+ Add to Monthly Budget</button>
+            </div>
+
+            <!-- Dynamic Budgets List Container -->
+            <div id="budget-dynamic-list-container" style="display:flex; flex-direction:column;"></div>
+        </section>
+    </div>
+
+    <!-- VIEW 4: Places to Visit -->
     <div id="view-places" class="view">
         <section class="places-scoped-card">
             <div class="places-scoped-title">📍 Places to Visit</div>
@@ -1278,7 +1352,7 @@
         </section>
     </div>
 
-    <!-- VIEW 4: Restaurants -->
+    <!-- VIEW 5: Restaurants -->
     <div id="view-restaurants" class="view">
         <section class="restaurants-scoped-card">
             <div class="restaurants-scoped-title">🍽️ Restaurants List</div>
@@ -1291,7 +1365,7 @@
         </section>
     </div>
 
-    <!-- VIEW 5: Watchlist -->
+    <!-- VIEW 6: Watchlist -->
     <div id="view-watchlist" class="view">
         <section class="compact-scoped-card">
             <div class="watchlist-scoped-title">🎬 Cinema Watchlist</div>
@@ -1312,7 +1386,7 @@
         </section>
     </div>
 
-    <!-- VIEW 6: To-Do & Tasks Hub -->
+    <!-- VIEW 7: To-Do & Tasks Hub -->
     <div id="view-todo" class="view">
         <section class="compact-scoped-card">
             <div class="todo-scoped-title">📝 To-Do List</div>
@@ -1351,6 +1425,10 @@
         <button id="nav-btn-shopping" class="nav-item" onclick="showView('shopping', this)">
             <span class="nav-icon">🛒</span>
             <span>Shopping</span>
+        </button>
+        <button id="nav-btn-budget" class="nav-item" onclick="showView('budget', this)">
+            <span class="nav-icon">💳</span>
+            <span>Budgets</span>
         </button>
         <button id="nav-btn-places" class="nav-item" onclick="showView('places', this)">
             <span class="nav-icon">📍</span>
@@ -1411,6 +1489,11 @@
         ];
         let foodShopData = JSON.parse(localStorage.getItem('fam_foodshop')) || [];
         let familyShopData = JSON.parse(localStorage.getItem('fam_familyshop')) || [];
+        let budgetData = JSON.parse(localStorage.getItem('fam_budget')) || [
+            { provider: "Mortgage / Rent", cost: 850.00, due: 1, type: "actual", who: "family" },
+            { provider: "Council Tax", cost: 165.00, due: 5, type: "actual", who: "family" },
+            { provider: "Food Shopping (Estimate)", cost: 400.00, due: 28, type: "estimated", who: "family" }
+        ];
         let destinationsData = JSON.parse(localStorage.getItem('fam_destinations')) || { 
             places: [], 
             restaurants: [], 
@@ -1422,7 +1505,6 @@
         let calendarEvents = JSON.parse(localStorage.getItem('fam_calendar')) || {};
 
         // One-time import of the family dates supplied on 31 October 2026.
-        // Events are assigned to "family" so they remain visible in every user view.
         const calendarImportKey = 'fam_calendar_import_nov2026_v1';
         if (!localStorage.getItem(calendarImportKey)) {
             const importedCalendarEntries = [
@@ -1464,6 +1546,7 @@
             localStorage.setItem('fam_meals', JSON.stringify(mealsData));
             localStorage.setItem('fam_foodshop', JSON.stringify(foodShopData));
             localStorage.setItem('fam_familyshop', JSON.stringify(familyShopData));
+            localStorage.setItem('fam_budget', JSON.stringify(budgetData));
             localStorage.setItem('fam_destinations', JSON.stringify(destinationsData));
             localStorage.setItem('fam_chores', JSON.stringify(choresData));
             localStorage.setItem('fam_wishlist', JSON.stringify(wishlistData));
@@ -1554,6 +1637,8 @@
             const isCal = (val === 'calendar' || val === 'birthday');
             document.getElementById('date-row').style.display = isCal ? 'flex' : 'none';
             document.getElementById('recurring-row').style.display = isCal ? 'flex' : 'none';
+            document.getElementById('budget-fields-row').style.display = (val === 'budget') ? 'flex' : 'none';
+            document.getElementById('budget-type-row').style.display = (val === 'budget') ? 'flex' : 'none';
             if (val === 'birthday') {
                 document.getElementById('add-recurring').value = 'birthday';
             }
@@ -1923,8 +2008,62 @@
             }).join('');
         }
 
+        /* Monthly Budgets Logic */
+        function addBudgetCardItem() {
+            const providerInput = document.getElementById('budget-provider-input');
+            const costInput = document.getElementById('budget-cost-input');
+            const dueInput = document.getElementById('budget-duedate-input');
+            const typeInput = document.getElementById('budget-type-input');
+
+            if (!providerInput || !providerInput.value.trim()) return;
+            const provider = providerInput.value.trim();
+            const cost = parseFloat(costInput.value) || 0;
+            const due = parseInt(dueInput.value) || 1;
+            const type = typeInput ? typeInput.value : 'actual';
+
+            budgetData.push({ provider, cost, due, type, who: currentUser });
+
+            providerInput.value = '';
+            costInput.value = '';
+            dueInput.value = '';
+            saveData();
+            renderBudgetView();
+            showToast('Budget bill added');
+        }
+
+        function renderBudgetView() {
+            const container = document.getElementById('budget-dynamic-list-container');
+            const totalEl = document.getElementById('budget-total-amount');
+            const filtered = budgetData.filter(item => filterItem(item.who));
+
+            let totalSum = 0;
+            filtered.forEach(item => { totalSum += Number(item.cost) || 0; });
+            totalEl.textContent = `£${totalSum.toFixed(2)}`;
+
+            container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No budget items added yet.</div>` : budgetData.map((item, idx) => {
+                if (!filterItem(item.who)) return '';
+                const isEst = item.type === 'estimated';
+                return `
+                    <div class="compact-scoped-item" style="padding: 10px 12px; min-height: 44px;">
+                        <div style="display:flex; flex-direction:column; flex:1;">
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <span style="font-weight:700; font-size:0.92rem;">💳 ${item.provider}</span>
+                                <span class="budget-type-badge ${isEst ? 'badge-estimated' : 'badge-actual'}">${isEst ? 'Estimated' : 'Actual'}</span>
+                            </div>
+                            <span style="font-size:0.75rem; color:var(--muted);">Due on day ${item.due} of the month</span>
+                        </div>
+                        <div style="font-weight:800; font-size:0.95rem; color:var(--accent); margin-right: 8px;">£${Number(item.cost).toFixed(2)}</div>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <span class="compact-scoped-tag bg-${item.who}" onclick="cycleAssignee('budget', ${idx})">${item.who}</span>
+                            <button class="action-btn delete-btn" onclick="budgetData.splice(${idx},1); saveData(); renderBudgetView();">✕</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
         function cycleAssignee(type, index) {
-            let data = type === 'foodshop' ? foodShopData : (type === 'familyshop' ? familyShopData : (type === 'wishlist' ? wishlistData : (type === 'cinema' ? destinationsData.cinema : (type === 'home' ? destinationsData.home : todosData))));
+            let data = type === 'foodshop' ? foodShopData : (type === 'familyshop' ? familyShopData : (type === 'budget' ? budgetData : (type === 'wishlist' ? wishlistData : (type === 'cinema' ? destinationsData.cinema : (type === 'home' ? destinationsData.home : todosData))));
             if (!data) return;
             const currentWho = data[index].who || 'family';
             data[index].who = assignees[(assignees.indexOf(currentWho) + 1) % assignees.length];
@@ -2249,6 +2388,9 @@
             const dateVal = document.getElementById('add-date').value;
             const recurring = document.getElementById('add-recurring').value;
             const postcode = document.getElementById('add-postcode').value.trim();
+            const budgetCost = parseFloat(document.getElementById('add-budget-cost').value) || 0;
+            const budgetDue = parseInt(document.getElementById('add-budget-duedate').value) || 1;
+            const budgetType = document.getElementById('add-budget-type').value;
 
             let title = rawTitle;
             if (category === 'birthday' && !title.includes('🎂')) {
@@ -2263,6 +2405,7 @@
                 calendarEvents[dateVal].push({ title: finalTitle, who: assignee });
             } else if (category === 'foodshop') foodShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
             else if (category === 'familyshop') familyShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
+            else if (category === 'budget') budgetData.push({ provider: rawTitle, cost: budgetCost, due: budgetDue, type: budgetType, who: assignee });
             else if (category === 'places') destinationsData.places.push({ title: finalTitle, who: assignee, postcode });
             else if (category === 'restaurants') destinationsData.restaurants.push({ title: finalTitle, who: assignee, postcode, image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60' });
             else if (['cinema','home'].includes(category)) {
@@ -2279,6 +2422,8 @@
             saveData();
             document.getElementById('add-title').value = '';
             document.getElementById('add-postcode').value = '';
+            document.getElementById('add-budget-cost').value = '';
+            document.getElementById('add-budget-duedate').value = '';
             toggleQuickAddModal();
             renderAllViews();
             showToast('Item added successfully!');
@@ -2288,6 +2433,7 @@
             setCalendarMode(calendarMode);
             renderMeals();
             renderShopping();
+            renderBudgetView();
             renderTodos();
             renderPlacesView();
             renderRestaurantsView();
