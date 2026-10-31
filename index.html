@@ -1449,15 +1449,17 @@
         let foodShopData = JSON.parse(localStorage.getItem('fam_foodshop')) || [];
         let familyShopData = JSON.parse(localStorage.getItem('fam_familyshop')) || [];
         let budgetData = JSON.parse(localStorage.getItem('fam_budget')) || [
-            { provider: "Mortgage / Rent", cost: 850.00, due: 1, type: "actual", who: "family" },
-            { provider: "Council Tax", cost: 165.00, due: 5, type: "actual", who: "family" },
-            { provider: "Food Shopping (Estimate)", cost: 400.00, due: 28, type: "estimated", who: "family" }
+            { provider: "HSBC Mortgage", cost: 800.00, due: 1, type: "actual", who: "family" },
+            { provider: "Sky Broadband", cost: 20.00, due: 1, type: "actual", who: "family" },
+            { provider: "Yorkshire Water", cost: 41.00, due: 1, type: "actual", who: "family" },
+            { provider: "Shopping (Estimate)", cost: 200.00, due: 1, type: "estimated", who: "family" },
+            { provider: "Octopus Energy", cost: 150.00, due: 25, type: "actual", who: "family" },
+            { provider: "Netflix", cost: 0.00, due: 28, type: "actual", who: "family" }
         ];
         let destinationsData = JSON.parse(localStorage.getItem('fam_destinations')) || { 
             places: [], 
             cinema: [], home: [] 
         };
-        // Ensure restaurants array is safe even if old localStorage had it
         if (!destinationsData.places) destinationsData.places = [];
         if (!destinationsData.cinema) destinationsData.cinema = [];
         if (!destinationsData.home) destinationsData.home = [];
