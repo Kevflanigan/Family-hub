@@ -1573,7 +1573,7 @@
         function selectFamilyView() {
             viewMode = 'family';
             toggleUserDropdown();
-            updateHeaderDisplay();
+            window.updateHeaderDisplay();
             saveData();
             renderAllViews();
             showToast("Showing Family Plans (Everyone)");
@@ -1584,13 +1584,13 @@
             currentUserName = userName;
             viewMode = 'individual';
             toggleUserDropdown();
-            updateHeaderDisplay();
+            window.updateHeaderDisplay();
             saveData();
             renderAllViews();
             showToast(`Showing ${userName}'s Personal View`);
         }
 
-        function updateHeaderDisplay() {
+        window.updateHeaderDisplay = function updateHeaderDisplay() {
             const indicatorEl = document.getElementById('account-indicator');
             const badgeDotEl = document.getElementById('active-badge-dot');
             const badgeTextEl = document.getElementById('active-badge-text');
@@ -1604,15 +1604,15 @@
             }
 
             if (viewMode === 'family') {
-                indicatorEl.setAttribute('class', 'user-silhouette-icon text-family');
-                badgeDotEl.className = "account-avatar-dot bg-family";
-                badgeTextEl.textContent = "Family";
+                if (indicatorEl) indicatorEl.setAttribute('class', 'user-silhouette-icon text-family');
+                if (badgeDotEl) badgeDotEl.className = "account-avatar-dot bg-family";
+                if (badgeTextEl) badgeTextEl.textContent = "Family";
             } else {
-                indicatorEl.setAttribute('class', `user-silhouette-icon text-${currentUser}`);
-                badgeDotEl.className = `account-avatar-dot bg-${currentUser}`;
-                badgeTextEl.textContent = currentUserName.split(' ')[0];
+                if (indicatorEl) indicatorEl.setAttribute('class', `user-silhouette-icon text-${currentUser}`);
+                if (badgeDotEl) badgeDotEl.className = `account-avatar-dot bg-${currentUser}`;
+                if (badgeTextEl) badgeTextEl.textContent = currentUserName.split(' ')[0];
             }
-        }
+        };
 
         function filterItem(itemWho) {
             if (viewMode === 'family') return true;
@@ -2445,7 +2445,7 @@
 
         document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
         
-        updateHeaderDisplay();
+        window.updateHeaderDisplay();
         renderAllViews();
     </script>
 
@@ -2524,7 +2524,9 @@
         if (dropdownHouse) dropdownHouse.textContent = householdName;
         if (optUserName) optUserName.textContent = `${firstName}'s Plan`;
 
-        updateHeaderDisplay();
+        if (typeof window.updateHeaderDisplay === 'function') {
+            window.updateHeaderDisplay();
+        }
       }
 
       window.fpSetAuthMode = (mode) => {
