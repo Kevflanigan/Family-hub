@@ -1286,7 +1286,7 @@
             <!-- Manual Add Form -->
             <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px;">
                 <div style="font-weight: 700; font-size: 0.85rem; color: var(--muted);">Add New Bill / Estimate</div>
-                <input type="text" id="budget-provider-input" class="compact-scoped-input" placeholder="Provider / Category name...">
+                <input type="text" id="budget-provider-input" class="compact-scoped-input" placeholder="Provider / Category name..." onkeypress="if(event.key==='Enter') addBudgetCardItem()">
                 <div style="display: flex; gap: 8px;">
                     <input type="number" step="0.01" id="budget-cost-input" class="compact-scoped-input" placeholder="Cost (£)">
                     <input type="number" min="1" max="31" id="budget-duedate-input" class="compact-scoped-input" placeholder="Due Day (1-31)">
@@ -1302,7 +1302,7 @@
                         <option value="mom">Harriet</option>
                     </select>
                 </div>
-                <button class="wishlist-scoped-add-btn" style="width: 100%; min-height: 40px; margin-top: 4px;" onclick="addBudgetCardItem()">+ Add to Monthly Budget</button>
+                <button type="button" class="wishlist-scoped-add-btn" style="width: 100%; min-height: 40px; margin-top: 4px;" onclick="addBudgetCardItem()">+ Add to Monthly Budget</button>
             </div>
 
             <!-- Dynamic Budgets List Container -->
@@ -2039,7 +2039,10 @@
             const typeInput = document.getElementById('budget-type-input');
             const assigneeInput = document.getElementById('budget-assignee-input');
 
-            if (!providerInput || !providerInput.value.trim()) return;
+            if (!providerInput || !providerInput.value.trim()) {
+                showToast('Please enter a provider name');
+                return;
+            }
             const provider = providerInput.value.trim();
             const cost = parseFloat(costInput.value) || 0;
             const due = parseInt(dueInput.value) || 1;
