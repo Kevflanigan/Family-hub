@@ -1156,22 +1156,28 @@
                 <div class="card-title">🎙️ Voice Transcription Review</div>
                 <button class="bubble-close-btn" onclick="toggleVoicePreviewModal()">✕</button>
             </div>
-            <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px;">Review what was heard, make any adjustments if needed, and choose where to save it.</p>
+            <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px;">Review what was heard, adjust details if needed, and approve to add directly as a monthly bill.</p>
             <div class="add-form" style="gap:8px;">
-                <label class="auth-field" style="margin:0;">Heard text / Title:</label>
+                <label class="auth-field" style="margin:0;">Bill Provider / Title:</label>
                 <input type="text" id="voice-preview-input" class="form-input input-full" placeholder="Transcribed text...">
                 
-                <label class="auth-field" style="margin:0;">Target Section:</label>
-                <select id="voice-preview-category" class="form-select input-full">
-                    <option value="budget">Monthly Budget / Bill 💳</option>
-                    <option value="calendar">Calendar Event 📅</option>
-                    <option value="foodshop">Food Shopping List 🛒</option>
-                    <option value="todo">To-Do Task 📝</option>
+                <div style="display:flex; gap:8px;">
+                    <input type="number" step="0.01" id="voice-preview-cost" class="form-input input-half" placeholder="Cost (£)">
+                    <input type="number" min="1" max="31" id="voice-preview-duedate" class="form-input input-half" placeholder="Due Day (1-31)">
+                </div>
+
+                <label class="auth-field" style="margin:0;">Bill For / Assignee:</label>
+                <select id="voice-preview-assignee" class="form-select input-full">
+                    <option value="family">Family (Everyone / Shared)</option>
+                    <option value="dad">Kevin</option>
+                    <option value="mom">Harriet</option>
+                    <option value="leo">Leo</option>
+                    <option value="mia">Mia</option>
                 </select>
 
                 <div style="display:flex; gap:8px; margin-top:6px;">
                     <button type="button" class="auth-secondary" style="margin:0;" onclick="toggleVoicePreviewModal()">Cancel</button>
-                    <button type="button" class="auth-primary" style="margin:0;" onclick="approveVoiceTranscription()">Approve & Add</button>
+                    <button type="button" class="auth-primary" style="margin:0;" onclick="approveVoiceTranscription()">Approve & Add Bill</button>
                 </div>
             </div>
         </div>
@@ -1205,11 +1211,8 @@
             </div>
         </div>
 
-        <!-- Top Header Add Button & Mic Button -->
-        <div style="display: flex; gap: 6px; align-items: center;">
-            <button class="top-add-btn" onclick="toggleQuickAddModal()" title="Add Event / Item">+</button>
-            <button class="top-add-btn" id="mic-voice-btn" onclick="toggleVoiceRecognition()" title="Voice Quick Add" style="background: #0d9488;">🎙️</button>
-        </div>
+        <!-- Top Header Add Button -->
+        <button class="top-add-btn" onclick="toggleQuickAddModal()" title="Add Event / Item">+</button>
 
         <!-- Center: Logo -->
         <div class="header-center" onclick="showView('dashboard', document.getElementById('nav-btn-home'))">
@@ -1313,7 +1316,11 @@
     <!-- VIEW 3: Monthly Budgets & Bills -->
     <div id="view-budget" class="view">
         <section class="budget-scoped-card">
-            <div class="budget-scoped-title">💳 Monthly Budget & Bills</div>
+            <!-- Header title with Voice Mic Button positioned right next to it -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <div class="budget-scoped-title" style="margin-bottom:0;">💳 Monthly Budget & Bills</div>
+                <button id="mic-voice-btn" onclick="toggleVoiceRecognition()" title="Voice Add Bill" style="background:#0d9488; color:#fff; border:none; width:36px; height:36px; border-radius:50%; font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(13,148,136,0.3);">🎙️</button>
+            </div>
             
             <!-- Monthly Total Banner -->
             <div class="budget-total-summary">
@@ -1324,15 +1331,24 @@
             <!-- Inline Add Form -->
             <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px;">
                 <div style="font-weight: 700; font-size: 0.85rem; color: var(--muted);">Add New Bill / Estimate</div>
-                <input type="text" id="budget-provider-input" class="compact-scoped-input" placeholder="Provider / Category name (e.g. Food Shopping, Energy)...">
+                <input type="text" id="budget-provider-input" class="compact-scoped-input" placeholder="Provider / Category name (e.g. Kevin's Phone, Broadband)...">
                 <div style="display: flex; gap: 8px;">
                     <input type="number" step="0.01" id="budget-cost-input" class="compact-scoped-input" placeholder="Cost (£)">
                     <input type="number" min="1" max="31" id="budget-duedate-input" class="compact-scoped-input" placeholder="Due Day (1-31)">
                 </div>
-                <select id="budget-type-input" class="compact-scoped-input">
-                    <option value="actual">Actual Cost</option>
-                    <option value="estimated">Estimated Cost (e.g. Shopping)</option>
-                </select>
+                <div style="display: flex; gap: 8px;">
+                    <select id="budget-type-input" class="compact-scoped-input" style="flex:1;">
+                        <option value="actual">Actual Cost</option>
+                        <option value="estimated">Estimated Cost (e.g. Shopping)</option>
+                    </select>
+                    <select id="budget-assignee-input" class="compact-scoped-input" style="flex:1;">
+                        <option value="family">Family (Shared / All)</option>
+                        <option value="dad">Kevin</option>
+                        <option value="mom">Harriet</option>
+                        <option value="leo">Leo</option>
+                        <option value="mia">Mia</option>
+                    </select>
+                </div>
                 <button class="wishlist-scoped-add-btn" style="width: 100%; min-height: 40px; margin-top: 4px;" onclick="addBudgetCardItem()">+ Add to Monthly Budget</button>
             </div>
 
@@ -1598,7 +1614,7 @@
             recognition.onstart = () => {
                 isListening = true;
                 micBtn.style.background = '#ef4444';
-                showToast("Listening... Speak now.");
+                showToast("Listening... Speak your bill name.");
             };
 
             recognition.onresult = (event) => {
@@ -1630,30 +1646,18 @@
 
         function approveVoiceTranscription() {
             const text = document.getElementById('voice-preview-input').value.trim();
-            const category = document.getElementById('voice-preview-category').value;
+            const cost = parseFloat(document.getElementById('voice-preview-cost').value) || 0;
+            const due = parseInt(document.getElementById('voice-preview-duedate').value) || 1;
+            const assignee = document.getElementById('voice-preview-assignee').value;
+            
             toggleVoicePreviewModal();
 
             if (!text) return;
 
-            if (category === 'budget') {
-                budgetData.push({ provider: text, cost: 0.00, due: 1, type: "actual", who: currentUser });
-                showView('budget', document.getElementById('nav-btn-budget'));
-            } else if (category === 'calendar') {
-                const todayStr = new Date().toISOString().split('T')[0];
-                if (!calendarEvents[todayStr]) calendarEvents[todayStr] = [];
-                calendarEvents[todayStr].push({ title: text, who: currentUser });
-                showView('calendar', document.getElementById('nav-btn-calendar'));
-            } else if (category === 'foodshop') {
-                foodShopData.push({ text: text, who: currentUser, done: false, isEditing: false });
-                showView('shopping', document.getElementById('nav-btn-shopping'));
-            } else if (category === 'todo') {
-                todosData.push({ text: text, who: currentUser, done: false, isEditing: false });
-                showView('todo', document.getElementById('nav-btn-todo'));
-            }
-
+            budgetData.push({ provider: text, cost: cost, due: due, type: "actual", who: assignee });
             saveData();
-            renderAllViews();
-            showToast("Voice item successfully added!");
+            renderBudgetView();
+            showToast("Voice bill successfully added!");
         }
 
         function toggleUserDropdown() {
@@ -2101,14 +2105,16 @@
             const costInput = document.getElementById('budget-cost-input');
             const dueInput = document.getElementById('budget-duedate-input');
             const typeInput = document.getElementById('budget-type-input');
+            const assigneeInput = document.getElementById('budget-assignee-input');
 
             if (!providerInput || !providerInput.value.trim()) return;
             const provider = providerInput.value.trim();
             const cost = parseFloat(costInput.value) || 0;
             const due = parseInt(dueInput.value) || 1;
             const type = typeInput ? typeInput.value : 'actual';
+            const who = assigneeInput ? assigneeInput.value : currentUser;
 
-            budgetData.push({ provider, cost, due, type, who: currentUser });
+            budgetData.push({ provider, cost, due, type, who });
 
             providerInput.value = '';
             costInput.value = '';
