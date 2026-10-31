@@ -16,8 +16,6 @@
             --accent: #1e3a8a;
             --mom: #d9468d;
             --dad: #3678d4;
-            --leo: #159b75;
-            --mia: #c47a08;
             --family: #1e3a8a;
             --shadow-soft: 0 4px 16px rgba(30, 58, 138, .05);
         }
@@ -98,8 +96,6 @@
 
         .text-mom { color: var(--mom); }
         .text-dad { color: var(--dad); }
-        .text-leo { color: var(--leo); }
-        .text-mia { color: var(--mia); }
         .text-family { color: var(--family); }
 
         .user-dropdown-menu {
@@ -541,20 +537,11 @@
 
         .bg-mom { background-color: var(--mom); }
         .bg-dad { background-color: var(--dad); }
-        .bg-leo { background-color: var(--leo); }
-        .bg-mia { background-color: var(--mia); }
         .bg-family { background-color: var(--family); }
 
         .meal-card-row { margin-bottom: 6px; }
         .meal-day-name { font-size: 0.95rem; font-weight: 800; color: #1e3a8a; width: 48px; flex-shrink: 0; }
         .meal-input-inline { background: transparent; border: none; border-bottom: 1px dashed var(--border); font-size: 0.95rem; width: 100%; outline: none; padding: 4px 0; }
-
-        .chores-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 10px;
-            width: 100%;
-        }
 
         #places-map {
             width: 100%;
@@ -1105,15 +1092,12 @@
                         <option value="cinema">Cinema Film</option>
                         <option value="home">Home Watchlist</option>
                         <option value="todo">To-Do Task</option>
-                        <option value="chores">Kid Chore</option>
                         <option value="wishlist">Gift Wishlist</option>
                     </select>
                     <select id="add-assignee" class="form-select input-half">
                         <option value="family">Family (Everyone)</option>
                         <option value="mom">Harriet</option>
                         <option value="dad">Kevin</option>
-                        <option value="leo">Leo</option>
-                        <option value="mia">Mia</option>
                     </select>
                 </div>
                 <!-- Budget Cost, Due Date & Type Specific Fields -->
@@ -1171,8 +1155,6 @@
                     <option value="family">Family (Shared / All)</option>
                     <option value="dad">Kevin</option>
                     <option value="mom">Harriet</option>
-                    <option value="leo">Leo</option>
-                    <option value="mia">Mia</option>
                 </select>
 
                 <div style="display:flex; gap:8px; margin-top:6px;">
@@ -1316,10 +1298,10 @@
     <!-- VIEW 3: Monthly Budgets & Bills -->
     <div id="view-budget" class="view">
         <section class="budget-scoped-card">
-            <!-- Header title with Voice Mic Button positioned right next to it -->
-            <div style="display:flex; justify-space-between; align-items:center; margin-bottom:8px;">
+            <!-- Header title with Voice Mic Button positioned cleanly right next to it -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                 <div class="budget-scoped-title" style="margin-bottom:0;">💳 Monthly Budget & Bills</div>
-                <button id="mic-voice-btn" onclick="toggleVoiceRecognition()" title="Voice Add Bill" style="background:#0d9488; color:#fff; border:none; width:36px; height:36px; border-radius:50%; font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(13,148,136,0.3);">🎙️</button>
+                <button id="mic-voice-btn" onclick="toggleVoiceRecognition()" title="Voice Add Bill" style="background:#0d9488; color:#fff; border:none; width:36px; height:36px; border-radius:50%; font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(13,148,136,0.3); flex-shrink:0;">🎙️</button>
             </div>
             
             <!-- Monthly Total Banner -->
@@ -1345,8 +1327,6 @@
                         <option value="family">Family (Shared / All)</option>
                         <option value="dad">Kevin</option>
                         <option value="mom">Harriet</option>
-                        <option value="leo">Leo</option>
-                        <option value="mia">Mia</option>
                     </select>
                 </div>
                 <button class="wishlist-scoped-add-btn" style="width: 100%; min-height: 40px; margin-top: 4px;" onclick="addBudgetCardItem()">+ Add to Monthly Budget</button>
@@ -1405,11 +1385,6 @@
                 <button class="compact-scoped-add-btn" onclick="addTodoItem()">+</button>
             </div>
             <div id="todo-list-container" style="display:flex; flex-direction:column;"></div>
-        </section>
-
-        <section class="compact-scoped-card">
-            <div class="todo-scoped-title">⭐ Kids' Chores</div>
-            <div id="chores-list-container" class="chores-grid"></div>
         </section>
 
         <section class="compact-scoped-card">
@@ -1483,7 +1458,7 @@
             return new Date(date.setDate(diff));
         }
 
-        const assignees = ['family', 'mom', 'dad', 'leo', 'mia'];
+        const assignees = ['family', 'mom', 'dad'];
 
         let currentUser = localStorage.getItem('fam_user') || 'dad';
         let currentUserName = localStorage.getItem('fam_user_name') || 'Kevin';
@@ -1517,7 +1492,6 @@
         if (!destinationsData.cinema) destinationsData.cinema = [];
         if (!destinationsData.home) destinationsData.home = [];
 
-        let choresData = JSON.parse(localStorage.getItem('fam_chores')) || [{ kid: "Leo", chores: [] }, { kid: "Mia", chores: [] }];
         let wishlistData = JSON.parse(localStorage.getItem('fam_wishlist')) || [];
         let todosData = JSON.parse(localStorage.getItem('fam_todos')) || [];
         let calendarEvents = JSON.parse(localStorage.getItem('fam_calendar')) || {};
@@ -1565,7 +1539,6 @@
             localStorage.setItem('fam_familyshop', JSON.stringify(familyShopData));
             localStorage.setItem('fam_budget', JSON.stringify(budgetData));
             localStorage.setItem('fam_destinations', JSON.stringify(destinationsData));
-            localStorage.setItem('fam_chores', JSON.stringify(choresData));
             localStorage.setItem('fam_wishlist', JSON.stringify(wishlistData));
             localStorage.setItem('fam_todos', JSON.stringify(todosData));
             localStorage.setItem('fam_calendar', JSON.stringify(calendarEvents));
@@ -1608,34 +1581,46 @@
             recognition.lang = 'en-GB';
             recognition.interimResults = false;
             recognition.maxAlternatives = 1;
+            
+            // Allow a longer pause for natural speech completion
+            recognition.continuous = false;
 
             const micBtn = document.getElementById('mic-voice-btn');
 
             recognition.onstart = () => {
                 isListening = true;
                 micBtn.style.background = '#ef4444';
-                showToast("Listening... Speak your bill details.");
+                showToast("Listening... Speak clearly.");
             };
 
             recognition.onresult = (event) => {
                 const speechText = event.results[0][0].transcript;
                 
-                // Clear inputs
                 document.getElementById('voice-preview-input').value = speechText;
                 document.getElementById('voice-preview-cost').value = '';
                 document.getElementById('voice-preview-duedate').value = '';
                 document.getElementById('voice-preview-assignee').value = 'family';
 
-                // Smart parse cost (£ / pounds / quid)
+                // Smart parse cost (£ / pounds / quid / digits)
                 const moneyMatch = speechText.match(/(?:£|pounds?|\bcost\b[:\s]*)(\d+(?:\.\d{2})?)/i) || speechText.match(/(\d+(?:\.\d{2})?)\s*(?:pounds?|quid)/i);
                 if (moneyMatch) {
                     document.getElementById('voice-preview-cost').value = moneyMatch[1];
                 }
 
-                // Smart parse due date
-                const dueMatch = speechText.match(/(?:due\s*(?:on\s*(?:the)?)?|day)\s*(\d{1,2})(?:st|nd|rd|th)?/i);
-                if (dueMatch) {
-                    document.getElementById('voice-preview-duedate').value = dueMatch[1];
+                // Smart parse due date (digits or ordinal/number words)
+                const dueMatch = speechText.match(/(?:due\s*(?:on\s*(?:the)?)?|day|second)\s*(\d{1,2}|second|first|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)?/i);
+                const dayWordMap = { first: 1, second: 2, third: 3, fourth: 4, fifth: 5, sixth: 6, seventh: 7, eighth: 8, ninth: 9, tenth: 10 };
+                
+                let detectedDay = '';
+                if (/second/i.test(speechText)) detectedDay = '2';
+                else if (/first/i.test(speechText)) detectedDay = '1';
+                else if (/third/i.test(speechText)) detectedDay = '3';
+                else if (dueMatch && dueMatch[1]) {
+                    detectedDay = dayWordMap[dueMatch[1].toLowerCase()] || dueMatch[1].replace(/\D/g, '');
+                }
+
+                if (detectedDay) {
+                    document.getElementById('voice-preview-duedate').value = detectedDay;
                 }
 
                 // Smart parse assignee / target person
@@ -1645,14 +1630,20 @@
                     document.getElementById('voice-preview-assignee').value = 'mom';
                 }
 
-                // Clean title input
+                // Clean title input thoroughly so trailing phrases aren't left behind
                 let cleanTitle = speechText;
                 if (moneyMatch) cleanTitle = cleanTitle.replace(moneyMatch[0], '');
                 if (dueMatch) cleanTitle = cleanTitle.replace(dueMatch[0], '');
-                cleanTitle = cleanTitle.replace(/(?:new bill|bill for|for kevin|for harriet|bill is|every month|is when this is billed|billed|due on the|due on)/gi, '').trim();
+                
+                cleanTitle = cleanTitle
+                    .replace(/new bill|bill for|for kevin|for harriet|bill is|every month|is when this is billed|billed|due on the|due on|a month|on the second|on the first|on the third|on the fourth|on the fifth/gi, '')
+                    .replace(/[£0-9]+/g, '')
+                    .trim();
                 
                 if (cleanTitle) {
                     document.getElementById('voice-preview-input').value = cleanTitle.charAt(0).toUpperCase() + cleanTitle.slice(1);
+                } else {
+                    document.getElementById('voice-preview-input').value = speechText;
                 }
 
                 toggleVoicePreviewModal();
@@ -2393,48 +2384,6 @@
             }).join('');
         }
 
-        function addKidChore(kidIndex) {
-            const input = document.getElementById(`chore-input-${kidIndex}`);
-            if (!input || !input.value.trim()) return;
-            choresData[kidIndex].chores.push({ text: input.value.trim(), done: false });
-            input.value = '';
-            saveData();
-            renderChores();
-            showToast('Chore added');
-        }
-
-        function deleteKidChore(kidIndex, choreIndex) {
-            choresData[kidIndex].chores.splice(choreIndex, 1);
-            saveData();
-            renderChores();
-        }
-
-        function renderChores() {
-            document.getElementById('chores-list-container').innerHTML = choresData.map((k, kIdx) => `
-                <div style="background:#f8fafc; border:1px solid #eae7e1; border-radius:8px; padding:8px 10px; margin-bottom:6px;">
-                    <div style="font-weight:800; font-size:0.88rem; margin-bottom:6px;">${k.kid}</div>
-                    <div class="compact-scoped-add-group" style="margin-bottom:6px;">
-                        <input type="text" id="chore-input-${kIdx}" class="compact-scoped-input" placeholder="Add chore..." onkeypress="if(event.key==='Enter') addKidChore(${kIdx})">
-                        <button class="compact-scoped-add-btn" onclick="addKidChore(${kIdx})">+</button>
-                    </div>
-                    <div style="display:flex; flex-direction:column;">
-                        ${k.chores.length === 0 ? '<span style="font-size:0.8rem; color:var(--muted); padding:2px 0;">No chores</span>' : k.chores.map((c, cIdx) => {
-                            const choreText = typeof c === 'string' ? c : c.text;
-                            return `
-                                <div class="compact-scoped-item">
-                                    <div class="compact-scoped-left">
-                                        <input type="checkbox" class="compact-scoped-checkbox">
-                                        <span class="todo-item-label">${choreText}</span>
-                                    </div>
-                                    <button class="action-btn delete-btn" onclick="deleteKidChore(${kIdx}, ${cIdx})" style="padding:2px 6px;">✕</button>
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                </div>
-            `).join('');
-        }
-
         function addWishlistItem() {
             const input = document.getElementById('wishlist-quick-input');
             if (!input || !input.value.trim()) return;
@@ -2494,10 +2443,6 @@
             }
             else if (category === 'todo') todosData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
             else if (category === 'wishlist') wishlistData.push({ title: finalTitle, who: assignee });
-            else if (category === 'chores') {
-                const target = choresData.find(c => c.kid.toLowerCase() === assignee.toLowerCase()) || choresData[0];
-                target.chores.push({ text: finalTitle, done: false });
-            }
 
             saveData();
             document.getElementById('add-title').value = '';
@@ -2517,7 +2462,6 @@
             renderTodos();
             renderPlacesView();
             renderWatchlist();
-            renderChores();
             renderWishlist();
             renderDashboard();
         }
