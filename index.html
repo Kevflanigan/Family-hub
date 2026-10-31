@@ -1421,6 +1421,34 @@
         let todosData = JSON.parse(localStorage.getItem('fam_todos')) || [];
         let calendarEvents = JSON.parse(localStorage.getItem('fam_calendar')) || {};
 
+        // One-time import of the family dates supplied on 31 October 2026.
+        // Events are assigned to "family" so they remain visible in every user view.
+        const calendarImportKey = 'fam_calendar_import_nov2026_v1';
+        if (!localStorage.getItem(calendarImportKey)) {
+            const importedCalendarEntries = [
+                ['2026-11-04', 'Harriet - London'],
+                ['2026-11-10', 'Harriet - work'],
+                ['2026-11-13', 'Chimney sweep'],
+                ['2026-11-14', 'Harriet - Hairdresser'],
+                ['2026-11-19', 'Harriet in London'],
+                ['2026-11-21', 'Harriet mum here'],
+                ['2026-11-29', 'Harriet Stay at London'],
+                ['2026-12-12', "Roy's bday"],
+                ['2026-12-19', 'Stef and Jim Xmas bash'],
+                ['2027-01-20', 'Siblings training'],
+                ['2027-01-22', 'Final wedding payment due']
+            ];
+
+            importedCalendarEntries.forEach(([date, title]) => {
+                if (!calendarEvents[date]) calendarEvents[date] = [];
+                const alreadyExists = calendarEvents[date].some(ev => ev.title === title);
+                if (!alreadyExists) calendarEvents[date].push({ title, who: 'family' });
+            });
+
+            localStorage.setItem('fam_calendar', JSON.stringify(calendarEvents));
+            localStorage.setItem(calendarImportKey, 'done');
+        }
+
         let toastTimer = null;
         function showToast(msg) {
             const toast = document.getElementById('toast-banner');
