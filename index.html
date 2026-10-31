@@ -327,6 +327,14 @@
             font-weight: 800;
         }
 
+        /* Dashboard task checkboxes */
+        .dashboard-task-item { gap: 10px; }
+        .dashboard-task-left { display:flex; align-items:center; gap:12px; flex:1; min-width:0; cursor:pointer; }
+        .dashboard-task-left > span { display:block; min-width:0; }
+        .dashboard-task-left strong { display:block; }
+        .dashboard-task-left .sub-text { display:block; }
+        .dashboard-task-checkbox { width:22px; height:22px; flex-shrink:0; accent-color:var(--accent); cursor:pointer; }
+
         /* Standard Cards & Inputs */
         .card {
             background: rgba(255,255,255,.96);
@@ -1612,6 +1620,17 @@
             }
         }
 
+        function toggleDashboardTask(type, index) {
+            const target = type === 'foodshop' ? foodShopData : todosData;
+            if (!target[index]) return;
+            target[index].done = true;
+            saveData();
+            renderShopping();
+            renderTodos();
+            renderDashboard();
+            showToast(type === 'foodshop' ? 'Shopping item completed' : 'Task completed');
+        }
+
         function renderDashboard() {
             const todayStr = new Date().toISOString().split('T')[0];
             
@@ -1654,23 +1673,36 @@
 
             // 3. Outstanding Tasks & Shopping Items
             const tasksCont = document.getElementById('dash-tasks');
-            const uncompletedTasks = todosData.filter(t => !t.done && filterItem(t.who));
-            const uncompletedFood = foodShopData.filter(s => !s.done && filterItem(s.who));
-            
+            const uncompletedTasks = todosData
+                .map((item, index) => ({ ...item, index }))
+                .filter(item => !item.done && filterItem(item.who));
+            const uncompletedFood = foodShopData
+                .map((item, index) => ({ ...item, index }))
+                .filter(item => !item.done && filterItem(item.who));
+
             let combinedItems = [];
-            uncompletedFood.forEach(f => combinedItems.push({ text: f.text, sub: "Food Shopping List", icon: "🛒" }));
-            uncompletedTasks.forEach(t => combinedItems.push({ text: t.text, sub: "To-Do Task", icon: "✅" }));
+            uncompletedFood.forEach(item => combinedItems.push({
+                text: item.text, sub: "Food Shopping List", type: "foodshop", index: item.index, icon: "🛒"
+            }));
+            uncompletedTasks.forEach(item => combinedItems.push({
+                text: item.text, sub: "To-Do Task", type: "todo", index: item.index, icon: "📝"
+            }));
 
             if (combinedItems.length === 0) {
                 tasksCont.innerHTML = `<div class="list-empty">No outstanding tasks or shopping items.</div>`;
             } else {
                 tasksCont.innerHTML = combinedItems.slice(0, 5).map(item => `
-                    <div class="dashboard-item">
-                        <div>
-                            <strong>${item.text}</strong>
-                            <div class="sub-text">${item.sub}</div>
-                        </div>
-                        <span>${item.icon}</span>
+                    <div class="dashboard-item dashboard-task-item">
+                        <label class="dashboard-task-left">
+                            <input class="dashboard-task-checkbox" type="checkbox"
+                                aria-label="Mark ${item.text.replace(/&/g, '&amp;').replace(/"/g, '&quot;')} as complete"
+                                onchange="toggleDashboardTask('${item.type}', ${item.index})">
+                            <span>
+                                <strong>${item.text}</strong>
+                                <span class="sub-text">${item.sub}</span>
+                            </span>
+                        </label>
+                        <span aria-hidden="true">${item.icon}</span>
                     </div>
                 `).join('');
             }
