@@ -16,6 +16,8 @@
             --accent: #1e3a8a;
             --mom: #d9468d;
             --dad: #3678d4;
+            --leo: #159b75;
+            --mia: #c47a08;
             --family: #1e3a8a;
             --shadow-soft: 0 4px 16px rgba(30, 58, 138, .05);
         }
@@ -96,6 +98,8 @@
 
         .text-mom { color: var(--mom); }
         .text-dad { color: var(--dad); }
+        .text-leo { color: var(--leo); }
+        .text-mia { color: var(--mia); }
         .text-family { color: var(--family); }
 
         .user-dropdown-menu {
@@ -246,10 +250,9 @@
             flex-direction: row !important;
             align-items: center !important;
             justify-content: space-around !important;
-            padding: 0 2px !important;
+            padding: 0 4px !important;
             z-index: 1000 !important;
             box-sizing: border-box !important;
-            overflow-x: auto;
         }
 
         .nav-item {
@@ -261,7 +264,7 @@
             border: none !important;
             color: var(--muted) !important;
             padding: 4px 1px !important;
-            font-size: 0.60rem !important;
+            font-size: 0.65rem !important;
             font-weight: 600 !important;
             cursor: pointer !important;
             border-radius: 8px !important;
@@ -278,7 +281,7 @@
         }
 
         .nav-icon {
-            font-size: 1.1rem !important;
+            font-size: 1.15rem !important;
             line-height: 1 !important;
             display: block !important;
         }
@@ -412,7 +415,6 @@
             gap: 8px;
             width: 100%;
             margin-bottom: 10px;
-            flex-wrap: wrap;
         }
 
         .form-input, .form-select {
@@ -537,11 +539,20 @@
 
         .bg-mom { background-color: var(--mom); }
         .bg-dad { background-color: var(--dad); }
+        .bg-leo { background-color: var(--leo); }
+        .bg-mia { background-color: var(--mia); }
         .bg-family { background-color: var(--family); }
 
         .meal-card-row { margin-bottom: 6px; }
         .meal-day-name { font-size: 0.95rem; font-weight: 800; color: #1e3a8a; width: 48px; flex-shrink: 0; }
         .meal-input-inline { background: transparent; border: none; border-bottom: 1px dashed var(--border); font-size: 0.95rem; width: 100%; outline: none; padding: 4px 0; }
+
+        .chores-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 10px;
+            width: 100%;
+        }
 
         #places-map {
             width: 100%;
@@ -788,7 +799,7 @@
             width: 100%;
         }
 
-        .watchlist-scoped-title, .todo-scoped-title, .places-scoped-title, .budget-scoped-title {
+        .watchlist-scoped-title, .todo-scoped-title, .places-scoped-title, .restaurants-scoped-title {
             font-size: 1.05rem;
             font-weight: 800;
             margin-bottom: 8px;
@@ -799,7 +810,6 @@
             gap: 8px;
             width: 100%;
             margin-bottom: 8px;
-            flex-wrap: wrap;
         }
 
         .compact-scoped-input {
@@ -886,7 +896,7 @@
             flex-shrink: 0;
         }
 
-        .wishlist-scoped-input, .places-scoped-input {
+        .wishlist-scoped-input, .places-scoped-input, .restaurants-scoped-input {
             background: #fff;
             border: 1px solid #dcdfe6;
             color: var(--text);
@@ -899,7 +909,7 @@
             box-sizing: border-box;
         }
 
-        .wishlist-scoped-add-btn, .places-scoped-add-btn {
+        .wishlist-scoped-add-btn, .places-scoped-add-btn, .restaurants-scoped-add-btn {
             background: var(--accent);
             color: #fff;
             border: none;
@@ -928,7 +938,7 @@
             font-size: 0.85rem;
         }
 
-        .places-scoped-card, .budget-scoped-card {
+        .places-scoped-card, .restaurants-scoped-card {
             background: rgba(255,255,255,.98);
             border: 1px solid var(--border);
             border-radius: 10px;
@@ -938,33 +948,28 @@
             width: 100%;
         }
 
-        /* Budget Summary Total Box */
-        .budget-total-summary {
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
+        .restaurant-card-item {
+            background: #fff;
+            border: 1px solid #eae7e1;
             border-radius: 10px;
-            padding: 12px 14px;
+            padding: 8px 10px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
-            font-weight: 700;
-            color: var(--accent);
-        }
-        .budget-total-amount {
-            font-size: 1.2rem;
-            font-weight: 800;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 6px;
+            width: 100%;
         }
 
-        .budget-type-badge {
-            font-size: 0.65rem;
-            font-weight: 700;
-            padding: 2px 6px;
-            border-radius: 6px;
-            text-transform: uppercase;
+        .restaurant-thumb {
+            width: 52px;
+            height: 52px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid var(--border);
+            flex-shrink: 0;
+            background: #f1f5f9;
         }
-        .badge-actual { background: #d1fae5; color: #065f46; }
-        .badge-estimated { background: #fef3c7; color: #92400e; }
 
         /* Firebase Auth Gate */
         #auth-gate { position:fixed; inset:0; z-index:5000; display:flex; align-items:center; justify-content:center; padding:12px; background:radial-gradient(ellipse at 15% 0%,rgba(30,58,138,.16),transparent 34rem),#f7f5f1; overflow-y:auto; }
@@ -993,6 +998,29 @@
         .auth-user-line { display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.84rem;color:var(--muted); }
         .auth-user-line button { margin-left:auto;border:1px solid var(--border);background:white;border-radius:8px;padding:6px 10px;font-weight:700;cursor:pointer; }
         @media(max-width:420px){ .auth-card{padding:10px 16px 16px 16px} }
+
+
+
+        /* Family Plan enhancements */
+        .tool-section{background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px;margin:12px 0;box-shadow:var(--shadow-soft)}
+        .tool-section h3{font-size:1rem;margin-bottom:8px;color:var(--accent)}
+        .tool-form{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+        .tool-form input,.tool-form select,.tool-form textarea{width:100%;min-width:0;padding:10px;border:1px solid var(--border);border-radius:9px;background:#fff;font-size:.9rem;color:var(--text)}
+        .tool-form textarea{grid-column:1/-1;min-height:64px;resize:vertical}
+        .tool-form .wide{grid-column:1/-1}
+        .tool-btn{border:0;border-radius:9px;background:var(--accent);color:#fff;padding:9px 12px;font-weight:750;cursor:pointer}
+        .tool-btn.secondary{background:#eff6ff;color:var(--accent);border:1px solid #bfdbfe}
+        .tool-list{display:flex;flex-direction:column;gap:7px;margin-top:9px}
+        .tool-row{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:9px 10px;background:#f8fafc;border:1px solid #edf0f4;border-radius:9px;font-size:.88rem}
+        .tool-row small{display:block;color:var(--muted);font-size:.75rem}
+        .tool-row button{border:0;background:transparent;color:#b42318;font-weight:800;padding:4px 6px;cursor:pointer}
+        .week-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+        .week-day{border:1px solid var(--border);border-radius:10px;padding:9px;background:#fff;min-width:0}
+        .week-day strong{color:var(--accent);font-size:.85rem}.week-day p{font-size:.78rem;color:var(--muted);margin-top:4px;overflow-wrap:anywhere}
+        .tool-note{font-size:.78rem;color:var(--muted);line-height:1.4;margin:6px 0}
+        .account-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+        .tool-total{font-size:1.45rem;font-weight:850;color:var(--accent)}
+        @media(min-width:600px){.week-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 
     </style>
 </head>
@@ -1050,7 +1078,7 @@
             <button class="auth-secondary" type="button" onclick="window.fpJoinHousehold()">Join household</button>
           </div>
           <div class="auth-message" id="household-message" role="status" aria-live="polite"></div>
-          <p class="auth-small">This starter connects login and household membership. Your existing planner items are stored locally in this browser.</p>
+          <p class="auth-small">Important: account and household access are connected, but planner entries are currently stored on this device. Shared cloud synchronisation still needs to be implemented and tested.</p>
         </div>
       </section>
     </div>
@@ -1080,35 +1108,27 @@
                 <button class="bubble-close-btn" onclick="toggleQuickAddModal()">✕</button>
             </div>
             <form class="add-form" style="gap:8px;" onsubmit="handleQuickAdd(event)">
-                <input type="text" id="add-title" class="form-input input-full" placeholder="Enter title / item / task / provider..." required>
+                <input type="text" id="add-title" class="form-input input-full" placeholder="Enter title / item / task..." required>
                 <div class="form-row" style="gap:8px;">
                     <select id="add-category" class="form-select input-half" onchange="handleCategoryChange(this.value)">
                         <option value="calendar">Calendar Event</option>
                         <option value="birthday">Birthday 🎂</option>
                         <option value="foodshop">Food Shopping</option>
                         <option value="familyshop">Family Shopping</option>
-                        <option value="budget">Monthly Budget / Bill 💳</option>
                         <option value="places">Place to Visit</option>
+                        <option value="restaurants">Restaurant</option>
                         <option value="cinema">Cinema Film</option>
                         <option value="home">Home Watchlist</option>
                         <option value="todo">To-Do Task</option>
+                        <option value="chores">Kid Chore</option>
                         <option value="wishlist">Gift Wishlist</option>
                     </select>
                     <select id="add-assignee" class="form-select input-half">
                         <option value="family">Family (Everyone)</option>
                         <option value="mom">Harriet</option>
                         <option value="dad">Kevin</option>
-                    </select>
-                </div>
-                <!-- Budget Cost, Due Date & Type Specific Fields -->
-                <div class="form-row" id="budget-fields-row" style="display:none; gap:8px;">
-                    <input type="number" step="0.01" id="add-budget-cost" class="form-input input-half" placeholder="Cost (£ e.g. 150.00)">
-                    <input type="number" min="1" max="31" id="add-budget-duedate" class="form-input input-half" placeholder="Due Day (1-31)">
-                </div>
-                <div class="form-row" id="budget-type-row" style="display:none; gap:8px;">
-                    <select id="add-budget-type" class="form-select input-full">
-                        <option value="actual">Actual Cost</option>
-                        <option value="estimated">Estimated Cost (e.g. Shopping)</option>
+                        <option value="leo">Leo</option>
+                        <option value="mia">Mia</option>
                     </select>
                 </div>
                 <div class="form-row" id="date-row" style="gap:8px;">
@@ -1178,8 +1198,12 @@
         </div>
     </div>
 
-    <!-- VIEW 0: HOME DASHBOARD -->
+    <!-- VIEW 0: HOME DASHBOARD (Default Opening Screen) -->
     <div id="view-dashboard" class="view active">
+        <section class="card" style="margin-bottom:12px;">
+            <div class="card-title"><span>🗓️ This Week in Our Family</span><button class="tool-btn secondary" onclick="showView('familytools',document.getElementById('nav-btn-tools'))">Open planner</button></div>
+            <div id="family-week-summary" class="tool-note">Your family week at a glance.</div>
+        </section>
         <!-- 1. Today's Schedule & Locations -->
         <section class="card">
             <div class="card-title">
@@ -1263,54 +1287,7 @@
         </section>
     </div>
 
-    <!-- VIEW 3: Monthly Budgets & Bills -->
-    <div id="view-budget" class="view">
-        <section class="budget-scoped-card">
-            <div class="budget-scoped-title" style="margin-bottom:10px;">💳 Monthly Budget & Bills</div>
-            
-            <!-- Natural Language Quick-Bar -->
-            <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 10px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px;">
-                <div style="font-weight: 700; font-size: 0.85rem; color: var(--accent);">💬 Quick Natural Language Add</div>
-                <div style="display: flex; gap: 8px;">
-                    <input type="text" id="nl-budget-input" class="compact-scoped-input" style="flex:1;" placeholder="e.g. Virgin Media £5 a month due on the 2nd..." onkeypress="if(event.key==='Enter') parseAndAddNaturalBudget()">
-                    <button class="wishlist-scoped-add-btn" style="min-height: 38px; padding: 0 14px;" onclick="parseAndAddNaturalBudget()">Add</button>
-                </div>
-            </div>
-
-            <!-- Monthly Total Banner -->
-            <div class="budget-total-summary">
-                <span>Total Monthly Outgoings</span>
-                <span id="budget-total-amount" class="budget-total-amount">£0.00</span>
-            </div>
-
-            <!-- Manual Add Form -->
-            <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px;">
-                <div style="font-weight: 700; font-size: 0.85rem; color: var(--muted);">Add New Bill / Estimate</div>
-                <input type="text" id="budget-provider-input" class="compact-scoped-input" placeholder="Provider / Category name..." onkeypress="if(event.key==='Enter') addBudgetCardItem()">
-                <div style="display: flex; gap: 8px;">
-                    <input type="number" step="0.01" id="budget-cost-input" class="compact-scoped-input" placeholder="Cost (£)">
-                    <input type="number" min="1" max="31" id="budget-duedate-input" class="compact-scoped-input" placeholder="Due Day (1-31)">
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    <select id="budget-type-input" class="compact-scoped-input" style="flex:1;">
-                        <option value="actual">Actual Cost</option>
-                        <option value="estimated">Estimated Cost (e.g. Shopping)</option>
-                    </select>
-                    <select id="budget-assignee-input" class="compact-scoped-input" style="flex:1;">
-                        <option value="family">Family (Shared / All)</option>
-                        <option value="dad">Kevin</option>
-                        <option value="mom">Harriet</option>
-                    </select>
-                </div>
-                <button type="button" class="wishlist-scoped-add-btn" style="width: 100%; min-height: 40px; margin-top: 4px;" onclick="addBudgetCardItem()">+ Add to Monthly Budget</button>
-            </div>
-
-            <!-- Dynamic Budgets List Container -->
-            <div id="budget-dynamic-list-container" style="display:flex; flex-direction:column;"></div>
-        </section>
-    </div>
-
-    <!-- VIEW 4: Places to Visit -->
+    <!-- VIEW 3: Places to Visit -->
     <div id="view-places" class="view">
         <section class="places-scoped-card">
             <div class="places-scoped-title">📍 Places to Visit</div>
@@ -1325,6 +1302,19 @@
         <section class="places-scoped-card">
             <div class="places-scoped-title">🗺️ Interactive Map</div>
             <div id="places-map"></div>
+        </section>
+    </div>
+
+    <!-- VIEW 4: Restaurants -->
+    <div id="view-restaurants" class="view">
+        <section class="restaurants-scoped-card">
+            <div class="restaurants-scoped-title">🍽️ Restaurants List</div>
+            <div class="compact-scoped-add-group">
+                <input type="text" id="restaurants-name-input" class="restaurants-scoped-input" style="flex:2;" placeholder="Restaurant name...">
+                <input type="text" id="restaurants-postcode-input" class="restaurants-scoped-input" style="flex:1.2;" placeholder="Postcode...">
+                <button class="restaurants-scoped-add-btn" onclick="addRestaurantItem()">+ Add</button>
+            </div>
+            <div id="restaurants-dynamic-list-container" style="display:flex; flex-direction:column;"></div>
         </section>
     </div>
 
@@ -1361,12 +1351,96 @@
         </section>
 
         <section class="compact-scoped-card">
+            <div class="todo-scoped-title">⭐ Kids' Chores</div>
+            <div id="chores-list-container" class="chores-grid"></div>
+        </section>
+
+        <section class="compact-scoped-card">
             <div class="todo-scoped-title">🎁 Gift Wishlist</div>
             <div class="compact-scoped-add-group">
                 <input type="text" id="wishlist-quick-input" class="wishlist-scoped-input" placeholder="Add item..." onkeypress="if(event.key==='Enter') addWishlistItem()">
                 <button class="wishlist-scoped-add-btn" onclick="addWishlistItem()">+ Add</button>
             </div>
             <div id="wishlist-list-container" style="display:flex; flex-direction:column;"></div>
+        </section>
+    </div>
+
+    <!-- Family tools: weekly planner, household bills, renewals, ideas, handover, occasions and account -->
+    <div id="view-familytools" class="view">
+        <section class="card"><div class="card-title">✨ Family Plan tools</div><p class="tool-note">A connected place to organise the week, household commitments and family ideas.</p></section>
+        <section class="tool-section">
+            <h3>🗓️ Weekly family planner</h3>
+            <p class="tool-note">A quick Monday–Sunday overview using your existing meal plan and calendar.</p>
+            <div id="weekly-planner-grid" class="week-grid"></div>
+        </section>
+        <section class="tool-section">
+            <h3>💷 Household bills planner</h3>
+            <p class="tool-note">Track known household bills only — no bank connections or transaction tracking.</p>
+            <div class="tool-total" id="bills-monthly-total">£0.00 <span style="font-size:.75rem;font-weight:600">monthly equivalent</span></div>
+            <form class="tool-form" onsubmit="addHouseholdBill(event)">
+                <input id="bill-name" required placeholder="Bill / provider">
+                <input id="bill-amount" type="number" min="0" step="0.01" required placeholder="Amount (£)">
+                <select id="bill-frequency"><option value="monthly">Monthly</option><option value="weekly">Weekly</option><option value="quarterly">Quarterly</option><option value="yearly">Yearly</option></select>
+                <input id="bill-due" type="date" aria-label="Next payment date">
+                <select id="bill-category"><option>Utilities</option><option>Mortgage / Rent</option><option>Insurance</option><option>Vehicle</option><option>Communications</option><option>Subscriptions</option><option>Other</option></select>
+                <button class="tool-btn" type="submit">Add bill</button>
+            </form>
+            <div id="household-bills-list" class="tool-list"></div>
+        </section>
+        <section class="tool-section">
+            <h3>🔁 Subscriptions & renewals</h3>
+            <p class="tool-note">Remember renewal dates for services, insurance, MOT, vehicle tax and memberships.</p>
+            <form class="tool-form" onsubmit="addRenewal(event)">
+                <input id="renewal-name" required placeholder="Service / renewal">
+                <input id="renewal-cost" type="number" min="0" step="0.01" placeholder="Cost (£)">
+                <input id="renewal-date" type="date" required>
+                <select id="renewal-frequency"><option>Monthly</option><option>Yearly</option><option>Other</option></select>
+                <button class="tool-btn" type="submit">Add renewal</button>
+            </form>
+            <div id="renewals-list" class="tool-list"></div>
+        </section>
+        <section class="tool-section">
+            <h3>💡 Family ideas inbox</h3>
+            <p class="tool-note">Save ideas before deciding: days out, restaurants, films, holidays or gifts.</p>
+            <form class="tool-form" onsubmit="addFamilyIdea(event)">
+                <input id="idea-name" required placeholder="What should we remember?">
+                <select id="idea-category"><option>Day out</option><option>Restaurant</option><option>Holiday</option><option>Film / TV</option><option>Gift</option><option>Buy</option><option>Other</option></select>
+                <input id="idea-notes" class="wide" placeholder="Notes (optional)">
+                <button class="tool-btn" type="submit">Save idea</button>
+            </form>
+            <div id="family-ideas-list" class="tool-list"></div>
+        </section>
+        <section class="tool-section">
+            <h3>🤝 Family handover</h3>
+            <p class="tool-note">A simple shared note for pickups, activities, dinner and things the next person needs to know.</p>
+            <form class="tool-form" onsubmit="saveHandover(event)">
+                <input id="handover-date" type="date" required>
+                <input id="handover-person" placeholder="Who's taking over?">
+                <textarea id="handover-notes" class="wide" required placeholder="Pickups, times, what to take, dinner or reminders..."></textarea>
+                <button class="tool-btn" type="submit">Add handover note</button>
+            </form>
+            <div id="handover-list" class="tool-list"></div>
+        </section>
+        <section class="tool-section">
+            <h3>🎂 Family occasions</h3>
+            <p class="tool-note">Keep birthdays and special dates connected to preparation and gift reminders.</p>
+            <form class="tool-form" onsubmit="addFamilyOccasion(event)">
+                <input id="occasion-name" required placeholder="Occasion / person">
+                <input id="occasion-date" type="date" required>
+                <input id="occasion-notes" class="wide" placeholder="Gift or preparation notes (optional)">
+                <button class="tool-btn" type="submit">Add occasion</button>
+            </form>
+            <div id="family-occasions-list" class="tool-list"></div>
+        </section>
+        <section class="tool-section">
+            <h3>⚙️ Account & data backup</h3>
+            <p class="tool-note">Export a backup of your planner data or restore it from a Family Plan JSON backup. Import replaces the current data on this browser, so export a backup first.</p>
+            <div class="account-actions">
+                <button class="tool-btn" type="button" onclick="exportFamilyPlanData()">Export all entries</button>
+                <button class="tool-btn secondary" type="button" onclick="document.getElementById('family-import-file').click()">Import backup</button>
+                <input id="family-import-file" type="file" accept="application/json,.json" hidden onchange="importFamilyPlanData(event)">
+            </div>
+            <p class="tool-note" id="backup-status" aria-live="polite"></p>
         </section>
     </div>
 
@@ -1384,13 +1458,13 @@
             <span class="nav-icon">🛒</span>
             <span>Shopping</span>
         </button>
-        <button id="nav-btn-budget" class="nav-item" onclick="showView('budget', this)">
-            <span class="nav-icon">💳</span>
-            <span>Budgets</span>
-        </button>
         <button id="nav-btn-places" class="nav-item" onclick="showView('places', this)">
             <span class="nav-icon">📍</span>
             <span>Places</span>
+        </button>
+        <button id="nav-btn-restaurants" class="nav-item" onclick="showView('restaurants', this)">
+            <span class="nav-icon">🍽️</span>
+            <span>Dining</span>
         </button>
         <button id="nav-btn-watchlist" class="nav-item" onclick="showView('watchlist', this)">
             <span class="nav-icon">🎬</span>
@@ -1399,6 +1473,10 @@
         <button id="nav-btn-todo" class="nav-item" onclick="showView('todo', this)">
             <span class="nav-icon">📝</span>
             <span>To-Do</span>
+        </button>
+        <button id="nav-btn-tools" class="nav-item" onclick="showView('familytools', this)">
+            <span class="nav-icon">✨</span>
+            <span>More</span>
         </button>
     </nav>
 
@@ -1431,7 +1509,7 @@
             return new Date(date.setDate(diff));
         }
 
-        const assignees = ['family', 'mom', 'dad'];
+        const assignees = ['family', 'mom', 'dad', 'leo', 'mia'];
 
         let currentUser = localStorage.getItem('fam_user') || 'dad';
         let currentUserName = localStorage.getItem('fam_user_name') || 'Kevin';
@@ -1443,33 +1521,24 @@
         ];
         let foodShopData = JSON.parse(localStorage.getItem('fam_foodshop')) || [];
         let familyShopData = JSON.parse(localStorage.getItem('fam_familyshop')) || [];
-        
-        let budgetData = JSON.parse(localStorage.getItem('fam_budget'));
-        if (!budgetData || budgetData.length === 0) {
-            budgetData = [
-                { provider: "HSBC Mortgage", cost: 800.00, due: 1, type: "actual", who: "family" },
-                { provider: "Sky Broadband", cost: 20.00, due: 1, type: "actual", who: "family" },
-                { provider: "Yorkshire Water", cost: 41.00, due: 1, type: "actual", who: "family" },
-                { provider: "Shopping (Estimate)", cost: 200.00, due: 1, type: "estimated", who: "family" },
-                { provider: "Octopus Energy", cost: 150.00, due: 25, type: "actual", who: "family" },
-                { provider: "Netflix", cost: 0.00, due: 28, type: "actual", who: "family" }
-            ];
-            localStorage.setItem('fam_budget', JSON.stringify(budgetData));
-        }
-
         let destinationsData = JSON.parse(localStorage.getItem('fam_destinations')) || { 
             places: [], 
+            restaurants: [], 
             cinema: [], home: [] 
         };
-        if (!destinationsData.places) destinationsData.places = [];
-        if (!destinationsData.cinema) destinationsData.cinema = [];
-        if (!destinationsData.home) destinationsData.home = [];
-
+        let choresData = JSON.parse(localStorage.getItem('fam_chores')) || [{ kid: "Leo", chores: [] }, { kid: "Mia", chores: [] }];
         let wishlistData = JSON.parse(localStorage.getItem('fam_wishlist')) || [];
         let todosData = JSON.parse(localStorage.getItem('fam_todos')) || [];
         let calendarEvents = JSON.parse(localStorage.getItem('fam_calendar')) || {};
+        let householdBillsData = JSON.parse(localStorage.getItem('fam_bills')) || [];
+        let renewalsData = JSON.parse(localStorage.getItem('fam_renewals')) || [];
+        let familyIdeasData = JSON.parse(localStorage.getItem('fam_ideas')) || [];
+        let handoverData = JSON.parse(localStorage.getItem('fam_handover')) || [];
+        let occasionsData = JSON.parse(localStorage.getItem('fam_occasions')) || [];
 
-        const calendarImportKey = 'fam_calendar_import_nov2026_v2';
+        // One-time import of the family dates supplied on 31 October 2026.
+        // Events are assigned to "family" so they remain visible in every user view.
+        const calendarImportKey = 'fam_calendar_import_nov2026_v1';
         if (!localStorage.getItem(calendarImportKey)) {
             const importedCalendarEntries = [
                 ['2026-11-04', 'Harriet - London'],
@@ -1492,6 +1561,11 @@
             });
 
             localStorage.setItem('fam_calendar', JSON.stringify(calendarEvents));
+            localStorage.setItem('fam_bills', JSON.stringify(householdBillsData));
+            localStorage.setItem('fam_renewals', JSON.stringify(renewalsData));
+            localStorage.setItem('fam_ideas', JSON.stringify(familyIdeasData));
+            localStorage.setItem('fam_handover', JSON.stringify(handoverData));
+            localStorage.setItem('fam_occasions', JSON.stringify(occasionsData));
             localStorage.setItem(calendarImportKey, 'done');
         }
 
@@ -1510,8 +1584,8 @@
             localStorage.setItem('fam_meals', JSON.stringify(mealsData));
             localStorage.setItem('fam_foodshop', JSON.stringify(foodShopData));
             localStorage.setItem('fam_familyshop', JSON.stringify(familyShopData));
-            localStorage.setItem('fam_budget', JSON.stringify(budgetData));
             localStorage.setItem('fam_destinations', JSON.stringify(destinationsData));
+            localStorage.setItem('fam_chores', JSON.stringify(choresData));
             localStorage.setItem('fam_wishlist', JSON.stringify(wishlistData));
             localStorage.setItem('fam_todos', JSON.stringify(todosData));
             localStorage.setItem('fam_calendar', JSON.stringify(calendarEvents));
@@ -1526,70 +1600,8 @@
             modal.classList.toggle('active');
             if (modal.classList.contains('active')) {
                 document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
+        if(document.getElementById('handover-date')) document.getElementById('handover-date').value = new Date().toISOString().slice(0,10);
             }
-        }
-
-        // Natural Language Bar Parser for Budgets
-        function parseAndAddNaturalBudget() {
-            const inputEl = document.getElementById('nl-budget-input');
-            const text = inputEl.value.trim();
-            if (!text) return;
-
-            let provider = text;
-            let cost = 0.00;
-            let due = 1;
-            let who = 'family';
-
-            // Extract cost (£ / pounds / quid / digits)
-            const moneyMatch = text.match(/(?:£|pounds?|\bcost\b[:\s]*)(\d+(?:\.\d{2})?)/i) || text.match(/(\d+(?:\.\d{2})?)\s*(?:pounds?|quid)/i);
-            if (moneyMatch) {
-                cost = parseFloat(moneyMatch[1]);
-                provider = provider.replace(moneyMatch[0], '');
-            }
-
-            // Extract due day (digits or number words)
-            const dayWordMap = { first: 1, second: 2, third: 3, fourth: 4, fifth: 5, sixth: 6, seventh: 7, eighth: 8, ninth: 9, tenth: 10, fifteenth: 15, twentieth: 20 };
-            const dueMatch = text.match(/(?:due\s*(?:on\s*(?:the)?)?|day|second)\s*(\d{1,2}|first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth|fifteenth|twentieth)?/i);
-            
-            let detectedDay = '';
-            for (let word in dayWordMap) {
-                if (new RegExp(word, 'i').test(text)) {
-                    detectedDay = dayWordMap[word];
-                    break;
-                }
-            }
-            if (!detectedDay && dueMatch && dueMatch[1]) {
-                detectedDay = parseInt(dueMatch[1].replace(/\D/g, '')) || 1;
-            }
-            if (detectedDay) {
-                due = detectedDay;
-                if (dueMatch) provider = provider.replace(dueMatch[0], '');
-            }
-
-            // Assignee detection
-            if (/kevin/i.test(text)) {
-                who = 'dad';
-                provider = provider.replace(/for kevin/gi, '');
-            } else if (/harriet/i.test(text)) {
-                who = 'mom';
-                provider = provider.replace(/for harriet/gi, '');
-            }
-
-            // Clean remaining punctuation and boilerplate
-            provider = provider
-                .replace(/a month|on the|due on|every month|is when this is billed|billed/gi, '')
-                .replace(/[£0-9]+/g, '')
-                .replace(/[^a-zA-Z\s]/g, '')
-                .trim();
-
-            if (!provider) provider = text;
-            provider = provider.charAt(0).toUpperCase() + provider.slice(1);
-
-            budgetData.push({ provider, cost, due, type: "actual", who });
-            saveData();
-            inputEl.value = '';
-            renderBudgetView();
-            showToast(`Added: ${provider} (£${cost.toFixed(2)})`);
         }
 
         function toggleUserDropdown() {
@@ -1599,7 +1611,7 @@
         function selectFamilyView() {
             viewMode = 'family';
             toggleUserDropdown();
-            window.updateHeaderDisplay();
+            updateHeaderDisplay();
             saveData();
             renderAllViews();
             showToast("Showing Family Plans (Everyone)");
@@ -1610,13 +1622,13 @@
             currentUserName = userName;
             viewMode = 'individual';
             toggleUserDropdown();
-            window.updateHeaderDisplay();
+            updateHeaderDisplay();
             saveData();
             renderAllViews();
             showToast(`Showing ${userName}'s Personal View`);
         }
 
-        window.updateHeaderDisplay = function updateHeaderDisplay() {
+        function updateHeaderDisplay() {
             const indicatorEl = document.getElementById('account-indicator');
             const badgeDotEl = document.getElementById('active-badge-dot');
             const badgeTextEl = document.getElementById('active-badge-text');
@@ -1630,27 +1642,25 @@
             }
 
             if (viewMode === 'family') {
-                if (indicatorEl) indicatorEl.setAttribute('class', 'user-silhouette-icon text-family');
-                if (badgeDotEl) badgeDotEl.className = "account-avatar-dot bg-family";
-                if (badgeTextEl) badgeTextEl.textContent = "Family";
+                indicatorEl.setAttribute('class', 'user-silhouette-icon text-family');
+                badgeDotEl.className = "account-avatar-dot bg-family";
+                badgeTextEl.textContent = "Family";
             } else {
-                if (indicatorEl) indicatorEl.setAttribute('class', `user-silhouette-icon text-${currentUser}`);
-                if (badgeDotEl) badgeDotEl.className = `account-avatar-dot bg-${currentUser}`;
-                if (badgeTextEl) badgeTextEl.textContent = currentUserName.split(' ')[0];
+                indicatorEl.setAttribute('class', `user-silhouette-icon text-${currentUser}`);
+                badgeDotEl.className = `account-avatar-dot bg-${currentUser}`;
+                badgeTextEl.textContent = currentUserName.split(' ')[0];
             }
-        };
+        }
 
         function filterItem(itemWho) {
             if (viewMode === 'family') return true;
-            const targetWho = itemWho || 'family';
-            return targetWho === 'family' || targetWho === currentUser;
+            return itemWho === currentUser || itemWho === 'family' || itemWho === 'dad';
         }
 
         function showView(viewId, navBtn) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.bottom-nav .nav-item').forEach(btn => btn.classList.remove('active'));
-            const targetView = document.getElementById(`view-${viewId}`);
-            if (targetView) targetView.classList.add('active');
+            document.getElementById(`view-${viewId}`).classList.add('active');
             if (navBtn) navBtn.classList.add('active');
             window.scrollTo(0, 0);
 
@@ -1665,12 +1675,10 @@
             const isCal = (val === 'calendar' || val === 'birthday');
             document.getElementById('date-row').style.display = isCal ? 'flex' : 'none';
             document.getElementById('recurring-row').style.display = isCal ? 'flex' : 'none';
-            document.getElementById('budget-fields-row').style.display = (val === 'budget') ? 'flex' : 'none';
-            document.getElementById('budget-type-row').style.display = (val === 'budget') ? 'flex' : 'none';
             if (val === 'birthday') {
                 document.getElementById('add-recurring').value = 'birthday';
             }
-            document.getElementById('postcode-row').style.display = (val === 'places') ? 'flex' : 'none';
+            document.getElementById('postcode-row').style.display = (val === 'places' || val === 'restaurants') ? 'flex' : 'none';
         }
 
         function setCalendarMode(mode) {
@@ -1775,6 +1783,7 @@
         function renderDashboard() {
             const todayStr = new Date().toISOString().split('T')[0];
             
+            // 1. Schedule & Locations Today
             const schedCont = document.getElementById('dash-schedule');
             const todayEvents = (calendarEvents[todayStr] || []).filter(ev => filterItem(ev.who));
             if (todayEvents.length === 0) {
@@ -1791,6 +1800,7 @@
                 `).join('');
             }
 
+            // 2. What's for Dinner
             const dinnerCont = document.getElementById('dash-dinner');
             const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
             const todayDay = dayNames[new Date().getDay()];
@@ -1810,6 +1820,7 @@
                 `;
             }
 
+            // 3. Outstanding Tasks & Shopping Items
             const tasksCont = document.getElementById('dash-tasks');
             const uncompletedTasks = todosData
                 .map((item, index) => ({ ...item, index }))
@@ -1845,6 +1856,7 @@
                 `).join('');
             }
 
+            // 4. Birthdays & Term Dates
             const datesCont = document.getElementById('dash-dates');
             let upcomingDates = [];
             
@@ -2032,66 +2044,8 @@
             }).join('');
         }
 
-        function addBudgetCardItem() {
-            const providerInput = document.getElementById('budget-provider-input');
-            const costInput = document.getElementById('budget-cost-input');
-            const dueInput = document.getElementById('budget-duedate-input');
-            const typeInput = document.getElementById('budget-type-input');
-            const assigneeInput = document.getElementById('budget-assignee-input');
-
-            if (!providerInput || !providerInput.value.trim()) {
-                showToast('Please enter a provider name');
-                return;
-            }
-            const provider = providerInput.value.trim();
-            const cost = parseFloat(costInput.value) || 0;
-            const due = parseInt(dueInput.value) || 1;
-            const type = typeInput ? typeInput.value : 'actual';
-            const who = assigneeInput ? assigneeInput.value : currentUser;
-
-            budgetData.push({ provider, cost, due, type, who });
-
-            providerInput.value = '';
-            costInput.value = '';
-            dueInput.value = '';
-            saveData();
-            renderBudgetView();
-            showToast('Budget bill added');
-        }
-
-        function renderBudgetView() {
-            const container = document.getElementById('budget-dynamic-list-container');
-            const totalEl = document.getElementById('budget-total-amount');
-            const filtered = budgetData.filter(item => filterItem(item.who));
-
-            let totalSum = 0;
-            filtered.forEach(item => { totalSum += Number(item.cost) || 0; });
-            totalEl.textContent = `£${totalSum.toFixed(2)}`;
-
-            container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No budget items added yet.</div>` : budgetData.map((item, idx) => {
-                if (!filterItem(item.who)) return '';
-                const isEst = item.type === 'estimated';
-                return `
-                    <div class="compact-scoped-item" style="padding: 10px 12px; min-height: 44px;">
-                        <div style="display:flex; flex-direction:column; flex:1;">
-                            <div style="display:flex; align-items:center; gap:6px;">
-                                <span style="font-weight:700; font-size:0.92rem;">💳 ${item.provider}</span>
-                                <span class="budget-type-badge ${isEst ? 'badge-estimated' : 'badge-actual'}">${isEst ? 'Estimated' : 'Actual'}</span>
-                            </div>
-                            <span style="font-size:0.75rem; color:var(--muted);">Due on day ${item.due} of the month</span>
-                        </div>
-                        <div style="font-weight:800; font-size:0.95rem; color:var(--accent); margin-right: 8px;">£${Number(item.cost).toFixed(2)}</div>
-                        <div style="display:flex; align-items:center; gap:6px;">
-                            <span class="compact-scoped-tag bg-${item.who}" onclick="cycleAssignee('budget', ${idx})">${item.who}</span>
-                            <button class="action-btn delete-btn" onclick="budgetData.splice(${idx},1); saveData(); renderBudgetView();">✕</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
         function cycleAssignee(type, index) {
-            let data = type === 'foodshop' ? foodShopData : (type === 'familyshop' ? familyShopData : (type === 'budget' ? budgetData : (type === 'wishlist' ? wishlistData : (type === 'cinema' ? destinationsData.cinema : (type === 'home' ? destinationsData.home : todosData)))));
+            let data = type === 'foodshop' ? foodShopData : (type === 'familyshop' ? familyShopData : (type === 'wishlist' ? wishlistData : (type === 'cinema' ? destinationsData.cinema : (type === 'home' ? destinationsData.home : todosData))));
             if (!data) return;
             const currentWho = data[index].who || 'family';
             data[index].who = assignees[(assignees.indexOf(currentWho) + 1) % assignees.length];
@@ -2191,6 +2145,53 @@
             } else {
                 mapInstance.setView([54.0, -2.5], 5);
             }
+        }
+
+        async function addRestaurantItem() {
+            const nameInput = document.getElementById('restaurants-name-input');
+            const pcInput = document.getElementById('restaurants-postcode-input');
+            if (!nameInput || !nameInput.value.trim()) return;
+
+            const title = nameInput.value.trim();
+            const postcode = pcInput.value.trim();
+            let imageUrl = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60';
+
+            destinationsData.restaurants.push({
+                title,
+                postcode,
+                who: currentUser,
+                image: imageUrl
+            });
+
+            nameInput.value = '';
+            pcInput.value = '';
+            saveData();
+            renderRestaurantsView();
+            showToast('Restaurant added');
+        }
+
+        function renderRestaurantsView() {
+            const container = document.getElementById('restaurants-dynamic-list-container');
+            const list = destinationsData.restaurants || [];
+            const filtered = list.filter(item => filterItem(item.who));
+
+            container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No restaurants added yet.</div>` : list.map((item, idx) => {
+                if (!filterItem(item.who)) return '';
+                const img = item.image || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60';
+                return `
+                    <div class="restaurant-card-item">
+                        <img src="${img}" alt="${item.title}" class="restaurant-thumb">
+                        <div style="flex:1; min-width:0; padding-left:4px;">
+                            <div style="font-weight:700; font-size:0.92rem; color:var(--text);">${item.title}</div>
+                            ${item.postcode ? `<div style="font-size:0.75rem; color:var(--muted);">Postcode: ${item.postcode}</div>` : ''}
+                        </div>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <span class="compact-scoped-tag bg-${item.who}">${item.who}</span>
+                            <button class="action-btn delete-btn" onclick="destinationsData.restaurants.splice(${idx},1); saveData(); renderRestaurantsView();">✕</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         function addTodoItem() {
@@ -2293,6 +2294,48 @@
             }).join('');
         }
 
+        function addKidChore(kidIndex) {
+            const input = document.getElementById(`chore-input-${kidIndex}`);
+            if (!input || !input.value.trim()) return;
+            choresData[kidIndex].chores.push({ text: input.value.trim(), done: false });
+            input.value = '';
+            saveData();
+            renderChores();
+            showToast('Chore added');
+        }
+
+        function deleteKidChore(kidIndex, choreIndex) {
+            choresData[kidIndex].chores.splice(choreIndex, 1);
+            saveData();
+            renderChores();
+        }
+
+        function renderChores() {
+            document.getElementById('chores-list-container').innerHTML = choresData.map((k, kIdx) => `
+                <div style="background:#f8fafc; border:1px solid #eae7e1; border-radius:8px; padding:8px 10px; margin-bottom:6px;">
+                    <div style="font-weight:800; font-size:0.88rem; margin-bottom:6px;">${k.kid}</div>
+                    <div class="compact-scoped-add-group" style="margin-bottom:6px;">
+                        <input type="text" id="chore-input-${kIdx}" class="compact-scoped-input" placeholder="Add chore..." onkeypress="if(event.key==='Enter') addKidChore(${kIdx})">
+                        <button class="compact-scoped-add-btn" onclick="addKidChore(${kIdx})">+</button>
+                    </div>
+                    <div style="display:flex; flex-direction:column;">
+                        ${k.chores.length === 0 ? '<span style="font-size:0.8rem; color:var(--muted); padding:2px 0;">No chores</span>' : k.chores.map((c, cIdx) => {
+                            const choreText = typeof c === 'string' ? c : c.text;
+                            return `
+                                <div class="compact-scoped-item">
+                                    <div class="compact-scoped-left">
+                                        <input type="checkbox" class="compact-scoped-checkbox">
+                                        <span class="todo-item-label">${choreText}</span>
+                                    </div>
+                                    <button class="action-btn delete-btn" onclick="deleteKidChore(${kIdx}, ${cIdx})" style="padding:2px 6px;">✕</button>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
         function addWishlistItem() {
             const input = document.getElementById('wishlist-quick-input');
             if (!input || !input.value.trim()) return;
@@ -2321,68 +2364,91 @@
 
         function handleQuickAdd(e) {
             e.preventDefault();
-            try {
-                const rawTitle = document.getElementById('add-title').value.trim();
-                const category = document.getElementById('add-category').value;
-                const assignee = document.getElementById('add-assignee').value;
-                const dateVal = document.getElementById('add-date').value;
-                const recurring = document.getElementById('add-recurring').value;
-                const postcode = document.getElementById('add-postcode').value.trim();
-                const budgetCost = parseFloat(document.getElementById('add-budget-cost').value) || 0;
-                const budgetDue = parseInt(document.getElementById('add-budget-duedate').value) || 1;
-                const budgetType = document.getElementById('add-budget-type').value;
+            const rawTitle = document.getElementById('add-title').value.trim();
+            const category = document.getElementById('add-category').value;
+            const assignee = document.getElementById('add-assignee').value;
+            const dateVal = document.getElementById('add-date').value;
+            const recurring = document.getElementById('add-recurring').value;
+            const postcode = document.getElementById('add-postcode').value.trim();
 
-                let title = rawTitle;
-                if (category === 'birthday' && !title.includes('🎂')) {
-                    title = '🎂 ' + title + ' Birthday';
-                }
-
-                const recLabel = recurring !== 'none' ? ` [${recurring}]` : '';
-                const finalTitle = title + recLabel;
-
-                if (category === 'calendar' || category === 'birthday') {
-                    if (!calendarEvents[dateVal]) calendarEvents[dateVal] = [];
-                    calendarEvents[dateVal].push({ title: finalTitle, who: assignee });
-                } else if (category === 'foodshop') foodShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
-                else if (category === 'familyshop') familyShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
-                else if (category === 'budget') budgetData.push({ provider: rawTitle, cost: budgetCost, due: budgetDue, type: budgetType, who: assignee });
-                else if (category === 'places') destinationsData.places.push({ title: finalTitle, who: assignee, postcode });
-                else if (['cinema','home'].includes(category)) {
-                    if (!destinationsData[category]) destinationsData[category] = [];
-                    destinationsData[category].push({ title: finalTitle, who: assignee });
-                }
-                else if (category === 'todo') todosData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
-                else if (category === 'wishlist') wishlistData.push({ title: finalTitle, who: assignee });
-
-                saveData();
-                document.getElementById('add-title').value = '';
-                document.getElementById('add-postcode').value = '';
-                document.getElementById('add-budget-cost').value = '';
-                document.getElementById('add-budget-duedate').value = '';
-                toggleQuickAddModal();
-                renderAllViews();
-                showToast('Item added successfully!');
-            } catch (err) {
-                console.error("Quick add error:", err);
-                showToast("Error adding item. Please check inputs.");
+            let title = rawTitle;
+            if (category === 'birthday' && !title.includes('🎂')) {
+                title = '🎂 ' + title + ' Birthday';
             }
+
+            const recLabel = recurring !== 'none' ? ` [${recurring}]` : '';
+            const finalTitle = title + recLabel;
+
+            if (category === 'calendar' || category === 'birthday') {
+                if (!calendarEvents[dateVal]) calendarEvents[dateVal] = [];
+                calendarEvents[dateVal].push({ title: finalTitle, who: assignee });
+            } else if (category === 'foodshop') foodShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
+            else if (category === 'familyshop') familyShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
+            else if (category === 'places') destinationsData.places.push({ title: finalTitle, who: assignee, postcode });
+            else if (category === 'restaurants') destinationsData.restaurants.push({ title: finalTitle, who: assignee, postcode, image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60' });
+            else if (['cinema','home'].includes(category)) {
+                if (!destinationsData[category]) destinationsData[category] = [];
+                destinationsData[category].push({ title: finalTitle, who: assignee });
+            }
+            else if (category === 'todo') todosData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
+            else if (category === 'wishlist') wishlistData.push({ title: finalTitle, who: assignee });
+            else if (category === 'chores') {
+                const target = choresData.find(c => c.kid.toLowerCase() === assignee.toLowerCase()) || choresData[0];
+                target.chores.push({ text: finalTitle, done: false });
+            }
+
+            saveData();
+            document.getElementById('add-title').value = '';
+            document.getElementById('add-postcode').value = '';
+            toggleQuickAddModal();
+            renderAllViews();
+            showToast('Item added successfully!');
         }
+
+        // Family Plan enhancement data and rendering
+        function moneyGBP(value) { return new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(Number(value)||0); }
+        function escapeToolText(value) { return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+        function dateLabel(value) { if(!value) return 'Date not set'; const d=new Date(value+'T12:00:00'); return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }
+        function monthlyBillEquivalent(b) { const n=Number(b.amount)||0; return n * ({weekly:52/12,monthly:1,quarterly:1/3,yearly:1/12}[b.frequency]||1); }
+        function renderWeeklyPlanner() {
+            const today=new Date(); const monday=getMonday(today);
+            const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+            const html=days.map((day,i)=>{const d=new Date(monday);d.setDate(monday.getDate()+i);const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;const meal=mealsData.find(m=>m.day===day)?.meal||'No meal planned';const events=(calendarEvents[key]||[]).filter(ev=>filterItem(ev.who)).map(ev=>ev.title);const taskCount=todosData.filter(t=>!t.done).length;return `<div class="week-day"><strong>${day} · ${d.getDate()} ${d.toLocaleDateString('en-GB',{month:'short'})}</strong><p>🍽️ ${escapeToolText(meal)}</p><p>📅 ${events.length?events.map(escapeToolText).join(', '):'No appointments'}</p>${i===0?`<p>☑️ ${taskCount} open to-do(s)</p>`:''}</div>`}).join('');
+            const grid=document.getElementById('weekly-planner-grid');if(grid)grid.innerHTML=html;
+            const summary=document.getElementById('family-week-summary');if(summary){const events=Object.values(calendarEvents).flat().length;const open=todosData.filter(t=>!t.done).length;summary.textContent=`7-day meal plan · ${events} calendar entries saved · ${open} outstanding to-do(s) · ${householdBillsData.length} household bill(s) tracked.`;}
+        }
+        function renderBills(){const list=document.getElementById('household-bills-list');if(!list)return;const total=householdBillsData.reduce((sum,b)=>sum+monthlyBillEquivalent(b),0);document.getElementById('bills-monthly-total').innerHTML=`${moneyGBP(total)} <span style="font-size:.75rem;font-weight:600">monthly equivalent</span>`;list.innerHTML=householdBillsData.length?householdBillsData.map((b,i)=>`<div class="tool-row"><div><strong>${escapeToolText(b.name)}</strong><small>${escapeToolText(b.category)} · ${moneyGBP(b.amount)} ${escapeToolText(b.frequency)} · Next: ${dateLabel(b.due)}</small></div><div><button onclick="toggleBillPaid(${i})">${b.paid?'✓ Paid':'Mark paid'}</button><button onclick="deleteToolItem('bills',${i})">✕</button></div></div>`).join(''):'<p class="tool-note">No household bills added yet.</p>';}
+        function addHouseholdBill(e){e.preventDefault();const name=document.getElementById('bill-name').value.trim();const amount=Number(document.getElementById('bill-amount').value);if(!name||!Number.isFinite(amount)||amount<0)return;householdBillsData.push({id:crypto.randomUUID(),name,amount,frequency:document.getElementById('bill-frequency').value,due:document.getElementById('bill-due').value,category:document.getElementById('bill-category').value,paid:false});saveData();e.target.reset();renderBills();showToast('Household bill added');}
+        function toggleBillPaid(i){if(!householdBillsData[i])return;householdBillsData[i].paid=!householdBillsData[i].paid;saveData();renderBills();}
+        function addRenewal(e){e.preventDefault();renewalsData.push({id:crypto.randomUUID(),name:document.getElementById('renewal-name').value.trim(),cost:Number(document.getElementById('renewal-cost').value)||0,date:document.getElementById('renewal-date').value,frequency:document.getElementById('renewal-frequency').value});saveData();e.target.reset();renderEnhancementLists();showToast('Renewal added');}
+        function addFamilyIdea(e){e.preventDefault();familyIdeasData.push({id:crypto.randomUUID(),name:document.getElementById('idea-name').value.trim(),category:document.getElementById('idea-category').value,notes:document.getElementById('idea-notes').value.trim(),createdAt:new Date().toISOString()});saveData();e.target.reset();renderEnhancementLists();showToast('Idea saved');}
+        function saveHandover(e){e.preventDefault();handoverData.push({id:crypto.randomUUID(),date:document.getElementById('handover-date').value,person:document.getElementById('handover-person').value.trim(),notes:document.getElementById('handover-notes').value.trim()});saveData();e.target.reset();document.getElementById('handover-date').value=new Date().toISOString().slice(0,10);renderEnhancementLists();showToast('Handover note added');}
+        function addFamilyOccasion(e){e.preventDefault();occasionsData.push({id:crypto.randomUUID(),name:document.getElementById('occasion-name').value.trim(),date:document.getElementById('occasion-date').value,notes:document.getElementById('occasion-notes').value.trim()});saveData();e.target.reset();renderEnhancementLists();showToast('Occasion added');}
+        function deleteToolItem(type,i){const map={bills:householdBillsData,renewals:renewalsData,ideas:familyIdeasData,handover:handoverData,occasions:occasionsData};if(!map[type]||!confirm('Delete this entry?'))return;map[type].splice(i,1);saveData();renderBills();renderEnhancementLists();}
+        function renderSimpleToolList(id,items,formatter,type,empty){const el=document.getElementById(id);if(!el)return;el.innerHTML=items.length?items.map((item,i)=>`<div class="tool-row"><div>${formatter(item)}</div><button onclick="deleteToolItem('${type}',${i})">✕</button></div>`).join(''):`<p class="tool-note">${empty}</p>`;}
+        function renderEnhancementLists(){renderSimpleToolList('renewals-list',renewalsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${moneyGBP(x.cost)} · ${escapeToolText(x.frequency)} · Renewal: ${dateLabel(x.date)}</small>`,'renewals','No renewals tracked yet.');renderSimpleToolList('family-ideas-list',familyIdeasData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${escapeToolText(x.category)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'ideas','Your saved family ideas will appear here.');renderSimpleToolList('handover-list',handoverData,x=>`<strong>${dateLabel(x.date)}${x.person?' · '+escapeToolText(x.person):''}</strong><small>${escapeToolText(x.notes)}</small>`,'handover','No handover notes yet.');renderSimpleToolList('family-occasions-list',occasionsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${dateLabel(x.date)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'occasions','No occasions added yet.');}
+        function renderFamilyTools(){renderWeeklyPlanner();renderBills();renderEnhancementLists();}
+        function exportFamilyPlanData(){const keys=['fam_meals','fam_foodshop','fam_familyshop','fam_destinations','fam_chores','fam_wishlist','fam_todos','fam_calendar','fam_bills','fam_renewals','fam_ideas','fam_handover','fam_occasions'];const payload={app:'Family Plan',formatVersion:1,exportedAt:new Date().toISOString(),data:{}};keys.forEach(k=>{const raw=localStorage.getItem(k);if(raw!==null){try{payload.data[k]=JSON.parse(raw)}catch{payload.data[k]=raw}}});const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`family-plan-backup-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);document.getElementById('backup-status').textContent='Backup exported. Keep this file somewhere safe.';}
+        async function importFamilyPlanData(e){const file=e.target.files?.[0];if(!file)return;try{const payload=JSON.parse(await file.text());if(payload.app!=='Family Plan'||!payload.data||typeof payload.data!=='object')throw new Error('This does not look like a Family Plan backup.');if(!confirm('Importing will replace the Family Plan data stored in this browser. Export a backup first. Continue?'))return;Object.entries(payload.data).forEach(([key,value])=>{if(/^fam_(meals|foodshop|familyshop|destinations|chores|wishlist|todos|calendar|bills|renewals|ideas|handover|occasions)$/.test(key))localStorage.setItem(key,JSON.stringify(value));});mealsData=JSON.parse(localStorage.getItem('fam_meals'))||mealsData;foodShopData=JSON.parse(localStorage.getItem('fam_foodshop'))||[];familyShopData=JSON.parse(localStorage.getItem('fam_familyshop'))||[];destinationsData=JSON.parse(localStorage.getItem('fam_destinations'))||destinationsData;choresData=JSON.parse(localStorage.getItem('fam_chores'))||choresData;wishlistData=JSON.parse(localStorage.getItem('fam_wishlist'))||[];todosData=JSON.parse(localStorage.getItem('fam_todos'))||[];calendarEvents=JSON.parse(localStorage.getItem('fam_calendar'))||{};householdBillsData=JSON.parse(localStorage.getItem('fam_bills'))||[];renewalsData=JSON.parse(localStorage.getItem('fam_renewals'))||[];familyIdeasData=JSON.parse(localStorage.getItem('fam_ideas'))||[];handoverData=JSON.parse(localStorage.getItem('fam_handover'))||[];occasionsData=JSON.parse(localStorage.getItem('fam_occasions'))||[];renderAllViews();renderFamilyTools();document.getElementById('backup-status').textContent='Backup imported successfully.';showToast('Family Plan backup restored');}catch(err){document.getElementById('backup-status').textContent='Import failed: '+err.message;}finally{e.target.value='';}}
 
         function renderAllViews() {
             setCalendarMode(calendarMode);
             renderMeals();
             renderShopping();
-            renderBudgetView();
             renderTodos();
             renderPlacesView();
+            renderRestaurantsView();
             renderWatchlist();
+            renderChores();
             renderWishlist();
             renderDashboard();
+            renderFamilyTools();
         }
 
         document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
+        if(document.getElementById('handover-date')) document.getElementById('handover-date').value = new Date().toISOString().slice(0,10);
         
-        window.updateHeaderDisplay();
+        updateHeaderDisplay();
         renderAllViews();
     </script>
 
@@ -2461,9 +2527,7 @@
         if (dropdownHouse) dropdownHouse.textContent = householdName;
         if (optUserName) optUserName.textContent = `${firstName}'s Plan`;
 
-        if (typeof window.updateHeaderDisplay === 'function') {
-            window.updateHeaderDisplay();
-        }
+        updateHeaderDisplay();
       }
 
       window.fpSetAuthMode = (mode) => {
