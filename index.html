@@ -1355,8 +1355,8 @@
             <div class="tool-section" style="margin:12px 0;padding:14px;border:1px solid var(--border);border-radius:12px">
                 <h4 style="margin:0 0 6px">🎙️ Add a budget by voice</h4>
                 <p class="tool-note">Tap record and describe the budget. You can edit the words and check the details before anything is added.</p>
-                <button type="button" class="tool-btn" id="budget-voice-start" onclick="startBudgetVoice()">🎙️ Start recording</button>
-                <button type="button" class="tool-btn" id="budget-voice-stop" onclick="stopBudgetVoice()" disabled>Stop</button>
+                <button type="button" class="tool-btn" id="budget-voice-start">🎙️ Start recording</button>
+                <button type="button" class="tool-btn" id="budget-voice-stop" disabled>Stop</button>
                 <p id="budget-voice-status" class="tool-note" aria-live="polite">Microphone access is only requested when you tap Start recording.</p>
                 <label for="budget-voice-text" style="display:block;font-weight:600;margin:8px 0 5px">Review or edit what was heard</label>
                 <textarea id="budget-voice-text" rows="3" style="width:100%;box-sizing:border-box" placeholder="For example: Food shopping budget six hundred pounds, already spent one hundred and twenty pounds."></textarea>
@@ -2798,6 +2798,12 @@
     status('Transcript ready for review.');
     document.getElementById('budget-name')?.scrollIntoView({behavior:'smooth',block:'center'});
   };
+  const startButton=document.getElementById('budget-voice-start');
+  const stopButton=document.getElementById('budget-voice-stop');
+  const reviewButton=document.getElementById('budget-voice-review');
+  if(startButton) startButton.addEventListener('click', function(){ status('Starting voice recording…'); window.startBudgetVoice(); });
+  if(stopButton) stopButton.addEventListener('click', function(){ window.stopBudgetVoice(); });
+  if(reviewButton) reviewButton.addEventListener('click', function(){ window.reviewBudgetVoice(); });
 })();
 </script>
 
