@@ -1397,18 +1397,18 @@
     <div id="view-monthlybudget" class="view">
         <section class="tool-section" id="monthly-budget-section">
             <h3>📊 Monthly budgets</h3>
-            <p class="tool-note">Set a monthly spending limit for each area of family life, such as food shopping, subscriptions or days out. Update the amount spent to track what remains.</p>
-            <div class="tool-total" id="monthly-budget-total">£0.00 <span style="font-size:.75rem;font-weight:600">total monthly budget</span></div>
+            <p class="tool-note">Set limits and track family spending.</p>
+            <div class="tool-total" id="monthly-budget-total">£0.00 <span style="font-size:.75rem;font-weight:600">total budget</span></div>
             <div class="tool-section" style="margin:12px 0;padding:14px;border:1px solid var(--border);border-radius:12px">
-                <h4 style="margin:0 0 6px">🎙️ Add a budget by voice</h4>
-                <p class="tool-note">Tap record and describe the budget. You can edit the words and check the details before anything is added.</p>
+                <h4 style="margin:0 0 6px">🎙️ Add by voice</h4>
+                <p class="tool-note">Say the budget and amount spent. Check before saving.</p>
                 <button type="button" class="tool-btn" id="budget-voice-start">🎙️ Start recording</button>
                 <button type="button" class="tool-btn" id="budget-voice-stop" disabled>Stop</button>
-                <p id="budget-voice-status" class="tool-note" aria-live="polite">Microphone access is only requested when you tap Start recording.</p>
-                <label for="budget-voice-text" style="display:block;font-weight:600;margin:8px 0 5px">Review or edit what was heard</label>
-                <textarea id="budget-voice-text" rows="3" style="width:100%;box-sizing:border-box" placeholder="For example: Food shopping budget six hundred pounds, already spent one hundred and twenty pounds."></textarea>
+                <p id="budget-voice-status" class="tool-note" aria-live="polite">Mic access is requested when recording starts.</p>
+                <label for="budget-voice-text" style="display:block;font-weight:600;margin:8px 0 5px">Check transcript</label>
+                <textarea id="budget-voice-text" rows="3" style="width:100%;box-sizing:border-box" placeholder="Example: Food shopping, £600 budget, £120 spent."></textarea>
                 <button type="button" class="tool-btn wide" style="margin-top:8px" onclick="reviewBudgetVoice()">Review details</button>
-                <p id="budget-voice-review" class="tool-note" aria-live="polite">Your budget form will be filled in for checking. It will not be saved until you approve it below.</p>
+                <p id="budget-voice-review" class="tool-note" aria-live="polite">Check the details before saving.</p>
             </div>
             <form class="tool-form" onsubmit="addMonthlyBudget(event)">
                 <input id="budget-name" required placeholder="Budget name (e.g. Food shopping)">
