@@ -56,7 +56,7 @@
             backdrop-filter: blur(14px);
             padding: 6px 10px;
             display: grid;
-            grid-template-columns: auto auto 1fr auto;
+            grid-template-columns: auto 1fr auto;
             align-items: center;
             gap: 6px;
         }
@@ -65,7 +65,26 @@
             display: flex;
             align-items: center;
             position: relative;
+            gap: 7px;
         }
+
+        .top-home-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            background: #fff;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            cursor: pointer;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(30,58,138,.08);
+        }
+        .top-home-btn:active { transform: scale(.95); }
+        .top-home-btn.active { background: #eff6ff; border-color: #bfdbfe; }
 
         .account-icon-btn {
             background: #eff6ff;
@@ -1197,10 +1216,9 @@
                     ↪ Sign out
                 </div>
             </div>
+            <button id="top-home-btn" class="top-home-btn" onclick="showView('dashboard', this)" title="Home" aria-label="Home">🏠</button>
+            <button class="top-add-btn" onclick="toggleQuickAddModal()" title="Add Event / Item" aria-label="Add">+</button>
         </div>
-
-        <!-- Top Header Add Button -->
-        <button class="top-add-btn" onclick="toggleQuickAddModal()" title="Add Event / Item">+</button>
 
         <!-- Center: Logo -->
         <div class="header-center" onclick="showView('dashboard', document.getElementById('nav-btn-home'))">
@@ -1423,12 +1441,10 @@
         </section>
     </div>
 
-    <!-- Family tools: weekly planner, household bills, renewals, ideas, handover, occasions and account -->
-    <div id="view-familytools" class="view">
-        <section class="card"><div class="card-title">✨ Family Plan tools</div><p class="tool-note">A connected place to organise the week, household commitments and family ideas.</p></section>
+    <!-- Dedicated Address Book page -->
+    <div id="view-addressbook" class="view">
+        <section class="card"><div class="card-title">📇 Address Book</div><p class="tool-note">Keep important family addresses together, such as schools, relatives, friends, clubs and regular destinations.</p></section>
         <section class="tool-section" id="address-book-section">
-            <h3>📇 Address book</h3>
-            <p class="tool-note">Keep important family addresses together, such as schools, relatives, friends, clubs and regular destinations.</p>
             <form class="tool-form" onsubmit="addAddressBookEntry(event)">
                 <input id="address-book-name" required maxlength="100" placeholder="Name (person or place)">
                 <input id="address-book-address" class="wide" required maxlength="250" placeholder="Street address">
@@ -1437,6 +1453,11 @@
             </form>
             <div id="address-book-list" class="tool-list"></div>
         </section>
+    </div>
+
+    <!-- Family tools: weekly planner, household bills, renewals, ideas, handover, occasions and account -->
+    <div id="view-familytools" class="view">
+        <section class="card"><div class="card-title">✨ Family Plan tools</div><p class="tool-note">A connected place to organise the week, household commitments and family ideas.</p></section>
         <section class="tool-section">
             <h3>🗓️ Weekly family planner</h3>
             <p class="tool-note">A quick Monday–Sunday overview using your existing meal plan and calendar.</p>
@@ -1509,9 +1530,9 @@
 
     <!-- FIXED Bottom Navigation Bar -->
     <nav class="bottom-nav">
-        <button id="nav-btn-home" class="nav-item active" onclick="showView('dashboard', this)">
-            <span class="nav-icon">🏠</span>
-            <span>Home</span>
+        <button id="nav-btn-addressbook" class="nav-item" onclick="showView('addressbook', this)">
+            <span class="nav-icon">📇</span>
+            <span>Addresses</span>
         </button>
         <button id="nav-btn-calendar" class="nav-item" onclick="showView('calendar', this)">
             <span class="nav-icon">📅</span>
@@ -1737,11 +1758,15 @@
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.bottom-nav .nav-item').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`view-${viewId}`).classList.add('active');
-            if (navBtn) navBtn.classList.add('active');
+            document.getElementById('top-home-btn')?.classList.toggle('active', viewId === 'dashboard');
+            if (navBtn && navBtn.classList.contains('nav-item')) navBtn.classList.add('active');
             window.scrollTo(0, 0);
 
             if (viewId === 'monthlybudget') {
                 renderMonthlyBudgets();
+            }
+            if (viewId === 'addressbook') {
+                renderAddressBook();
             }
             if (viewId === 'calendar') {
                 setCalendarPage('handover');
