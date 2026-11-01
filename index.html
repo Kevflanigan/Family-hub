@@ -1271,17 +1271,6 @@
             background: linear-gradient(125deg, #eaf3ee 0%, #f7faf7 58%, #edf4f3 100%);
             box-shadow: 0 8px 24px rgba(39,91,78,.07);
         }
-        #view-dashboard > .card:first-child:after {
-            content: "";
-            position: absolute;
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            right: -58px;
-            top: -76px;
-            background: rgba(93,151,130,.09);
-            pointer-events: none;
-        }
         #family-week-summary { color: #627875; line-height: 1.55; }
         #view-dashboard > .card:first-child .card-title { font-size: 1.12rem; }
         #view-dashboard > .card:not(:first-child) .card-title { margin-bottom: 12px; }
@@ -1306,6 +1295,70 @@
         .finance-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
         .finance-pane[hidden] { display: none !important; }
 </style>
+
+<style id="family-plan-navigation-refinement">
+    /* Remove the decorative corner motif that appeared as a stray teal semicircle. */
+    #view-dashboard > .card:first-child::before,
+    #view-dashboard > .card:first-child::after {
+        content: none !important;
+        display: none !important;
+    }
+
+    /* Compact, evenly spaced mobile navigation: six clear destinations. */
+    nav.bottom-nav, .bottom-nav {
+        display: grid !important;
+        grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+        align-items: stretch !important;
+        justify-content: initial !important;
+        gap: 2px !important;
+        height: calc(66px + env(safe-area-inset-bottom, 0px)) !important;
+        min-height: 66px !important;
+        padding: 5px 5px env(safe-area-inset-bottom, 0px) !important;
+        overflow: hidden !important;
+        background: rgba(255,255,255,.97) !important;
+        border-top: 1px solid #e4e9e5 !important;
+        box-shadow: 0 -5px 22px rgba(31,61,62,.08) !important;
+    }
+    .nav-item {
+        min-width: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        flex: initial !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 5px !important;
+        padding: 5px 1px !important;
+        border: 0 !important;
+        border-radius: 11px !important;
+        line-height: 1 !important;
+        font-size: clamp(.56rem, 2.35vw, .67rem) !important;
+        font-weight: 650 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+    .nav-item .nav-icon {
+        font-size: 1.12rem !important;
+        line-height: 1 !important;
+        flex: 0 0 auto !important;
+    }
+    .nav-item.active {
+        color: #245b67 !important;
+        background: #edf5f1 !important;
+    }
+    body { padding-bottom: calc(78px + env(safe-area-inset-bottom, 0px)) !important; }
+
+    @media (min-width: 600px) {
+        nav.bottom-nav, .bottom-nav {
+            grid-template-columns: repeat(6, minmax(72px, 100px)) !important;
+            justify-content: center !important;
+        }
+        .nav-item { font-size: .68rem !important; }
+    }
+</style>
+
 </head>
 <body>
 
@@ -1803,7 +1856,7 @@
     <nav class="bottom-nav">
         <button id="nav-btn-addressbook" class="nav-item" onclick="showView('addressbook', this)">
             <span class="nav-icon">📇</span>
-            <span>Addresses & Places</span>
+            <span>Places</span>
         </button>
         <button id="nav-btn-calendar" class="nav-item" onclick="showView('calendar', this)">
             <span class="nav-icon">📅</span>
@@ -1823,11 +1876,11 @@
         </button>
         <button id="nav-btn-monthlybudget" class="nav-item" onclick="showView('monthlybudget', this)">
             <span class="nav-icon">📊</span>
-            <span>Family Finances</span>
+            <span>Money</span>
         </button>
         <button id="nav-btn-todo" class="nav-item" onclick="showView('todo', this)">
             <span class="nav-icon">📝</span>
-            <span>To-Do</span>
+            <span>Tasks</span>
         </button>
         <button id="nav-btn-tools" class="nav-item" onclick="showView('familytools', this)">
             <span class="nav-icon">✨</span>
