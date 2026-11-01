@@ -2809,36 +2809,51 @@
   let finalTranscript = '';
   const status = (message) => { const el=document.getElementById('budget-voice-status'); if(el) el.textContent=message; };
   const cleanPhrase = (value) => (value || '').replace(/\s+/g, ' ').trim();
-  const samePhrase = (a,b) => cleanPhrase(a).toLocaleLowerCase('en-GB').replace(/[.,!?]/g,'') === cleanPhrase(b).toLocaleLowerCase('en-GB').replace(/[.,!?]/g,'');
+  const normaliseWords = (value) => cleanPhrase(value).toLocaleLowerCase('en-GB').replace(/[^\p{L}\p{N}£]+/gu, ' ').trim().split(/\s+/).filter(Boolean);
+  const mergeRecognisedParts = (parts) => {
+    let words=[];
+    for (const part of parts) {
+      const next=normaliseWords(part);
+      if (!next.length) continue;
+      const currentText=words.join(' '), nextText=next.join(' ');
+      if (currentText && (currentText.includes(nextText) || nextText.includes(currentText))) {
+        if (next.length > words.length) words=next;
+        continue;
+      }
+      let overlap=Math.min(words.length,next.length);
+      while (overlap>0 && words.slice(-overlap).join(' ') !== next.slice(0,overlap).join(' ')) overlap--;
+      words=words.concat(next.slice(overlap));
+    }
+    return words.join(' ');
+  };
   window.startBudgetVoice = function(){
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) { status('Voice recognition is not supported by this browser. You can type directly into the box above.'); return; }
     try {
       recognition = new SpeechRecognition();
       recognition.lang = 'en-GB';
-      recognition.continuous = true;
-      recognition.interimResults = true;
+      // This is a single short dictation, not an open-ended dictation session.
+      // Interim hypotheses can be revised/repeated by Android speech services.
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
       finalTranscript = '';
       const box=document.getElementById('budget-voice-text');
       if(box) box.value='';
       recognition.onstart = function(){ status('Listening… speak clearly. Tap Stop when you have finished.'); };
       recognition.onresult = function(event){
-        // The browser may resend earlier results in later events. Rebuild the
-        // final transcript from the result list instead of appending each event.
+        // Use final results only. Some Android recognition providers send
+        // overlapping/repeated chunks; merge their word overlap rather than
+        // blindly concatenating each returned phrase.
         const finalParts=[];
-        let interim='';
         for(let i=0;i<event.results.length;i++){
           const result=event.results[i];
+          if(!result.isFinal) continue;
           const phrase=cleanPhrase(result[0] && result[0].transcript);
-          if(!phrase) continue;
-          if(result.isFinal){
-            if(!finalParts.length || !samePhrase(finalParts[finalParts.length-1], phrase)) finalParts.push(phrase);
-          } else if(i >= event.resultIndex) {
-            interim += (interim ? ' ' : '') + phrase;
-          }
+          if(phrase) finalParts.push(phrase);
         }
-        finalTranscript=finalParts.join(' ');
-        if(box) box.value=cleanPhrase(finalTranscript + (interim ? ' ' + interim : ''));
+        finalTranscript=mergeRecognisedParts(finalParts);
+        if(box) box.value=finalTranscript;
       };
       recognition.onerror = function(event){ status(event.error==='not-allowed'?'Microphone permission was denied. Allow microphone access in your browser settings, or type the details instead.':'Voice recognition stopped ('+event.error+'). You can edit the text or type it manually.'); };
       recognition.onend = function(){
