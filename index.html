@@ -51,8 +51,8 @@
             right: 0;
             z-index: 1000;
             background: rgba(255, 255, 255, 0.98);
-            border-bottom: 1px solid var(--border);
-            box-shadow: 0 2px 10px rgba(30,35,50,.04);
+            border-bottom: 0.5px solid rgba(231,226,218,.55);
+            box-shadow: 0 1px 4px rgba(30,35,50,.02);
             backdrop-filter: blur(14px);
             padding: 6px 10px;
             display: grid;
@@ -671,6 +671,10 @@
             text-align: left;
             display: block;
         }
+        .event-pill.quick-added { background: var(--accent) !important; color: #fff !important; }
+        .cal-week-content { justify-content: flex-start; text-align: left; }
+        .compact-scoped-item.quick-added-task { justify-content: flex-start; }
+        .quick-added-task .todo-item-label { color: var(--accent); font-weight: 700; }
 
         .day-popover-backdrop {
             display: none;
@@ -1789,7 +1793,7 @@
                     let eventsHtml = '';
                     if (calendarEvents[dateKey]) {
                         calendarEvents[dateKey].filter(ev => filterItem(ev.who)).forEach(ev => {
-                            eventsHtml += `<div class="event-pill bg-${ev.who}" title="${ev.title}">${ev.title}</div>`;
+                            eventsHtml += `<div class="event-pill bg-${ev.who} ${ev.quickAdded ? 'quick-added' : ''}" title="${ev.title}">${ev.title}</div>`;
                         });
                     }
                     html += `
@@ -1828,7 +1832,7 @@
                     let eventsHtml = '';
                     if (calendarEvents[dateKey]) {
                         calendarEvents[dateKey].filter(ev => filterItem(ev.who)).forEach((ev, evIdx) => {
-                            eventsHtml += `<span class="event-pill bg-${ev.who}" style="margin:2px 3px; font-size:0.75rem; padding:3px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:4px; width:auto;">${ev.title} <button onclick="event.stopPropagation(); deleteCalEvent('${dateKey}', ${evIdx})" style="background:none; border:none; color:#fff; font-size:0.75rem; cursor:pointer;">✕</button></span>`;
+                            eventsHtml += `<span class="event-pill bg-${ev.who} ${ev.quickAdded ? 'quick-added' : ''}" style="margin:2px 3px; font-size:0.75rem; padding:3px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:4px; width:auto;">${ev.title} <button onclick="event.stopPropagation(); deleteCalEvent('${dateKey}', ${evIdx})" style="background:none; border:none; color:#fff; font-size:0.75rem; cursor:pointer;">✕</button></span>`;
                         });
                     }
 
@@ -2005,7 +2009,7 @@
 
         function addQuickCalEvent(dateStr, title) {
             if (!calendarEvents[dateStr]) calendarEvents[dateStr] = [];
-            calendarEvents[dateStr].push({ title, who: currentUser });
+            calendarEvents[dateStr].push({ title, who: currentUser, quickAdded: true });
             saveData();
             renderCalendar();
             renderDashboard();
@@ -2273,7 +2277,7 @@
         function addTodoItem() {
             const input = document.getElementById('todo-quick-input');
             if (!input || !input.value.trim()) return;
-            todosData.push({ text: input.value.trim(), who: currentUser, done: false, isEditing: false });
+            todosData.push({ text: input.value.trim(), who: currentUser, done: false, isEditing: false, quickAdded: true });
             input.value = '';
             saveData();
             renderTodos();
@@ -2308,7 +2312,7 @@
             container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No tasks remaining.</div>` : todosData.map((t, idx) => {
                 if (!filterItem(t.who)) return '';
                 return `
-                    <div class="compact-scoped-item ${t.done ? 'completed' : ''}">
+                    <div class="compact-scoped-item ${t.done ? 'completed' : ''} ${t.quickAdded ? 'quick-added-task' : ''}">
                         <div class="compact-scoped-left">
                             <input type="checkbox" class="compact-scoped-checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodoCheck(${idx})">
                             ${t.isEditing ? 
@@ -2457,7 +2461,7 @@
 
             if (category === 'calendar' || category === 'birthday') {
                 if (!calendarEvents[dateVal]) calendarEvents[dateVal] = [];
-                calendarEvents[dateVal].push({ title: finalTitle, who: assignee });
+                calendarEvents[dateVal].push({ title: finalTitle, who: assignee, quickAdded: true });
             } else if (category === 'foodshop') foodShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
             else if (category === 'familyshop') familyShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
             else if (category === 'places') destinationsData.places.push({ title: finalTitle, who: assignee, postcode });
@@ -2466,7 +2470,7 @@
                 if (!destinationsData[category]) destinationsData[category] = [];
                 destinationsData[category].push({ title: finalTitle, who: assignee });
             }
-            else if (category === 'todo') todosData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
+            else if (category === 'todo') todosData.push({ text: finalTitle, who: assignee, done: false, isEditing: false, quickAdded: true });
             else if (category === 'wishlist') wishlistData.push({ title: finalTitle, who: assignee });
             else if (category === 'chores') {
                 const target = choresData.find(c => c.kid.toLowerCase() === assignee.toLowerCase()) || choresData[0];
