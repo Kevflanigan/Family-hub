@@ -2186,7 +2186,10 @@
             }
             if (viewId === 'addressbook') {
                 renderAddressBook();
-                if (document.getElementById('addressbook-places-panel')?.style.display !== 'none') setTimeout(() => initMap(), 50);
+                if (document.getElementById('addressbook-places-panel')?.style.display !== 'none') {
+                    setTimeout(() => initMap(), 50);
+                    setTimeout(() => initMap(), 300);
+                }
             }
             if (viewId === 'calendar') {
                 setCalendarPage('handover');
@@ -2526,7 +2529,10 @@
             const placesBtn = document.getElementById('address-toggle-places');
             addressBtn.classList.toggle('secondary', !addresses); placesBtn.classList.toggle('secondary', places);
             addressBtn.setAttribute('aria-pressed', String(addresses)); placesBtn.setAttribute('aria-pressed', String(!addresses));
-            if (!addresses) setTimeout(() => initMap(), 50);
+            if (!addresses) {
+                setTimeout(() => initMap(), 50);
+                setTimeout(() => initMap(), 300);
+            }
         }
 
         function renderShopping() {
@@ -2615,7 +2621,9 @@
                 `;
             }).join('');
 
-            if (document.getElementById('addressbook-places-panel')?.style.display !== 'none' && document.getElementById('view-addressbook')?.classList.contains('active')) initMap();
+            if (document.getElementById('addressbook-places-panel')?.style.display !== 'none' && document.getElementById('view-addressbook')?.classList.contains('active')) {
+                setTimeout(() => initMap(), 50);
+            }
         }
 
         let mapInstance = null;
@@ -2627,9 +2635,9 @@
 
             if (!mapInstance) {
                 mapInstance = L.map('places-map').setView([54.0, -2.5], 5);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
                     maxZoom: 19,
-                    attribution: '© OpenStreetMap'
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
                 }).addTo(mapInstance);
 
                 const resizeObserver = new ResizeObserver(() => {
@@ -2665,8 +2673,9 @@
             if (bounds.length > 0) {
                 mapInstance.fitBounds(bounds, { padding: [50, 50], maxZoom: 7 });
             } else {
-                mapInstance.setView([54.0, -2.5], 5);
+                mapInstance.setView([53.858, -1.685], 11); // Default centered near Rawdon/Leeds area
             }
+            mapInstance.invalidateSize();
         }
 
         async function addRestaurantItem() {
