@@ -695,6 +695,16 @@
         .compact-scoped-item.quick-added-task { justify-content: flex-start; }
         .quick-added-task .todo-item-label { color: var(--accent); font-weight: 700; }
 
+        /* Weekly calendar quick add text styling and alignment */
+        .cal-week-content .event-pill.quick-added,
+        .cal-week-content .event-pill {
+            color: var(--accent) !important;
+            background: #edf5f1 !important;
+            border: 1px solid #d8e8df !important;
+            text-align: left !important;
+            justify-content: flex-start !important;
+        }
+
         .day-popover-backdrop {
             display: none;
             position: fixed;
@@ -1033,8 +1043,6 @@
         .auth-user-line button { margin-left:auto;border:1px solid var(--border);background:white;border-radius:8px;padding:6px 10px;font-weight:700;cursor:pointer; }
         @media(max-width:420px){ .auth-card{padding:10px 16px 16px 16px} }
 
-
-
         /* Family Plan enhancements */
         .tool-section{background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px;margin:12px 0;box-shadow:var(--shadow-soft)}
         .tool-section h3{font-size:1rem;margin-bottom:8px;color:var(--accent)}
@@ -1061,8 +1069,6 @@
         .account-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
         .tool-total{font-size:1.45rem;font-weight:850;color:var(--accent)}
         @media(min-width:600px){.week-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
-
-    
 
         /* FAMILY PLAN — visual refinement pass */
         :root {
@@ -1287,78 +1293,76 @@
             .view { padding: 1rem .8rem; }
             #view-dashboard > .card:first-child { padding: 1.5rem; }
         }
-
-</style>
-<style id="temporary-nav-hiding">#nav-btn-restaurants,#nav-btn-watchlist{display:none!important}</style>
-<style id="family-finances-styles">
+    </style>
+    <style id="temporary-nav-hiding">#nav-btn-restaurants,#nav-btn-watchlist{display:none!important}</style>
+    <style id="family-finances-styles">
         .finance-tab { padding: 9px 4px; font-size: .78rem; min-width: 0; }
         .finance-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
         .finance-pane[hidden] { display: none !important; }
-</style>
+    </style>
 
-<style id="family-plan-navigation-refinement">
-    /* Remove the decorative corner motif that appeared as a stray teal semicircle. */
-    #view-dashboard > .card:first-child::before,
-    #view-dashboard > .card:first-child::after {
-        content: none !important;
-        display: none !important;
-    }
-
-    /* Compact, evenly spaced mobile navigation: six clear destinations. */
-    nav.bottom-nav, .bottom-nav {
-        display: grid !important;
-        grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
-        align-items: stretch !important;
-        justify-content: initial !important;
-        gap: 2px !important;
-        height: calc(66px + env(safe-area-inset-bottom, 0px)) !important;
-        min-height: 66px !important;
-        padding: 5px 5px env(safe-area-inset-bottom, 0px) !important;
-        overflow: hidden !important;
-        background: rgba(255,255,255,.97) !important;
-        border-top: 1px solid #e4e9e5 !important;
-        box-shadow: 0 -5px 22px rgba(31,61,62,.08) !important;
-    }
-    .nav-item {
-        min-width: 0 !important;
-        width: 100% !important;
-        height: 100% !important;
-        flex: initial !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        gap: 5px !important;
-        padding: 5px 1px !important;
-        border: 0 !important;
-        border-radius: 11px !important;
-        line-height: 1 !important;
-        font-size: clamp(.56rem, 2.35vw, .67rem) !important;
-        font-weight: 650 !important;
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-    }
-    .nav-item .nav-icon {
-        font-size: 1.12rem !important;
-        line-height: 1 !important;
-        flex: 0 0 auto !important;
-    }
-    .nav-item.active {
-        color: #245b67 !important;
-        background: #edf5f1 !important;
-    }
-    body { padding-bottom: calc(78px + env(safe-area-inset-bottom, 0px)) !important; }
-
-    @media (min-width: 600px) {
-        nav.bottom-nav, .bottom-nav {
-            grid-template-columns: repeat(6, minmax(72px, 100px)) !important;
-            justify-content: center !important;
+    <style id="family-plan-navigation-refinement">
+        /* Remove decorative corner motif */
+        #view-dashboard > .card:first-child::before,
+        #view-dashboard > .card:first-child::after {
+            content: none !important;
+            display: none !important;
         }
-        .nav-item { font-size: .68rem !important; }
-    }
-</style>
 
+        /* Compact, evenly spaced mobile navigation: six clear destinations. */
+        nav.bottom-nav, .bottom-nav {
+            display: grid !important;
+            grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+            align-items: stretch !important;
+            justify-content: initial !important;
+            gap: 2px !important;
+            height: calc(66px + env(safe-area-inset-bottom, 0px)) !important;
+            min-height: 66px !important;
+            padding: 5px 5px env(safe-area-inset-bottom, 0px) !important;
+            overflow: hidden !important;
+            background: rgba(255,255,255,.97) !important;
+            border-top: 1px solid #e4e9e5 !important;
+            box-shadow: 0 -5px 22px rgba(31,61,62,.08) !important;
+        }
+        .nav-item {
+            min-width: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            flex: initial !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 5px !important;
+            padding: 5px 1px !important;
+            border: 0 !important;
+            border-radius: 11px !important;
+            line-height: 1 !important;
+            font-size: clamp(.56rem, 2.35vw, .67rem) !important;
+            font-weight: 650 !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+        }
+        .nav-item .nav-icon {
+            font-size: 1.12rem !important;
+            line-height: 1 !important;
+            flex: 0 0 auto !important;
+        }
+        .nav-item.active {
+            color: #245b67 !important;
+            background: #edf5f1 !important;
+        }
+        body { padding-bottom: calc(78px + env(safe-area-inset-bottom, 0px)) !important; }
+
+        @media (min-width: 600px) {
+            nav.bottom-nav, .bottom-nav {
+                grid-template-columns: repeat(6, minmax(72px, 100px)) !important;
+                justify-content: center !important;
+            }
+            .nav-item { font-size: .68rem !important; }
+        }
+    </style>
 </head>
 <body>
 
@@ -1678,7 +1682,7 @@
 
     <!-- Family Finances -->
     <div id="view-monthlybudget" class="view">
-        <section class="card"><div class="card-title">💷 Family Finances</div><p class="tool-note">Your household budget, regular payments and renewal dates.</p></section>
+        <section class="card"><div class="card-title">💷 Family Finances</div></section>
         <div class="finance-tabs" role="tablist" aria-label="Family finances sections" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:12px 0">
             <button type="button" class="tool-btn secondary finance-tab active" data-finance-tab="overview" onclick="setFinanceTab('overview',this)">Overview</button>
             <button type="button" class="tool-btn secondary finance-tab" data-finance-tab="bills" onclick="setFinanceTab('bills',this)">Bills & Payments</button>
@@ -1744,6 +1748,7 @@
             </section>
         </div>
     </div>
+
     <!-- VIEW 6: To-Do & Tasks Hub -->
     <div id="view-todo" class="view">
         <section class="compact-scoped-card">
@@ -1772,21 +1777,21 @@
 
     <!-- Dedicated Address Book page -->
     <div id="view-addressbook" class="view">
-        <div id="addressbook-addresses-panel">
-        <section class="card"><div class="card-title">📇 Address Book</div><p class="tool-note">Keep important family addresses together, such as schools, relatives, friends, clubs and regular destinations.</p></section>
-        <section class="tool-section" id="address-book-section">
-            <form class="tool-form" onsubmit="addAddressBookEntry(event)">
-                <input id="address-book-name" required maxlength="100" placeholder="Name (person or place)">
-                <input id="address-book-address" class="wide" required maxlength="250" placeholder="Street address">
-                <input id="address-book-postcode" required maxlength="20" placeholder="Postcode">
-                <button class="tool-btn" type="submit">Add address</button>
-            </form>
-            <div id="address-book-list" class="tool-list"></div>
-        </section>
-        </div>
-        <div class="toggle-switch" role="group" aria-label="Addresses and places view" style="display:flex;gap:8px;margin:14px 0;background:var(--surface, #f3f4f6);padding:5px;border-radius:12px;">
+        <div class="toggle-switch" role="group" aria-label="Addresses and places view" style="display:flex;gap:8px;margin:0 0 14px 0;background:var(--surface, #f3f4f6);padding:5px;border-radius:12px;">
             <button type="button" id="address-toggle-addresses" class="tool-btn" onclick="setAddressPlacesView('addresses')" aria-pressed="true" style="flex:1;">📇 Address book</button>
             <button type="button" id="address-toggle-places" class="tool-btn secondary" onclick="setAddressPlacesView('places')" aria-pressed="false" style="flex:1;">📍 Places to visit</button>
+        </div>
+        <div id="addressbook-addresses-panel">
+            <section class="card"><div class="card-title">📇 Address Book</div><p class="tool-note">Keep important family addresses together, such as schools, relatives, friends, clubs and regular destinations.</p></section>
+            <section class="tool-section" id="address-book-section">
+                <form class="tool-form" onsubmit="addAddressBookEntry(event)">
+                    <input id="address-book-name" required maxlength="100" placeholder="Name (person or place)">
+                    <input id="address-book-address" class="wide" required maxlength="250" placeholder="Street address">
+                    <input id="address-book-postcode" required maxlength="20" placeholder="Postcode">
+                    <button class="tool-btn" type="submit">Add address</button>
+                </form>
+                <div id="address-book-list" class="tool-list"></div>
+            </section>
         </div>
         <div id="addressbook-places-panel" style="display:none;">
             <section class="places-scoped-card">
@@ -1947,7 +1952,6 @@
         let addressBookData = JSON.parse(localStorage.getItem('fam_address_book')) || [];
 
         // One-time import of the family dates supplied on 31 October 2026.
-        // Events are assigned to "family" so they remain visible in every user view.
         const calendarImportKey = 'fam_calendar_import_nov2026_v1';
         if (!localStorage.getItem(calendarImportKey)) {
             const importedCalendarEntries = [
@@ -2017,7 +2021,7 @@
             modal.classList.toggle('active');
             if (modal.classList.contains('active')) {
                 document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
-        if(document.getElementById('handover-date')) document.getElementById('handover-date').value = new Date().toISOString().slice(0,10);
+                if(document.getElementById('handover-date')) document.getElementById('handover-date').value = new Date().toISOString().slice(0,10);
             }
         }
 
@@ -2096,7 +2100,6 @@
             if (viewId === 'calendar') {
                 setCalendarPage('handover');
             }
-
         }
 
         function handleCategoryChange(val) {
@@ -2908,7 +2911,7 @@
             const total=monthlyBudgetsData.reduce((sum,b)=>sum+(Number(b.limit)||0),0);
             const spent=monthlyBudgetsData.reduce((sum,b)=>sum+(Number(b.spent)||0),0);
             document.getElementById('monthly-budget-total').innerHTML=`${moneyGBP(total)} <span style="font-size:.75rem;font-weight:600">total monthly budget · ${moneyGBP(spent)} spent</span>`;
-            list.innerHTML=monthlyBudgetsData.length?monthlyBudgetsData.map((b,i)=>{const limit=Number(b.limit)||0,used=Number(b.spent)||0,remaining=limit-used,pct=limit>0?Math.min(100,Math.max(0,used/limit*100)):0;return `<div class="tool-row" style="display:block"><div style="display:flex;justify-content:space-between;gap:8px;align-items:start"><div><strong>${escapeToolText(b.name)}</strong><small>${escapeToolText(b.category)} · ${moneyGBP(used)} spent of ${moneyGBP(limit)}</small></div><button onclick="deleteToolItem('budgets',${i})">✕</button></div><div style="height:8px;background:#e8edf2;border-radius:10px;overflow:hidden;margin:9px 0"><div style="height:100%;width:${pct}%;background:${pct>=100?'#dc5b52':'var(--accent)'};border-radius:10px"></div></div><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><small>${remaining>=0?moneyGBP(remaining)+' remaining':moneyGBP(Math.abs(remaining))+' over budget'}</small><button style="color:var(--accent)" onclick="updateBudgetSpent(${i})">Update spent</button></div></div>`}).join(''):'<p class="tool-note">No monthly budgets yet. Add a category above to get started.</p>';
+            list.innerHTML=monthlyBudgetsData.length?monthlyBudgetsData.map((b,i)=>{const limit=Number(b.limit)||0,used=Number(b.spent)||0,remaining=limit-used,pct=limit>0?Math.min(100,Math.max(0,used/limit*100)):0;return `<div class="tool-row" style="display:block"><div style="display:flex;justify-space-between;gap:8px;align-items:start"><div><strong>${escapeToolText(b.name)}</strong><small>${escapeToolText(b.category)} · ${moneyGBP(used)} spent of ${moneyGBP(limit)}</small></div><button onclick="deleteToolItem('budgets',${i})">✕</button></div><div style="height:8px;background:#e8edf2;border-radius:10px;overflow:hidden;margin:9px 0"><div style="height:100%;width:${pct}%;background:${pct>=100?'#dc5b52':'var(--accent)'};border-radius:10px"></div></div><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><small>${remaining>=0?moneyGBP(remaining)+' remaining':moneyGBP(Math.abs(remaining))+' over budget'}</small><button style="color:var(--accent)" onclick="updateBudgetSpent(${i})">Update spent</button></div></div>`}).join(''):'<p class="tool-note">No monthly budgets yet. Add a category above to get started.</p>';
             renderFinanceOverview();
         }
         function addMonthlyBudget(e){e.preventDefault();const name=document.getElementById('budget-name').value.trim(),limit=Number(document.getElementById('budget-limit').value),spent=Number(document.getElementById('budget-spent').value)||0;if(!name||!Number.isFinite(limit)||limit<=0)return;monthlyBudgetsData.push({id:crypto.randomUUID(),name,category:document.getElementById('budget-category').value,limit,spent});saveData();e.target.reset();document.getElementById('budget-spent').value='0';renderMonthlyBudgets();showToast('Monthly budget added');}
@@ -3174,7 +3177,6 @@
         }
       }
     </script>
-
 
 <script id="bill-voice-support">
 (function(){
