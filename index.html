@@ -275,6 +275,12 @@
             line-height: 1 !important;
         }
 
+        /* Temporarily hide these navigation shortcuts without removing their views or code. */
+        #nav-btn-restaurants,
+        #nav-btn-watchlist {
+            display: none !important;
+        }
+
         .nav-item.active {
             color: var(--accent) !important;
             font-weight: 700 !important;
@@ -1373,6 +1379,19 @@
             <p class="tool-note">A quick Monday–Sunday overview using your existing meal plan and calendar.</p>
             <div id="weekly-planner-grid" class="week-grid"></div>
         </section>
+        <section class="tool-section" id="monthly-budget-section">
+            <h3>📊 Monthly budgets</h3>
+            <p class="tool-note">Set a monthly spending limit for each area of family life, such as food shopping, subscriptions or days out. Update the amount spent to track what remains.</p>
+            <div class="tool-total" id="monthly-budget-total">£0.00 <span style="font-size:.75rem;font-weight:600">total monthly budget</span></div>
+            <form class="tool-form" onsubmit="addMonthlyBudget(event)">
+                <input id="budget-name" required placeholder="Budget name (e.g. Food shopping)">
+                <select id="budget-category"><option>Food shopping</option><option>Family shopping</option><option>Subscriptions</option><option>Days out & entertainment</option><option>Transport</option><option>Children</option><option>Household</option><option>Other</option></select>
+                <input id="budget-limit" type="number" min="0.01" step="0.01" required placeholder="Monthly budget (£)">
+                <input id="budget-spent" type="number" min="0" step="0.01" value="0" placeholder="Already spent (£)">
+                <button class="tool-btn wide" type="submit">Add monthly budget</button>
+            </form>
+            <div id="monthly-budgets-list" class="tool-list"></div>
+        </section>
         <section class="tool-section">
             <h3>💷 Household bills planner</h3>
             <p class="tool-note">Track known household bills only — no bank connections or transaction tracking.</p>
@@ -1531,6 +1550,7 @@
         let todosData = JSON.parse(localStorage.getItem('fam_todos')) || [];
         let calendarEvents = JSON.parse(localStorage.getItem('fam_calendar')) || {};
         let householdBillsData = JSON.parse(localStorage.getItem('fam_bills')) || [];
+        let monthlyBudgetsData = JSON.parse(localStorage.getItem('fam_monthly_budgets')) || [];
         let renewalsData = JSON.parse(localStorage.getItem('fam_renewals')) || [];
         let familyIdeasData = JSON.parse(localStorage.getItem('fam_ideas')) || [];
         let handoverData = JSON.parse(localStorage.getItem('fam_handover')) || [];
@@ -1589,6 +1609,12 @@
             localStorage.setItem('fam_wishlist', JSON.stringify(wishlistData));
             localStorage.setItem('fam_todos', JSON.stringify(todosData));
             localStorage.setItem('fam_calendar', JSON.stringify(calendarEvents));
+            localStorage.setItem('fam_bills', JSON.stringify(householdBillsData));
+            localStorage.setItem('fam_monthly_budgets', JSON.stringify(monthlyBudgetsData));
+            localStorage.setItem('fam_renewals', JSON.stringify(renewalsData));
+            localStorage.setItem('fam_ideas', JSON.stringify(familyIdeasData));
+            localStorage.setItem('fam_handover', JSON.stringify(handoverData));
+            localStorage.setItem('fam_occasions', JSON.stringify(occasionsData));
             localStorage.setItem('fam_user', currentUser);
             localStorage.setItem('fam_user_name', currentUserName);
             localStorage.setItem('fam_view_mode', viewMode);
@@ -2417,6 +2443,15 @@
             const grid=document.getElementById('weekly-planner-grid');if(grid)grid.innerHTML=html;
             const summary=document.getElementById('family-week-summary');if(summary){const events=Object.values(calendarEvents).flat().length;const open=todosData.filter(t=>!t.done).length;summary.textContent=`7-day meal plan · ${events} calendar entries saved · ${open} outstanding to-do(s) · ${householdBillsData.length} household bill(s) tracked.`;}
         }
+        function renderMonthlyBudgets(){
+            const list=document.getElementById('monthly-budgets-list');if(!list)return;
+            const total=monthlyBudgetsData.reduce((sum,b)=>sum+(Number(b.limit)||0),0);
+            const spent=monthlyBudgetsData.reduce((sum,b)=>sum+(Number(b.spent)||0),0);
+            document.getElementById('monthly-budget-total').innerHTML=`${moneyGBP(total)} <span style="font-size:.75rem;font-weight:600">total monthly budget · ${moneyGBP(spent)} spent</span>`;
+            list.innerHTML=monthlyBudgetsData.length?monthlyBudgetsData.map((b,i)=>{const limit=Number(b.limit)||0,used=Number(b.spent)||0,remaining=limit-used,pct=limit>0?Math.min(100,Math.max(0,used/limit*100)):0;return `<div class="tool-row" style="display:block"><div style="display:flex;justify-content:space-between;gap:8px;align-items:start"><div><strong>${escapeToolText(b.name)}</strong><small>${escapeToolText(b.category)} · ${moneyGBP(used)} spent of ${moneyGBP(limit)}</small></div><button onclick="deleteToolItem('budgets',${i})">✕</button></div><div style="height:8px;background:#e8edf2;border-radius:10px;overflow:hidden;margin:9px 0"><div style="height:100%;width:${pct}%;background:${pct>=100?'#dc5b52':'var(--accent)'};border-radius:10px"></div></div><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><small>${remaining>=0?moneyGBP(remaining)+' remaining':moneyGBP(Math.abs(remaining))+' over budget'}</small><button style="color:var(--accent)" onclick="updateBudgetSpent(${i})">Update spent</button></div></div>`}).join(''):'<p class="tool-note">No monthly budgets yet. Add a category above to get started.</p>';
+        }
+        function addMonthlyBudget(e){e.preventDefault();const name=document.getElementById('budget-name').value.trim(),limit=Number(document.getElementById('budget-limit').value),spent=Number(document.getElementById('budget-spent').value)||0;if(!name||!Number.isFinite(limit)||limit<=0)return;monthlyBudgetsData.push({id:crypto.randomUUID(),name,category:document.getElementById('budget-category').value,limit,spent});saveData();e.target.reset();document.getElementById('budget-spent').value='0';renderMonthlyBudgets();showToast('Monthly budget added');}
+        function updateBudgetSpent(i){const b=monthlyBudgetsData[i];if(!b)return;const value=prompt(`How much has been spent on ${b.name} this month?`,String(b.spent||0));if(value===null)return;const amount=Number(value);if(!Number.isFinite(amount)||amount<0){showToast('Enter a valid amount');return;}b.spent=amount;saveData();renderMonthlyBudgets();}
         function renderBills(){const list=document.getElementById('household-bills-list');if(!list)return;const total=householdBillsData.reduce((sum,b)=>sum+monthlyBillEquivalent(b),0);document.getElementById('bills-monthly-total').innerHTML=`${moneyGBP(total)} <span style="font-size:.75rem;font-weight:600">monthly equivalent</span>`;list.innerHTML=householdBillsData.length?householdBillsData.map((b,i)=>`<div class="tool-row"><div><strong>${escapeToolText(b.name)}</strong><small>${escapeToolText(b.category)} · ${moneyGBP(b.amount)} ${escapeToolText(b.frequency)} · Next: ${dateLabel(b.due)}</small></div><div><button onclick="toggleBillPaid(${i})">${b.paid?'✓ Paid':'Mark paid'}</button><button onclick="deleteToolItem('bills',${i})">✕</button></div></div>`).join(''):'<p class="tool-note">No household bills added yet.</p>';}
         function addHouseholdBill(e){e.preventDefault();const name=document.getElementById('bill-name').value.trim();const amount=Number(document.getElementById('bill-amount').value);if(!name||!Number.isFinite(amount)||amount<0)return;householdBillsData.push({id:crypto.randomUUID(),name,amount,frequency:document.getElementById('bill-frequency').value,due:document.getElementById('bill-due').value,category:document.getElementById('bill-category').value,paid:false});saveData();e.target.reset();renderBills();showToast('Household bill added');}
         function toggleBillPaid(i){if(!householdBillsData[i])return;householdBillsData[i].paid=!householdBillsData[i].paid;saveData();renderBills();}
@@ -2424,12 +2459,12 @@
         function addFamilyIdea(e){e.preventDefault();familyIdeasData.push({id:crypto.randomUUID(),name:document.getElementById('idea-name').value.trim(),category:document.getElementById('idea-category').value,notes:document.getElementById('idea-notes').value.trim(),createdAt:new Date().toISOString()});saveData();e.target.reset();renderEnhancementLists();showToast('Idea saved');}
         function saveHandover(e){e.preventDefault();handoverData.push({id:crypto.randomUUID(),date:document.getElementById('handover-date').value,person:document.getElementById('handover-person').value.trim(),notes:document.getElementById('handover-notes').value.trim()});saveData();e.target.reset();document.getElementById('handover-date').value=new Date().toISOString().slice(0,10);renderEnhancementLists();showToast('Handover note added');}
         function addFamilyOccasion(e){e.preventDefault();occasionsData.push({id:crypto.randomUUID(),name:document.getElementById('occasion-name').value.trim(),date:document.getElementById('occasion-date').value,notes:document.getElementById('occasion-notes').value.trim()});saveData();e.target.reset();renderEnhancementLists();showToast('Occasion added');}
-        function deleteToolItem(type,i){const map={bills:householdBillsData,renewals:renewalsData,ideas:familyIdeasData,handover:handoverData,occasions:occasionsData};if(!map[type]||!confirm('Delete this entry?'))return;map[type].splice(i,1);saveData();renderBills();renderEnhancementLists();}
+        function deleteToolItem(type,i){const map={bills:householdBillsData,budgets:monthlyBudgetsData,renewals:renewalsData,ideas:familyIdeasData,handover:handoverData,occasions:occasionsData};if(!map[type]||!confirm('Delete this entry?'))return;map[type].splice(i,1);saveData();renderBills();renderEnhancementLists();}
         function renderSimpleToolList(id,items,formatter,type,empty){const el=document.getElementById(id);if(!el)return;el.innerHTML=items.length?items.map((item,i)=>`<div class="tool-row"><div>${formatter(item)}</div><button onclick="deleteToolItem('${type}',${i})">✕</button></div>`).join(''):`<p class="tool-note">${empty}</p>`;}
         function renderEnhancementLists(){renderSimpleToolList('renewals-list',renewalsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${moneyGBP(x.cost)} · ${escapeToolText(x.frequency)} · Renewal: ${dateLabel(x.date)}</small>`,'renewals','No renewals tracked yet.');renderSimpleToolList('family-ideas-list',familyIdeasData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${escapeToolText(x.category)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'ideas','Your saved family ideas will appear here.');renderSimpleToolList('handover-list',handoverData,x=>`<strong>${dateLabel(x.date)}${x.person?' · '+escapeToolText(x.person):''}</strong><small>${escapeToolText(x.notes)}</small>`,'handover','No handover notes yet.');renderSimpleToolList('family-occasions-list',occasionsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${dateLabel(x.date)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'occasions','No occasions added yet.');}
-        function renderFamilyTools(){renderWeeklyPlanner();renderBills();renderEnhancementLists();}
-        function exportFamilyPlanData(){const keys=['fam_meals','fam_foodshop','fam_familyshop','fam_destinations','fam_chores','fam_wishlist','fam_todos','fam_calendar','fam_bills','fam_renewals','fam_ideas','fam_handover','fam_occasions'];const payload={app:'Family Plan',formatVersion:1,exportedAt:new Date().toISOString(),data:{}};keys.forEach(k=>{const raw=localStorage.getItem(k);if(raw!==null){try{payload.data[k]=JSON.parse(raw)}catch{payload.data[k]=raw}}});const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`family-plan-backup-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);document.getElementById('backup-status').textContent='Backup exported. Keep this file somewhere safe.';}
-        async function importFamilyPlanData(e){const file=e.target.files?.[0];if(!file)return;try{const payload=JSON.parse(await file.text());if(payload.app!=='Family Plan'||!payload.data||typeof payload.data!=='object')throw new Error('This does not look like a Family Plan backup.');if(!confirm('Importing will replace the Family Plan data stored in this browser. Export a backup first. Continue?'))return;Object.entries(payload.data).forEach(([key,value])=>{if(/^fam_(meals|foodshop|familyshop|destinations|chores|wishlist|todos|calendar|bills|renewals|ideas|handover|occasions)$/.test(key))localStorage.setItem(key,JSON.stringify(value));});mealsData=JSON.parse(localStorage.getItem('fam_meals'))||mealsData;foodShopData=JSON.parse(localStorage.getItem('fam_foodshop'))||[];familyShopData=JSON.parse(localStorage.getItem('fam_familyshop'))||[];destinationsData=JSON.parse(localStorage.getItem('fam_destinations'))||destinationsData;choresData=JSON.parse(localStorage.getItem('fam_chores'))||choresData;wishlistData=JSON.parse(localStorage.getItem('fam_wishlist'))||[];todosData=JSON.parse(localStorage.getItem('fam_todos'))||[];calendarEvents=JSON.parse(localStorage.getItem('fam_calendar'))||{};householdBillsData=JSON.parse(localStorage.getItem('fam_bills'))||[];renewalsData=JSON.parse(localStorage.getItem('fam_renewals'))||[];familyIdeasData=JSON.parse(localStorage.getItem('fam_ideas'))||[];handoverData=JSON.parse(localStorage.getItem('fam_handover'))||[];occasionsData=JSON.parse(localStorage.getItem('fam_occasions'))||[];renderAllViews();renderFamilyTools();document.getElementById('backup-status').textContent='Backup imported successfully.';showToast('Family Plan backup restored');}catch(err){document.getElementById('backup-status').textContent='Import failed: '+err.message;}finally{e.target.value='';}}
+        function renderFamilyTools(){renderWeeklyPlanner();renderMonthlyBudgets();renderBills();renderEnhancementLists();}
+        function exportFamilyPlanData(){const keys=['fam_meals','fam_foodshop','fam_familyshop','fam_destinations','fam_chores','fam_wishlist','fam_todos','fam_calendar','fam_bills','fam_monthly_budgets','fam_renewals','fam_ideas','fam_handover','fam_occasions'];const payload={app:'Family Plan',formatVersion:1,exportedAt:new Date().toISOString(),data:{}};keys.forEach(k=>{const raw=localStorage.getItem(k);if(raw!==null){try{payload.data[k]=JSON.parse(raw)}catch{payload.data[k]=raw}}});const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`family-plan-backup-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);document.getElementById('backup-status').textContent='Backup exported. Keep this file somewhere safe.';}
+        async function importFamilyPlanData(e){const file=e.target.files?.[0];if(!file)return;try{const payload=JSON.parse(await file.text());if(payload.app!=='Family Plan'||!payload.data||typeof payload.data!=='object')throw new Error('This does not look like a Family Plan backup.');if(!confirm('Importing will replace the Family Plan data stored in this browser. Export a backup first. Continue?'))return;Object.entries(payload.data).forEach(([key,value])=>{if(/^fam_(meals|foodshop|familyshop|destinations|chores|wishlist|todos|calendar|bills|monthly_budgets|renewals|ideas|handover|occasions)$/.test(key))localStorage.setItem(key,JSON.stringify(value));});mealsData=JSON.parse(localStorage.getItem('fam_meals'))||mealsData;foodShopData=JSON.parse(localStorage.getItem('fam_foodshop'))||[];familyShopData=JSON.parse(localStorage.getItem('fam_familyshop'))||[];destinationsData=JSON.parse(localStorage.getItem('fam_destinations'))||destinationsData;choresData=JSON.parse(localStorage.getItem('fam_chores'))||choresData;wishlistData=JSON.parse(localStorage.getItem('fam_wishlist'))||[];todosData=JSON.parse(localStorage.getItem('fam_todos'))||[];calendarEvents=JSON.parse(localStorage.getItem('fam_calendar'))||{};householdBillsData=JSON.parse(localStorage.getItem('fam_bills'))||[];monthlyBudgetsData=JSON.parse(localStorage.getItem('fam_monthly_budgets'))||[];renewalsData=JSON.parse(localStorage.getItem('fam_renewals'))||[];familyIdeasData=JSON.parse(localStorage.getItem('fam_ideas'))||[];handoverData=JSON.parse(localStorage.getItem('fam_handover'))||[];occasionsData=JSON.parse(localStorage.getItem('fam_occasions'))||[];renderAllViews();renderFamilyTools();document.getElementById('backup-status').textContent='Backup imported successfully.';showToast('Family Plan backup restored');}catch(err){document.getElementById('backup-status').textContent='Import failed: '+err.message;}finally{e.target.value='';}}
 
         function renderAllViews() {
             setCalendarMode(calendarMode);
