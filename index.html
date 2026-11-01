@@ -1029,6 +1029,7 @@
         @media(min-width:600px){.week-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 
     </style>
+<style id="temporary-nav-hiding">#nav-btn-restaurants,#nav-btn-watchlist{display:none!important}</style>
 </head>
 <body>
 
@@ -1351,6 +1352,17 @@
             <h3>📊 Monthly budgets</h3>
             <p class="tool-note">Set a monthly spending limit for each area of family life, such as food shopping, subscriptions or days out. Update the amount spent to track what remains.</p>
             <div class="tool-total" id="monthly-budget-total">£0.00 <span style="font-size:.75rem;font-weight:600">total monthly budget</span></div>
+            <div class="tool-section" style="margin:12px 0;padding:14px;border:1px solid var(--border);border-radius:12px">
+                <h4 style="margin:0 0 6px">🎙️ Add a budget by voice</h4>
+                <p class="tool-note">Tap record and describe the budget. You can edit the words and check the details before anything is added.</p>
+                <button type="button" class="tool-btn" id="budget-voice-start" onclick="startBudgetVoice()">🎙️ Start recording</button>
+                <button type="button" class="tool-btn" id="budget-voice-stop" onclick="stopBudgetVoice()" disabled>Stop</button>
+                <p id="budget-voice-status" class="tool-note" aria-live="polite">Microphone access is only requested when you tap Start recording.</p>
+                <label for="budget-voice-text" style="display:block;font-weight:600;margin:8px 0 5px">Review or edit what was heard</label>
+                <textarea id="budget-voice-text" rows="3" style="width:100%;box-sizing:border-box" placeholder="For example: Food shopping budget six hundred pounds, already spent one hundred and twenty pounds."></textarea>
+                <button type="button" class="tool-btn wide" style="margin-top:8px" onclick="reviewBudgetVoice()">Review details</button>
+                <p id="budget-voice-review" class="tool-note" aria-live="polite">Your budget form will be filled in for checking. It will not be saved until you approve it below.</p>
+            </div>
             <form class="tool-form" onsubmit="addMonthlyBudget(event)">
                 <input id="budget-name" required placeholder="Budget name (e.g. Food shopping)">
                 <select id="budget-category"><option>Food shopping</option><option>Family shopping</option><option>Subscriptions</option><option>Days out & entertainment</option><option>Transport</option><option>Children</option><option>Household</option><option>Other</option></select>
@@ -2717,6 +2729,77 @@
         }
       }
     </script>
+
+
+<script id="monthly-budget-voice-support">
+(function(){
+  let recognition = null;
+  let finalTranscript = '';
+  const status = (message) => { const el=document.getElementById('budget-voice-status'); if(el) el.textContent=message; };
+  window.startBudgetVoice = function(){
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) { status('Voice recognition is not supported by this browser. You can type directly into the box above.'); return; }
+    try {
+      recognition = new SpeechRecognition();
+      recognition.lang = 'en-GB';
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      finalTranscript = '';
+      const box=document.getElementById('budget-voice-text');
+      if(box) box.value='';
+      recognition.onresult = function(event){
+        let interim='';
+        for(let i=event.resultIndex;i<event.results.length;i++){
+          const phrase=event.results[i][0].transcript;
+          if(event.results[i].isFinal) finalTranscript += phrase+' ';
+          else interim += phrase;
+        }
+        if(box) box.value=(finalTranscript+interim).trim();
+      };
+      recognition.onerror = function(event){ status(event.error==='not-allowed'?'Microphone permission was denied. Allow microphone access in your browser settings, or type the details instead.':'Voice recognition stopped ('+event.error+'). You can edit the text or type it manually.'); };
+      recognition.onend = function(){
+        const stop=document.getElementById('budget-voice-stop'); if(stop) stop.disabled=true;
+        const start=document.getElementById('budget-voice-start'); if(start) start.disabled=false;
+        if(document.getElementById('budget-voice-text')?.value.trim()) status('Recording finished. Check the transcript, then tap Review details.');
+      };
+      recognition.start();
+      const start=document.getElementById('budget-voice-start'); if(start) start.disabled=true;
+      const stop=document.getElementById('budget-voice-stop'); if(stop) stop.disabled=false;
+      status('Listening… speak clearly. Tap Stop when you have finished.');
+    } catch(error) { status('Could not start the microphone. Check browser permissions or type the details instead.'); }
+  };
+  window.stopBudgetVoice = function(){ if(recognition){ try{recognition.stop();}catch(e){} } };
+  window.reviewBudgetVoice = function(){
+    const text=(document.getElementById('budget-voice-text')?.value||'').trim();
+    if(!text){status('Please record or type a description first.');return;}
+    const lower=text.toLowerCase();
+    const amountMatches=[...text.matchAll(/(?:£\s*)?(\d+(?:[.,]\d{1,2})?)(?:\s*(?:pounds?|quid))?/gi)].map(m=>Number(m[1].replace(',','.'))).filter(Number.isFinite);
+    const nameEl=document.getElementById('budget-name');
+    const categoryEl=document.getElementById('budget-category');
+    const limitEl=document.getElementById('budget-limit');
+    const spentEl=document.getElementById('budget-spent');
+    const categories=[['food shopping','Food shopping'],['groceries','Food shopping'],['family shopping','Family shopping'],['subscriptions','Subscriptions'],['days out','Days out & entertainment'],['entertainment','Days out & entertainment'],['transport','Transport'],['children','Children'],['household','Household']];
+    let category='Other';
+    for(const [needle,value] of categories){if(lower.includes(needle)){category=value;break;}}
+    if(nameEl){
+      let name=text.split(/[,.;]/)[0].trim();
+      name=name.replace(/^(please\s+)?(add|create|set up|make)\s+(a\s+)?(monthly\s+)?budget\s+(for\s+)?/i,'').replace(/\s+(monthly\s+)?budget.*$/i,'').trim();
+      if(!name || /^\d/.test(name)) name=category==='Other'?'Monthly budget':category;
+      nameEl.value=name.charAt(0).toUpperCase()+name.slice(1);
+    }
+    if(categoryEl) categoryEl.value=category;
+    if(amountMatches.length){
+      limitEl.value=amountMatches[0].toFixed(2);
+      spentEl.value=(amountMatches.length>1?amountMatches[1]:0).toFixed(2);
+    }
+    const review=document.getElementById('budget-voice-review');
+    const found=amountMatches.length?`Detected monthly limit £${amountMatches[0].toFixed(2)}${amountMatches.length>1?' and already spent £'+amountMatches[1].toFixed(2):' (spent set to £0.00)'};`:'I could not confidently identify an amount; enter the monthly limit manually.';
+    if(review) review.textContent=`Please check the form below. ${found} Nothing has been saved yet. Edit any field, then tap “Add monthly budget” to approve.`;
+    status('Transcript ready for review.');
+    document.getElementById('budget-name')?.scrollIntoView({behavior:'smooth',block:'center'});
+  };
+})();
+</script>
 
 </body>
 </html>
