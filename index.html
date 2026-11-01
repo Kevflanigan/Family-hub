@@ -695,7 +695,7 @@
         .compact-scoped-item.quick-added-task { justify-content: flex-start; }
         .quick-added-task .todo-item-label { color: var(--accent); font-weight: 700; }
 
-        /* Weekly calendar quick add text styling and alignment */
+        /* Weekly calendar quick add text styling and alignment (teal color & left aligned) */
         .cal-week-content .event-pill.quick-added,
         .cal-week-content .event-pill {
             color: var(--accent) !important;
@@ -799,6 +799,7 @@
             margin-bottom: 6px;
             width: 100%;
             min-height: 48px;
+            cursor: pointer;
         }
 
         .cal-week-day {
@@ -2198,10 +2199,9 @@
                     }
 
                     html += `
-                        <div class="cal-week-row">
+                        <div class="cal-week-row" onclick="openDayPopover('${dateKey}', ${d.getDate()})">
                             <div class="cal-week-day">${weekDays[i]} ${d.getDate()}</div>
                             <div class="cal-week-content">${eventsHtml}</div>
-                            <input type="text" class="meal-input-inline" style="flex:1; max-width:140px; font-size:0.85rem;" placeholder="+ Quick add..." onkeypress="if(event.key==='Enter' && this.value.trim()){ addQuickCalEvent('${dateKey}', this.value.trim()); this.value=''; }">
                         </div>
                     `;
                 }
@@ -2327,7 +2327,8 @@
         function openDayPopover(dateKey, dayNum) {
             selectedPopoverDateKey = dateKey;
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            const formattedDate = `${dayNum} ${monthNames[currentMonth]} ${currentYear}`;
+            const [y, m, d] = dateKey.split('-');
+            const formattedDate = `${d} ${monthNames[parseInt(m, 10) - 1]} ${y}`;
             
             document.getElementById('bubble-date-title').textContent = formattedDate;
             const events = (calendarEvents[dateKey] || []).filter(ev => filterItem(ev.who));
@@ -2366,15 +2367,6 @@
                 handleCategoryChange('calendar');
                 document.getElementById('add-date').value = dateKey;
             }
-        }
-
-        function addQuickCalEvent(dateStr, title) {
-            if (!calendarEvents[dateStr]) calendarEvents[dateStr] = [];
-            calendarEvents[dateStr].push({ title, who: currentUser, quickAdded: true });
-            saveData();
-            renderCalendar();
-            renderDashboard();
-            showToast("Event added to calendar");
         }
 
         function deleteCalEvent(dateStr, index) {
@@ -2458,7 +2450,7 @@
             document.getElementById('addressbook-places-panel').style.display = addresses ? 'none' : 'block';
             const addressBtn = document.getElementById('address-toggle-addresses');
             const placesBtn = document.getElementById('address-toggle-places');
-            addressBtn.classList.toggle('secondary', !addresses); placesBtn.classList.toggle('secondary', addresses);
+            addressBtn.classList.toggle('secondary', !addresses); placesBtn.classList.toggle('secondary', places);
             addressBtn.setAttribute('aria-pressed', String(addresses)); placesBtn.setAttribute('aria-pressed', String(!addresses));
             if (!addresses) setTimeout(() => initMap(), 50);
         }
