@@ -1322,46 +1322,34 @@
 
     <!-- VIEW 2: Shopping -->
     <div id="view-shopping" class="view">
-        <section class="card" style="margin-bottom:0.8rem;">
-            <div class="card-header"><div class="card-title">🍽️ Weekly Meal Planner</div></div>
-            <div id="meal-list-container" class="list-container"></div>
-        </section>
-
-        <section class="card" style="margin-bottom:0.8rem;">
-            <div class="card-header"><div class="card-title">🛒 Food Shopping List</div></div>
-            <div class="inline-add-group">
-                <input type="text" id="foodshop-quick-input" class="form-input input-full" placeholder="Add food item..." onkeypress="if(event.key==='Enter') addInlineShop('foodshop')">
-                <button class="inline-add-btn" onclick="addInlineShop('foodshop')" style="width:auto; min-height:48px; background:var(--accent); color:#fff; border:none; border-radius:10px; font-weight:700; padding:0 16px; cursor:pointer;">+ Add</button>
-            </div>
-            <div id="foodshop-list-container" class="list-container"></div>
-        </section>
-
-        <section class="card">
-            <div class="card-header"><div class="card-title">🛍️ Family Shopping List</div></div>
-            <div class="inline-add-group">
-                <input type="text" id="familyshop-quick-input" class="form-input input-full" placeholder="Add family item..." onkeypress="if(event.key==='Enter') addInlineShop('familyshop')">
-                <button class="inline-add-btn" onclick="addInlineShop('familyshop')" style="width:auto; min-height:48px; background:var(--accent); color:#fff; border:none; border-radius:10px; font-weight:700; padding:0 16px; cursor:pointer;">+ Add</button>
-            </div>
-            <div id="familyshop-list-container" class="list-container"></div>
-        </section>
-    </div>
-
-    <!-- VIEW 3: Places to Visit -->
-    <div id="view-places" class="view">
-        <section class="places-scoped-card">
-            <div class="places-scoped-title">📍 Places to Visit</div>
-            <div class="compact-scoped-add-group">
-                <input type="text" id="places-name-input" class="places-scoped-input" style="flex:2;" placeholder="Place name...">
-                <input type="text" id="places-postcode-input" class="places-scoped-input" style="flex:1.2;" placeholder="Postcode...">
-                <button class="places-scoped-add-btn" onclick="addPlacesItem()">+ Add</button>
-            </div>
-            <div id="places-dynamic-list-container" style="display:flex; flex-direction:column;"></div>
-        </section>
-
-        <section class="places-scoped-card">
-            <div class="places-scoped-title">🗺️ Interactive Map</div>
-            <div id="places-map"></div>
-        </section>
+        <div class="toggle-switch" role="group" aria-label="Shopping view" style="display:flex;gap:8px;margin-bottom:14px;background:var(--surface, #f3f4f6);padding:5px;border-radius:12px;">
+            <button type="button" id="shopping-toggle-meals" class="tool-btn" onclick="setShoppingView('meals')" aria-pressed="true" style="flex:1;">🍽️ Weekly meal plan</button>
+            <button type="button" id="shopping-toggle-list" class="tool-btn secondary" onclick="setShoppingView('list')" aria-pressed="false" style="flex:1;">🛒 Shopping list</button>
+        </div>
+        <div id="shopping-meals-panel">
+            <section class="card" style="margin-bottom:0.8rem;">
+                <div class="card-header"><div class="card-title">🍽️ Weekly Meal Planner</div></div>
+                <div id="meal-list-container" class="list-container"></div>
+            </section>
+        </div>
+        <div id="shopping-list-panel" style="display:none;">
+            <section class="card" style="margin-bottom:0.8rem;">
+                <div class="card-header"><div class="card-title">🛒 Food Shopping List</div></div>
+                <div class="inline-add-group">
+                    <input type="text" id="foodshop-quick-input" class="form-input input-full" placeholder="Add food item..." onkeypress="if(event.key==='Enter') addInlineShop('foodshop')">
+                    <button class="inline-add-btn" onclick="addInlineShop('foodshop')" style="width:auto; min-height:48px; background:var(--accent); color:#fff; border:none; border-radius:10px; font-weight:700; padding:0 16px; cursor:pointer;">+ Add</button>
+                </div>
+                <div id="foodshop-list-container" class="list-container"></div>
+            </section>
+            <section class="card">
+                <div class="card-header"><div class="card-title">🛍️ Family Shopping List</div></div>
+                <div class="inline-add-group">
+                    <input type="text" id="familyshop-quick-input" class="form-input input-full" placeholder="Add family item..." onkeypress="if(event.key==='Enter') addInlineShop('familyshop')">
+                    <button class="inline-add-btn" onclick="addInlineShop('familyshop')" style="width:auto; min-height:48px; background:var(--accent); color:#fff; border:none; border-radius:10px; font-weight:700; padding:0 16px; cursor:pointer;">+ Add</button>
+                </div>
+                <div id="familyshop-list-container" class="list-container"></div>
+            </section>
+        </div>
     </div>
 
     <!-- VIEW 4: Restaurants -->
@@ -1494,6 +1482,7 @@
 
     <!-- Dedicated Address Book page -->
     <div id="view-addressbook" class="view">
+        <div id="addressbook-addresses-panel">
         <section class="card"><div class="card-title">📇 Address Book</div><p class="tool-note">Keep important family addresses together, such as schools, relatives, friends, clubs and regular destinations.</p></section>
         <section class="tool-section" id="address-book-section">
             <form class="tool-form" onsubmit="addAddressBookEntry(event)">
@@ -1504,6 +1493,26 @@
             </form>
             <div id="address-book-list" class="tool-list"></div>
         </section>
+        </div>
+        <div class="toggle-switch" role="group" aria-label="Addresses and places view" style="display:flex;gap:8px;margin:14px 0;background:var(--surface, #f3f4f6);padding:5px;border-radius:12px;">
+            <button type="button" id="address-toggle-addresses" class="tool-btn" onclick="setAddressPlacesView('addresses')" aria-pressed="true" style="flex:1;">📇 Address book</button>
+            <button type="button" id="address-toggle-places" class="tool-btn secondary" onclick="setAddressPlacesView('places')" aria-pressed="false" style="flex:1;">📍 Places to visit</button>
+        </div>
+        <div id="addressbook-places-panel" style="display:none;">
+            <section class="places-scoped-card">
+                <div class="places-scoped-title">📍 Places to Visit</div>
+                <div class="compact-scoped-add-group">
+                    <input type="text" id="places-name-input" class="places-scoped-input" style="flex:2;" placeholder="Place name...">
+                    <input type="text" id="places-postcode-input" class="places-scoped-input" style="flex:1.2;" placeholder="Postcode...">
+                    <button class="places-scoped-add-btn" onclick="addPlacesItem()">+ Add</button>
+                </div>
+                <div id="places-dynamic-list-container" style="display:flex; flex-direction:column;"></div>
+            </section>
+            <section class="places-scoped-card">
+                <div class="places-scoped-title">🗺️ Interactive Map</div>
+                <div id="places-map"></div>
+            </section>
+        </div>
     </div>
 
     <!-- Family tools: weekly planner, household bills, renewals, ideas, handover, occasions and account -->
@@ -1557,7 +1566,7 @@
     <nav class="bottom-nav">
         <button id="nav-btn-addressbook" class="nav-item" onclick="showView('addressbook', this)">
             <span class="nav-icon">📇</span>
-            <span>Addresses</span>
+            <span>Addresses & Places</span>
         </button>
         <button id="nav-btn-calendar" class="nav-item" onclick="showView('calendar', this)">
             <span class="nav-icon">📅</span>
@@ -1566,10 +1575,6 @@
         <button id="nav-btn-shopping" class="nav-item" onclick="showView('shopping', this)">
             <span class="nav-icon">🛒</span>
             <span>Shopping</span>
-        </button>
-        <button id="nav-btn-places" class="nav-item" onclick="showView('places', this)">
-            <span class="nav-icon">📍</span>
-            <span>Places</span>
         </button>
         <button id="nav-btn-restaurants" class="nav-item" onclick="showView('restaurants', this)">
             <span class="nav-icon">🍽️</span>
@@ -1796,16 +1801,12 @@
             }
             if (viewId === 'addressbook') {
                 renderAddressBook();
+                if (document.getElementById('addressbook-places-panel')?.style.display !== 'none') setTimeout(() => initMap(), 50);
             }
             if (viewId === 'calendar') {
                 setCalendarPage('handover');
             }
 
-            if (viewId === 'places') {
-                setTimeout(() => {
-                    initMap();
-                }, 50);
-            }
         }
 
         function handleCategoryChange(val) {
@@ -2148,6 +2149,27 @@
             renderDashboard();
         }
 
+        function setShoppingView(mode) {
+            const meals = mode === 'meals';
+            document.getElementById('shopping-meals-panel').style.display = meals ? 'block' : 'none';
+            document.getElementById('shopping-list-panel').style.display = meals ? 'none' : 'block';
+            const mealBtn = document.getElementById('shopping-toggle-meals');
+            const listBtn = document.getElementById('shopping-toggle-list');
+            mealBtn.classList.toggle('secondary', !meals); listBtn.classList.toggle('secondary', meals);
+            mealBtn.setAttribute('aria-pressed', String(meals)); listBtn.setAttribute('aria-pressed', String(!meals));
+        }
+
+        function setAddressPlacesView(mode) {
+            const addresses = mode === 'addresses';
+            document.getElementById('addressbook-addresses-panel').style.display = addresses ? 'block' : 'none';
+            document.getElementById('addressbook-places-panel').style.display = addresses ? 'none' : 'block';
+            const addressBtn = document.getElementById('address-toggle-addresses');
+            const placesBtn = document.getElementById('address-toggle-places');
+            addressBtn.classList.toggle('secondary', !addresses); placesBtn.classList.toggle('secondary', addresses);
+            addressBtn.setAttribute('aria-pressed', String(addresses)); placesBtn.setAttribute('aria-pressed', String(!addresses));
+            if (!addresses) setTimeout(() => initMap(), 50);
+        }
+
         function renderShopping() {
             const foodCont = document.getElementById('foodshop-list-container');
             const famCont = document.getElementById('familyshop-list-container');
@@ -2239,7 +2261,7 @@
                 `;
             }).join('');
 
-            initMap();
+            if (document.getElementById('addressbook-places-panel')?.style.display !== 'none' && document.getElementById('view-addressbook')?.classList.contains('active')) initMap();
         }
 
         let mapInstance = null;
