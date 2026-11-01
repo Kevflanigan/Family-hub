@@ -294,7 +294,6 @@
             line-height: 1 !important;
         }
 
-        /* Temporarily hide these navigation shortcuts without removing their views or code. */
         #nav-btn-restaurants,
         #nav-btn-watchlist {
             display: none !important;
@@ -695,7 +694,6 @@
         .compact-scoped-item.quick-added-task { justify-content: flex-start; }
         .quick-added-task .todo-item-label { color: var(--accent); font-weight: 700; }
 
-        /* Weekly calendar quick add text styling and alignment (teal color & left aligned) */
         .cal-week-content .event-pill.quick-added,
         .cal-week-content .event-pill {
             color: var(--accent) !important;
@@ -1054,7 +1052,6 @@
         .tool-btn{border:0;border-radius:9px;background:var(--accent);color:#fff;padding:9px 12px;font-weight:750;cursor:pointer}
         .tool-btn.secondary{background:#eff6ff;color:var(--accent);border:1px solid #bfdbfe}
         .tool-list{display:flex;flex-direction:column;gap:7px;margin-top:9px}
-        /* Address Book form and saved entries layout */
         #address-book-section .tool-form{grid-template-columns:minmax(0,1fr) minmax(0,1fr);row-gap:10px;margin:4px 0 0}
         #address-book-name,#address-book-address{grid-column:1/-1}
         #address-book-name,#address-book-address,#address-book-postcode{min-height:46px;font-size:.95rem}
@@ -1269,7 +1266,6 @@
         .auth-tabs { background: #edf4f0; border-radius: 12px; }
         .auth-tabs button.active { color: var(--accent); border-radius: 9px; }
 
-        /* Dashboard lead card gets a more editorial, welcoming treatment */
         #view-dashboard > .card:first-child {
             position: relative;
             overflow: hidden;
@@ -1300,17 +1296,39 @@
         .finance-tab { padding: 9px 4px; font-size: .78rem; min-width: 0; }
         .finance-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
         .finance-pane[hidden] { display: none !important; }
+        
+        /* New horizontal budget summary table layout */
+        .budget-horizontal-table {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 10px;
+        }
+        .budget-row-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+            border: 1px solid #edf0f4;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .budget-row-item span:last-child {
+            color: var(--accent);
+            font-size: 1.05rem;
+        }
     </style>
 
     <style id="family-plan-navigation-refinement">
-        /* Remove decorative corner motif */
         #view-dashboard > .card:first-child::before,
         #view-dashboard > .card:first-child::after {
             content: none !important;
             display: none !important;
         }
 
-        /* Compact, evenly spaced mobile navigation: six clear destinations. */
         nav.bottom-nav, .bottom-nav {
             display: grid !important;
             grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
@@ -1475,7 +1493,6 @@
                 <div class="form-row" id="date-row" style="gap:8px;">
                     <input type="date" id="add-date" class="form-input input-full">
                 </div>
-                <!-- Recurring Dropdown Field -->
                 <div class="form-row" id="recurring-row" style="gap:8px;">
                     <select id="add-recurring" class="form-select input-full">
                         <option value="none">Does not repeat</option>
@@ -1496,7 +1513,6 @@
 
     <!-- Top Header Container -->
     <div class="top-header-container">
-        <!-- Left: Account / Switcher Icon -->
         <div class="header-left">
             <button class="account-icon-btn" onclick="toggleUserDropdown()" title="Switch User / View">
                 <svg id="account-indicator" class="user-silhouette-icon text-family" viewBox="0 0 24 24" fill="currentColor">
@@ -1526,12 +1542,10 @@
             <button class="top-add-btn" onclick="toggleQuickAddModal()" title="Add Event / Item" aria-label="Add">+</button>
         </div>
 
-        <!-- Center: Logo -->
         <div class="header-center" onclick="showView('dashboard', document.getElementById('nav-btn-home'))">
             <img src="familiplan-icon.png" alt="FamilyPlan Logo" class="brand-logo-img">
         </div>
 
-        <!-- Right: Active View Label -->
         <div class="header-right">
             <div class="current-user-badge">
                 <span id="active-badge-dot" class="account-avatar-dot bg-family" style="width:8px; height:8px;"></span>
@@ -1540,13 +1554,12 @@
         </div>
     </div>
 
-    <!-- VIEW 0: HOME DASHBOARD (Default Opening Screen) -->
+    <!-- VIEW 0: HOME DASHBOARD -->
     <div id="view-dashboard" class="view active">
         <section class="card" style="margin-bottom:12px;">
             <div class="card-title"><span>🗓️ This Week in Our Family</span><button class="tool-btn secondary" onclick="showView('familytools',document.getElementById('nav-btn-tools'))">Open planner</button></div>
             <div id="family-week-summary" class="tool-note">Your family week at a glance.</div>
         </section>
-        <!-- 1. Today's Schedule & Locations -->
         <section class="card">
             <div class="card-title">
                 <span>📍 Today's Schedule & Locations</span>
@@ -1554,8 +1567,6 @@
             </div>
             <div id="dash-schedule"></div>
         </section>
-
-        <!-- 2. What's for Dinner -->
         <section class="card">
             <div class="card-title">
                 <span>🍽️ What's for Dinner</span>
@@ -1563,16 +1574,12 @@
             </div>
             <div id="dash-dinner"></div>
         </section>
-
-        <!-- 3. Outstanding Tasks & Shopping Items -->
         <section class="card">
             <div class="card-title">
                 <span>📝 Tasks & Shopping Needed</span>
             </div>
             <div id="dash-tasks"></div>
         </section>
-
-        <!-- 4. Birthdays & Term Dates -->
         <section class="card">
             <div class="card-title">
                 <span>🎂 Birthdays & Term Dates</span>
@@ -1681,7 +1688,7 @@
         </section>
     </div>
 
-    <!-- Family Finances -->
+    <!-- Family Finances / Money -->
     <div id="view-monthlybudget" class="view">
         <section class="card"><div class="card-title">💷 Family Finances</div></section>
         <div class="finance-tabs" role="tablist" aria-label="Family finances sections" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:12px 0">
@@ -1689,25 +1696,58 @@
             <button type="button" class="tool-btn secondary finance-tab" data-finance-tab="bills" onclick="setFinanceTab('bills',this)">Bills & Payments</button>
             <button type="button" class="tool-btn secondary finance-tab" data-finance-tab="renewals" onclick="setFinanceTab('renewals',this)">Renewals</button>
         </div>
+        
         <div id="finance-pane-overview" class="finance-pane">
             <section class="tool-section">
                 <h3>Monthly household budget</h3>
                 <p class="tool-note">Set one figure for the household each month.</p>
                 <form class="tool-form" onsubmit="saveHouseholdBudget(event)">
                     <input id="household-monthly-budget" type="number" min="0" step="0.01" required placeholder="Monthly budget (£)">
-                    <input id="household-monthly-spent" type="number" min="0" step="0.01" placeholder="Monthly spending so far (£)">
-                    <button class="tool-btn wide" type="submit">Save monthly figures</button>
+                    <button class="tool-btn wide" type="submit">Save monthly budget</button>
                 </form>
-                <div class="grid" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px">
-                    <div class="tool-total"><small>Monthly budget</small><div id="finance-overview-budget">£0.00</div></div>
-                    <div class="tool-total"><small>Spent so far</small><div id="finance-overview-spent">£0.00</div></div>
-                    <div class="tool-total"><small>Remaining</small><div id="finance-overview-remaining">£0.00</div></div>
-                    <div class="tool-total"><small>Regular payments</small><div id="finance-overview-bills">£0.00</div></div>
+                
+                <!-- Horizontal Budget Display Table -->
+                <div class="budget-horizontal-table">
+                    <div class="budget-row-item">
+                        <span>Budget</span>
+                        <span id="finance-overview-budget">£0.00</span>
+                    </div>
+                    <div class="budget-row-item">
+                        <span>Regular Payments</span>
+                        <span id="finance-overview-bills">£0.00</span>
+                    </div>
+                    <div class="budget-row-item">
+                        <span>Spending so far</span>
+                        <span id="finance-overview-spent">£0.00</span>
+                    </div>
+                    <div class="budget-row-item">
+                        <span>Remaining spending</span>
+                        <span id="finance-overview-remaining">£0.00</span>
+                    </div>
                 </div>
-                <h3 style="margin-top:16px">Upcoming payments</h3>
+            </section>
+
+            <!-- New Section: Non-Planned Spending (Shopping, etc.) -->
+            <section class="tool-section">
+                <h3>🛒 Non-planned spending (Shopping & Extras)</h3>
+                <p class="tool-note">Log any unplanned purchases with a date. The spending so far updates as a running total.</p>
+                <form class="tool-form" onsubmit="addUnplannedSpend(event)">
+                    <input id="unplanned-name" required placeholder="Description (e.g. Shopping)">
+                    <input id="unplanned-amount" type="number" min="0" step="0.01" required placeholder="Amount (£)">
+                    <input id="unplanned-date" type="date" required aria-label="Purchase date">
+                    <button class="tool-btn wide" type="submit">Add spending entry</button>
+                </form>
+                <div id="unplanned-spending-list" class="tool-list" style="margin-top:12px;">
+                    <p class="tool-note">No unplanned spending recorded yet.</p>
+                </div>
+            </section>
+
+            <section class="tool-section">
+                <h3 style="margin-top:4px">Upcoming payments</h3>
                 <div id="finance-upcoming-list" class="tool-list"><p class="tool-note">No upcoming payments recorded yet.</p></div>
             </section>
         </div>
+
         <div id="finance-pane-bills" class="finance-pane" hidden>
             <section class="tool-section">
                 <h3>💷 Bills & Payments</h3>
@@ -1734,6 +1774,7 @@
                 <div id="household-bills-list" class="tool-list"></div>
             </section>
         </div>
+
         <div id="finance-pane-renewals" class="finance-pane" hidden>
             <section class="tool-section">
                 <h3>🔁 Renewals</h3>
@@ -1811,7 +1852,7 @@
         </div>
     </div>
 
-    <!-- Family tools: weekly planner, household bills, renewals, ideas, handover, occasions and account -->
+    <!-- Family tools -->
     <div id="view-familytools" class="view">
         <section class="card"><div class="card-title">✨ Family Plan tools</div><p class="tool-note">A connected place to organise the week, household commitments and family ideas.</p></section>
         <section class="tool-section">
@@ -1951,8 +1992,8 @@
         let handoverData = JSON.parse(localStorage.getItem('fam_handover')) || [];
         let occasionsData = JSON.parse(localStorage.getItem('fam_occasions')) || [];
         let addressBookData = JSON.parse(localStorage.getItem('fam_address_book')) || [];
+        let unplannedSpendingData = JSON.parse(localStorage.getItem('fam_unplanned_spending')) || [];
 
-        // One-time import of the family dates supplied on 31 October 2026.
         const calendarImportKey = 'fam_calendar_import_nov2026_v1';
         if (!localStorage.getItem(calendarImportKey)) {
             const importedCalendarEntries = [
@@ -1976,12 +2017,6 @@
             });
 
             localStorage.setItem('fam_calendar', JSON.stringify(calendarEvents));
-            localStorage.setItem('fam_bills', JSON.stringify(householdBillsData));
-            localStorage.setItem('fam_renewals', JSON.stringify(renewalsData));
-            localStorage.setItem('fam_ideas', JSON.stringify(familyIdeasData));
-            localStorage.setItem('fam_handover', JSON.stringify(handoverData));
-            localStorage.setItem('fam_occasions', JSON.stringify(occasionsData));
-            localStorage.setItem('fam_address_book', JSON.stringify(addressBookData));
             localStorage.setItem(calendarImportKey, 'done');
         }
 
@@ -2011,6 +2046,8 @@
             localStorage.setItem('fam_ideas', JSON.stringify(familyIdeasData));
             localStorage.setItem('fam_handover', JSON.stringify(handoverData));
             localStorage.setItem('fam_occasions', JSON.stringify(occasionsData));
+            localStorage.setItem('fam_address_book', JSON.stringify(addressBookData));
+            localStorage.setItem('fam_unplanned_spending', JSON.stringify(unplannedSpendingData));
             localStorage.setItem('fam_user', currentUser);
             localStorage.setItem('fam_user_name', currentUserName);
             localStorage.setItem('fam_view_mode', viewMode);
@@ -2088,9 +2125,8 @@
             window.scrollTo(0, 0);
 
             if (viewId === 'monthlybudget') {
-                renderMonthlyBudgets();
                 renderBills();
-                renderEnhancementLists();
+                renderUnplannedSpending();
                 renderFinanceOverview();
                 setFinanceTab('overview');
             }
@@ -2223,8 +2259,6 @@
 
         function renderDashboard() {
             const todayStr = new Date().toISOString().split('T')[0];
-            
-            // 1. Schedule & Locations Today
             const schedCont = document.getElementById('dash-schedule');
             const todayEvents = (calendarEvents[todayStr] || []).filter(ev => filterItem(ev.who));
             if (todayEvents.length === 0) {
@@ -2241,7 +2275,6 @@
                 `).join('');
             }
 
-            // 2. What's for Dinner
             const dinnerCont = document.getElementById('dash-dinner');
             const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
             const todayDay = dayNames[new Date().getDay()];
@@ -2261,22 +2294,13 @@
                 `;
             }
 
-            // 3. Outstanding Tasks & Shopping Items
             const tasksCont = document.getElementById('dash-tasks');
-            const uncompletedTasks = todosData
-                .map((item, index) => ({ ...item, index }))
-                .filter(item => !item.done && filterItem(item.who));
-            const uncompletedFood = foodShopData
-                .map((item, index) => ({ ...item, index }))
-                .filter(item => !item.done && filterItem(item.who));
+            const uncompletedTasks = todosData.map((item, index) => ({ ...item, index })).filter(item => !item.done && filterItem(item.who));
+            const uncompletedFood = foodShopData.map((item, index) => ({ ...item, index })).filter(item => !item.done && filterItem(item.who));
 
             let combinedItems = [];
-            uncompletedFood.forEach(item => combinedItems.push({
-                text: item.text, sub: "Food Shopping List", type: "foodshop", index: item.index, icon: "🛒"
-            }));
-            uncompletedTasks.forEach(item => combinedItems.push({
-                text: item.text, sub: "To-Do Task", type: "todo", index: item.index, icon: "📝"
-            }));
+            uncompletedFood.forEach(item => combinedItems.push({ text: item.text, sub: "Food Shopping List", type: "foodshop", index: item.index, icon: "🛒" }));
+            uncompletedTasks.forEach(item => combinedItems.push({ text: item.text, sub: "To-Do Task", type: "todo", index: item.index, icon: "📝" }));
 
             if (combinedItems.length === 0) {
                 tasksCont.innerHTML = `<div class="list-empty">No outstanding tasks or shopping items.</div>`;
@@ -2284,9 +2308,7 @@
                 tasksCont.innerHTML = combinedItems.slice(0, 5).map(item => `
                     <div class="dashboard-item dashboard-task-item">
                         <label class="dashboard-task-left">
-                            <input class="dashboard-task-checkbox" type="checkbox"
-                                aria-label="Mark ${item.text.replace(/&/g, '&amp;').replace(/"/g, '&quot;')} as complete"
-                                onchange="toggleDashboardTask('${item.type}', ${item.index})">
+                            <input class="dashboard-task-checkbox" type="checkbox" onchange="toggleDashboardTask('${item.type}', ${item.index})">
                             <span>
                                 <strong>${item.text}</strong>
                                 <span class="sub-text">${item.sub}</span>
@@ -2297,10 +2319,8 @@
                 `).join('');
             }
 
-            // 4. Birthdays & Term Dates
             const datesCont = document.getElementById('dash-dates');
             let upcomingDates = [];
-            
             Object.keys(calendarEvents).forEach(dateStr => {
                 calendarEvents[dateStr].forEach(ev => {
                     if (ev.title.includes('Birthday') || ev.title.includes('🎂') || ev.title.includes('Term') || ev.title.includes('School')) {
@@ -2512,12 +2532,7 @@
             const pcInput = document.getElementById('places-postcode-input');
             if (!nameInput || !nameInput.value.trim()) return;
 
-            destinationsData.places.push({
-                title: nameInput.value.trim(),
-                postcode: pcInput.value.trim(),
-                who: currentUser
-            });
-
+            destinationsData.places.push({ title: nameInput.value.trim(), postcode: pcInput.value.trim(), who: currentUser });
             nameInput.value = '';
             pcInput.value = '';
             saveData();
@@ -2570,7 +2585,6 @@
             }
 
             mapInstance.invalidateSize();
-
             mapMarkers.forEach(m => mapInstance.removeLayer(m));
             mapMarkers = [];
 
@@ -2610,13 +2624,7 @@
             const postcode = pcInput.value.trim();
             let imageUrl = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60';
 
-            destinationsData.restaurants.push({
-                title,
-                postcode,
-                who: currentUser,
-                image: imageUrl
-            });
-
+            destinationsData.restaurants.push({ title, postcode, who: currentUser, image: imageUrl });
             nameInput.value = '';
             pcInput.value = '';
             saveData();
@@ -2859,11 +2867,11 @@
             showToast('Item added successfully!');
         }
 
-        // Family Plan enhancement data and rendering
         function moneyGBP(value) { return new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(Number(value)||0); }
         function escapeToolText(value) { return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
         function dateLabel(value) { if(!value) return 'Date not set'; const d=new Date(value+'T12:00:00'); return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }
         function monthlyBillEquivalent(b) { const n=Number(b.amount)||0; return n * ({weekly:52/12,monthly:1,quarterly:1/3,yearly:1/12}[b.frequency]||1); }
+
         function renderWeeklyPlanner() {
             const today=new Date(); const monday=getMonday(today);
             const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
@@ -2871,8 +2879,9 @@
             const grid=document.getElementById('weekly-planner-grid');if(grid)grid.innerHTML=html;
             const summary=document.getElementById('family-week-summary');if(summary){const events=Object.values(calendarEvents).flat().length;const open=todosData.filter(t=>!t.done).length;summary.textContent=`7-day meal plan · ${events} calendar entries saved · ${open} outstanding to-do(s) · ${householdBillsData.length} household bill(s) tracked.`;}
         }
-        let householdMonthlyBudget = Number(localStorage.getItem('fam_household_monthly_budget')) || 0;
-        let householdMonthlySpent = Number(localStorage.getItem('fam_household_monthly_spent')) || 0;
+
+        let householdMonthlyBudget = Number(localStorage.getItem('fam_household_monthly_budget')) || 1500;
+
         function setFinanceTab(tab, button){
             ['overview','bills','renewals'].forEach(name=>{const pane=document.getElementById('finance-pane-'+name);if(pane)pane.hidden=name!==tab;});
             document.querySelectorAll('.finance-tab').forEach(btn=>btn.classList.toggle('active',btn.dataset.financeTab===tab));
@@ -2881,42 +2890,94 @@
             if(tab==='renewals')renderEnhancementLists();
             renderFinanceOverview();
         }
+
         function saveHouseholdBudget(e){
             e.preventDefault();
             const budget=Number(document.getElementById('household-monthly-budget').value);
-            const spent=Number(document.getElementById('household-monthly-spent').value)||0;
-            if(!Number.isFinite(budget)||budget<0||spent<0)return;
-            householdMonthlyBudget=budget;householdMonthlySpent=spent;
+            if(!Number.isFinite(budget)||budget<0)return;
+            householdMonthlyBudget=budget;
             localStorage.setItem('fam_household_monthly_budget',String(budget));
-            localStorage.setItem('fam_household_monthly_spent',String(spent));
-            renderFinanceOverview();showToast('Monthly household figures saved');
-        }
-        function renderFinanceOverview(){
-            const bills=householdBillsData.reduce((sum,b)=>sum+monthlyBillEquivalent(b),0);
-            const put=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value;};
-            put('finance-overview-budget',moneyGBP(householdMonthlyBudget));put('finance-overview-spent',moneyGBP(householdMonthlySpent));put('finance-overview-remaining',moneyGBP(householdMonthlyBudget-householdMonthlySpent));put('finance-overview-bills',moneyGBP(bills));
-            const upcoming=document.getElementById('finance-upcoming-list');
-            if(upcoming){const items=[...householdBillsData.filter(x=>x.due).map(x=>({name:x.name,date:x.due,detail:`Payment · ${moneyGBP(x.amount)} · ${x.frequency}`})),...renewalsData.filter(x=>x.date).map(x=>({name:x.name,date:x.date,detail:`Renewal · ${moneyGBP(x.cost)} · ${x.frequency}`}))].filter(x=>x.date>=new Date().toISOString().slice(0,10)).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,6);upcoming.innerHTML=items.length?items.map(x=>`<div class="tool-row"><div><strong>${escapeToolText(x.name)}</strong><small>${dateLabel(x.date)} · ${escapeToolText(x.detail)}</small></div></div>`).join(''):'<p class="tool-note">No upcoming payments recorded yet.</p>';}
-        }
-        function renderMonthlyBudgets(){
-            const list=document.getElementById('monthly-budgets-list');if(!list)return;
-            const total=monthlyBudgetsData.reduce((sum,b)=>sum+(Number(b.limit)||0),0);
-            const spent=monthlyBudgetsData.reduce((sum,b)=>sum+(Number(b.spent)||0),0);
-            document.getElementById('monthly-budget-total').innerHTML=`${moneyGBP(total)} <span style="font-size:.75rem;font-weight:600">total monthly budget · ${moneyGBP(spent)} spent</span>`;
-            list.innerHTML=monthlyBudgetsData.length?monthlyBudgetsData.map((b,i)=>{const limit=Number(b.limit)||0,used=Number(b.spent)||0,remaining=limit-used,pct=limit>0?Math.min(100,Math.max(0,used/limit*100)):0;return `<div class="tool-row" style="display:block"><div style="display:flex;justify-space-between;gap:8px;align-items:start"><div><strong>${escapeToolText(b.name)}</strong><small>${escapeToolText(b.category)} · ${moneyGBP(used)} spent of ${moneyGBP(limit)}</small></div><button onclick="deleteToolItem('budgets',${i})">✕</button></div><div style="height:8px;background:#e8edf2;border-radius:10px;overflow:hidden;margin:9px 0"><div style="height:100%;width:${pct}%;background:${pct>=100?'#dc5b52':'var(--accent)'};border-radius:10px"></div></div><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><small>${remaining>=0?moneyGBP(remaining)+' remaining':moneyGBP(Math.abs(remaining))+' over budget'}</small><button style="color:var(--accent)" onclick="updateBudgetSpent(${i})">Update spent</button></div></div>`}).join(''):'<p class="tool-note">No monthly budgets yet. Add a category above to get started.</p>';
             renderFinanceOverview();
+            showToast('Monthly budget saved');
         }
-        function addMonthlyBudget(e){e.preventDefault();const name=document.getElementById('budget-name').value.trim(),limit=Number(document.getElementById('budget-limit').value),spent=Number(document.getElementById('budget-spent').value)||0;if(!name||!Number.isFinite(limit)||limit<=0)return;monthlyBudgetsData.push({id:crypto.randomUUID(),name,category:document.getElementById('budget-category').value,limit,spent});saveData();e.target.reset();document.getElementById('budget-spent').value='0';renderMonthlyBudgets();showToast('Monthly budget added');}
-        function updateBudgetSpent(i){const b=monthlyBudgetsData[i];if(!b)return;const value=prompt(`How much has been spent on ${b.name} this month?`,String(b.spent||0));if(value===null)return;const amount=Number(value);if(!Number.isFinite(amount)||amount<0){showToast('Enter a valid amount');return;}b.spent=amount;saveData();renderMonthlyBudgets();}
+
+        function addUnplannedSpend(e){
+            e.preventDefault();
+            const name=document.getElementById('unplanned-name').value.trim();
+            const amount=Number(document.getElementById('unplanned-amount').value);
+            const date=document.getElementById('unplanned-date').value;
+            if(!name||!Number.isFinite(amount)||amount<=0||!date)return;
+            unplannedSpendingData.push({ id: crypto.randomUUID(), name, amount, date });
+            unplannedSpendingData.sort((a,b)=>a.date.localeCompare(b.date));
+            saveData();
+            e.target.reset();
+            document.getElementById('unplanned-date').value = new Date().toISOString().slice(0,10);
+            renderUnplannedSpending();
+            renderFinanceOverview();
+            showToast('Spending entry added');
+        }
+
+        function deleteUnplannedSpend(id){
+            unplannedSpendingData = unplannedSpendingData.filter(x=>x.id!==id);
+            saveData();
+            renderUnplannedSpending();
+            renderFinanceOverview();
+            showToast('Entry removed');
+        }
+
+        function renderUnplannedSpending(){
+            const list=document.getElementById('unplanned-spending-list');
+            if(!list)return;
+            let runningTotal = 0;
+            if(unplannedSpendingData.length===0){
+                list.innerHTML='<p class="tool-note">No unplanned spending recorded yet.</p>';
+                return;
+            }
+            list.innerHTML=unplannedSpendingData.map(item=>{
+                runningTotal += Number(item.amount)||0;
+                return `
+                    <div class="tool-row" style="align-items:center;">
+                        <div>
+                            <strong>${escapeToolText(item.name)}</strong>
+                            <small>${dateLabel(item.date)} · ${moneyGBP(item.amount)} <span style="color:var(--accent); font-weight:700;">(Running total: ${moneyGBP(runningTotal)})</span></small>
+                        </div>
+                        <button onclick="deleteUnplannedSpend('${item.id}')">✕</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderFinanceOverview(){
+            const billsTotal = householdBillsData.reduce((sum,b)=>sum+monthlyBillEquivalent(b),0);
+            const unplannedTotal = unplannedSpendingData.reduce((sum,i)=>sum+(Number(i.amount)||0),0);
+            const totalSpent = billsTotal + unplannedTotal;
+            const remaining = householdMonthlyBudget - totalSpent;
+
+            const put=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value;};
+            put('finance-overview-budget',moneyGBP(householdMonthlyBudget));
+            put('finance-overview-bills',moneyGBP(billsTotal));
+            put('finance-overview-spent',moneyGBP(totalSpent));
+            put('finance-overview-remaining',moneyGBP(remaining));
+
+            const budgetInput = document.getElementById('household-monthly-budget');
+            if(budgetInput && document.activeElement !== budgetInput) budgetInput.value = householdMonthlyBudget;
+
+            const upcoming=document.getElementById('finance-upcoming-list');
+            if(upcoming){
+                const items=[...householdBillsData.filter(x=>x.due).map(x=>({name:x.name,date:x.due,detail:`Payment · ${moneyGBP(x.amount)} · ${x.frequency}`})),...renewalsData.filter(x=>x.date).map(x=>({name:x.name,date:x.date,detail:`Renewal · ${moneyGBP(x.cost)} · ${x.frequency}`}))].filter(x=>x.date>=new Date().toISOString().slice(0,10)).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,6);
+                upcoming.innerHTML=items.length?items.map(x=>`<div class="tool-row"><div><strong>${escapeToolText(x.name)}</strong><small>${dateLabel(x.date)} · ${escapeToolText(x.detail)}</small></div></div>`).join(''):'<p class="tool-note">No upcoming payments recorded yet.</p>';
+            }
+        }
+
         function renderBills(){const list=document.getElementById('household-bills-list');if(!list){renderFinanceOverview();return;}const total=householdBillsData.reduce((sum,b)=>sum+monthlyBillEquivalent(b),0);document.getElementById('bills-monthly-total').innerHTML=`${moneyGBP(total)} <span style="font-size:.75rem;font-weight:600">monthly equivalent</span>`;list.innerHTML=householdBillsData.length?householdBillsData.map((b,i)=>`<div class="tool-row"><div><strong>${escapeToolText(b.name)}</strong><small>${escapeToolText(b.category)} · ${moneyGBP(b.amount)} ${escapeToolText(b.frequency)} · Next: ${dateLabel(b.due)}</small></div><div><button onclick="toggleBillPaid(${i})">${b.paid?'✓ Paid':'Mark paid'}</button><button onclick="deleteToolItem('bills',${i})">✕</button></div></div>`).join(''):'<p class="tool-note">No household bills added yet.</p>';renderFinanceOverview();}
-        function refreshFinanceOverview(){renderFinanceOverview();}
+        
         function addHouseholdBill(e){e.preventDefault();const name=document.getElementById('bill-name').value.trim();const amount=Number(document.getElementById('bill-amount').value);if(!name||!Number.isFinite(amount)||amount<0)return;householdBillsData.push({id:crypto.randomUUID(),name,amount,frequency:document.getElementById('bill-frequency').value,due:document.getElementById('bill-due').value,category:document.getElementById('bill-category').value,paid:false});saveData();e.target.reset();renderBills();showToast('Household bill added');}
         function toggleBillPaid(i){if(!householdBillsData[i])return;householdBillsData[i].paid=!householdBillsData[i].paid;saveData();renderBills();}
         function addRenewal(e){e.preventDefault();renewalsData.push({id:crypto.randomUUID(),name:document.getElementById('renewal-name').value.trim(),cost:Number(document.getElementById('renewal-cost').value)||0,date:document.getElementById('renewal-date').value,frequency:document.getElementById('renewal-frequency').value});saveData();e.target.reset();renderEnhancementLists();showToast('Renewal added');}
         function addFamilyIdea(e){e.preventDefault();familyIdeasData.push({id:crypto.randomUUID(),name:document.getElementById('idea-name').value.trim(),category:document.getElementById('idea-category').value,notes:document.getElementById('idea-notes').value.trim(),createdAt:new Date().toISOString()});saveData();e.target.reset();renderEnhancementLists();showToast('Idea saved');}
         function saveHandover(e){e.preventDefault();handoverData.push({id:crypto.randomUUID(),date:document.getElementById('handover-date').value,person:document.getElementById('handover-person').value.trim(),notes:document.getElementById('handover-notes').value.trim()});saveData();e.target.reset();document.getElementById('handover-date').value=new Date().toISOString().slice(0,10);renderEnhancementLists();showToast('Handover note added');}
         function addFamilyOccasion(e){e.preventDefault();occasionsData.push({id:crypto.randomUUID(),name:document.getElementById('occasion-name').value.trim(),date:document.getElementById('occasion-date').value,notes:document.getElementById('occasion-notes').value.trim()});saveData();e.target.reset();renderEnhancementLists();showToast('Occasion added');}
-        function deleteToolItem(type,i){const map={bills:householdBillsData,budgets:monthlyBudgetsData,renewals:renewalsData,ideas:familyIdeasData,handover:handoverData,occasions:occasionsData};if(!map[type]||!confirm('Delete this entry?'))return;map[type].splice(i,1);saveData();renderBills();renderEnhancementLists();}
+        function deleteToolItem(type,i){const map={bills:householdBillsData,renewals:renewalsData,ideas:familyIdeasData,handover:handoverData,occasions:occasionsData};if(!map[type]||!confirm('Delete this entry?'))return;map[type].splice(i,1);saveData();renderBills();renderEnhancementLists();}
         function renderSimpleToolList(id,items,formatter,type,empty){const el=document.getElementById(id);if(!el)return;el.innerHTML=items.length?items.map((item,i)=>`<div class="tool-row"><div>${formatter(item)}</div><button onclick="deleteToolItem('${type}',${i})">✕</button></div>`).join(''):`<p class="tool-note">${empty}</p>`;}
         function addAddressBookEntry(e){e.preventDefault();const name=document.getElementById('address-book-name').value.trim(),address=document.getElementById('address-book-address').value.trim(),postcode=document.getElementById('address-book-postcode').value.trim();if(!name||!address||!postcode)return;addressBookData.push({id:crypto.randomUUID(),name,address,postcode});saveData();e.target.reset();renderAddressBook();showToast('Address saved');}
         function editAddressBookEntry(i){const entry=addressBookData[i];if(!entry)return;const name=prompt('Name',entry.name);if(name===null)return;const address=prompt('Address',entry.address);if(address===null)return;const postcode=prompt('Postcode',entry.postcode);if(postcode===null)return;if(!name.trim()||!address.trim()||!postcode.trim()){showToast('Please complete all address fields');return;}entry.name=name.trim();entry.address=address.trim();entry.postcode=postcode.trim();saveData();renderAddressBook();}
@@ -2924,8 +2985,9 @@
         function renderAddressBook(){const list=document.getElementById('address-book-list');if(!list)return;list.innerHTML=addressBookData.length?addressBookData.map((entry,i)=>`<div class="tool-row"><div><strong>${escapeToolText(entry.name)}</strong><small>${escapeToolText(entry.address)}<br>${escapeToolText(entry.postcode)}</small></div><div style="display:flex;gap:6px;flex-shrink:0"><button type="button" onclick="editAddressBookEntry(${i})">Edit</button><button type="button" onclick="deleteAddressBookEntry(${i})">✕</button></div></div>`).join(''):'<p class="tool-note">No saved addresses yet. Add your first key address above.</p>'; }
         function renderEnhancementLists(){renderSimpleToolList('renewals-list',renewalsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${moneyGBP(x.cost)} · ${escapeToolText(x.frequency)} · Renewal: ${dateLabel(x.date)}</small>`,'renewals','No renewals tracked yet.');renderSimpleToolList('family-ideas-list',familyIdeasData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${escapeToolText(x.category)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'ideas','Your saved family ideas will appear here.');renderSimpleToolList('handover-list',handoverData,x=>`<strong>${dateLabel(x.date)}${x.person?' · '+escapeToolText(x.person):''}</strong><small>${escapeToolText(x.notes)}</small>`,'handover','No handover notes yet.');renderSimpleToolList('family-occasions-list',occasionsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${dateLabel(x.date)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'occasions','No occasions added yet.');renderAddressBook();renderFinanceOverview();}
         function renderFamilyTools(){renderWeeklyPlanner();renderBills();renderEnhancementLists();}
+        
         function exportFamilyPlanData(){const keys=Object.keys(localStorage).filter(k=>k.startsWith('fam_')).sort();const payload={app:'Family Plan',formatVersion:2,exportedAt:new Date().toISOString(),data:{}};keys.forEach(k=>{const raw=localStorage.getItem(k);if(raw!==null){try{payload.data[k]=JSON.parse(raw)}catch{payload.data[k]=raw}}});const addressCount=Array.isArray(payload.data.fam_address_book)?payload.data.fam_address_book.length:0;const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`family-plan-backup-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);document.getElementById('backup-status').textContent=`Backup exported: ${keys.length} data/settings items, including ${addressCount} saved address(es). Keep this file somewhere safe.`;}
-        async function importFamilyPlanData(e){const file=e.target.files?.[0];if(!file)return;try{const payload=JSON.parse(await file.text());if(payload.app!=='Family Plan'||!payload.data||typeof payload.data!=='object')throw new Error('This does not look like a Family Plan backup.');if(!confirm('Importing will replace the Family Plan data stored in this browser. Export a backup first. Continue?'))return;Object.entries(payload.data).forEach(([key,value])=>{if(/^fam_[a-z0-9_]+$/i.test(key))localStorage.setItem(key,typeof value==='string'?value:JSON.stringify(value));});mealsData=JSON.parse(localStorage.getItem('fam_meals'))||mealsData;foodShopData=JSON.parse(localStorage.getItem('fam_foodshop'))||[];familyShopData=JSON.parse(localStorage.getItem('fam_familyshop'))||[];destinationsData=JSON.parse(localStorage.getItem('fam_destinations'))||destinationsData;choresData=JSON.parse(localStorage.getItem('fam_chores'))||choresData;wishlistData=JSON.parse(localStorage.getItem('fam_wishlist'))||[];todosData=JSON.parse(localStorage.getItem('fam_todos'))||[];calendarEvents=JSON.parse(localStorage.getItem('fam_calendar'))||{};householdBillsData=JSON.parse(localStorage.getItem('fam_bills'))||[];monthlyBudgetsData=JSON.parse(localStorage.getItem('fam_monthly_budgets'))||[];renewalsData=JSON.parse(localStorage.getItem('fam_renewals'))||[];familyIdeasData=JSON.parse(localStorage.getItem('fam_ideas'))||[];handoverData=JSON.parse(localStorage.getItem('fam_handover'))||[];occasionsData=JSON.parse(localStorage.getItem('fam_occasions'))||[];addressBookData=JSON.parse(localStorage.getItem('fam_address_book'))||[];renderAllViews();renderFamilyTools();document.getElementById('backup-status').textContent='Backup imported. Any existing Family Plan items not present in this backup were left untouched.';showToast('Family Plan backup restored');}catch(err){document.getElementById('backup-status').textContent='Import failed: '+err.message;}finally{e.target.value='';}}
+        async function importFamilyPlanData(e){const file=e.target.files?.[0];if(!file)return;try{const payload=JSON.parse(await file.text());if(payload.app!=='Family Plan'||!payload.data||typeof payload.data!=='object')throw new Error('This does not look like a Family Plan backup.');if(!confirm('Importing will replace the Family Plan data stored in this browser. Export a backup first. Continue?'))return;Object.entries(payload.data).forEach(([key,value])=>{if(/^fam_[a-z0-9_]+$/i.test(key))localStorage.setItem(key,typeof value==='string'?value:JSON.stringify(value));});mealsData=JSON.parse(localStorage.getItem('fam_meals'))||mealsData;foodShopData=JSON.parse(localStorage.getItem('fam_foodshop'))||[];familyShopData=JSON.parse(localStorage.getItem('fam_familyshop'))||[];destinationsData=JSON.parse(localStorage.getItem('fam_destinations'))||destinationsData;choresData=JSON.parse(localStorage.getItem('fam_chores'))||choresData;wishlistData=JSON.parse(localStorage.getItem('fam_wishlist'))||[];todosData=JSON.parse(localStorage.getItem('fam_todos'))||[];calendarEvents=JSON.parse(localStorage.getItem('fam_calendar'))||{};householdBillsData=JSON.parse(localStorage.getItem('fam_bills'))||[];monthlyBudgetsData=JSON.parse(localStorage.getItem('fam_monthly_budgets'))||[];renewalsData=JSON.parse(localStorage.getItem('fam_renewals'))||[];familyIdeasData=JSON.parse(localStorage.getItem('fam_ideas'))||[];handoverData=JSON.parse(localStorage.getItem('fam_handover'))||[];occasionsData=JSON.parse(localStorage.getItem('fam_occasions'))||[];addressBookData=JSON.parse(localStorage.getItem('fam_address_book'))||[];unplannedSpendingData=JSON.parse(localStorage.getItem('fam_unplanned_spending'))||[];renderAllViews();renderFamilyTools();document.getElementById('backup-status').textContent='Backup imported. Any existing Family Plan items not present in this backup were left untouched.';showToast('Family Plan backup restored');}catch(err){document.getElementById('backup-status').textContent='Import failed: '+err.message;}finally{e.target.value='';}}
 
         function renderAllViews() {
             setCalendarMode(calendarMode);
@@ -2939,270 +3001,16 @@
             renderWishlist();
             renderDashboard();
             renderFamilyTools();
+            renderUnplannedSpending();
         }
 
         document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
         if(document.getElementById('handover-date')) document.getElementById('handover-date').value = new Date().toISOString().slice(0,10);
+        if(document.getElementById('unplanned-date')) document.getElementById('unplanned-date').value = new Date().toISOString().slice(0,10);
         
         updateHeaderDisplay();
-        if(document.getElementById('household-monthly-budget'))document.getElementById('household-monthly-budget').value=householdMonthlyBudget||'';
-        if(document.getElementById('household-monthly-spent'))document.getElementById('household-monthly-spent').value=householdMonthlySpent||'';
         renderFinanceOverview();
         renderAllViews();
     </script>
-
-    <!-- Firebase Starter Script -->
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
-      import {
-        getAuth, onAuthStateChanged, createUserWithEmailAndPassword,
-        signInWithEmailAndPassword, signOut, sendPasswordResetEmail,
-        updateProfile
-      } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
-      import {
-        getFirestore, doc, getDoc, setDoc, collection, addDoc,
-        serverTimestamp
-      } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
-
-      const firebaseConfig = {
-        apiKey: "AIzaSyAeLviH8AqXY9BdvRwR6g8YhaTarM00v1Y",
-        authDomain: "family-plan-f5168.firebaseapp.com",
-        databaseURL: "https://family-plan-f5168-default-rtdb.europe-west1.firebasedatabase.app",
-        projectId: "family-plan-f5168",
-        storageBucket: "family-plan-f5168.firebasestorage.app",
-        messagingSenderId: "114463971604",
-        appId: "1:114463971604:web:f29686947d4f2282f68a01",
-        measurementId: "G-RKJSNJRHP0"
-      };
-
-      const configReady = Object.values(firebaseConfig).every(v =>
-        typeof v === "string" && v.length > 0 &&
-        !v.startsWith("PASTE_") && !v.includes("PASTE_")
-      );
-      let auth = null;
-      let db = null;
-      let signedInUser = null;
-      let userProfile = null;
-      let authMode = "signin";
-
-      const gate = document.getElementById("auth-gate");
-      const accountPanel = document.getElementById("auth-account-panel");
-      const householdPanel = document.getElementById("household-panel");
-      const authMessage = document.getElementById("auth-message");
-      const householdMessage = document.getElementById("household-message");
-
-      function message(el, text, ok=false) {
-        el.textContent = text;
-        el.classList.toggle("ok", ok);
-      }
-      function friendlyError(error) {
-        const messages = {
-          "auth/email-already-in-use": "That email already has an account. Try signing in instead.",
-          "auth/invalid-email": "Enter a valid email address.",
-          "auth/invalid-credential": "Email or password is incorrect.",
-          "auth/weak-password": "Choose a stronger password (at least 6 characters).",
-          "auth/too-many-requests": "Too many attempts. Wait a while and try again.",
-          "permission-denied": "Firebase denied this action. Check Firestore security rules.",
-          "unavailable": "Firebase is temporarily unavailable. Please try again."
-        };
-        return messages[error.code] || error.message || "Something went wrong. Please try again.";
-      }
-      function showGate(which) {
-        gate.hidden = false;
-        accountPanel.style.display = which === "account" ? "block" : "none";
-        householdPanel.classList.toggle("visible", which === "household");
-      }
-      function enterApp(profile) {
-        gate.hidden = true;
-        const fullName = profile.displayName || signedInUser?.displayName || signedInUser?.email?.split("@")[0] || "Member";
-        const firstName = fullName.split(" ")[0];
-        const householdName = profile.householdName || "Household";
-
-        const dropdownName = document.getElementById("dropdown-user-name");
-        const dropdownHouse = document.getElementById("dropdown-household-name");
-        const optUserName = document.getElementById("opt-user-name");
-
-        if (dropdownName) dropdownName.textContent = fullName;
-        if (dropdownHouse) dropdownHouse.textContent = householdName;
-        if (optUserName) optUserName.textContent = `${firstName}'s Plan`;
-
-        updateHeaderDisplay();
-      }
-
-      window.fpSetAuthMode = (mode) => {
-        authMode = mode;
-        document.getElementById("auth-signin-tab").classList.toggle("active", mode === "signin");
-        document.getElementById("auth-signup-tab").classList.toggle("active", mode === "signup");
-        const signup = mode === "signup";
-        document.getElementById("auth-name").hidden = !signup;
-        document.getElementById("auth-name-label").hidden = !signup;
-        document.getElementById("auth-password").autocomplete = signup ? "new-password" : "current-password";
-        document.getElementById("auth-submit").textContent = signup ? "Create account" : "Sign in";
-        document.getElementById("auth-reset").hidden = signup;
-        message(authMessage, "");
-      };
-
-      document.getElementById("firebase-auth-form").addEventListener("submit", async (event) => {
-        event.preventDefault();
-        if (!configReady || !auth || !db) {
-          message(authMessage, "Firebase is not configured yet.");
-          return;
-        }
-        const email = document.getElementById("auth-email").value.trim();
-        const password = document.getElementById("auth-password").value;
-        const name = document.getElementById("auth-name").value.trim();
-        const submit = document.getElementById("auth-submit");
-        submit.disabled = true;
-        try {
-          if (authMode === "signup") {
-            const credential = await createUserWithEmailAndPassword(auth, email, password);
-            if (name) await updateProfile(credential.user, { displayName: name });
-            await setDoc(doc(db, "users", credential.user.uid), {
-              uid: credential.user.uid, email, displayName: name || email.split("@")[0],
-              householdId: null, createdAt: serverTimestamp()
-            });
-          } else {
-            await signInWithEmailAndPassword(auth, email, password);
-          }
-        } catch (error) {
-          message(authMessage, friendlyError(error));
-        } finally {
-          submit.disabled = false;
-        }
-      });
-
-      window.fpResetPassword = async () => {
-        if (!configReady || !auth) {
-          message(authMessage, "Configure Firebase first.");
-          return;
-        }
-        const email = document.getElementById("auth-email").value.trim();
-        if (!email) return message(authMessage, "Enter your email address first.");
-        try {
-          await sendPasswordResetEmail(auth, email);
-          message(authMessage, "Password reset email sent if an account exists.", true);
-        } catch (error) { message(authMessage, friendlyError(error)); }
-      };
-
-      window.fpSignOut = async () => {
-        if (auth) await signOut(auth);
-      };
-
-      window.fpCreateHousehold = async () => {
-        if (!signedInUser || !db) return;
-        const name = document.getElementById("household-name").value.trim();
-        if (!name) return message(householdMessage, "Enter a household name.");
-        try {
-          const householdRef = await addDoc(collection(db, "households"), {
-            name, ownerUid: signedInUser.uid, createdAt: serverTimestamp()
-          });
-          await setDoc(doc(db, "households", householdRef.id, "members", signedInUser.uid), {
-            uid: signedInUser.uid, email: signedInUser.email,
-            displayName: signedInUser.displayName || signedInUser.email.split("@")[0],
-            role: "owner", joinedAt: serverTimestamp()
-          });
-          await setDoc(doc(db, "users", signedInUser.uid), {
-            householdId: householdRef.id, householdName: name
-          }, { merge: true });
-          userProfile = { ...(userProfile || {}), householdId: householdRef.id, householdName: name };
-          message(householdMessage, `Household created! ID: ${householdRef.id}`, true);
-          enterApp(userProfile);
-        } catch (error) { message(householdMessage, friendlyError(error)); }
-      };
-
-      window.fpJoinHousehold = async () => {
-        if (!signedInUser || !db) return;
-        const householdId = document.getElementById("household-id").value.trim();
-        if (!householdId) return message(householdMessage, "Paste the household ID given.");
-        try {
-          const householdRef = doc(db, "households", householdId);
-          const householdSnap = await getDoc(householdRef);
-          if (!householdSnap.exists()) return message(householdMessage, "Household ID not found.");
-          const household = householdSnap.data();
-          await setDoc(doc(db, "households", householdId, "members", signedInUser.uid), {
-            uid: signedInUser.uid, email: signedInUser.email,
-            displayName: signedInUser.displayName || signedInUser.email.split("@")[0],
-            role: "member", joinedAt: serverTimestamp()
-          });
-          await setDoc(doc(db, "users", signedInUser.uid), {
-            householdId, householdName: household.name || "Household"
-          }, { merge: true });
-          userProfile = { ...(userProfile || {}), householdId, householdName: household.name || "Household" };
-          enterApp(userProfile);
-        } catch (error) { message(householdMessage, friendlyError(error)); }
-      };
-
-      if (!configReady) {
-        showGate("account");
-      } else {
-        try {
-          const app = initializeApp(firebaseConfig);
-          auth = getAuth(app);
-          db = getFirestore(app);
-          onAuthStateChanged(auth, async (user) => {
-            signedInUser = user;
-            if (!user) {
-              userProfile = null;
-              showGate("account");
-              window.fpSetAuthMode("signin");
-              return;
-            }
-            try {
-              const profileRef = doc(db, "users", user.uid);
-              const profileSnap = await getDoc(profileRef);
-              userProfile = profileSnap.exists() ? profileSnap.data() : {};
-              if (!userProfile.householdId) {
-                document.getElementById("auth-signed-in-email").textContent = user.email || "";
-                showGate("household");
-                message(householdMessage, "");
-              } else {
-                enterApp(userProfile);
-              }
-            } catch (error) {
-              showGate("account");
-              message(authMessage, "Could not load profile: " + friendlyError(error));
-            }
-          });
-        } catch (error) {
-          showGate("account");
-          message(authMessage, "Firebase error: " + friendlyError(error));
-        }
-      }
-    </script>
-
-<script id="bill-voice-support">
-(function(){
- let recognition=null;
- const status=m=>{const el=document.getElementById('bill-voice-status');if(el)el.textContent=m;};
- window.startBillVoice=function(){
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){status('Voice recognition is not supported in this browser. You can type the details instead.');return;}
-  try{recognition=new SR();recognition.lang='en-GB';recognition.continuous=false;recognition.interimResults=false;recognition.maxAlternatives=1;
-   const box=document.getElementById('bill-voice-text');if(box)box.value='';
-   recognition.onstart=()=>status('Listening… describe the bill or subscription.');
-   recognition.onresult=e=>{const phrases=[];for(let i=0;i<e.results.length;i++)if(e.results[i].isFinal){const t=(e.results[i][0]?.transcript||'').trim();if(t&&!phrases.includes(t))phrases.push(t);}if(box)box.value=phrases.join(' ');};
-   recognition.onerror=e=>status(e.error==='not-allowed'?'Microphone permission denied. Allow microphone access or type the details.':'Voice recognition stopped. You can edit the transcript or type manually.');
-   recognition.onend=()=>{const a=document.getElementById('bill-voice-start'),b=document.getElementById('bill-voice-stop');if(a)a.disabled=false;if(b)b.disabled=true;if(box?.value.trim())status('Recording finished. Review the details before saving.');};
-   recognition.start();document.getElementById('bill-voice-start').disabled=true;document.getElementById('bill-voice-stop').disabled=false;
-  }catch(e){status('Could not start the microphone. Check browser permissions or type the details instead.');}
- };
- window.stopBillVoice=()=>{if(recognition)try{recognition.stop();}catch(e){}};
- window.reviewBillVoice=function(){
-  const text=(document.getElementById('bill-voice-text')?.value||'').trim();if(!text){status('Please record or type the details first.');return;}
-  const amountMatch=text.match(/£\s*(\d+(?:[.,]\d{1,2})?)/i)||text.match(/(\d+(?:[.,]\d{1,2})?)\s*(?:pounds?|quid)/i);
-  const amount=amountMatch?Number(amountMatch[1].replace(',','.')):null;
-  let frequency='monthly';const lower=text.toLowerCase();if(/\bweekly\b|\beach week\b/.test(lower))frequency='weekly';else if(/\bquarterly\b|\bevery three months\b/.test(lower))frequency='quarterly';else if(/\byearly\b|\bannually\b|\bevery year\b/.test(lower))frequency='yearly';
-  let name=text.split(/,|\b\d+(?:[.,]\d{1,2})?\b/)[0].replace(/\b(add|please|bill|subscription)\b/ig,'').trim().replace(/[. ]+$/,'');
-  if(name)document.getElementById('bill-name').value=name.charAt(0).toUpperCase()+name.slice(1);
-  if(amount!==null)document.getElementById('bill-amount').value=amount.toFixed(2);
-  document.getElementById('bill-frequency').value=frequency;
-  const review=document.getElementById('bill-voice-review');if(review)review.textContent=`Suggested name: ${name||'not detected'} · Amount: ${amount===null?'please enter manually':'£'+amount.toFixed(2)} · Frequency: ${frequency}. Check and correct the form, then tap Add bill or payment. Nothing has been saved yet.`;
-  status('Transcript ready for review.');document.getElementById('bill-name')?.scrollIntoView({behavior:'smooth',block:'center'});
- };
- document.getElementById('bill-voice-start')?.addEventListener('click',window.startBillVoice);
- document.getElementById('bill-voice-stop')?.addEventListener('click',window.stopBillVoice);
-})();
-</script>
-
 </body>
 </html>
