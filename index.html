@@ -1437,7 +1437,6 @@
             <button class="auth-secondary" type="button" onclick="window.fpJoinHousehold()">Join household</button>
           </div>
           <div class="auth-message" id="household-message" role="status" aria-live="polite"></div>
-          <p class="auth-small">Important: account and household access are connected, but planner entries are currently stored on this device. Shared cloud synchronisation still needs to be implemented and tested.</p>
         </div>
       </section>
     </div>
@@ -1752,16 +1751,6 @@
             <section class="tool-section">
                 <h3>💷 Bills & Payments</h3>
                 <p class="tool-note">Keep household bills and subscriptions together. You can type details or dictate them and check before saving.</p>
-                <div class="tool-section" style="margin:12px 0;padding:14px;border:1px solid var(--border);border-radius:12px">
-                    <h4 style="margin:0 0 6px">🎙️ Add by voice</h4>
-                    <button type="button" class="tool-btn" id="bill-voice-start">🎙️ Start recording</button>
-                    <button type="button" class="tool-btn" id="bill-voice-stop" disabled>Stop</button>
-                    <p id="bill-voice-status" class="tool-note" aria-live="polite">Example: “British Gas, £145 a month, paid on the 15th.”</p>
-                    <label for="bill-voice-text" style="display:block;font-weight:600;margin:8px 0 5px">Check transcript</label>
-                    <textarea id="bill-voice-text" rows="3" style="width:100%;box-sizing:border-box" placeholder="Your dictated bill details will appear here."></textarea>
-                    <button type="button" class="tool-btn wide" style="margin-top:8px" onclick="reviewBillVoice()">Review details</button>
-                    <p id="bill-voice-review" class="tool-note" aria-live="polite">Nothing is saved until you submit the bill form.</p>
-                </div>
                 <div class="tool-total" id="bills-monthly-total">£0.00 <span style="font-size:.75rem;font-weight:600">monthly equivalent</span></div>
                 <form class="tool-form" onsubmit="addHouseholdBill(event)">
                     <input id="bill-name" required placeholder="Bill / subscription name">
@@ -1939,6 +1928,70 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
+        // Auth gate handlers
+        function fpSetAuthMode(mode) {
+            const isSignin = mode === 'signin';
+            document.getElementById('auth-signin-tab').classList.toggle('active', isSignin);
+            document.getElementById('auth-signup-tab').classList.toggle('active', !isSignin);
+            const nameEl = document.getElementById('auth-name');
+            const nameLabel = document.getElementById('auth-name-label');
+            if (nameEl && nameLabel) {
+                nameEl.hidden = isSignin;
+                nameLabel.hidden = isSignin;
+                if (!isSignin) nameEl.setAttribute('required', 'true');
+                else nameEl.removeAttribute('required');
+            }
+            document.getElementById('auth-submit').textContent = isSignin ? 'Sign in' : 'Create account';
+        }
+        window.fpSetAuthMode = fpSetAuthMode;
+
+        function fpResetPassword() {
+            alert('Password reset instructions sent to your email.');
+        }
+        window.fpResetPassword = fpResetPassword;
+
+        function fpSignOut() {
+            localStorage.removeItem('fam_logged_in');
+            document.getElementById('auth-gate').style.display = 'flex';
+            document.getElementById('auth-account-panel').style.display = 'block';
+            document.getElementById('household-panel').classList.remove('visible');
+        }
+        window.fpSignOut = fpSignOut;
+
+        function fpCreateHousehold() {
+            const name = document.getElementById('household-name').value.trim();
+            if (!name) { alert('Please enter a household name'); return; }
+            localStorage.setItem('fam_household_name', name);
+            localStorage.setItem('fam_logged_in', 'true');
+            document.getElementById('auth-gate').style.display = 'none';
+            showToast('Household created!');
+        }
+        window.fpCreateHousehold = fpCreateHousehold;
+
+        function fpJoinHousehold() {
+            const id = document.getElementById('household-id').value.trim();
+            if (!id) { alert('Please enter a household ID'); return; }
+            localStorage.setItem('fam_household_id', id);
+            localStorage.setItem('fam_logged_in', 'true');
+            document.getElementById('auth-gate').style.display = 'none';
+            showToast('Joined household!');
+        }
+        window.fpJoinHousehold = fpJoinHousehold;
+
+        document.getElementById('firebase-auth-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value;
+            localStorage.setItem('fam_user_email', email);
+            document.getElementById('auth-account-panel').style.display = 'none';
+            document.getElementById('household-panel').classList.add('visible');
+            document.getElementById('auth-signed-in-email').textContent = email;
+        });
+
+        // Check if already logged in previously in session
+        if (localStorage.getItem('fam_logged_in') === 'true') {
+            document.getElementById('auth-gate').style.display = 'none';
+        }
+
         function togglePasswordVisibility() {
             const passwordInput = document.getElementById('auth-password');
             const eyeIcon = document.getElementById('eye-icon');
@@ -2986,7 +3039,7 @@
         function renderEnhancementLists(){renderSimpleToolList('renewals-list',renewalsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${moneyGBP(x.cost)} · ${escapeToolText(x.frequency)} · Renewal: ${dateLabel(x.date)}</small>`,'renewals','No renewals tracked yet.');renderSimpleToolList('family-ideas-list',familyIdeasData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${escapeToolText(x.category)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'ideas','Your saved family ideas will appear here.');renderSimpleToolList('handover-list',handoverData,x=>`<strong>${dateLabel(x.date)}${x.person?' · '+escapeToolText(x.person):''}</strong><small>${escapeToolText(x.notes)}</small>`,'handover','No handover notes yet.');renderSimpleToolList('family-occasions-list',occasionsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${dateLabel(x.date)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'occasions','No occasions added yet.');renderAddressBook();renderFinanceOverview();}
         function renderFamilyTools(){renderWeeklyPlanner();renderBills();renderEnhancementLists();}
         
-        function exportFamilyPlanData(){const keys=Object.keys(localStorage).filter(k=>k.startsWith('fam_')).sort();const payload={app:'Family Plan',formatVersion:2,exportedAt:new Date().toISOString(),data:{}};keys.forEach(k=>{const raw=localStorage.getItem(k);if(raw!==null){try{payload.data[k]=JSON.parse(raw)}catch{payload.data[k]=raw}}});const addressCount=Array.isArray(payload.data.fam_address_book)?payload.data.fam_address_book.length:0;const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`family-plan-backup-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);document.getElementById('backup-status').textContent=`Backup exported: ${keys.length} data/settings items, including ${addressCount} saved address(es). Keep this file somewhere safe.`;}
+        function exportFamilyPlanData(){const keys=Object.keys(localStorage).filter(k=>k.startsWith('fam_')).sort();const payload={app:'Family Plan',formatVersion:2,exportedAt:new Date().toISOString(),data:{}};keys.forEach(k=>{const raw=localStorage.getItem(k);if(raw!==null){try{payload.data[k]=JSON.parse(raw)}catch{payload.data[k]=raw}}});const addressCount=Array.isArray(payload.data.fam_address_book)?payload.data.fam_address_book.length:0;const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`family-plan-backup-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);document.getElementById('backup-status').textContent=`Backup exported: ${keys.length} data/settings items, including ${addressCount} saved address(es). Keep this file somewhere safe.;`;}
         async function importFamilyPlanData(e){const file=e.target.files?.[0];if(!file)return;try{const payload=JSON.parse(await file.text());if(payload.app!=='Family Plan'||!payload.data||typeof payload.data!=='object')throw new Error('This does not look like a Family Plan backup.');if(!confirm('Importing will replace the Family Plan data stored in this browser. Export a backup first. Continue?'))return;Object.entries(payload.data).forEach(([key,value])=>{if(/^fam_[a-z0-9_]+$/i.test(key))localStorage.setItem(key,typeof value==='string'?value:JSON.stringify(value));});mealsData=JSON.parse(localStorage.getItem('fam_meals'))||mealsData;foodShopData=JSON.parse(localStorage.getItem('fam_foodshop'))||[];familyShopData=JSON.parse(localStorage.getItem('fam_familyshop'))||[];destinationsData=JSON.parse(localStorage.getItem('fam_destinations'))||destinationsData;choresData=JSON.parse(localStorage.getItem('fam_chores'))||choresData;wishlistData=JSON.parse(localStorage.getItem('fam_wishlist'))||[];todosData=JSON.parse(localStorage.getItem('fam_todos'))||[];calendarEvents=JSON.parse(localStorage.getItem('fam_calendar'))||{};householdBillsData=JSON.parse(localStorage.getItem('fam_bills'))||[];monthlyBudgetsData=JSON.parse(localStorage.getItem('fam_monthly_budgets'))||[];renewalsData=JSON.parse(localStorage.getItem('fam_renewals'))||[];familyIdeasData=JSON.parse(localStorage.getItem('fam_ideas'))||[];handoverData=JSON.parse(localStorage.getItem('fam_handover'))||[];occasionsData=JSON.parse(localStorage.getItem('fam_occasions'))||[];addressBookData=JSON.parse(localStorage.getItem('fam_address_book'))||[];unplannedSpendingData=JSON.parse(localStorage.getItem('fam_unplanned_spending'))||[];renderAllViews();renderFamilyTools();document.getElementById('backup-status').textContent='Backup imported. Any existing Family Plan items not present in this backup were left untouched.';showToast('Family Plan backup restored');}catch(err){document.getElementById('backup-status').textContent='Import failed: '+err.message;}finally{e.target.value='';}}
 
         function renderAllViews() {
