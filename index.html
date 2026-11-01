@@ -242,9 +242,9 @@
         .view {
             display: none;
             width: 100%;
-            max-width: 480px;
+            max-width: 640px;
             margin: 0 auto;
-            padding: 0.8rem;
+            padding: 0.45rem;
             animation: fadeIn 0.18s ease-in-out;
         }
 
@@ -1045,6 +1045,12 @@
         .tool-btn{border:0;border-radius:9px;background:var(--accent);color:#fff;padding:9px 12px;font-weight:750;cursor:pointer}
         .tool-btn.secondary{background:#eff6ff;color:var(--accent);border:1px solid #bfdbfe}
         .tool-list{display:flex;flex-direction:column;gap:7px;margin-top:9px}
+        /* Address Book form and saved entries layout */
+        #address-book-section .tool-form{grid-template-columns:minmax(0,1fr) minmax(0,1fr);row-gap:10px;margin:4px 0 0}
+        #address-book-name,#address-book-address{grid-column:1/-1}
+        #address-book-name,#address-book-address,#address-book-postcode{min-height:46px;font-size:.95rem}
+        #address-book-list{margin-top:20px}
+        #address-book-list:empty{margin-top:0}
         .tool-row{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:9px 10px;background:#f8fafc;border:1px solid #edf0f4;border-radius:9px;font-size:.88rem}
         .tool-row small{display:block;color:var(--muted);font-size:.75rem}
         .tool-row button{border:0;background:transparent;color:#b42318;font-weight:800;padding:4px 6px;cursor:pointer}
