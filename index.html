@@ -1398,90 +1398,74 @@
         </section>
     </div>
 
-    <!-- Consolidated Family Finances page -->
+    <!-- Family Finances -->
     <div id="view-monthlybudget" class="view">
-        <section class="card">
-            <div class="card-title">💷 Family Finances</div>
-            <p class="tool-note">Budgets, household bills and renewals in one place.</p>
-        </section>
-        <div class="finance-tabs" role="tablist" aria-label="Family finances sections" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0">
+        <section class="card"><div class="card-title">💷 Family Finances</div><p class="tool-note">Your household budget, regular payments and renewal dates.</p></section>
+        <div class="finance-tabs" role="tablist" aria-label="Family finances sections" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:12px 0">
             <button type="button" class="tool-btn secondary finance-tab active" data-finance-tab="overview" onclick="setFinanceTab('overview',this)">Overview</button>
-            <button type="button" class="tool-btn secondary finance-tab" data-finance-tab="budgets" onclick="setFinanceTab('budgets',this)">Budgets</button>
-            <button type="button" class="tool-btn secondary finance-tab" data-finance-tab="bills" onclick="setFinanceTab('bills',this)">Bills</button>
+            <button type="button" class="tool-btn secondary finance-tab" data-finance-tab="bills" onclick="setFinanceTab('bills',this)">Bills & Payments</button>
             <button type="button" class="tool-btn secondary finance-tab" data-finance-tab="renewals" onclick="setFinanceTab('renewals',this)">Renewals</button>
         </div>
         <div id="finance-pane-overview" class="finance-pane">
             <section class="tool-section">
-                <h3>At a glance</h3>
-                <div class="grid" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+                <h3>Monthly household budget</h3>
+                <p class="tool-note">Set one figure for the household each month.</p>
+                <form class="tool-form" onsubmit="saveHouseholdBudget(event)">
+                    <input id="household-monthly-budget" type="number" min="0" step="0.01" required placeholder="Monthly budget (£)">
+                    <input id="household-monthly-spent" type="number" min="0" step="0.01" placeholder="Monthly spending so far (£)">
+                    <button class="tool-btn wide" type="submit">Save monthly figures</button>
+                </form>
+                <div class="grid" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px">
                     <div class="tool-total"><small>Monthly budget</small><div id="finance-overview-budget">£0.00</div></div>
-                    <div class="tool-total"><small>Budget spent</small><div id="finance-overview-spent">£0.00</div></div>
-                    <div class="tool-total"><small>Monthly bills</small><div id="finance-overview-bills">£0.00</div></div>
-                    <div class="tool-total"><small>Renewals tracked</small><div id="finance-overview-renewals">0</div></div>
+                    <div class="tool-total"><small>Spent so far</small><div id="finance-overview-spent">£0.00</div></div>
+                    <div class="tool-total"><small>Remaining</small><div id="finance-overview-remaining">£0.00</div></div>
+                    <div class="tool-total"><small>Regular payments</small><div id="finance-overview-bills">£0.00</div></div>
                 </div>
-                <p class="tool-note" style="margin-top:12px">Use the tabs above to manage each area.</p>
+                <h3 style="margin-top:16px">Upcoming payments</h3>
+                <div id="finance-upcoming-list" class="tool-list"><p class="tool-note">No upcoming payments recorded yet.</p></div>
             </section>
         </div>
-        <div id="finance-pane-budgets" class="finance-pane" hidden>
-        <section class="tool-section" id="monthly-budget-section">
-            <h3>📊 Monthly budgets</h3>
-            <p class="tool-note">Set spending limits and track what remains.</p>
-            <div class="tool-total" id="monthly-budget-total">£0.00 <span style="font-size:.75rem;font-weight:600">total budget</span></div>
-            <div class="tool-section" style="margin:12px 0;padding:14px;border:1px solid var(--border);border-radius:12px">
-                <h4 style="margin:0 0 6px">🎙️ Add by voice</h4>
-                <p class="tool-note">Say the budget and amount spent. Check before saving.</p>
-                <button type="button" class="tool-btn" id="budget-voice-start">🎙️ Start recording</button>
-                <button type="button" class="tool-btn" id="budget-voice-stop" disabled>Stop</button>
-                <p id="budget-voice-status" class="tool-note" aria-live="polite">Mic access is requested when recording starts.</p>
-                <label for="budget-voice-text" style="display:block;font-weight:600;margin:8px 0 5px">Check transcript</label>
-                <textarea id="budget-voice-text" rows="3" style="width:100%;box-sizing:border-box" placeholder="Example: Food shopping, £600 budget, £120 spent."></textarea>
-                <button type="button" class="tool-btn wide" style="margin-top:8px" onclick="reviewBudgetVoice()">Review details</button>
-                <p id="budget-voice-review" class="tool-note" aria-live="polite">Check the details before saving.</p>
-            </div>
-            <form class="tool-form" onsubmit="addMonthlyBudget(event)">
-                <input id="budget-name" required placeholder="Budget name (e.g. Food shopping)">
-                <select id="budget-category"><option>Food shopping</option><option>Family shopping</option><option>Subscriptions</option><option>Days out & entertainment</option><option>Transport</option><option>Children</option><option>Household</option><option>Other</option></select>
-                <input id="budget-limit" type="number" min="0.01" step="0.01" required placeholder="Monthly budget (£)">
-                <input id="budget-spent" type="number" min="0" step="0.01" value="0" placeholder="Already spent (£)">
-                <button class="tool-btn wide" type="submit">Add monthly budget</button>
-            </form>
-            <div id="monthly-budgets-list" class="tool-list"></div>
-        </section>
-        </div>
         <div id="finance-pane-bills" class="finance-pane" hidden>
-        <section class="tool-section">
-            <h3>💷 Household bills planner</h3>
-            <p class="tool-note">Track known household bills only — no bank connections or transaction tracking.</p>
-            <div class="tool-total" id="bills-monthly-total">£0.00 <span style="font-size:.75rem;font-weight:600">monthly equivalent</span></div>
-            <form class="tool-form" onsubmit="addHouseholdBill(event)">
-                <input id="bill-name" required placeholder="Bill / provider">
-                <input id="bill-amount" type="number" min="0" step="0.01" required placeholder="Amount (£)">
-                <select id="bill-frequency"><option value="monthly">Monthly</option><option value="weekly">Weekly</option><option value="quarterly">Quarterly</option><option value="yearly">Yearly</option></select>
-                <input id="bill-due" type="date" aria-label="Next payment date">
-                <select id="bill-category"><option>Utilities</option><option>Mortgage / Rent</option><option>Insurance</option><option>Vehicle</option><option>Communications</option><option>Subscriptions</option><option>Other</option></select>
-                <button class="tool-btn" type="submit">Add bill</button>
-            </form>
-            <div id="household-bills-list" class="tool-list"></div>
-        </section>
-
+            <section class="tool-section">
+                <h3>💷 Bills & Payments</h3>
+                <p class="tool-note">Keep household bills and subscriptions together. You can type details or dictate them and check before saving.</p>
+                <div class="tool-section" style="margin:12px 0;padding:14px;border:1px solid var(--border);border-radius:12px">
+                    <h4 style="margin:0 0 6px">🎙️ Add by voice</h4>
+                    <button type="button" class="tool-btn" id="bill-voice-start">🎙️ Start recording</button>
+                    <button type="button" class="tool-btn" id="bill-voice-stop" disabled>Stop</button>
+                    <p id="bill-voice-status" class="tool-note" aria-live="polite">Example: “British Gas, £145 a month, paid on the 15th.”</p>
+                    <label for="bill-voice-text" style="display:block;font-weight:600;margin:8px 0 5px">Check transcript</label>
+                    <textarea id="bill-voice-text" rows="3" style="width:100%;box-sizing:border-box" placeholder="Your dictated bill details will appear here."></textarea>
+                    <button type="button" class="tool-btn wide" style="margin-top:8px" onclick="reviewBillVoice()">Review details</button>
+                    <p id="bill-voice-review" class="tool-note" aria-live="polite">Nothing is saved until you submit the bill form.</p>
+                </div>
+                <div class="tool-total" id="bills-monthly-total">£0.00 <span style="font-size:.75rem;font-weight:600">monthly equivalent</span></div>
+                <form class="tool-form" onsubmit="addHouseholdBill(event)">
+                    <input id="bill-name" required placeholder="Bill / subscription name">
+                    <input id="bill-amount" type="number" min="0" step="0.01" required placeholder="Amount (£)">
+                    <select id="bill-frequency"><option value="monthly">Monthly</option><option value="weekly">Weekly</option><option value="quarterly">Quarterly</option><option value="yearly">Yearly</option></select>
+                    <input id="bill-due" type="date" aria-label="Next payment date">
+                    <select id="bill-category"><option>Utilities</option><option>Mortgage / Rent</option><option>Insurance</option><option>Vehicle</option><option>Communications</option><option>Subscriptions</option><option>Other</option></select>
+                    <button class="tool-btn wide" type="submit">Add bill or payment</button>
+                </form>
+                <div id="household-bills-list" class="tool-list"></div>
+            </section>
         </div>
         <div id="finance-pane-renewals" class="finance-pane" hidden>
-        <section class="tool-section">
-            <h3>🔁 Subscriptions & renewals</h3>
-            <p class="tool-note">Remember renewal dates for services, insurance, MOT, vehicle tax and memberships.</p>
-            <form class="tool-form" onsubmit="addRenewal(event)">
-                <input id="renewal-name" required placeholder="Service / renewal">
-                <input id="renewal-cost" type="number" min="0" step="0.01" placeholder="Cost (£)">
-                <input id="renewal-date" type="date" required>
-                <select id="renewal-frequency"><option>Monthly</option><option>Yearly</option><option>Other</option></select>
-                <button class="tool-btn" type="submit">Add renewal</button>
-            </form>
-            <div id="renewals-list" class="tool-list"></div>
-        </section>
-
+            <section class="tool-section">
+                <h3>🔁 Renewals</h3>
+                <p class="tool-note">Track annual renewals, memberships, insurance, MOT and cancellation dates.</p>
+                <form class="tool-form" onsubmit="addRenewal(event)">
+                    <input id="renewal-name" required placeholder="Service / renewal">
+                    <input id="renewal-cost" type="number" min="0" step="0.01" placeholder="Cost (£)">
+                    <input id="renewal-date" type="date" required aria-label="Renewal date">
+                    <select id="renewal-frequency"><option>Yearly</option><option>Monthly</option><option>Other</option></select>
+                    <button class="tool-btn wide" type="submit">Add renewal</button>
+                </form>
+                <div id="renewals-list" class="tool-list"></div>
+            </section>
         </div>
     </div>
-
     <!-- VIEW 6: To-Do & Tasks Hub -->
     <div id="view-todo" class="view">
         <section class="compact-scoped-card">
@@ -1597,7 +1581,7 @@
         </button>
         <button id="nav-btn-monthlybudget" class="nav-item" onclick="showView('monthlybudget', this)">
             <span class="nav-icon">📊</span>
-            <span>Finances</span>
+            <span>Family Finances</span>
         </button>
         <button id="nav-btn-todo" class="nav-item" onclick="showView('todo', this)">
             <span class="nav-icon">📝</span>
@@ -2580,20 +2564,32 @@
             const grid=document.getElementById('weekly-planner-grid');if(grid)grid.innerHTML=html;
             const summary=document.getElementById('family-week-summary');if(summary){const events=Object.values(calendarEvents).flat().length;const open=todosData.filter(t=>!t.done).length;summary.textContent=`7-day meal plan · ${events} calendar entries saved · ${open} outstanding to-do(s) · ${householdBillsData.length} household bill(s) tracked.`;}
         }
+        let householdMonthlyBudget = Number(localStorage.getItem('fam_household_monthly_budget')) || 0;
+        let householdMonthlySpent = Number(localStorage.getItem('fam_household_monthly_spent')) || 0;
         function setFinanceTab(tab, button){
-            ['overview','budgets','bills','renewals'].forEach(name=>{const pane=document.getElementById('finance-pane-'+name);if(pane)pane.hidden=name!==tab;});
+            ['overview','bills','renewals'].forEach(name=>{const pane=document.getElementById('finance-pane-'+name);if(pane)pane.hidden=name!==tab;});
             document.querySelectorAll('.finance-tab').forEach(btn=>btn.classList.toggle('active',btn.dataset.financeTab===tab));
             if(button)button.classList.add('active');
             if(tab==='bills')renderBills();
             if(tab==='renewals')renderEnhancementLists();
             renderFinanceOverview();
         }
+        function saveHouseholdBudget(e){
+            e.preventDefault();
+            const budget=Number(document.getElementById('household-monthly-budget').value);
+            const spent=Number(document.getElementById('household-monthly-spent').value)||0;
+            if(!Number.isFinite(budget)||budget<0||spent<0)return;
+            householdMonthlyBudget=budget;householdMonthlySpent=spent;
+            localStorage.setItem('fam_household_monthly_budget',String(budget));
+            localStorage.setItem('fam_household_monthly_spent',String(spent));
+            renderFinanceOverview();showToast('Monthly household figures saved');
+        }
         function renderFinanceOverview(){
-            const total=monthlyBudgetsData.reduce((sum,b)=>sum+(Number(b.limit)||0),0);
-            const spent=monthlyBudgetsData.reduce((sum,b)=>sum+(Number(b.spent)||0),0);
             const bills=householdBillsData.reduce((sum,b)=>sum+monthlyBillEquivalent(b),0);
             const put=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value;};
-            put('finance-overview-budget',moneyGBP(total));put('finance-overview-spent',moneyGBP(spent));put('finance-overview-bills',moneyGBP(bills));put('finance-overview-renewals',String(renewalsData.length));
+            put('finance-overview-budget',moneyGBP(householdMonthlyBudget));put('finance-overview-spent',moneyGBP(householdMonthlySpent));put('finance-overview-remaining',moneyGBP(householdMonthlyBudget-householdMonthlySpent));put('finance-overview-bills',moneyGBP(bills));
+            const upcoming=document.getElementById('finance-upcoming-list');
+            if(upcoming){const items=[...householdBillsData.filter(x=>x.due).map(x=>({name:x.name,date:x.due,detail:`Payment · ${moneyGBP(x.amount)} · ${x.frequency}`})),...renewalsData.filter(x=>x.date).map(x=>({name:x.name,date:x.date,detail:`Renewal · ${moneyGBP(x.cost)} · ${x.frequency}`}))].filter(x=>x.date>=new Date().toISOString().slice(0,10)).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,6);upcoming.innerHTML=items.length?items.map(x=>`<div class="tool-row"><div><strong>${escapeToolText(x.name)}</strong><small>${dateLabel(x.date)} · ${escapeToolText(x.detail)}</small></div></div>`).join(''):'<p class="tool-note">No upcoming payments recorded yet.</p>';}
         }
         function renderMonthlyBudgets(){
             const list=document.getElementById('monthly-budgets-list');if(!list)return;
@@ -2642,6 +2638,9 @@
         if(document.getElementById('handover-date')) document.getElementById('handover-date').value = new Date().toISOString().slice(0,10);
         
         updateHeaderDisplay();
+        if(document.getElementById('household-monthly-budget'))document.getElementById('household-monthly-budget').value=householdMonthlyBudget||'';
+        if(document.getElementById('household-monthly-spent'))document.getElementById('household-monthly-spent').value=householdMonthlySpent||'';
+        renderFinanceOverview();
         renderAllViews();
     </script>
 
@@ -2865,106 +2864,37 @@
     </script>
 
 
-<script id="monthly-budget-voice-support">
+<script id="bill-voice-support">
 (function(){
-  let recognition = null;
-  let finalTranscript = '';
-  const status = (message) => { const el=document.getElementById('budget-voice-status'); if(el) el.textContent=message; };
-  const cleanPhrase = (value) => (value || '').replace(/\s+/g, ' ').trim();
-  const normaliseWords = (value) => cleanPhrase(value).toLocaleLowerCase('en-GB').replace(/[^\p{L}\p{N}£]+/gu, ' ').trim().split(/\s+/).filter(Boolean);
-  const mergeRecognisedParts = (parts) => {
-    let words=[];
-    for (const part of parts) {
-      const next=normaliseWords(part);
-      if (!next.length) continue;
-      const currentText=words.join(' '), nextText=next.join(' ');
-      if (currentText && (currentText.includes(nextText) || nextText.includes(currentText))) {
-        if (next.length > words.length) words=next;
-        continue;
-      }
-      let overlap=Math.min(words.length,next.length);
-      while (overlap>0 && words.slice(-overlap).join(' ') !== next.slice(0,overlap).join(' ')) overlap--;
-      words=words.concat(next.slice(overlap));
-    }
-    return words.join(' ');
-  };
-  window.startBudgetVoice = function(){
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) { status('Voice recognition is not supported by this browser. You can type directly into the box above.'); return; }
-    try {
-      recognition = new SpeechRecognition();
-      recognition.lang = 'en-GB';
-      // This is a single short dictation, not an open-ended dictation session.
-      // Interim hypotheses can be revised/repeated by Android speech services.
-      recognition.continuous = false;
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
-      finalTranscript = '';
-      const box=document.getElementById('budget-voice-text');
-      if(box) box.value='';
-      recognition.onstart = function(){ status('Listening… speak clearly. Tap Stop when you have finished.'); };
-      recognition.onresult = function(event){
-        // Use final results only. Some Android recognition providers send
-        // overlapping/repeated chunks; merge their word overlap rather than
-        // blindly concatenating each returned phrase.
-        const finalParts=[];
-        for(let i=0;i<event.results.length;i++){
-          const result=event.results[i];
-          if(!result.isFinal) continue;
-          const phrase=cleanPhrase(result[0] && result[0].transcript);
-          if(phrase) finalParts.push(phrase);
-        }
-        finalTranscript=mergeRecognisedParts(finalParts);
-        if(box) box.value=finalTranscript;
-      };
-      recognition.onerror = function(event){ status(event.error==='not-allowed'?'Microphone permission was denied. Allow microphone access in your browser settings, or type the details instead.':'Voice recognition stopped ('+event.error+'). You can edit the text or type it manually.'); };
-      recognition.onend = function(){
-        const stop=document.getElementById('budget-voice-stop'); if(stop) stop.disabled=true;
-        const start=document.getElementById('budget-voice-start'); if(start) start.disabled=false;
-        if(document.getElementById('budget-voice-text')?.value.trim()) status('Recording finished. Check the transcript, then tap Review details.');
-      };
-      recognition.start();
-      const start=document.getElementById('budget-voice-start'); if(start) start.disabled=true;
-      const stop=document.getElementById('budget-voice-stop'); if(stop) stop.disabled=false;
-      status('Starting voice recording…');
-    } catch(error) { status('Could not start the microphone. Check browser permissions or type the details instead.'); }
-  };
-  window.stopBudgetVoice = function(){ if(recognition){ try{recognition.stop();}catch(e){} } };
-  window.reviewBudgetVoice = function(){
-    const text=(document.getElementById('budget-voice-text')?.value||'').trim();
-    if(!text){status('Please record or type a description first.');return;}
-    const lower=text.toLowerCase();
-    const amountMatches=[...text.matchAll(/(?:£\s*)?(\d+(?:[.,]\d{1,2})?)(?:\s*(?:pounds?|quid))?/gi)].map(m=>Number(m[1].replace(',','.'))).filter(Number.isFinite);
-    const nameEl=document.getElementById('budget-name');
-    const categoryEl=document.getElementById('budget-category');
-    const limitEl=document.getElementById('budget-limit');
-    const spentEl=document.getElementById('budget-spent');
-    const categories=[['food shopping','Food shopping'],['groceries','Food shopping'],['family shopping','Family shopping'],['subscriptions','Subscriptions'],['days out','Days out & entertainment'],['entertainment','Days out & entertainment'],['transport','Transport'],['children','Children'],['household','Household']];
-    let category='Other';
-    for(const [needle,value] of categories){if(lower.includes(needle)){category=value;break;}}
-    if(nameEl){
-      let name=text.split(/[,.;]/)[0].trim();
-      name=name.replace(/^(please\s+)?(add|create|set up|make)\s+(a\s+)?(monthly\s+)?budget\s+(for\s+)?/i,'').replace(/\s+(monthly\s+)?budget.*$/i,'').trim();
-      if(!name || /^\d/.test(name)) name=category==='Other'?'Monthly budget':category;
-      nameEl.value=name.charAt(0).toUpperCase()+name.slice(1);
-    }
-    if(categoryEl) categoryEl.value=category;
-    if(amountMatches.length){
-      limitEl.value=amountMatches[0].toFixed(2);
-      spentEl.value=(amountMatches.length>1?amountMatches[1]:0).toFixed(2);
-    }
-    const review=document.getElementById('budget-voice-review');
-    const found=amountMatches.length?`Detected monthly limit £${amountMatches[0].toFixed(2)}${amountMatches.length>1?' and already spent £'+amountMatches[1].toFixed(2):' (spent set to £0.00)'};`:'I could not confidently identify an amount; enter the monthly limit manually.';
-    if(review) review.textContent=`Please check the form below. ${found} Nothing has been saved yet. Edit any field, then tap “Add monthly budget” to approve.`;
-    status('Transcript ready for review.');
-    document.getElementById('budget-name')?.scrollIntoView({behavior:'smooth',block:'center'});
-  };
-  const startButton=document.getElementById('budget-voice-start');
-  const stopButton=document.getElementById('budget-voice-stop');
-  const reviewButton=document.getElementById('budget-voice-review');
-  if(startButton) startButton.addEventListener('click', function(){ status('Starting voice recording…'); window.startBudgetVoice(); });
-  if(stopButton) stopButton.addEventListener('click', function(){ window.stopBudgetVoice(); });
-  if(reviewButton) reviewButton.addEventListener('click', function(){ window.reviewBudgetVoice(); });
+ let recognition=null;
+ const status=m=>{const el=document.getElementById('bill-voice-status');if(el)el.textContent=m;};
+ window.startBillVoice=function(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){status('Voice recognition is not supported in this browser. You can type the details instead.');return;}
+  try{recognition=new SR();recognition.lang='en-GB';recognition.continuous=false;recognition.interimResults=false;recognition.maxAlternatives=1;
+   const box=document.getElementById('bill-voice-text');if(box)box.value='';
+   recognition.onstart=()=>status('Listening… describe the bill or subscription.');
+   recognition.onresult=e=>{const phrases=[];for(let i=0;i<e.results.length;i++)if(e.results[i].isFinal){const t=(e.results[i][0]?.transcript||'').trim();if(t&&!phrases.includes(t))phrases.push(t);}if(box)box.value=phrases.join(' ');};
+   recognition.onerror=e=>status(e.error==='not-allowed'?'Microphone permission denied. Allow microphone access or type the details.':'Voice recognition stopped. You can edit the transcript or type manually.');
+   recognition.onend=()=>{const a=document.getElementById('bill-voice-start'),b=document.getElementById('bill-voice-stop');if(a)a.disabled=false;if(b)b.disabled=true;if(box?.value.trim())status('Recording finished. Review the details before saving.');};
+   recognition.start();document.getElementById('bill-voice-start').disabled=true;document.getElementById('bill-voice-stop').disabled=false;
+  }catch(e){status('Could not start the microphone. Check browser permissions or type the details instead.');}
+ };
+ window.stopBillVoice=()=>{if(recognition)try{recognition.stop();}catch(e){}};
+ window.reviewBillVoice=function(){
+  const text=(document.getElementById('bill-voice-text')?.value||'').trim();if(!text){status('Please record or type the details first.');return;}
+  const amountMatch=text.match(/£\s*(\d+(?:[.,]\d{1,2})?)/i)||text.match(/(\d+(?:[.,]\d{1,2})?)\s*(?:pounds?|quid)/i);
+  const amount=amountMatch?Number(amountMatch[1].replace(',','.')):null;
+  let frequency='monthly';const lower=text.toLowerCase();if(/\bweekly\b|\beach week\b/.test(lower))frequency='weekly';else if(/\bquarterly\b|\bevery three months\b/.test(lower))frequency='quarterly';else if(/\byearly\b|\bannually\b|\bevery year\b/.test(lower))frequency='yearly';
+  let name=text.split(/,|\b\d+(?:[.,]\d{1,2})?\b/)[0].replace(/\b(add|please|bill|subscription)\b/ig,'').trim().replace(/[. ]+$/,'');
+  if(name)document.getElementById('bill-name').value=name.charAt(0).toUpperCase()+name.slice(1);
+  if(amount!==null)document.getElementById('bill-amount').value=amount.toFixed(2);
+  document.getElementById('bill-frequency').value=frequency;
+  const review=document.getElementById('bill-voice-review');if(review)review.textContent=`Suggested name: ${name||'not detected'} · Amount: ${amount===null?'please enter manually':'£'+amount.toFixed(2)} · Frequency: ${frequency}. Check and correct the form, then tap Add bill or payment. Nothing has been saved yet.`;
+  status('Transcript ready for review.');document.getElementById('bill-name')?.scrollIntoView({behavior:'smooth',block:'center'});
+ };
+ document.getElementById('bill-voice-start')?.addEventListener('click',window.startBillVoice);
+ document.getElementById('bill-voice-stop')?.addEventListener('click',window.stopBillVoice);
 })();
 </script>
 
