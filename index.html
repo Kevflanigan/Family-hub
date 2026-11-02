@@ -2634,7 +2634,7 @@
             if (!mapContainer) return;
 
             if (!mapInstance) {
-                mapInstance = L.map('places-map').setView([54.0, -2.5], 5);
+                mapInstance = L.map('places-map').setView([53.858, -1.685], 11);
                 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
                     maxZoom: 19,
                     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
@@ -2671,9 +2671,9 @@
             }
 
             if (bounds.length > 0) {
-                mapInstance.fitBounds(bounds, { padding: [50, 50], maxZoom: 7 });
+                mapInstance.fitBounds(bounds, { padding: [50, 50], maxZoom: 13 });
             } else {
-                mapInstance.setView([53.858, -1.685], 11); // Default centered near Rawdon/Leeds area
+                mapInstance.setView([53.858, -1.685], 11);
             }
             mapInstance.invalidateSize();
         }
