@@ -9,25 +9,22 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
-            --bg: #f7f5f1;
-            --card: #ffffff;
-            --border: #e7e2da;
-            --text: #252b36;
-            --muted: #6f7785;
-            --accent: #1e3a8a;
-            --mom: #d9468d;
-            --dad: #3678d4;
-            --leo: #159b75;
-            --mia: #c47a08;
-            --family: #1e3a8a;
-            --shadow-soft: 0 4px 16px rgba(30, 58, 138, .05);
+            --primary: #1A5258;
+            --primary-light: #e6eff0;
+            --accent: #E07A5F;
+            --dad: #1A5258; /* Kevin - Teal */
+            --dad-light: #e6eff0;
+            --mom: #d946ef; /* Harriet - Pink */
+            --mom-light: #fdf4ff;
+            --family: #64748b; /* Everyone - Slate */
+            --family-light: #f8fafc;
+            --bg-color: #f8fafc;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: #334155;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -1537,26 +1534,26 @@
                 </div>
                 <div id="opt-user" class="user-dropdown-item" onclick="selectUser('dad', 'Kevin')">
                     <span class="account-avatar-dot bg-dad"></span> <span id="opt-user-name">Kevin's Plan</span>
-                </div>
-                <div style="height:1px; background:#eff6ff;"></div>
-                <div class="user-dropdown-item" onclick="showView('account'); document.getElementById('user-dropdown').classList.remove('open');">⚙️ Account & backups</div>
-                <div style="height:1px; background:#eff6ff;"></div>
-                <div class="user-dropdown-item" onclick="window.fpSignOut()" style="color:#ef4444;">
-                    ↪ Sign out
-                </div>
-            </div>
-            <button id="top-home-btn" class="top-home-btn" onclick="showView('dashboard', this)" title="Home" aria-label="Home">🏠</button>
-            <button class="top-add-btn" onclick="toggleQuickAddModal()" title="Add Event / Item" aria-label="Add">+</button>
+    <!-- WEEKLY MEAL PLANNER -->
+    <div id="view-mealplanner" class="view-section hidden p-4 max-w-lg mx-auto pb-24">
+        <div class="flex items-center justify-between mb-4">
+            <button onclick="switchTab('shopping')" class="text-gray-600 flex items-center font-semibold text-sm">
+                <i class="fa-solid fa-arrow-left mr-2"></i> Back to Shopping
+            </button>
+            <h2 class="text-xl font-bold text-gray-800">Weekly Meal Plan</h2>
         </div>
 
-        <div class="header-center" onclick="showView('dashboard', document.getElementById('nav-btn-home'))">
-            <img src="familiplan-icon.png" alt="FamilyPlan Logo" class="brand-logo-img">
+        <!-- Legend for Cooks -->
+        <div class="bg-white rounded-2xl p-3 shadow-sm border border-gray-100 mb-4 flex items-center justify-around text-xs font-semibold">
+            <span class="text-gray-500">Cook Legend:</span>
+            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-[#1A5258]"></span> Kevin (Teal)</span>
+            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-fuchsia-500"></span> Harriet (Pink)</span>
+            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-slate-500"></span> Family</span>
         </div>
 
-        <div class="header-right">
-            <div class="current-user-badge">
-                <span id="active-badge-dot" class="account-avatar-dot bg-family" style="width:8px; height:8px;"></span>
-                <span id="active-badge-text">Family</span>
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-6">
+            <div id="meal-plan-list" class="space-y-4">
+                <!-- Meal plan items generated dynamically -->
             </div>
         </div>
     </div>
@@ -1939,115 +1936,115 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
-        // Auth gate handlers
-        function fpSetAuthMode(mode) {
-            const isSignin = mode === 'signin';
-            document.getElementById('auth-signin-tab').classList.toggle('active', isSignin);
-            document.getElementById('auth-signup-tab').classList.toggle('active', !isSignin);
-            const nameEl = document.getElementById('auth-name');
-            const nameLabel = document.getElementById('auth-name-label');
-            if (nameEl && nameLabel) {
-                nameEl.hidden = isSignin;
-                nameLabel.hidden = isSignin;
-                if (!isSignin) nameEl.setAttribute('required', 'true');
-                else nameEl.removeAttribute('required');
-            }
-            document.getElementById('auth-submit').textContent = isSignin ? 'Sign in' : 'Create account';
-        }
-        window.fpSetAuthMode = fpSetAuthMode;
-
-        function fpResetPassword() {
-            alert('Password reset instructions sent to your email.');
-        }
-        window.fpResetPassword = fpResetPassword;
-
-        function fpSignOut() {
-            localStorage.removeItem('fam_logged_in');
-            document.getElementById('auth-gate').style.display = 'flex';
-            document.getElementById('auth-account-panel').style.display = 'block';
-            document.getElementById('household-panel').classList.remove('visible');
-        }
-        window.fpSignOut = fpSignOut;
-
-        function fpCreateHousehold() {
-            const name = document.getElementById('household-name').value.trim();
-            if (!name) { alert('Please enter a household name'); return; }
-            localStorage.setItem('fam_household_name', name);
-            localStorage.setItem('fam_logged_in', 'true');
-            document.getElementById('auth-gate').style.display = 'none';
-            showToast('Household created!');
-        }
-        window.fpCreateHousehold = fpCreateHousehold;
-
-        function fpJoinHousehold() {
-            const id = document.getElementById('household-id').value.trim();
-            if (!id) { alert('Please enter a household ID'); return; }
-            localStorage.setItem('fam_household_id', id);
-            localStorage.setItem('fam_logged_in', 'true');
-            document.getElementById('auth-gate').style.display = 'none';
-            showToast('Joined household!');
-        }
-        window.fpJoinHousehold = fpJoinHousehold;
-
-        document.getElementById('firebase-auth-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = document.getElementById('auth-email').value;
-            localStorage.setItem('fam_user_email', email);
-            document.getElementById('auth-account-panel').style.display = 'none';
-            document.getElementById('household-panel').classList.add('visible');
-            document.getElementById('auth-signed-in-email').textContent = email;
-        });
-
-        // Check if already logged in previously in session
-        if (localStorage.getItem('fam_logged_in') === 'true') {
-            document.getElementById('auth-gate').style.display = 'none';
-        }
-
-        function togglePasswordVisibility() {
-            const passwordInput = document.getElementById('auth-password');
-            const eyeIcon = document.getElementById('eye-icon');
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                eyeIcon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
-            } else {
-                passwordInput.type = 'password';
-                eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
-            }
-        }
-
-        let currentMonth = 9;
-        let currentYear = 2026;
-        let calendarMode = localStorage.getItem('fam_cal_mode') || 'week';
-        let currentWeekStartDate = getMonday(new Date(2026, 9, 26));
-        let selectedPopoverDateKey = null;
-
-        function getMonday(d) {
-            const date = new Date(d);
-            const day = date.getDay();
-            const diff = date.getDate() - day + (day === 0 ? -6 : 1);
-            return new Date(date.setDate(diff));
-        }
-
-        const assignees = ['family', 'mom', 'dad', 'leo', 'mia'];
-
-        let currentUser = localStorage.getItem('fam_user') || 'dad';
-        let currentUserName = localStorage.getItem('fam_user_name') || 'Kevin';
-        let viewMode = localStorage.getItem('fam_view_mode') || 'family';
-
-        let mealsData = JSON.parse(localStorage.getItem('fam_meals')) || [
-            { day: "Mon", meal: "" }, { day: "Tue", meal: "" }, { day: "Wed", meal: "" },
-            { day: "Thu", meal: "" }, { day: "Fri", meal: "" }, { day: "Sat", meal: "" }, { day: "Sun", meal: "" }
-        ];
-        let foodShopData = JSON.parse(localStorage.getItem('fam_foodshop')) || [];
-        let familyShopData = JSON.parse(localStorage.getItem('fam_familyshop')) || [];
-        let destinationsData = JSON.parse(localStorage.getItem('fam_destinations')) || { 
-            places: [], 
-            restaurants: [], 
-            cinema: [], home: [] 
+        // --- DATA STORE ---
+        let state = {
+            activeProfile: 'kevin', // 'everyone', 'kevin'
+            budget: 1500,
+            spendingSoFar: 320,
+            regularPayments: [
+                { id: 1, name: 'Mortgage / Rent', amount: 850, renewalDate: '2026-12-01' },
+                { id: 2, name: 'Council Tax', amount: 169, renewalDate: '2026-11-28' },
+                { id: 3, name: 'Energy Bill', amount: 150, renewalDate: '2026-11-15' }
+            ],
+            tasks: [
+                { id: 1, text: 'Buy milk and eggs', completed: false, assignee: 'kevin' },
+                { id: 2, text: 'Book dentist appointment', completed: true, assignee: 'harriet' },
+                { id: 3, text: 'Fix kitchen tap leak', completed: false, assignee: 'kevin' }
+            ],
+            meals: [
+                { day: 'Monday', meal: 'Spaghetti Bolognese', who: 'kevin' },
+                { day: 'Tuesday', meal: 'Chicken Curry & Rice', who: 'harriet' },
+                { day: 'Wednesday', meal: 'Vegetable Stir Fry', who: 'family' },
+                { day: 'Thursday', meal: 'Baked Salmon & Greens', who: 'kevin' },
+                { day: 'Friday', meal: 'Homemade Pizza Night', who: 'family' },
+                { day: 'Saturday', meal: 'BBQ Burgers', who: 'harriet' },
+                { day: 'Sunday', meal: 'Sunday Roast Beef', who: 'kevin' }
+            ],
+            places: [
+                { id: 1, name: 'Dr. Smith (GP)', type: 'Health', address: '12 High St', phone: '01234 567890' },
+                { id: 2, name: 'Primary School', type: 'Education', address: 'Church Lane', phone: '01234 987654' }
+            ],
+            events: [
+                { id: 1, title: 'School Play', date: '2026-11-12', time: '14:00', who: 'family' },
+                { id: 2, title: 'Car MOT', date: '2026-11-18', time: '09:00', who: 'kevin' }
+            ],
+            shoppingList: [
+                { id: 1, item: 'Apples', qty: '1 bag', checked: false },
+                { id: 2, item: 'Bread', qty: '2 loaves', checked: true }
+            ]
         };
-        let choresData = JSON.parse(localStorage.getItem('fam_chores')) || [{ kid: "Leo", chores: [] }, { kid: "Mia", chores: [] }];
-        let wishlistData = JSON.parse(localStorage.getItem('fam_wishlist')) || [];
-        let todosData = JSON.parse(localStorage.getItem('fam_todos')) || [];
+
+        // Load saved state if exists
+        const savedState = localStorage.getItem('familyPlanState');
+        if (savedState) {
+            try {
+                const parsed = JSON.parse(savedState);
+                state = { ...state, ...parsed };
+            } catch(e) { console.error(e); }
+        }
+
+        function saveState() {
+            localStorage.setItem('familyPlanState', JSON.stringify(state));
+        }
+
+        function getCookBadge(who) {
+            if (who === 'kevin') {
+                return `<button onclick="cycleCook(event, arguments[1])" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#1A5258] text-white flex items-center gap-1 shadow-sm"><i class="fa-solid fa-user-ninja text-[10px]"></i> Kevin</button>`;
+            } else if (who === 'harriet') {
+                return `<button onclick="cycleCook(event, arguments[1])" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-fuchsia-600 text-white flex items-center gap-1 shadow-sm"><i class="fa-solid fa-user-astronaut text-[10px]"></i> Harriet</button>`;
+            }
+            return `<button onclick="cycleCook(event, arguments[1])" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-600 text-white flex items-center gap-1 shadow-sm"><i class="fa-solid fa-users text-[10px]"></i> Family</button>`;
+        }
+
+        function cycleCook(event, index) {
+            if (event) event.stopPropagation();
+            const modes = ['kevin', 'harriet', 'family'];
+            const current = state.meals[index].who || 'family';
+            const nextIdx = (modes.indexOf(current) + 1) % modes.length;
+            state.meals[index].who = modes[nextIdx];
+            saveState();
+            renderMealPlan();
+            renderHome();
+        }
+
+        function updateMealName(index, name) {
+            state.meals[index].meal = name;
+            saveState();
+            renderHome();
+        }
+
+        function renderMealPlan() {
+            const container = document.getElementById('meal-plan-list');
+            if (!container) return;
+
+            container.innerHTML = state.meals.map((item, index) => {
+                let borderClass = "border-l-4 border-slate-400 bg-slate-50";
+                if (item.who === 'kevin') borderClass = "border-l-4 border-[#1A5258] bg-[#e6eff0]/40";
+                if (item.who === 'harriet') borderClass = "border-l-4 border-fuchsia-500 bg-fuchsia-50/50";
+
+                const badgeHtml = item.who === 'kevin' 
+                    ? `<button onclick="cycleCook(event, ${index})" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#1A5258] text-white flex items-center gap-1 shadow-sm transition-transform active:scale-95"><i class="fa-solid fa-user text-[10px]"></i> Kevin</button>`
+                    : item.who === 'harriet'
+                    ? `<button onclick="cycleCook(event, ${index})" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-fuchsia-600 text-white flex items-center gap-1 shadow-sm transition-transform active:scale-95"><i class="fa-solid fa-user text-[10px]"></i> Harriet</button>`
+                    : `<button onclick="cycleCook(event, ${index})" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-600 text-white flex items-center gap-1 shadow-sm transition-transform active:scale-95"><i class="fa-solid fa-users text-[10px]"></i> Family</button>`;
+
+                return `
+                    <div class="p-3 rounded-xl border border-gray-100 ${borderClass} flex flex-col gap-2 sm:flex-row sm:items-center justify-between transition-all">
+                        <div class="flex-1">
+                            <span class="text-xs font-bold uppercase tracking-wider text-gray-500">${item.day}</span>
+                            <input type="text" value="${item.meal}" onchange="updateMealName(${index}, this.value)" class="w-full font-semibold text-gray-800 bg-transparent border-b border-transparent hover:border-gray-300 focus:border-[#1A5258] focus:outline-none text-sm py-0.5" placeholder="Add meal...">
+                        </div>
+                        <div class="flex items-center justify-between sm:justify-end gap-2 pt-1 sm:pt-0">
+                            <span class="text-[11px] text-gray-400 font-medium">Cook:</span>
+                            ${badgeHtml}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Render Home View Widget for Meals
+        function renderHome() {
         let calendarEvents = JSON.parse(localStorage.getItem('fam_calendar')) || {};
         let householdBillsData = JSON.parse(localStorage.getItem('fam_bills')) || [];
         let monthlyBudgetsData = JSON.parse(localStorage.getItem('fam_monthly_budgets')) || [];
@@ -3104,35 +3101,35 @@
         function addAddressBookEntry(e){e.preventDefault();const name=document.getElementById('address-book-name').value.trim(),address=document.getElementById('address-book-address').value.trim(),postcode=document.getElementById('address-book-postcode').value.trim();if(!name||!address||!postcode)return;addressBookData.push({id:crypto.randomUUID(),name,address,postcode});saveData();e.target.reset();renderAddressBook();showToast('Address saved');}
         function editAddressBookEntry(i){const entry=addressBookData[i];if(!entry)return;const name=prompt('Name',entry.name);if(name===null)return;const address=prompt('Address',entry.address);if(address===null)return;const postcode=prompt('Postcode',entry.postcode);if(postcode===null)return;if(!name.trim()||!address.trim()||!postcode.trim()){showToast('Please complete all address fields');return;}entry.name=name.trim();entry.address=address.trim();entry.postcode=postcode.trim();saveData();renderAddressBook();}
         function deleteAddressBookEntry(i){if(!addressBookData[i]||!confirm('Delete this saved address?'))return;addressBookData.splice(i,1);saveData();renderAddressBook();}
-        function renderAddressBook(){const list=document.getElementById('address-book-list');if(!list)return;list.innerHTML=addressBookData.length?addressBookData.map((entry,i)=>`<div class="tool-row"><div><strong>${escapeToolText(entry.name)}</strong><small>${escapeToolText(entry.address)}<br>${escapeToolText(entry.postcode)}</small></div><div style="display:flex;gap:6px;flex-shrink:0"><button type="button" onclick="editAddressBookEntry(${i})">Edit</button><button type="button" onclick="deleteAddressBookEntry(${i})">✕</button></div></div>`).join(''):'<p class="tool-note">No saved addresses yet. Add your first key address above.</p>'; }
-        function renderEnhancementLists(){renderSimpleToolList('renewals-list',renewalsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${moneyGBP(x.cost)} · ${escapeToolText(x.frequency)} · Renewal: ${dateLabel(x.date)}</small>`,'renewals','No renewals tracked yet.');renderSimpleToolList('family-ideas-list',familyIdeasData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${escapeToolText(x.category)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'ideas','Your saved family ideas will appear here.');renderSimpleToolList('handover-list',handoverData,x=>`<strong>${dateLabel(x.date)}${x.person?' · '+escapeToolText(x.person):''}</strong><small>${escapeToolText(x.notes)}</small>`,'handover','No handover notes yet.');renderSimpleToolList('family-occasions-list',occasionsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${dateLabel(x.date)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'occasions','No occasions added yet.');renderAddressBook();renderFinanceOverview();}
-        function renderFamilyTools(){renderWeeklyPlanner();renderBills();renderEnhancementLists();}
-        
-        function exportFamilyPlanData(){const keys=Object.keys(localStorage).filter(k=>k.startsWith('fam_')).sort();const payload={app:'Family Plan',formatVersion:2,exportedAt:new Date().toISOString(),data:{}};keys.forEach(k=>{const raw=localStorage.getItem(k);if(raw!==null){try{payload.data[k]=JSON.parse(raw)}catch{payload.data[k]=raw}}});const addressCount=Array.isArray(payload.data.fam_address_book)?payload.data.fam_address_book.length:0;const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`family-plan-backup-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);document.getElementById('backup-status').textContent=`Backup exported: ${keys.length} data/settings items, including ${addressCount} saved address(es). Keep this file somewhere safe.;`}
-        async function importFamilyPlanData(e){const file=e.target.files?.[0];if(!file)return;try{const payload=JSON.parse(await file.text());if(payload.app!=='Family Plan'||!payload.data||typeof payload.data!=='object')throw new Error('This does not look like a Family Plan backup.');if(!confirm('Importing will replace the Family Plan data stored in this browser. Export a backup first. Continue?'))return;Object.entries(payload.data).forEach(([key,value])=>{if(/^fam_[a-z0-9_]+$/i.test(key))localStorage.setItem(key,typeof value==='string'?value:JSON.stringify(value));});mealsData=JSON.parse(localStorage.getItem('fam_meals'))||mealsData;foodShopData=JSON.parse(localStorage.getItem('fam_foodshop'))||[];familyShopData=JSON.parse(localStorage.getItem('fam_familyshop'))||[];destinationsData=JSON.parse(localStorage.getItem('fam_destinations'))||destinationsData;choresData=JSON.parse(localStorage.getItem('fam_chores'))||choresData;wishlistData=JSON.parse(localStorage.getItem('fam_wishlist'))||[];todosData=JSON.parse(localStorage.getItem('fam_todos'))||[];calendarEvents=JSON.parse(localStorage.getItem('fam_calendar'))||{};householdBillsData=JSON.parse(localStorage.getItem('fam_bills'))||[];monthlyBudgetsData=JSON.parse(localStorage.getItem('fam_monthly_budgets'))||[];renewalsData=JSON.parse(localStorage.getItem('fam_renewals'))||[];familyIdeasData=JSON.parse(localStorage.getItem('fam_ideas'))||[];handoverData=JSON.parse(localStorage.getItem('fam_handover'))||[];occasionsData=JSON.parse(localStorage.getItem('fam_occasions'))||[];addressBookData=JSON.parse(localStorage.getItem('fam_address_book'))||[];unplannedSpendingData=JSON.parse(localStorage.getItem('fam_unplanned_spending'))||[];renderAllViews();renderFamilyTools();document.getElementById('backup-status').textContent='Backup imported. Any existing Family Plan items not present in this backup were left untouched.';showToast('Family Plan backup restored');}catch(err){document.getElementById('backup-status').textContent='Import failed: '+err.message;}finally{e.target.value='';}}
+            const todayIndex = (new Date().getDay() + 6) % 7; // Mon=0, Sun=6
+            const todayMeal = state.meals[todayIndex] || state.meals[0];
 
-        function renderAllViews() {
-            setCalendarMode(calendarMode);
-            renderMeals();
-            renderShopping();
-            renderTodos();
-            renderPlacesView();
-            renderRestaurantsView();
-            renderWatchlist();
-            renderChores();
-            renderWishlist();
-            renderDashboard();
-            renderFamilyTools();
-            renderUnplannedSpending();
+            const mealWidget = document.getElementById('home-meal-today');
+            if (mealWidget) {
+                let badgeClass = "bg-slate-600 text-white";
+                let cookName = "Family";
+                if (todayMeal.who === 'kevin') { badgeClass = "bg-[#1A5258] text-white"; cookName = "Kevin"; }
+                if (todayMeal.who === 'harriet') { badgeClass = "bg-fuchsia-600 text-white"; cookName = "Harriet"; }
+
+                mealWidget.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="text-xs font-semibold text-gray-500 uppercase">Today's Dinner (${todayMeal.day})</span>
+                            <p class="font-bold text-gray-800 text-base">${todayMeal.meal || 'No meal set'}</p>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${badgeClass} shadow-sm flex items-center gap-1">
+                            <i class="fa-solid fa-utensils text-[10px]"></i> ${cookName}
+                        </span>
+                    </div>
+                `;
+            }
         }
 
-        document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
-        if(document.getElementById('handover-date')) document.getElementById('handover-date').value = new Date().toISOString().slice(0,10);
-        if(document.getElementById('unplanned-date')) document.getElementById('unplanned-date').value = new Date().toISOString().slice(0,10);
-        
-        updateHeaderDisplay();
-        renderFinanceOverview();
-        renderAllViews();
+        // Initialize view
+        window.addEventListener('DOMContentLoaded', () => {
+            renderMealPlan();
+            renderHome();
+        });
     </script>
 </body>
 </html>
