@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,22 +8,25 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
-            --primary: #1A5258;
-            --primary-light: #e6eff0;
-            --accent: #E07A5F;
-            --dad: #1A5258; /* Kevin - Teal */
-            --dad-light: #e6eff0;
-            --mom: #d946ef; /* Harriet - Pink */
-            --mom-light: #fdf4ff;
-            --family: #64748b; /* Everyone - Slate */
-            --family-light: #f8fafc;
-            --bg-color: #f8fafc;
+            --bg: #f7f5f1;
+            --card: #ffffff;
+            --border: #e7e2da;
+            --text: #252b36;
+            --muted: #6f7785;
+            --accent: #1e3a8a;
+            --mom: #d9468d;
+            --dad: #159b75; /* Kevin color set to Teal */
+            --leo: #159b75;
+            --mia: #c47a08;
+            --family: #1e3a8a;
+            --shadow-soft: 0 4px 16px rgba(30, 58, 138, .05);
         }
 
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-color);
-            color: #334155;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -458,7 +460,11 @@
         }
 
         .input-full { flex: 1 1 100%; }
-        .input-half { flex: 1 1 48%; }
+        .input-half { flex: 1 1 100%; }
+
+        @media (min-width: 480px) {
+            .input-half { flex: 1 1 48%; }
+        }
 
         .list-container {
             display: flex;
@@ -562,6 +568,10 @@
         .bg-family { background-color: var(--family); }
 
         .meal-card-row { margin-bottom: 6px; }
+        .meal-card-row.cook-dad { border-left: 4px solid var(--dad); }
+        .meal-card-row.cook-mom { border-left: 4px solid var(--mom); }
+        .meal-card-row.cook-family { border-left: 4px solid var(--family); }
+
         .meal-day-name { font-size: 0.95rem; font-weight: 800; color: #1e3a8a; width: 48px; flex-shrink: 0; }
         .meal-input-inline { background: transparent; border: none; border-bottom: 1px dashed var(--border); font-size: 0.95rem; width: 100%; outline: none; padding: 4px 0; }
 
@@ -1046,8 +1056,6 @@
         .tool-form .wide{grid-column:1/-1}
         .tool-btn{border:0;border-radius:9px;background:var(--accent);color:#fff;padding:9px 12px;font-weight:750;cursor:pointer}
         .tool-btn.secondary{background:#eff6ff;color:var(--accent);border:1px solid #bfdbfe}
-        .tool-btn.danger{background:#fee2e2;color:#b42318;border:1px solid #fca5a5}
-        .tool-btn.danger:hover{background:#fecaca}
         .tool-list{display:flex;flex-direction:column;gap:7px;margin-top:9px}
         #address-book-section .tool-form{grid-template-columns:minmax(0,1fr) minmax(0,1fr);row-gap:10px;margin:4px 0 0}
         #address-book-name,#address-book-address{grid-column:1/-1}
@@ -1074,7 +1082,7 @@
             --muted: #718087;
             --accent: #245b67;
             --mom: #c65d87;
-            --dad: #397b91;
+            --dad: #159b75;
             --leo: #3c927b;
             --mia: #c18b45;
             --family: #245b67;
@@ -1294,7 +1302,6 @@
         .finance-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
         .finance-pane[hidden] { display: none !important; }
         
-        /* New horizontal budget summary table layout */
         .budget-horizontal-table {
             display: flex;
             flex-direction: column;
@@ -1482,20 +1489,11 @@
                         <option value="family">Family (Everyone)</option>
                         <option value="mom">Harriet</option>
                         <option value="dad">Kevin</option>
-                        <option value="leo">Leo</option>
-                        <option value="mia">Mia</option>
                     </select>
                 </div>
-                <!-- Date Range Selection for Calendar & Birthdays -->
                 <div class="form-row" id="date-row" style="gap:8px;">
-                    <div class="input-half">
-                        <label style="font-size:0.75rem; font-weight:700; color:var(--muted); display:block; margin-bottom:2px;">Start Date</label>
-                        <input type="date" id="add-date" class="form-input" style="width:100%;">
-                    </div>
-                    <div class="input-half">
-                        <label style="font-size:0.75rem; font-weight:700; color:var(--muted); display:block; margin-bottom:2px;">End Date (Optional)</label>
-                        <input type="date" id="add-end-date" class="form-input" style="width:100%;">
-                    </div>
+                    <input type="date" id="add-date" class="form-input input-half" placeholder="Start Date">
+                    <input type="date" id="add-end-date" class="form-input input-half" placeholder="End Date (Optional)">
                 </div>
                 <div class="form-row" id="recurring-row" style="gap:8px;">
                     <select id="add-recurring" class="form-select input-full">
@@ -1520,7 +1518,7 @@
         <div class="header-left">
             <button class="account-icon-btn" onclick="toggleUserDropdown()" title="Switch User / View">
                 <svg id="account-indicator" class="user-silhouette-icon text-family" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                 </svg>
             </button>
             <div id="user-dropdown" class="user-dropdown-menu">
@@ -1534,26 +1532,29 @@
                 </div>
                 <div id="opt-user" class="user-dropdown-item" onclick="selectUser('dad', 'Kevin')">
                     <span class="account-avatar-dot bg-dad"></span> <span id="opt-user-name">Kevin's Plan</span>
-    <!-- WEEKLY MEAL PLANNER -->
-    <div id="view-mealplanner" class="view-section hidden p-4 max-w-lg mx-auto pb-24">
-        <div class="flex items-center justify-between mb-4">
-            <button onclick="switchTab('shopping')" class="text-gray-600 flex items-center font-semibold text-sm">
-                <i class="fa-solid fa-arrow-left mr-2"></i> Back to Shopping
-            </button>
-            <h2 class="text-xl font-bold text-gray-800">Weekly Meal Plan</h2>
+                </div>
+                <div id="opt-harriet" class="user-dropdown-item" onclick="selectUser('mom', 'Harriet')">
+                    <span class="account-avatar-dot bg-mom"></span> <span>Harriet's Plan</span>
+                </div>
+                <div style="height:1px; background:#eff6ff;"></div>
+                <div class="user-dropdown-item" onclick="showView('account'); document.getElementById('user-dropdown').classList.remove('open');">⚙️ Account & backups</div>
+                <div style="height:1px; background:#eff6ff;"></div>
+                <div class="user-dropdown-item" onclick="window.fpSignOut()" style="color:#ef4444;">
+                    ↪ Sign out
+                </div>
+            </div>
+            <button id="top-home-btn" class="top-home-btn" onclick="showView('dashboard', this)" title="Home" aria-label="Home">🏠</button>
+            <button class="top-add-btn" onclick="toggleQuickAddModal()" title="Add Event / Item" aria-label="Add">+</button>
         </div>
 
-        <!-- Legend for Cooks -->
-        <div class="bg-white rounded-2xl p-3 shadow-sm border border-gray-100 mb-4 flex items-center justify-around text-xs font-semibold">
-            <span class="text-gray-500">Cook Legend:</span>
-            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-[#1A5258]"></span> Kevin (Teal)</span>
-            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-fuchsia-500"></span> Harriet (Pink)</span>
-            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-slate-500"></span> Family</span>
+        <div class="header-center" onclick="showView('dashboard', document.getElementById('nav-btn-home'))">
+            <img src="familiplan-icon.png" alt="FamilyPlan Logo" class="brand-logo-img">
         </div>
 
-        <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-6">
-            <div id="meal-plan-list" class="space-y-4">
-                <!-- Meal plan items generated dynamically -->
+        <div class="header-right">
+            <div class="current-user-badge">
+                <span id="active-badge-dot" class="account-avatar-dot bg-family" style="width:8px; height:8px;"></span>
+                <span id="active-badge-text">Family</span>
             </div>
         </div>
     </div>
@@ -1733,9 +1734,9 @@
 
             <!-- Non-Planned Spending (Shopping, etc.) -->
             <section class="tool-section">
-                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
                     <h3>🛒 Non-planned spending (Shopping & Extras)</h3>
-                    <button type="button" class="tool-btn danger" onclick="resetMonthlySpending()" style="padding:6px 12px; font-size:0.78rem;">Reset monthly spending</button>
+                    <button class="tool-btn secondary" type="button" onclick="resetMonthlySpending()" style="padding:4px 10px; font-size:0.75rem;">Reset monthly spending</button>
                 </div>
                 <p class="tool-note">Log any unplanned purchases with a date. The spending so far updates as a running total.</p>
                 <form class="tool-form" onsubmit="addUnplannedSpend(event)">
@@ -1936,115 +1937,117 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
-        // --- DATA STORE ---
-        let state = {
-            activeProfile: 'kevin', // 'everyone', 'kevin'
-            budget: 1500,
-            spendingSoFar: 320,
-            regularPayments: [
-                { id: 1, name: 'Mortgage / Rent', amount: 850, renewalDate: '2026-12-01' },
-                { id: 2, name: 'Council Tax', amount: 169, renewalDate: '2026-11-28' },
-                { id: 3, name: 'Energy Bill', amount: 150, renewalDate: '2026-11-15' }
-            ],
-            tasks: [
-                { id: 1, text: 'Buy milk and eggs', completed: false, assignee: 'kevin' },
-                { id: 2, text: 'Book dentist appointment', completed: true, assignee: 'harriet' },
-                { id: 3, text: 'Fix kitchen tap leak', completed: false, assignee: 'kevin' }
-            ],
-            meals: [
-                { day: 'Monday', meal: 'Spaghetti Bolognese', who: 'kevin' },
-                { day: 'Tuesday', meal: 'Chicken Curry & Rice', who: 'harriet' },
-                { day: 'Wednesday', meal: 'Vegetable Stir Fry', who: 'family' },
-                { day: 'Thursday', meal: 'Baked Salmon & Greens', who: 'kevin' },
-                { day: 'Friday', meal: 'Homemade Pizza Night', who: 'family' },
-                { day: 'Saturday', meal: 'BBQ Burgers', who: 'harriet' },
-                { day: 'Sunday', meal: 'Sunday Roast Beef', who: 'kevin' }
-            ],
-            places: [
-                { id: 1, name: 'Dr. Smith (GP)', type: 'Health', address: '12 High St', phone: '01234 567890' },
-                { id: 2, name: 'Primary School', type: 'Education', address: 'Church Lane', phone: '01234 987654' }
-            ],
-            events: [
-                { id: 1, title: 'School Play', date: '2026-11-12', time: '14:00', who: 'family' },
-                { id: 2, title: 'Car MOT', date: '2026-11-18', time: '09:00', who: 'kevin' }
-            ],
-            shoppingList: [
-                { id: 1, item: 'Apples', qty: '1 bag', checked: false },
-                { id: 2, item: 'Bread', qty: '2 loaves', checked: true }
-            ]
-        };
-
-        // Load saved state if exists
-        const savedState = localStorage.getItem('familyPlanState');
-        if (savedState) {
-            try {
-                const parsed = JSON.parse(savedState);
-                state = { ...state, ...parsed };
-            } catch(e) { console.error(e); }
-        }
-
-        function saveState() {
-            localStorage.setItem('familyPlanState', JSON.stringify(state));
-        }
-
-        function getCookBadge(who) {
-            if (who === 'kevin') {
-                return `<button onclick="cycleCook(event, arguments[1])" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#1A5258] text-white flex items-center gap-1 shadow-sm"><i class="fa-solid fa-user-ninja text-[10px]"></i> Kevin</button>`;
-            } else if (who === 'harriet') {
-                return `<button onclick="cycleCook(event, arguments[1])" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-fuchsia-600 text-white flex items-center gap-1 shadow-sm"><i class="fa-solid fa-user-astronaut text-[10px]"></i> Harriet</button>`;
+        // Auth gate handlers
+        function fpSetAuthMode(mode) {
+            const isSignin = mode === 'signin';
+            document.getElementById('auth-signin-tab').classList.toggle('active', isSignin);
+            document.getElementById('auth-signup-tab').classList.toggle('active', !isSignin);
+            const nameEl = document.getElementById('auth-name');
+            const nameLabel = document.getElementById('auth-name-label');
+            if (nameEl && nameLabel) {
+                nameEl.hidden = isSignin;
+                nameLabel.hidden = isSignin;
+                if (!isSignin) nameEl.setAttribute('required', 'true');
+                else nameEl.removeAttribute('required');
             }
-            return `<button onclick="cycleCook(event, arguments[1])" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-600 text-white flex items-center gap-1 shadow-sm"><i class="fa-solid fa-users text-[10px]"></i> Family</button>`;
+            document.getElementById('auth-submit').textContent = isSignin ? 'Sign in' : 'Create account';
+        }
+        window.fpSetAuthMode = fpSetAuthMode;
+
+        function fpResetPassword() {
+            alert('Password reset instructions sent to your email.');
+        }
+        window.fpResetPassword = fpResetPassword;
+
+        function fpSignOut() {
+            localStorage.removeItem('fam_logged_in');
+            document.getElementById('auth-gate').style.display = 'flex';
+            document.getElementById('auth-account-panel').style.display = 'block';
+            document.getElementById('household-panel').classList.remove('visible');
+        }
+        window.fpSignOut = fpSignOut;
+
+        function fpCreateHousehold() {
+            const name = document.getElementById('household-name').value.trim();
+            if (!name) { alert('Please enter a household name'); return; }
+            localStorage.setItem('fam_household_name', name);
+            localStorage.setItem('fam_logged_in', 'true');
+            document.getElementById('auth-gate').style.display = 'none';
+            showToast('Household created!');
+        }
+        window.fpCreateHousehold = fpCreateHousehold;
+
+        function fpJoinHousehold() {
+            const id = document.getElementById('household-id').value.trim();
+            if (!id) { alert('Please enter a household ID'); return; }
+            localStorage.setItem('fam_household_id', id);
+            localStorage.setItem('fam_logged_in', 'true');
+            document.getElementById('auth-gate').style.display = 'none';
+            showToast('Joined household!');
+        }
+        window.fpJoinHousehold = fpJoinHousehold;
+
+        document.getElementById('firebase-auth-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value;
+            localStorage.setItem('fam_user_email', email);
+            document.getElementById('auth-account-panel').style.display = 'none';
+            document.getElementById('household-panel').classList.add('visible');
+            document.getElementById('auth-signed-in-email').textContent = email;
+        });
+
+        if (localStorage.getItem('fam_logged_in') === 'true') {
+            document.getElementById('auth-gate').style.display = 'none';
         }
 
-        function cycleCook(event, index) {
-            if (event) event.stopPropagation();
-            const modes = ['kevin', 'harriet', 'family'];
-            const current = state.meals[index].who || 'family';
-            const nextIdx = (modes.indexOf(current) + 1) % modes.length;
-            state.meals[index].who = modes[nextIdx];
-            saveState();
-            renderMealPlan();
-            renderHome();
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('auth-password');
+            const eyeIcon = document.getElementById('eye-icon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+            }
         }
 
-        function updateMealName(index, name) {
-            state.meals[index].meal = name;
-            saveState();
-            renderHome();
+        let currentMonth = 9;
+        let currentYear = 2026;
+        let calendarMode = localStorage.getItem('fam_cal_mode') || 'week';
+        let currentWeekStartDate = getMonday(new Date(2026, 9, 26));
+        let selectedPopoverDateKey = null;
+
+        function getMonday(d) {
+            const date = new Date(d);
+            const day = date.getDay();
+            const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+            return new Date(date.setDate(diff));
         }
 
-        function renderMealPlan() {
-            const container = document.getElementById('meal-plan-list');
-            if (!container) return;
+        const assignees = ['family', 'mom', 'dad'];
+        const cooks = ['dad', 'mom', 'family'];
 
-            container.innerHTML = state.meals.map((item, index) => {
-                let borderClass = "border-l-4 border-slate-400 bg-slate-50";
-                if (item.who === 'kevin') borderClass = "border-l-4 border-[#1A5258] bg-[#e6eff0]/40";
-                if (item.who === 'harriet') borderClass = "border-l-4 border-fuchsia-500 bg-fuchsia-50/50";
+        let currentUser = localStorage.getItem('fam_user') || 'dad';
+        let currentUserName = localStorage.getItem('fam_user_name') || 'Kevin';
+        let viewMode = localStorage.getItem('fam_view_mode') || 'family';
 
-                const badgeHtml = item.who === 'kevin' 
-                    ? `<button onclick="cycleCook(event, ${index})" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#1A5258] text-white flex items-center gap-1 shadow-sm transition-transform active:scale-95"><i class="fa-solid fa-user text-[10px]"></i> Kevin</button>`
-                    : item.who === 'harriet'
-                    ? `<button onclick="cycleCook(event, ${index})" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-fuchsia-600 text-white flex items-center gap-1 shadow-sm transition-transform active:scale-95"><i class="fa-solid fa-user text-[10px]"></i> Harriet</button>`
-                    : `<button onclick="cycleCook(event, ${index})" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-600 text-white flex items-center gap-1 shadow-sm transition-transform active:scale-95"><i class="fa-solid fa-users text-[10px]"></i> Family</button>`;
-
-                return `
-                    <div class="p-3 rounded-xl border border-gray-100 ${borderClass} flex flex-col gap-2 sm:flex-row sm:items-center justify-between transition-all">
-                        <div class="flex-1">
-                            <span class="text-xs font-bold uppercase tracking-wider text-gray-500">${item.day}</span>
-                            <input type="text" value="${item.meal}" onchange="updateMealName(${index}, this.value)" class="w-full font-semibold text-gray-800 bg-transparent border-b border-transparent hover:border-gray-300 focus:border-[#1A5258] focus:outline-none text-sm py-0.5" placeholder="Add meal...">
-                        </div>
-                        <div class="flex items-center justify-between sm:justify-end gap-2 pt-1 sm:pt-0">
-                            <span class="text-[11px] text-gray-400 font-medium">Cook:</span>
-                            ${badgeHtml}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // Render Home View Widget for Meals
-        function renderHome() {
+        let mealsData = JSON.parse(localStorage.getItem('fam_meals')) || [
+            { day: "Mon", meal: "", cook: "dad" }, { day: "Tue", meal: "", cook: "mom" }, 
+            { day: "Wed", meal: "", cook: "dad" }, { day: "Thu", meal: "", cook: "mom" }, 
+            { day: "Fri", meal: "", cook: "family" }, { day: "Sat", meal: "", cook: "dad" }, 
+            { day: "Sun", meal: "", cook: "family" }
+        ];
+        let foodShopData = JSON.parse(localStorage.getItem('fam_foodshop')) || [];
+        let familyShopData = JSON.parse(localStorage.getItem('fam_familyshop')) || [];
+        let destinationsData = JSON.parse(localStorage.getItem('fam_destinations')) || { 
+            places: [], 
+            restaurants: [], 
+            cinema: [], home: [] 
+        };
+        let choresData = JSON.parse(localStorage.getItem('fam_chores')) || [{ kid: "Leo", chores: [] }, { kid: "Mia", chores: [] }];
+        let wishlistData = JSON.parse(localStorage.getItem('fam_wishlist')) || [];
+        let todosData = JSON.parse(localStorage.getItem('fam_todos')) || [];
         let calendarEvents = JSON.parse(localStorage.getItem('fam_calendar')) || {};
         let householdBillsData = JSON.parse(localStorage.getItem('fam_bills')) || [];
         let monthlyBudgetsData = JSON.parse(localStorage.getItem('fam_monthly_budgets')) || [];
@@ -2074,7 +2077,7 @@
             importedCalendarEntries.forEach(([date, title]) => {
                 if (!calendarEvents[date]) calendarEvents[date] = [];
                 const alreadyExists = calendarEvents[date].some(ev => ev.title === title);
-                if (!alreadyExists) calendarEvents[date].push({ title, who: 'family', eventId: crypto.randomUUID() });
+                if (!alreadyExists) calendarEvents[date].push({ title, who: 'family' });
             });
 
             localStorage.setItem('fam_calendar', JSON.stringify(calendarEvents));
@@ -2156,10 +2159,12 @@
 
             const optFamily = document.getElementById('opt-family');
             const optUser = document.getElementById('opt-user');
+            const optHarriet = document.getElementById('opt-harriet');
 
-            if (optFamily && optUser) {
+            if (optFamily && optUser && optHarriet) {
                 optFamily.classList.toggle('active-mode', viewMode === 'family');
-                optUser.classList.toggle('active-mode', viewMode === 'individual');
+                optUser.classList.toggle('active-mode', viewMode === 'individual' && currentUser === 'dad');
+                optHarriet.classList.toggle('active-mode', viewMode === 'individual' && currentUser === 'mom');
             }
 
             if (viewMode === 'family') {
@@ -2175,7 +2180,7 @@
 
         function filterItem(itemWho) {
             if (viewMode === 'family') return true;
-            return itemWho === currentUser || itemWho === 'family' || itemWho === 'dad';
+            return itemWho === currentUser || itemWho === 'family';
         }
 
         function showView(viewId, navBtn) {
@@ -2295,7 +2300,7 @@
                     let eventsHtml = '';
                     if (calendarEvents[dateKey]) {
                         calendarEvents[dateKey].filter(ev => filterItem(ev.who)).forEach((ev, evIdx) => {
-                            eventsHtml += `<span class="event-pill bg-${ev.who} ${ev.quickAdded ? 'quick-added' : ''}" style="margin:2px 3px; font-size:0.75rem; padding:3px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:4px; width:auto;">${ev.title} <button onclick="event.stopPropagation(); deleteCalEvent('${dateKey}', '${ev.eventId || evIdx}')" style="background:none; border:none; color:#fff; font-size:0.75rem; cursor:pointer;">✕</button></span>`;
+                            eventsHtml += `<span class="event-pill bg-${ev.who} ${ev.quickAdded ? 'quick-added' : ''}" style="margin:2px 3px; font-size:0.75rem; padding:3px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:4px; width:auto;">${ev.title} <button onclick="event.stopPropagation(); deleteCalEvent('${dateKey}', ${evIdx}, '${ev.eventId || ''}')" style="background:none; border:none; color:#fff; font-size:0.75rem; cursor:pointer;">✕</button></span>`;
                         });
                     }
 
@@ -2333,7 +2338,7 @@
                     <div class="dashboard-item">
                         <div>
                             <strong>${ev.title}</strong>
-                            <div class="sub-text">Assigned to: ${ev.who}</div>
+                            <div class="sub-text">Assigned to: ${ev.who === 'dad' ? 'Kevin' : (ev.who === 'mom' ? 'Harriet' : 'Family')}</div>
                         </div>
                         <span>📅</span>
                     </div>
@@ -2348,11 +2353,12 @@
             if (!todayMeal || !todayMeal.meal) {
                 dinnerCont.innerHTML = `<div class="list-empty">No dinner plan set for tonight.</div>`;
             } else {
+                const cookName = todayMeal.cook === 'dad' ? 'Kevin' : (todayMeal.cook === 'mom' ? 'Harriet' : 'Family');
                 dinnerCont.innerHTML = `
-                    <div class="dashboard-item">
+                    <div class="dashboard-item" style="border-left: 4px solid var(--${todayMeal.cook || 'dad'});">
                         <div>
                             <strong>${todayMeal.meal}</strong>
-                            <div class="sub-text">Planned for ${todayDay}</div>
+                            <div class="sub-text">Planned for ${todayDay} • Cook: <span class="assign-tag bg-${todayMeal.cook || 'dad'}" style="padding: 2px 6px; font-size: 0.65rem;">${cookName}</span></div>
                         </div>
                         <span>🥘</span>
                     </div>
@@ -2426,8 +2432,8 @@
                     <div class="bubble-event-item" style="border-left-color: var(--${ev.who});">
                         <div class="bubble-event-title">${ev.title}</div>
                         <div style="display:flex; align-items:center; gap:6px;">
-                            <span class="compact-scoped-tag bg-${ev.who}">${ev.who}</span>
-                            <button class="action-btn delete-btn" onclick="deleteCalEvent('${dateKey}', '${ev.eventId || idx}'); openDayPopover('${dateKey}', ${dayNum});">✕</button>
+                            <span class="compact-scoped-tag bg-${ev.who}">${ev.who === 'dad' ? 'Kevin' : (ev.who === 'mom' ? 'Harriet' : 'Family')}</span>
+                            <button class="action-btn delete-btn" onclick="deleteCalEvent('${dateKey}', ${idx}, '${ev.eventId || ''}'); openDayPopover('${dateKey}', ${dayNum});">✕</button>
                         </div>
                     </div>
                 `).join('');
@@ -2454,16 +2460,16 @@
             }
         }
 
-        function deleteCalEvent(dateStr, eventIdentifier) {
-            // Remove matching event across all dates if it spans multiple days by ID, or single index
-            Object.keys(calendarEvents).forEach(d => {
-                calendarEvents[d] = calendarEvents[d].filter((ev, i) => {
-                    if (ev.eventId && ev.eventId === eventIdentifier) return false;
-                    if (!ev.eventId && d === dateStr && String(i) === String(eventIdentifier)) return false;
-                    return true;
+        function deleteCalEvent(dateStr, index, eventId) {
+            if (eventId) {
+                Object.keys(calendarEvents).forEach(d => {
+                    calendarEvents[d] = calendarEvents[d].filter(ev => ev.eventId !== eventId);
+                    if (calendarEvents[d].length === 0) delete calendarEvents[d];
                 });
-                if (calendarEvents[d].length === 0) delete calendarEvents[d];
-            });
+            } else if (calendarEvents[dateStr]) {
+                calendarEvents[dateStr].splice(index, 1);
+                if (calendarEvents[dateStr].length === 0) delete calendarEvents[dateStr];
+            }
             saveData();
             renderCalendar();
             renderDashboard();
@@ -2480,13 +2486,27 @@
             renderCalendar();
         }
 
+        function cycleCook(idx) {
+            const currentCook = mealsData[idx].cook || 'dad';
+            const nextCook = cooks[(cooks.indexOf(currentCook) + 1) % cooks.length];
+            mealsData[idx].cook = nextCook;
+            saveData();
+            renderMeals();
+            renderDashboard();
+            renderWeeklyPlanner();
+        }
+
         function renderMeals() {
-            document.getElementById('meal-list-container').innerHTML = mealsData.map((m, idx) => `
-                <div class="meal-card-row">
+            document.getElementById('meal-list-container').innerHTML = mealsData.map((m, idx) => {
+                const cookKey = m.cook || 'dad';
+                const cookName = cookKey === 'dad' ? 'Kevin' : (cookKey === 'mom' ? 'Harriet' : 'Family');
+                return `
+                <div class="meal-card-row cook-${cookKey}">
                     <div class="meal-day-name">${m.day}</div>
-                    <input type="text" class="meal-input-inline" placeholder="Enter meal..." value="${m.meal}" onchange="mealsData[${idx}].meal = this.value; saveData(); renderDashboard();">
+                    <input type="text" class="meal-input-inline" placeholder="Enter meal..." value="${m.meal}" onchange="mealsData[${idx}].meal = this.value; saveData(); renderDashboard(); renderWeeklyPlanner();">
+                    <span class="assign-tag bg-${cookKey}" onclick="cycleCook(${idx})" title="Click to change who is cooking">${cookName}</span>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         function addInlineShop(type) {
@@ -2556,6 +2576,7 @@
             const filteredFood = foodShopData.filter(item => filterItem(item.who));
             foodCont.innerHTML = filteredFood.length === 0 ? `<div class="list-empty">Food list empty.</div>` : foodShopData.map((item, idx) => {
                 if (!filterItem(item.who)) return '';
+                const displayWho = item.who === 'dad' ? 'Kevin' : (item.who === 'mom' ? 'Harriet' : 'Family');
                 return `
                     <div class="shopping-item ${item.done ? 'completed' : ''}">
                         <div class="shop-left">
@@ -2566,7 +2587,7 @@
                             }
                         </div>
                         <button class="action-btn" onclick="enableShopEdit('foodshop', ${idx})">✏️</button>
-                        <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('foodshop', ${idx})">${item.who}</span>
+                        <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('foodshop', ${idx})">${displayWho}</span>
                         <button class="action-btn delete-btn" onclick="foodShopData.splice(${idx},1); saveData(); renderShopping(); renderDashboard();">✕</button>
                     </div>
                 `;
@@ -2575,6 +2596,7 @@
             const filteredFam = familyShopData.filter(item => filterItem(item.who));
             famCont.innerHTML = filteredFam.length === 0 ? `<div class="list-empty">Family list empty.</div>` : familyShopData.map((item, idx) => {
                 if (!filterItem(item.who)) return '';
+                const displayWho = item.who === 'dad' ? 'Kevin' : (item.who === 'mom' ? 'Harriet' : 'Family');
                 return `
                     <div class="shopping-item ${item.done ? 'completed' : ''}">
                         <div class="shop-left">
@@ -2585,7 +2607,7 @@
                             }
                         </div>
                         <button class="action-btn" onclick="enableShopEdit('familyshop', ${idx})">✏️</button>
-                        <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('familyshop', ${idx})">${item.who}</span>
+                        <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('familyshop', ${idx})">${displayWho}</span>
                         <button class="action-btn delete-btn" onclick="familyShopData.splice(${idx},1); saveData(); renderShopping(); renderDashboard();">✕</button>
                     </div>
                 `;
@@ -2621,6 +2643,7 @@
 
             container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No places added yet.</div>` : list.map((item, idx) => {
                 if (!filterItem(item.who)) return '';
+                const displayWho = item.who === 'dad' ? 'Kevin' : (item.who === 'mom' ? 'Harriet' : 'Family');
                 return `
                     <div class="places-scoped-item">
                         <div>
@@ -2628,7 +2651,7 @@
                             ${item.postcode ? `<span style="font-size:0.75rem; color:var(--muted); margin-left:6px;">(${item.postcode})</span>` : ''}
                         </div>
                         <div style="display:flex; align-items:center; gap:6px;">
-                            <span class="compact-scoped-tag bg-${item.who}">${item.who}</span>
+                            <span class="compact-scoped-tag bg-${item.who}">${displayWho}</span>
                             <button class="action-btn delete-btn" onclick="destinationsData.places.splice(${idx},1); saveData(); renderPlacesView();">✕</button>
                         </div>
                     </div>
@@ -2717,6 +2740,7 @@
             container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No restaurants added yet.</div>` : list.map((item, idx) => {
                 if (!filterItem(item.who)) return '';
                 const img = item.image || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60';
+                const displayWho = item.who === 'dad' ? 'Kevin' : (item.who === 'mom' ? 'Harriet' : 'Family');
                 return `
                     <div class="restaurant-card-item">
                         <img src="${img}" alt="${item.title}" class="restaurant-thumb">
@@ -2725,7 +2749,7 @@
                             ${item.postcode ? `<div style="font-size:0.75rem; color:var(--muted);">Postcode: ${item.postcode}</div>` : ''}
                         </div>
                         <div style="display:flex; align-items:center; gap:6px;">
-                            <span class="compact-scoped-tag bg-${item.who}">${item.who}</span>
+                            <span class="compact-scoped-tag bg-${item.who}">${displayWho}</span>
                             <button class="action-btn delete-btn" onclick="destinationsData.restaurants.splice(${idx},1); saveData(); renderRestaurantsView();">✕</button>
                         </div>
                     </div>
@@ -2770,6 +2794,7 @@
             
             container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No tasks remaining.</div>` : todosData.map((t, idx) => {
                 if (!filterItem(t.who)) return '';
+                const displayWho = t.who === 'dad' ? 'Kevin' : (t.who === 'mom' ? 'Harriet' : 'Family');
                 return `
                     <div class="compact-scoped-item ${t.done ? 'completed' : ''} ${t.quickAdded ? 'quick-added-task' : ''}">
                         <div class="compact-scoped-left">
@@ -2780,7 +2805,7 @@
                             }
                         </div>
                         <button class="action-btn" onclick="enableTodoEdit(${idx})">✏️</button>
-                        <span class="compact-scoped-tag bg-${t.who}" onclick="cycleAssignee('todo', ${idx})">${t.who}</span>
+                        <span class="compact-scoped-tag bg-${t.who}" onclick="cycleAssignee('todo', ${idx})">${displayWho}</span>
                         <button class="action-btn delete-btn" onclick="todosData.splice(${idx},1); saveData(); renderTodos(); renderDashboard();">✕</button>
                     </div>
                 `;
@@ -2808,11 +2833,12 @@
 
             cinemaCont.innerHTML = cinemaList.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">Cinema watchlist empty.</div>` : (destinationsData.cinema || []).map((item, idx) => {
                 if (!filterItem(item.who)) return '';
+                const displayWho = item.who === 'dad' ? 'Kevin' : (item.who === 'mom' ? 'Harriet' : 'Family');
                 return `
                     <div class="compact-scoped-item">
                         <span class="compact-scoped-label">🎬 ${item.title}</span>
                         <div style="display:flex; align-items:center; gap:6px;">
-                            <span class="compact-scoped-tag bg-${item.who}" onclick="cycleAssignee('cinema', ${idx})">${item.who}</span>
+                            <span class="compact-scoped-tag bg-${item.who}" onclick="cycleAssignee('cinema', ${idx})">${displayWho}</span>
                             <button class="action-btn delete-btn" onclick="destinationsData.cinema.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
                         </div>
                     </div>
@@ -2821,11 +2847,12 @@
 
             homeCont.innerHTML = homeList.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">Home watchlist empty.</div>` : (destinationsData.home || []).map((item, idx) => {
                 if (!filterItem(item.who)) return '';
+                const displayWho = item.who === 'dad' ? 'Kevin' : (item.who === 'mom' ? 'Harriet' : 'Family');
                 return `
                     <div class="compact-scoped-item">
                         <span class="compact-scoped-label">📺 ${item.title}</span>
                         <div style="display:flex; align-items:center; gap:6px;">
-                            <span class="compact-scoped-tag bg-${item.who}" onclick="cycleAssignee('home', ${idx})">${item.who}</span>
+                            <span class="compact-scoped-tag bg-${item.who}" onclick="cycleAssignee('home', ${idx})">${displayWho}</span>
                             <button class="action-btn delete-btn" onclick="destinationsData.home.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
                         </div>
                     </div>
@@ -2889,11 +2916,12 @@
             const filtered = wishlistData.filter(w => filterItem(w.who));
             document.getElementById('wishlist-list-container').innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">Wishlist is empty.</div>` : wishlistData.map((w, idx) => {
                 if (!filterItem(w.who)) return '';
+                const displayWho = w.who === 'dad' ? 'Kevin' : (w.who === 'mom' ? 'Harriet' : 'Family');
                 return `
                     <div class="wishlist-scoped-item">
                         <span class="todo-item-label">🎁 ${w.title}</span>
                         <div style="display:flex; align-items:center; gap:6px;">
-                            <span class="compact-scoped-tag bg-${w.who}" onclick="cycleAssignee('wishlist', ${idx})">${w.who}</span>
+                            <span class="compact-scoped-tag bg-${w.who}" onclick="cycleAssignee('wishlist', ${idx})">${displayWho}</span>
                             <button class="action-btn delete-btn" onclick="wishlistData.splice(${idx},1); saveData(); renderWishlist();">✕</button>
                         </div>
                     </div>
@@ -2906,7 +2934,7 @@
             const rawTitle = document.getElementById('add-title').value.trim();
             const category = document.getElementById('add-category').value;
             const assignee = document.getElementById('add-assignee').value;
-            const startDateVal = document.getElementById('add-date').value;
+            const dateVal = document.getElementById('add-date').value;
             const endDateVal = document.getElementById('add-end-date').value;
             const recurring = document.getElementById('add-recurring').value;
             const postcode = document.getElementById('add-postcode').value.trim();
@@ -2921,18 +2949,21 @@
 
             if (category === 'calendar' || category === 'birthday') {
                 const eventId = crypto.randomUUID();
-                if (startDateVal && endDateVal && endDateVal >= startDateVal) {
-                    let curDate = new Date(startDateVal);
-                    const endDate = new Date(endDateVal);
-                    while (curDate <= endDate) {
-                        const dStr = curDate.toISOString().split('T')[0];
-                        if (!calendarEvents[dStr]) calendarEvents[dStr] = [];
-                        calendarEvents[dStr].push({ title: finalTitle, who: assignee, quickAdded: true, eventId, startDate: startDateVal, endDate: endDateVal });
+                if (endDateVal && endDateVal >= dateVal) {
+                    let curDate = new Date(dateVal);
+                    const stopDate = new Date(endDateVal);
+                    while (curDate <= stopDate) {
+                        const yyyy = curDate.getFullYear();
+                        const mm = String(curDate.getMonth() + 1).padStart(2, '0');
+                        const dd = String(curDate.getDate()).padStart(2, '0');
+                        const key = `${yyyy}-${mm}-${dd}`;
+                        if (!calendarEvents[key]) calendarEvents[key] = [];
+                        calendarEvents[key].push({ eventId, title: finalTitle, who: assignee, quickAdded: true });
                         curDate.setDate(curDate.getDate() + 1);
                     }
-                } else if (startDateVal) {
-                    if (!calendarEvents[startDateVal]) calendarEvents[startDateVal] = [];
-                    calendarEvents[startDateVal].push({ title: finalTitle, who: assignee, quickAdded: true, eventId });
+                } else if (dateVal) {
+                    if (!calendarEvents[dateVal]) calendarEvents[dateVal] = [];
+                    calendarEvents[dateVal].push({ eventId, title: finalTitle, who: assignee, quickAdded: true });
                 }
             } else if (category === 'foodshop') foodShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
             else if (category === 'familyshop') familyShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
@@ -2952,7 +2983,6 @@
             saveData();
             document.getElementById('add-title').value = '';
             document.getElementById('add-postcode').value = '';
-            document.getElementById('add-end-date').value = '';
             toggleQuickAddModal();
             renderAllViews();
             showToast('Item added successfully!');
@@ -2966,7 +2996,18 @@
         function renderWeeklyPlanner() {
             const today=new Date(); const monday=getMonday(today);
             const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-            const html=days.map((day,i)=>{const d=new Date(monday);d.setDate(monday.getDate()+i);const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;const meal=mealsData.find(m=>m.day===day)?.meal||'No meal planned';const events=(calendarEvents[key]||[]).filter(ev=>filterItem(ev.who)).map(ev=>ev.title);const taskCount=todosData.filter(t=>!t.done).length;return `<div class="week-day"><strong>${day} · ${d.getDate()} ${d.toLocaleDateString('en-GB',{month:'short'})}</strong><p>🍽️ ${escapeToolText(meal)}</p><p>📅 ${events.length?events.map(escapeToolText).join(', '):'No appointments'}</p>${i===0?`<p>☑️ ${taskCount} open to-do(s)</p>`:''}</div>`}).join('');
+            const html=days.map((day,i)=>{
+                const d=new Date(monday);
+                d.setDate(monday.getDate()+i);
+                const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+                const mObj=mealsData.find(m=>m.day===day);
+                const meal=mObj?.meal||'No meal planned';
+                const cookKey=mObj?.cook||'dad';
+                const cookName=cookKey==='dad'?'Kevin':(cookKey==='mom'?'Harriet':'Family');
+                const events=(calendarEvents[key]||[]).filter(ev=>filterItem(ev.who)).map(ev=>ev.title);
+                const taskCount=todosData.filter(t=>!t.done).length;
+                return `<div class="week-day" style="border-left: 4px solid var(--${cookKey});"><strong>${day} · ${d.getDate()} ${d.toLocaleDateString('en-GB',{month:'short'})}</strong><p>🍽️ ${escapeToolText(meal)} <small style="color:var(--${cookKey}); font-weight:700;">(${cookName})</small></p><p>📅 ${events.length?events.map(escapeToolText).join(', '):'No appointments'}</p>${i===0?`<p>☑️ ${taskCount} open to-do(s)</p>`:''}</div>`
+            }).join('');
             const grid=document.getElementById('weekly-planner-grid');if(grid)grid.innerHTML=html;
             const summary=document.getElementById('family-week-summary');if(summary){const events=Object.values(calendarEvents).flat().length;const open=todosData.filter(t=>!t.done).length;summary.textContent=`7-day meal plan · ${events} calendar entries saved · ${open} outstanding to-do(s) · ${householdBillsData.length} household bill(s) tracked.`;}
         }
@@ -2992,6 +3033,20 @@
             showToast('Monthly budget saved');
         }
 
+        function resetMonthlySpending() {
+            if (unplannedSpendingData.length === 0) {
+                showToast('Spending is already cleared');
+                return;
+            }
+            if (confirm('Are you sure you want to reset monthly spending and clear all manual entries?')) {
+                unplannedSpendingData = [];
+                saveData();
+                renderUnplannedSpending();
+                renderFinanceOverview();
+                showToast('Monthly spending reset to £0.00');
+            }
+        }
+
         function addUnplannedSpend(e){
             e.preventDefault();
             const name=document.getElementById('unplanned-name').value.trim();
@@ -3014,18 +3069,6 @@
             renderUnplannedSpending();
             renderFinanceOverview();
             showToast('Entry removed');
-        }
-
-        function resetMonthlySpending() {
-            if (unplannedSpendingData.length === 0) {
-                showToast('No spending entries to reset.');
-                return;
-            }
-            unplannedSpendingData = [];
-            saveData();
-            renderUnplannedSpending();
-            renderFinanceOverview();
-            showToast('Monthly spending reset to £0.00');
         }
 
         function renderUnplannedSpending(){
@@ -3101,36 +3144,35 @@
         function addAddressBookEntry(e){e.preventDefault();const name=document.getElementById('address-book-name').value.trim(),address=document.getElementById('address-book-address').value.trim(),postcode=document.getElementById('address-book-postcode').value.trim();if(!name||!address||!postcode)return;addressBookData.push({id:crypto.randomUUID(),name,address,postcode});saveData();e.target.reset();renderAddressBook();showToast('Address saved');}
         function editAddressBookEntry(i){const entry=addressBookData[i];if(!entry)return;const name=prompt('Name',entry.name);if(name===null)return;const address=prompt('Address',entry.address);if(address===null)return;const postcode=prompt('Postcode',entry.postcode);if(postcode===null)return;if(!name.trim()||!address.trim()||!postcode.trim()){showToast('Please complete all address fields');return;}entry.name=name.trim();entry.address=address.trim();entry.postcode=postcode.trim();saveData();renderAddressBook();}
         function deleteAddressBookEntry(i){if(!addressBookData[i]||!confirm('Delete this saved address?'))return;addressBookData.splice(i,1);saveData();renderAddressBook();}
-            const todayIndex = (new Date().getDay() + 6) % 7; // Mon=0, Sun=6
-            const todayMeal = state.meals[todayIndex] || state.meals[0];
+        function renderAddressBook(){const list=document.getElementById('address-book-list');if(!list)return;list.innerHTML=addressBookData.length?addressBookData.map((entry,i)=>`<div class="tool-row"><div><strong>${escapeToolText(entry.name)}</strong><small>${escapeToolText(entry.address)}<br>${escapeToolText(entry.postcode)}</small></div><div style="display:flex;gap:6px;flex-shrink:0"><button type="button" onclick="editAddressBookEntry(${i})">Edit</button><button type="button" onclick="deleteAddressBookEntry(${i})">✕</button></div></div>`).join(''):'<p class="tool-note">No saved addresses yet. Add your first key address above.</p>'; }
+        function renderEnhancementLists(){renderSimpleToolList('renewals-list',renewalsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${moneyGBP(x.cost)} · ${escapeToolText(x.frequency)} · Renewal: ${dateLabel(x.date)}</small>`,'renewals','No renewals tracked yet.');renderSimpleToolList('family-ideas-list',familyIdeasData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${escapeToolText(x.category)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'ideas','Your saved family ideas will appear here.');renderSimpleToolList('handover-list',handoverData,x=>`<strong>${dateLabel(x.date)}${x.person?' · '+escapeToolText(x.person):''}</strong><small>${escapeToolText(x.notes)}</small>`,'handover','No handover notes yet.');renderSimpleToolList('family-occasions-list',occasionsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${dateLabel(x.date)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'occasions','No occasions added yet.');renderAddressBook();renderFinanceOverview();}
+        function renderFamilyTools(){renderWeeklyPlanner();renderBills();renderEnhancementLists();}
+        
+        function exportFamilyPlanData(){const keys=Object.keys(localStorage).filter(k=>k.startsWith('fam_')).sort();const payload={app:'Family Plan',formatVersion:2,exportedAt:new Date().toISOString(),data:{}};keys.forEach(k=>{const raw=localStorage.getItem(k);if(raw!==null){try{payload.data[k]=JSON.parse(raw)}catch{payload.data[k]=raw}}});const addressCount=Array.isArray(payload.data.fam_address_book)?payload.data.fam_address_book.length:0;const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.getElementById('a');a.href=url;a.download=`family-plan-backup-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);document.getElementById('backup-status').textContent=`Backup exported: ${keys.length} data/settings items, including ${addressCount} saved address(es). Keep this file somewhere safe.;`}
+        async function importFamilyPlanData(e){const file=e.target.files?.[0];if(!file)return;try{const payload=JSON.parse(await file.text());if(payload.app!=='Family Plan'||!payload.data||typeof payload.data!=='object')throw new Error('This does not look like a Family Plan backup.');if(!confirm('Importing will replace the Family Plan data stored in this browser. Export a backup first. Continue?'))return;Object.entries(payload.data).forEach(([key,value])=>{if(/^fam_[a-z0-9_]+$/i.test(key))localStorage.setItem(key,typeof value==='string'?value:JSON.stringify(value));});mealsData=JSON.parse(localStorage.getItem('fam_meals'))||mealsData;foodShopData=JSON.parse(localStorage.getItem('fam_foodshop'))||[];familyShopData=JSON.parse(localStorage.getItem('fam_familyshop'))||[];destinationsData=JSON.parse(localStorage.getItem('fam_destinations'))||destinationsData;choresData=JSON.parse(localStorage.getItem('fam_chores'))||choresData;wishlistData=JSON.parse(localStorage.getItem('fam_wishlist'))||[];todosData=JSON.parse(localStorage.getItem('fam_todos'))||[];calendarEvents=JSON.parse(localStorage.getItem('fam_calendar'))||{};householdBillsData=JSON.parse(localStorage.getItem('fam_bills'))||[];monthlyBudgetsData=JSON.parse(localStorage.getItem('fam_monthly_budgets'))||[];renewalsData=JSON.parse(localStorage.getItem('fam_renewals'))||[];familyIdeasData=JSON.parse(localStorage.getItem('fam_ideas'))||[];handoverData=JSON.parse(localStorage.getItem('fam_handover'))||[];occasionsData=JSON.parse(localStorage.getItem('fam_occasions'))||[];addressBookData=JSON.parse(localStorage.getItem('fam_address_book'))||[];unplannedSpendingData=JSON.parse(localStorage.getItem('fam_unplanned_spending'))||[];renderAllViews();renderFamilyTools();document.getElementById('backup-status').textContent='Backup imported. Any existing Family Plan items not present in this backup were left untouched.';showToast('Family Plan backup restored');}catch(err){document.getElementById('backup-status').textContent='Import failed: '+err.message;}finally{e.target.value='';}}
 
-            const mealWidget = document.getElementById('home-meal-today');
-            if (mealWidget) {
-                let badgeClass = "bg-slate-600 text-white";
-                let cookName = "Family";
-                if (todayMeal.who === 'kevin') { badgeClass = "bg-[#1A5258] text-white"; cookName = "Kevin"; }
-                if (todayMeal.who === 'harriet') { badgeClass = "bg-fuchsia-600 text-white"; cookName = "Harriet"; }
-
-                mealWidget.innerHTML = `
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <span class="text-xs font-semibold text-gray-500 uppercase">Today's Dinner (${todayMeal.day})</span>
-                            <p class="font-bold text-gray-800 text-base">${todayMeal.meal || 'No meal set'}</p>
-                        </div>
-                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${badgeClass} shadow-sm flex items-center gap-1">
-                            <i class="fa-solid fa-utensils text-[10px]"></i> ${cookName}
-                        </span>
-                    </div>
-                `;
-            }
+        function renderAllViews() {
+            setCalendarMode(calendarMode);
+            renderMeals();
+            renderShopping();
+            renderTodos();
+            renderPlacesView();
+            renderRestaurantsView();
+            renderWatchlist();
+            renderChores();
+            renderWishlist();
+            renderDashboard();
+            renderFamilyTools();
+            renderUnplannedSpending();
         }
 
-        // Initialize view
-        window.addEventListener('DOMContentLoaded', () => {
-            renderMealPlan();
-            renderHome();
-        });
+        document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
+        if(document.getElementById('handover-date')) document.getElementById('handover-date').value = new Date().toISOString().slice(0,10);
+        if(document.getElementById('unplanned-date')) document.getElementById('unplanned-date').value = new Date().toISOString().slice(0,10);
+        
+        updateHeaderDisplay();
+        renderFinanceOverview();
+        renderAllViews();
     </script>
 </body>
 </html>
-```
