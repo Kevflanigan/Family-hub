@@ -1213,6 +1213,46 @@ nav.bottom-nav, .bottom-nav {
     font-size: 1.05rem;
 }
 
+
+/* Family Plan usability refinements */
+.meal-planner-heading { align-items: center; }
+.meal-cook-heading {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .045em;
+    text-align: right;
+}
+.todo-task-item {
+    background: #f7faf8;
+    border: 1px solid #e7eeea;
+    border-radius: 12px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 9px;
+    margin-bottom: 8px;
+    width: 100%;
+}
+.todo-task-main { display: flex; align-items: flex-start; gap: 10px; min-width: 0; }
+.todo-task-main .compact-scoped-checkbox { flex: 0 0 17px; margin-top: 3px; }
+.todo-task-main .todo-item-label { font-size: .94rem; line-height: 1.4; overflow-wrap: anywhere; }
+.todo-task-controls { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
+.todo-task-controls .date-tag {
+    width: 138px; max-width: 100%; background: #f1f5f9; border: 1px solid #cbd5e1;
+    border-radius: 8px; padding: 5px 7px; font-size: .78rem; color: #334155; cursor: pointer;
+}
+.todo-task-item.completed .todo-item-label { text-decoration: line-through; color: var(--muted); opacity: .65; }
+#places-map { position: relative; overflow: hidden; background: #edf3f0; }
+.map-status { min-height: 320px; display: grid; place-items: center; padding: 24px; color: var(--muted); text-align: center; font-size: .9rem; }
+@media (max-width: 420px) {
+    .meal-planner-heading { align-items: flex-start; }
+    .meal-cook-heading { max-width: 45%; font-size: .65rem; line-height: 1.3; }
+    .todo-task-controls { justify-content: flex-start; }
+    .todo-task-controls .date-tag { width: 124px; }
+}
 </style>
 </head>
 <body>
@@ -1469,7 +1509,7 @@ nav.bottom-nav, .bottom-nav {
         </div>
         <div id="shopping-meals-panel">
             <section class="card" style="margin-bottom:0.8rem;">
-                <div class="card-header"><div class="card-title">🍽️ Weekly Meal Planner</div></div>
+                <div class="card-header meal-planner-heading"><div class="card-title">🍽️ Weekly Meal Planner</div><div class="meal-cook-heading">Who is cooking dinner?</div></div>
                 <div id="meal-list-container" class="list-container"></div>
             </section>
         </div>
@@ -1843,8 +1883,9 @@ function togglePasswordVisibility() {
     }
 }
 
-let currentMonth = 9;
-let currentYear = 2026;
+const initialCalendarDate = new Date();
+let currentMonth = initialCalendarDate.getMonth();
+let currentYear = initialCalendarDate.getFullYear();
 let calendarPageMode = localStorage.getItem('fam_cal_page_mode') || 'week';
 let selectedPopoverDateKey = null;
 
@@ -1875,6 +1916,7 @@ let destinationsData = JSON.parse(localStorage.getItem('fam_destinations')) || {
     restaurants: [], 
     cinema: [], home: [] 
 };
+destinationsData.places = Array.isArray(destinationsData.places) ? destinationsData.places : [];
 let choresData = JSON.parse(localStorage.getItem('fam_chores')) || [{ kid: "Leo", chores: [] }, { kid: "Mia", chores: [] }];
 let wishlistData = JSON.parse(localStorage.getItem('fam_wishlist')) || [];
 let todosData = JSON.parse(localStorage.getItem('fam_todos')) || [];
@@ -2004,7 +2046,7 @@ function showView(viewId, navBtn) {
     if (viewId === 'addressbook') {
         renderAddressBook();
         if (document.getElementById('addressbook-places-panel')?.style.display !== 'none') {
-            setTimeout(() => initMap(), 100);
+            setTimeout(() => initMap(), 180);
         }
     }
     if (viewId === 'calendar') {
@@ -2336,7 +2378,7 @@ function setAddressPlacesView(mode) {
     addressBtn.setAttribute('aria-pressed', String(addresses)); 
     placesBtn.setAttribute('aria-pressed', String(!addresses));
     if (!addresses) {
-        setTimeout(() => initMap(), 100);
+        setTimeout(() => initMap(), 180);
     }
 }
 
@@ -2438,55 +2480,71 @@ function renderPlacesView() {
     }).join('');
 
     if (document.getElementById('addressbook-places-panel')?.style.display !== 'none' && document.getElementById('view-addressbook')?.classList.contains('active')) {
-        setTimeout(() => initMap(), 100);
+        setTimeout(() => initMap(), 180);
     }
 }
 
 let mapInstance = null;
 let mapMarkers = [];
+let mapRequestToken = 0;
 
 async function initMap() {
     const mapContainer = document.getElementById('places-map');
-    if (!mapContainer) return;
-
-    if (!mapInstance) {
-        mapInstance = L.map('places-map').setView([53.858, -1.685], 11);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-            maxZoom: 19,
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        }).addTo(mapInstance);
+    const placesPanel = document.getElementById('addressbook-places-panel');
+    if (!mapContainer || !placesPanel || placesPanel.style.display === 'none') return;
+    if (!window.L) {
+        mapContainer.innerHTML = '<div class="map-status">The map library could not be loaded. Please check your connection and try again.</div>';
+        return;
     }
 
-    mapInstance.invalidateSize();
-    mapMarkers.forEach(m => mapInstance.removeLayer(m));
-    mapMarkers = [];
+    const requestToken = ++mapRequestToken;
+    try {
+        if (!mapInstance) {
+            mapInstance = L.map(mapContainer).setView([53.858, -1.685], 11);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            }).addTo(mapInstance);
+        }
+        await new Promise(resolve => requestAnimationFrame(resolve));
+        mapInstance.invalidateSize(true);
+        mapMarkers.forEach(marker => mapInstance.removeLayer(marker));
+        mapMarkers = [];
 
-    const allLocations = (destinationsData.places || []).filter(item => filterItem(item.who));
-    const bounds = [];
-
-    for (const item of allLocations) {
-        if (!item.postcode) continue;
-        try {
-            const res = await fetch(`https://api.postcodes.io/postcodes/${encodeURIComponent(item.postcode)}`);
-            const data = await res.json();
-            if (data.status === 200) {
-                const { latitude, longitude } = data.result;
+        const allLocations = (destinationsData.places || []).filter(item => filterItem(item.who));
+        const bounds = [];
+        for (const item of allLocations) {
+            if (requestToken !== mapRequestToken) return;
+            const postcode = (item.postcode || '').trim().replace(/\s+/g, ' ');
+            if (!postcode) continue;
+            try {
+                const response = await fetch(`https://api.postcodes.io/postcodes/${encodeURIComponent(postcode)}`);
+                if (!response.ok) continue;
+                const result = await response.json();
+                const latitude = result?.result?.latitude;
+                const longitude = result?.result?.longitude;
+                if (result.status !== 200 || !Number.isFinite(latitude) || !Number.isFinite(longitude)) continue;
+                if (requestToken !== mapRequestToken) return;
                 const marker = L.marker([latitude, longitude]).addTo(mapInstance);
-                marker.bindPopup(`<b>📍 ${item.title}</b><br>${item.postcode}`);
+                const safeTitle = escapeToolText(item.title || 'Place');
+                marker.bindPopup(`<b>📍 ${safeTitle}</b><br>${escapeToolText(postcode)}`);
                 mapMarkers.push(marker);
                 bounds.push([latitude, longitude]);
+            } catch (error) {
+                console.warn('Could not locate place postcode:', error);
             }
-        } catch (e) {
-            console.error("Geocoding error:", e);
         }
+        if (requestToken !== mapRequestToken) return;
+        if (bounds.length > 1) mapInstance.fitBounds(bounds, { padding: [35, 35], maxZoom: 13 });
+        else if (bounds.length === 1) mapInstance.setView(bounds[0], 13);
+        else mapInstance.setView([53.858, -1.685], 11);
+        await new Promise(resolve => requestAnimationFrame(resolve));
+        mapInstance.invalidateSize(true);
+    } catch (error) {
+        console.error('Places map initialisation failed:', error);
+        mapContainer.innerHTML = '<div class="map-status">Unable to load the map right now. Please try again.</div>';
+        mapInstance = null;
     }
-
-    if (bounds.length > 0) {
-        mapInstance.fitBounds(bounds, { padding: [50, 50], maxZoom: 13 });
-    } else {
-        mapInstance.setView([53.858, -1.685], 11);
-    }
-    mapInstance.invalidateSize();
 }
 
 async function addRestaurantItem() {
@@ -2576,18 +2634,20 @@ function renderTodos() {
         if (!filterItem(t.who)) return '';
         const displayWho = t.who === 'dad' ? 'Kevin' : (t.who === 'mom' ? 'Harriet' : 'Family');
         return `
-            <div class="compact-scoped-item ${t.done ? 'completed' : ''} ${t.quickAdded ? 'quick-added-task' : ''}">
-                <div class="compact-scoped-left">
+            <div class="todo-task-item ${t.done ? 'completed' : ''} ${t.quickAdded ? 'quick-added-task' : ''}">
+                <div class="todo-task-main">
                     <input type="checkbox" class="compact-scoped-checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodoCheck(${idx})">
                     ${t.isEditing ? 
                         `<input type="text" class="compact-scoped-input" value="${t.text}" onkeypress="if(event.key==='Enter') saveTodoEdit(${idx}, this.value)" onblur="saveTodoEdit(${idx}, this.value)" autofocus>` : 
                         `<span class="todo-item-label">${t.text}</span>`
                     }
                 </div>
-                <button class="action-btn" onclick="enableTodoEdit(${idx})">✏️</button>
-                <input type="date" class="date-tag" value="${t.date || ''}" onchange="updateTodoDate(${idx}, this.value)" title="Change task date" style="width:110px; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:8px; padding:2px 4px; font-size:0.72rem; color:#334155; cursor:pointer;">
-                <span class="compact-scoped-tag bg-${t.who}" onclick="cycleAssignee('todo', ${idx})">${displayWho}</span>
-                <button class="action-btn delete-btn" onclick="todosData.splice(${idx},1); saveData(); renderTodos(); renderDashboard(); renderWeeklyPlanner();">✕</button>
+                <div class="todo-task-controls">
+                    <input type="date" class="date-tag" value="${t.date || ''}" onchange="updateTodoDate(${idx}, this.value)" title="Change task date">
+                    <span class="compact-scoped-tag bg-${t.who}" onclick="cycleAssignee('todo', ${idx})">${displayWho}</span>
+                    <button class="action-btn" onclick="enableTodoEdit(${idx})" aria-label="Edit task">✏️</button>
+                    <button class="action-btn delete-btn" onclick="todosData.splice(${idx},1); saveData(); renderTodos(); renderDashboard(); renderWeeklyPlanner();" aria-label="Delete task">✕</button>
+                </div>
             </div>
         `;
     }).join('');
@@ -2801,6 +2861,28 @@ function renderWeeklyPlanner() {
         // Get tasks for this specific day (or undated tasks assigned to first day)
         const dayTasks = todosData.filter(t => !t.done && filterItem(t.who) && (t.date === key || (!t.date && i === 0)));
 
+        const dayEvents = [];
+        const seenEventIds = new Set();
+        Object.entries(calendarEvents || {}).forEach(([eventDate, entries]) => {
+            (Array.isArray(entries) ? entries : []).forEach(ev => {
+                const isBirthday = /\[(yearly|birthday)\]/i.test(ev.title || '') && eventDate.slice(5) === key.slice(5);
+                if ((eventDate === key || isBirthday) && filterItem(ev.who) && !seenEventIds.has(`${ev.eventId || ev.title}-${eventDate}`)) {
+                    dayEvents.push({ ...ev, birthday: /birthday/i.test(ev.title || '') || /\[birthday\]/i.test(ev.title || '') });
+                    seenEventIds.add(`${ev.eventId || ev.title}-${eventDate}`);
+                }
+            });
+        });
+        const eventsHtml = dayEvents.map(ev => {
+            const whoName = ev.who === 'dad' ? 'Kevin' : (ev.who === 'mom' ? 'Harriet' : 'Family');
+            const cleanTitle = (ev.title || 'Calendar event').replace(/\s*\[(yearly|birthday)\]/ig, '');
+            return `
+                <div class="week-day-row" onclick="openDayPopover('${key}', ${d.getDate()})" title="Click to view calendar details">
+                    <span class="week-day-icon">${ev.birthday ? '🎂' : '📅'}</span>
+                    <span class="week-day-content"><strong>${escapeToolText(cleanTitle)}</strong> <small style="color:var(--${ev.who || 'family'}); font-weight:700;">(${whoName})</small></span>
+                </div>
+            `;
+        }).join('');
+
         let tasksHtml = '';
         if (dayTasks.length > 0) {
             tasksHtml = dayTasks.map(t => {
@@ -2824,6 +2906,7 @@ function renderWeeklyPlanner() {
                         <span class="week-day-icon">🍽️</span>
                         <span class="week-day-content">${escapeToolText(meal)} <small style="color:var(--${cookKey}); font-weight:700;">(${cookName})</small></span>
                     </div>
+                    ${eventsHtml}
                     ${tasksHtml}
                 </div>
             </div>
