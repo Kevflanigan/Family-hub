@@ -1066,7 +1066,7 @@
         .tool-row small{display:block;color:var(--muted);font-size:.75rem}
         .tool-row button{border:0;background:transparent;color:#b42318;font-weight:800;padding:4px 6px;cursor:pointer}
         
-        /* Updated full-width stacked grid layout for Weekly Planner */
+        /* Updated full-width stacked grid layout for Weekly Planner with Strictly Aligned Icon Grid */
         .week-grid {
             display: flex;
             flex-direction: column;
@@ -1082,7 +1082,7 @@
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
         }
         .week-day-header {
             display: flex;
@@ -1099,17 +1099,28 @@
         }
         .week-day-details {
             display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 12px 20px;
+            flex-direction: column;
+            gap: 6px;
         }
-        .week-day-details p {
-            font-size: 0.85rem;
-            color: var(--muted);
-            margin: 0;
+        .week-day-row {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 10px;
+            font-size: 0.88rem;
+            color: var(--muted);
+            min-height: 24px;
+        }
+        .week-day-icon {
+            width: 24px;
+            min-width: 24px;
+            text-align: center;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+            display: inline-block;
+        }
+        .week-day-content {
+            flex: 1;
+            min-width: 0;
             overflow-wrap: anywhere;
         }
 
@@ -2305,7 +2316,8 @@
                     let eventsHtml = '';
                     if (calendarEvents[dateKey]) {
                         calendarEvents[dateKey].filter(ev => filterItem(ev.who)).forEach(ev => {
-                            eventsHtml += `<div class="event-pill bg-${ev.who} ${ev.quickAdded ? 'quick-added' : ''}" title="${ev.title}">${ev.title}</div>`;
+                            const assigneeLabel = ev.who === 'dad' ? ' (Kevin)' : (ev.who === 'mom' ? ' (Harriet)' : ' (Family)');
+                            eventsHtml += `<div class="event-pill bg-${ev.who} ${ev.quickAdded ? 'quick-added' : ''}" title="${ev.title}${assigneeLabel}">${ev.title}${assigneeLabel}</div>`;
                         });
                     }
                     html += `
@@ -2344,7 +2356,8 @@
                     let eventsHtml = '';
                     if (calendarEvents[dateKey]) {
                         calendarEvents[dateKey].filter(ev => filterItem(ev.who)).forEach((ev, evIdx) => {
-                            eventsHtml += `<span class="event-pill bg-${ev.who} ${ev.quickAdded ? 'quick-added' : ''}" style="margin:2px 3px; font-size:0.75rem; padding:3px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:4px; width:auto;">${ev.title} <button onclick="event.stopPropagation(); deleteCalEvent('${dateKey}', ${evIdx}, '${ev.eventId || ''}')" style="background:none; border:none; color:#fff; font-size:0.75rem; cursor:pointer;">✕</button></span>`;
+                            const assigneeLabel = ev.who === 'dad' ? ' (Kevin)' : (ev.who === 'mom' ? ' (Harriet)' : ' (Family)');
+                            eventsHtml += `<span class="event-pill bg-${ev.who} ${ev.quickAdded ? 'quick-added' : ''}" style="margin:2px 3px; font-size:0.75rem; padding:3px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:4px; width:auto;">${ev.title}${assigneeLabel} <button onclick="event.stopPropagation(); deleteCalEvent('${dateKey}', ${evIdx}, '${ev.eventId || ''}')" style="background:none; border:none; color:#fff; font-size:0.75rem; cursor:pointer;">✕</button></span>`;
                         });
                     }
 
@@ -3050,7 +3063,15 @@
                 const meal = mObj?.meal || 'No meal planned';
                 const cookKey = mObj?.cook || 'dad';
                 const cookName = cookKey === 'dad' ? 'Kevin' : (cookKey === 'mom' ? 'Harriet' : 'Family');
-                const events = (calendarEvents[key] || []).filter(ev => filterItem(ev.who)).map(ev => ev.title);
+                
+                const eventsList = (calendarEvents[key] || []).filter(ev => filterItem(ev.who));
+                const eventsText = eventsList.length 
+                    ? eventsList.map(ev => {
+                        const nameLabel = ev.who === 'dad' ? 'Kevin' : (ev.who === 'mom' ? 'Harriet' : 'Family');
+                        return `${escapeToolText(ev.title)} <small style="color:var(--${ev.who}); font-weight:700;">(${nameLabel})</small>`;
+                      }).join(', ')
+                    : 'No appointments';
+
                 const taskCount = todosData.filter(t => !t.done).length;
 
                 return `
@@ -3059,9 +3080,19 @@
                             <strong>${day} · ${d.getDate()} ${d.toLocaleDateString('en-GB', { month: 'short' })}</strong>
                         </div>
                         <div class="week-day-details">
-                            <p>🍽️ <span>${escapeToolText(meal)}</span> <small style="color:var(--${cookKey}); font-weight:700;">(${cookName})</small></p>
-                            <p>📅 <span>${events.length ? events.map(escapeToolText).join(', ') : 'No appointments'}</span></p>
-                            ${i === 0 ? `<p>☑️ <span>${taskCount} open to-do(s)</span></p>` : ''}
+                            <div class="week-day-row">
+                                <span class="week-day-icon">🍽️</span>
+                                <span class="week-day-content">${escapeToolText(meal)} <small style="color:var(--${cookKey}); font-weight:700;">(${cookName})</small></span>
+                            </div>
+                            <div class="week-day-row">
+                                <span class="week-day-icon">📅</span>
+                                <span class="week-day-content">${eventsText}</span>
+                            </div>
+                            ${i === 0 ? `
+                            <div class="week-day-row">
+                                <span class="week-day-icon">☑️</span>
+                                <span class="week-day-content">${taskCount} open to-do(s)</span>
+                            </div>` : ''}
                         </div>
                     </div>
                 `;
