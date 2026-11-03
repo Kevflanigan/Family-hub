@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1065,13 +1066,44 @@
         .tool-row{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:9px 10px;background:#f8fafc;border:1px solid #edf0f4;border-radius:9px;font-size:.88rem}
         .tool-row small{display:block;color:var(--muted);font-size:.75rem}
         .tool-row button{border:0;background:transparent;color:#b42318;font-weight:800;padding:4px 6px;cursor:pointer}
-        .week-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-        .week-day{border:1px solid var(--border);border-radius:10px;padding:9px;background:#fff;min-width:0}
-        .week-day strong{color:var(--accent);font-size:.85rem}.week-day p{font-size:.78rem;color:var(--muted);margin-top:4px;overflow-wrap:anywhere}
+        
+        /* Updated Horizontal Weekly Planner Container & Day Cards */
+        .week-grid {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            padding-bottom: 8px;
+            flex-wrap: nowrap;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+        .week-day {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 9px;
+            background: #fff;
+            flex: 0 0 160px;
+            min-width: 150px;
+            scroll-snap-align: start;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+        .week-day strong {
+            color: var(--accent);
+            font-size: .85rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .week-day p {
+            font-size: .78rem;
+            color: var(--muted);
+            margin-top: 4px;
+            overflow-wrap: anywhere;
+        }
         .tool-note{font-size:.78rem;color:var(--muted);line-height:1.4;margin:6px 0}
         .account-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
         .tool-total{font-size:1.45rem;font-weight:850;color:var(--accent)}
-        @media(min-width:600px){.week-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 
         /* FAMILY PLAN — visual refinement pass */
         :root {
@@ -3176,3 +3208,4 @@
     </script>
 </body>
 </html>
+```
