@@ -1099,7 +1099,7 @@
         .tool-row small{display:block;color:var(--muted);font-size:.75rem}
         .tool-row button{border:0;background:transparent;color:#b42318;font-weight:800;padding:4px 6px;cursor:pointer}
         
-        /* Updated 2-column grid layout for Weekly Planner */
+        /* Fixed 2-column grid layout for Weekly Planner */
         .week-grid {
             display: flex;
             flex-direction: column;
@@ -1132,21 +1132,21 @@
         }
         .week-day-details {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px 12px;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 6px 8px;
         }
         .week-day-row {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 0.88rem;
+            gap: 6px;
+            font-size: 0.8rem;
             color: var(--muted);
             min-height: 28px;
             overflow: hidden;
             background: #f8fafc;
             border: 1px solid #edf2f0;
             border-radius: 8px;
-            padding: 6px 8px;
+            padding: 5px 6px;
             box-sizing: border-box;
         }
         .week-day-icon {
@@ -1189,7 +1189,6 @@
             .current-user-badge { padding: 4px 7px; font-size: .7rem; }
             .day-cell { min-height: 78px; }
             .event-pill { font-size: .59rem; }
-            .week-day-details { grid-template-columns: 1fr; }
         }
         @media (min-width: 700px) {
             .view { padding: 1rem .8rem; }
