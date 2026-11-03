@@ -221,7 +221,7 @@ margin: 0 auto;
 padding: .7rem .65rem;
 animation: refinedFade .22s ease-out;
 }
-​.view.active { display: block; }
+​.view.active { display: block !important; }
 ​@keyframes refinedFade {
 from { opacity: 0; transform: translateY(5px); }
 to { opacity: 1; transform: translateY(0); }
@@ -233,13 +233,13 @@ bottom: 0 !important;
 left: 0 !important;
 right: 0 !important;
 display: grid !important;
-grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
-align-items: stretch !important;
-justify-content: initial !important;
+grid-template-columns: repeat(6, 1fr) !important;
+align-items: center !important;
+justify-content: space-between !important;
 gap: 2px !important;
 height: calc(66px + env(safe-area-inset-bottom, 0px)) !important;
 min-height: 66px !important;
-padding: 5px 5px env(safe-area-inset-bottom, 0px) !important;
+padding: 5px 4px env(safe-area-inset-bottom, 0px) !important;
 background: rgba(250,252,250,.96) !important;
 backdrop-filter: blur(12px) !important;
 border-top: 1px solid #e0e9e4 !important;
@@ -251,7 +251,6 @@ box-sizing: border-box !important;
 min-width: 0 !important;
 width: 100% !important;
 height: 100% !important;
-flex: initial !important;
 display: flex !important;
 flex-direction: column !important;
 align-items: center !important;
@@ -259,12 +258,12 @@ justify-content: center !important;
 background: none !important;
 border: none !important;
 color: #83918f !important;
-padding: 5px 1px !important;
-font-size: clamp(.56rem, 2.35vw, .67rem) !important;
+padding: 4px 1px !important;
+font-size: 0.65rem !important;
 font-weight: 650 !important;
 cursor: pointer !important;
-border-radius: 12px !important;
-gap: 5px !important;
+border-radius: 10px !important;
+gap: 3px !important;
 white-space: nowrap !important;
 line-height: 1 !important;
 overflow: hidden !important;
@@ -280,7 +279,7 @@ background: #edf5f1 !important;
 font-weight: 700 !important;
 }
 ​.nav-icon {
-font-size: 1.2rem !important;
+font-size: 1.15rem !important;
 line-height: 1 !important;
 display: block !important;
 flex: 0 0 auto !important;
@@ -545,7 +544,7 @@ border: 1px solid var(--border);
 z-index: 1;
 }
 ​.calendar-main-tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding:5px;margin:0 0 10px;background:#e9f0ed;border:1px solid #dfe9e4;border-radius:14px;box-shadow:var(--shadow-soft)}
-.cal-main-tab{border:1px solid transparent;background:transparent;color:#64777a;border-radius:10px;padding:10px 5px;font-size:.78rem;font-weight:800;cursor:pointer;min-width:0}
+.cal-main-tab{border:1px solid transparent;background:transparent;color:#64777a;border-radius:10px;padding:10px 5px;font-size:.78rem;font-weight:800;cursor:pointer;min-width:0;text-align:center;}
 .cal-main-tab.active{background:#fff;border-color:transparent;color:var(--accent);box-shadow:0 2px 7px rgba(30,65,62,.09)}
 @media(max-width:380px){.cal-main-tab{font-size:.7rem;padding:9px 2px}}
 .calendar-controls { display: flex; align-items: center; gap: 8px; }
@@ -1278,7 +1277,7 @@ font-size: 1.05rem;
 ​<!-- VIEW 0: HOME DASHBOARD -->
 <div id="view-dashboard" class="view active">
 <section class="card" style="margin-bottom:12px;">
-<div class="card-title"><span>🗓️ This Week in Our Family</span><button class="tool-btn secondary" onclick="showView('calendar',document.getElementById('nav-btn-calendar'))">Open calendar</button></div>
+<div class="card-title"><span>🗓️ This Week in Our Family</span><button class="tool-btn secondary" onclick="showView('calendar',document.getElementById('nav-btn-calendar')); setCalendarPage('week');">Open calendar</button></div>
 <div id="family-week-summary" class="tool-note">Your family week at a glance.</div>
 </section>
 <section class="card">
@@ -1310,7 +1309,7 @@ font-size: 1.05rem;
 </div>
 ​<!-- VIEW 1: Calendar -->
 <div id="view-calendar" class="view" style="padding-left:0; padding-right:0;">
-<div class="calendar-main-tabs" role="tablist" aria-label="Calendar views">
+<div class="calendar-main-tabs" role="tablist" aria-label="Calendar views" style="margin-left:10px; margin-right:10px;">
 <button id="cal-tab-handover" class="cal-main-tab" onclick="setCalendarPage('handover')">🤝 Handover</button>
 <button id="cal-tab-week" class="cal-main-tab active" onclick="setCalendarPage('week')">Weekly planner</button>
 <button id="cal-tab-month" class="cal-main-tab" onclick="setCalendarPage('month')">Monthly calendar</button>
@@ -1609,7 +1608,7 @@ font-size: 1.05rem;
 <span class="nav-icon">📇</span>
 <span>Places</span>
 </button>
-<button id="nav-btn-calendar" class="nav-item" onclick="showView('calendar', this)">
+<button id="nav-btn-calendar" class="nav-item active" onclick="showView('calendar', this)">
 <span class="nav-icon">📅</span>
 <span>Calendar</span>
 </button>
@@ -1708,10 +1707,10 @@ passwordInput.type = 'password';
 eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
 }
 }
-​let currentMonth = 9;
+​let currentMonth = 10;
 let currentYear = 2026;
 let calendarMode = localStorage.getItem('fam_cal_mode') || 'week';
-let currentWeekStartDate = getMonday(new Date(2026, 9, 26));
+let currentWeekStartDate = getMonday(new Date(2026, 10, 2));
 let selectedPopoverDateKey = null;
 ​function getMonday(d) {
 const date = new Date(d);
@@ -1725,7 +1724,7 @@ const cooks = ['dad', 'mom', 'family'];
 let currentUserName = localStorage.getItem('fam_user_name') || 'Kevin';
 let viewMode = localStorage.getItem('fam_view_mode') || 'family';
 ​let mealsData = JSON.parse(localStorage.getItem('fam_meals')) || [
-{ day: "Mon", meal: "", cook: "dad" }, { day: "Tue", meal: "", cook: "mom" },
+{ day: "Mon", meal: "Meats", cook: "dad" }, { day: "Tue", meal: "", cook: "mom" },
 { day: "Wed", meal: "", cook: "dad" }, { day: "Thu", meal: "", cook: "mom" },
 { day: "Fri", meal: "", cook: "family" }, { day: "Sat", meal: "", cook: "dad" },
 { day: "Sun", meal: "", cook: "family" }
@@ -1739,8 +1738,10 @@ cinema: [], home: []
 };
 let choresData = JSON.parse(localStorage.getItem('fam_chores')) || [{ kid: "Leo", chores: [] }, { kid: "Mia", chores: [] }];
 let wishlistData = JSON.parse(localStorage.getItem('fam_wishlist')) || [];
-let todosData = JSON.parse(localStorage.getItem('fam_todos')) || [];
-let calendarEvents = JSON.parse(localStorage.getItem('fam_calendar')) || {};
+let todosData = JSON.parse(localStorage.getItem('fam_todos')) || [{ text: "Weekly household task", who: "family", date: "2026-11-02", done: false }];
+let calendarEvents = JSON.parse(localStorage.getItem('fam_calendar')) || {
+'2026-11-02': [{ title: 'Beers', who: 'family' }]
+};
 let householdBillsData = JSON.parse(localStorage.getItem('fam_bills')) || [];
 let monthlyBudgetsData = JSON.parse(localStorage.getItem('fam_monthly_budgets')) || [];
 let renewalsData = JSON.parse(localStorage.getItem('fam_renewals')) || [];
@@ -1863,9 +1864,13 @@ return itemWho === currentUser || itemWho === 'family';
 ​function showView(viewId, navBtn) {
 document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
 document.querySelectorAll('.bottom-nav .nav-item').forEach(btn => btn.classList.remove('active'));
-document.getElementById(view-${viewId}).classList.add('active');
-document.getElementById('top-home-btn')?.classList.toggle('active', viewId === 'dashboard');
-if (navBtn && navBtn.classList.contains('nav-item')) navBtn.classList.add('active');
+​const targetView = document.getElementById(view-${viewId});
+if (targetView) targetView.classList.add('active');
+​if (!navBtn) {
+navBtn = document.getElementById(nav-btn-${viewId});
+}
+if (navBtn) navBtn.classList.add('active');
+​document.getElementById('top-home-btn')?.classList.toggle('active', viewId === 'dashboard');
 window.scrollTo(0, 0);
 ​if (viewId === 'monthlybudget') {
 renderBills();
@@ -1881,7 +1886,7 @@ setTimeout(() => initMap(), 300);
 }
 }
 if (viewId === 'calendar') {
-// Keep current calendar subtab active
+setCalendarPage(calendarMode === 'month' ? 'month' : (calendarMode === 'handover' ? 'handover' : 'week'));
 }
 }
 ​function handleCategoryChange(val) {
@@ -1894,25 +1899,21 @@ document.getElementById('add-recurring').value = 'birthday';
 document.getElementById('postcode-row').style.display = (val === 'places' || val === 'restaurants') ? 'flex' : 'none';
 }
 ​function setCalendarPage(page) {
-const handover = page === 'handover';
+calendarMode = page;
+saveData();
+​const handover = page === 'handover';
 const week = page === 'week';
 const month = page === 'month';
 ​document.getElementById('calendar-handover-panel').style.display = handover ? 'block' : 'none';
 document.getElementById('calendar-week-panel').style.display = week ? 'block' : 'none';
 document.getElementById('calendar-events-panel').style.display = month ? 'block' : 'none';
 ​['handover','week','month'].forEach(key => {
-const tab=document.getElementById('cal-tab-'+key);
-if(tab) tab.classList.toggle('active', key===page);
+const tab = document.getElementById('cal-tab-' + key);
+if (tab) tab.classList.toggle('active', key === page);
 });
-if(week) {
-calendarMode = 'week';
-renderWeeklyPlanner();
-}
-if(month) {
-calendarMode = 'month';
-renderCalendar();
-}
-if(handover) renderEnhancementLists();
+​if (week) renderWeeklyPlanner();
+if (month) renderCalendar();
+if (handover) renderEnhancementLists();
 }
 ​function renderCalendar() {
 const container = document.getElementById('calendar-grid-container');
@@ -2430,11 +2431,12 @@ endDate.setDate(endDate.getDate() + 6);
 const endMonth = endDate.toLocaleDateString('en-GB', { month: 'short' });
 let rangeText = ${monday.getDate()} ${startMonth};
 if (startMonth !== endMonth || monday.getFullYear() !== endDate.getFullYear()) {
-rangeText +=  - ${endDate.getDate()} ${endMonth} ${endDate.getFullYear()};
+rangeText +=  - ${endDate.getDate()} ${endMonth} ${monday.getFullYear()};
 } else {
 rangeText +=  - ${endDate.getDate()} ${startMonth} ${monday.getFullYear()};
 }
-document.getElementById('weekly-planner-range-label').textContent = rangeText;
+const rangeEl = document.getElementById('weekly-planner-range-label');
+if (rangeEl) rangeEl.textContent = rangeText;
 ​const html = days.map((day, i) => {
 const d = new Date(monday);
 d.setDate(monday.getDate() + i);
@@ -2574,7 +2576,7 @@ function renderFamilyTools(){renderBills();renderEnhancementLists();}
 ​function exportFamilyPlanData(){const keys=Object.keys(localStorage).filter(k=>k.startsWith('fam_')).sort();const payload={app:'Family Plan',formatVersion:2,exportedAt:new Date().toISOString(),data:{}};keys.forEach(k=>{const raw=localStorage.getItem(k);if(raw!null){try{payload.data[k]=JSON.parse(raw)}catch{payload.data[k]=raw}}});const addressCount=Array.isArray(payload.data.fam_address_book)?payload.data.fam_address_book.length:0;const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.getElementById('a');a.href=url;a.download=family-plan-backup-${new Date().toISOString().slice(0,10)}.json;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);document.getElementById('backup-status').textContent=Backup exported: ${keys.length} data/settings items, including ${addressCount} saved address(es). Keep this file somewhere safe.;}
 async function importFamilyPlanData(e){const file=e.target.files?.[0];if(!file)return;try{const payload=JSON.parse(await file.text());if(payload.app!'Family Plan'||!payload.data||typeof payload.data!'object')throw new Error('This does not look like a Family Plan backup.');if(!confirm('Importing will replace the Family Plan data stored in this browser. Export a backup first. Continue?'))return;Object.entries(payload.data).forEach(([key,value])=>{if(/^fam_[a-z0-9_]+$/i.test(key))localStorage.setItem(key,typeof value='string'?value:JSON.stringify(value));});mealsData=JSON.parse(localStorage.getItem('fam_meals'))||mealsData;foodShopData=JSON.parse(localStorage.getItem('fam_foodshop'))||[];familyShopData=JSON.parse(localStorage.getItem('fam_familyshop'))||[];destinationsData=JSON.parse(localStorage.getItem('fam_destinations'))||destinationsData;choresData=JSON.parse(localStorage.getItem('fam_chores'))||choresData;wishlistData=JSON.parse(localStorage.getItem('fam_wishlist'))||[];todosData=JSON.parse(localStorage.getItem('fam_todos'))||[];calendarEvents=JSON.parse(localStorage.getItem('fam_calendar'))||{};householdBillsData=JSON.parse(localStorage.getItem('fam_bills'))||[];monthlyBudgetsData=JSON.parse(localStorage.getItem('fam_monthly_budgets'))||[];renewalsData=JSON.parse(localStorage.getItem('fam_renewals'))||[];familyIdeasData=JSON.parse(localStorage.getItem('fam_ideas'))||[];handoverData=JSON.parse(localStorage.getItem('fam_handover'))||[];occasionsData=JSON.parse(localStorage.getItem('fam_occasions'))||[];addressBookData=JSON.parse(localStorage.getItem('fam_address_book'))||[];unplannedSpendingData=JSON.parse(localStorage.getItem('fam_unplanned_spending'))||[];renderAllViews();renderFamilyTools();document.getElementById('backup-status').textContent='Backup imported. Any existing Family Plan items not present in this backup were left untouched.';showToast('Family Plan backup restored');}catch(err){document.getElementById('backup-status').textContent='Import failed: '+err.message;}finally{e.target.value='';}}
 ​function renderAllViews() {
-setCalendarPage(calendarMode === 'month' ? 'month' : 'week');
+setCalendarPage(calendarMode === 'month' ? 'month' : (calendarMode === 'handover' ? 'handover' : 'week'));
 renderMeals();
 renderShopping();
 renderTodos();
@@ -2594,6 +2596,7 @@ if(document.getElementById('unplanned-date')) document.getElementById('unplanned
 updateHeaderDisplay();
 renderFinanceOverview();
 renderAllViews();
+showView('calendar');
 </script>
 </body>
 </html>
