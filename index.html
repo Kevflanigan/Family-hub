@@ -590,40 +590,45 @@ nav.bottom-nav, .bottom-nav {
 .bg-mia { background-color: var(--mia); }
 .bg-family { background-color: var(--family); }
 
-/* Meal Card Row Styles with "Who is cooking tea?" */
-.meal-card-row { 
-    margin-bottom: 8px; 
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    padding: 10px 12px;
-}
-.meal-card-row.cook-dad { border-left: 4px solid var(--dad); }
-.meal-card-row.cook-mom { border-left: 4px solid var(--mom); }
-.meal-card-row.cook-family { border-left: 4px solid var(--family); }
-
-.meal-tea-header {
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
+/* Compact weekly meal planner rows */
+.meal-card-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: 4px;
+    gap: 12px;
+    min-height: 58px;
+    margin: 0;
+    padding: 9px 4px;
+    border-bottom: 1px solid #e8efeb;
+    background: transparent;
 }
-
-.meal-card-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    width: 100%;
+.meal-card-row:last-child { border-bottom: 0; }
+.meal-card-row.cook-dad { border-left: 3px solid var(--dad); padding-left: 10px; }
+.meal-card-row.cook-mom { border-left: 3px solid var(--mom); padding-left: 10px; }
+.meal-card-row.cook-family { border-left: 3px solid var(--family); padding-left: 10px; }
+.meal-card-inner { display: flex; align-items: center; gap: 12px; width: 100%; min-width: 0; }
+.meal-day-name { flex: 0 0 48px; font-size: .82rem; font-weight: 800; color: var(--accent); text-transform: uppercase; }
+.meal-input-inline {
+    flex: 1 1 auto; min-width: 0; width: 100%; background: transparent;
+    border: 0; border-bottom: 1px solid transparent; border-radius: 0;
+    color: var(--text); font: inherit; font-size: .94rem; font-weight: 600;
+    outline: none; padding: 7px 2px;
 }
-
-.meal-day-name { font-size: 0.95rem; font-weight: 800; color: #1e3a8a; width: 48px; flex-shrink: 0; }
-.meal-input-inline { background: transparent; border: none; border-bottom: 1px dashed var(--border); font-size: 0.95rem; width: 100%; outline: none; padding: 4px 0; }
+.meal-input-inline::placeholder { color: var(--muted); font-weight: 400; }
+.meal-input-inline:focus { border-bottom-color: var(--accent); }
+.meal-cook-tag { flex: 0 0 auto; border: 0; }
+.meal-planner-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
+.meal-planner-heading .card-title, .meal-cook-heading {
+    margin: 0; color: var(--text); font-size: 1rem; font-weight: 800;
+    line-height: 1.25; letter-spacing: -.015em;
+}
+.meal-cook-heading { margin-left: auto; text-align: right; }
+@media (max-width: 420px) {
+    .meal-card-row { gap: 7px; padding-top: 8px; padding-bottom: 8px; }
+    .meal-card-inner { gap: 7px; }
+    .meal-day-name { flex-basis: 40px; font-size: .76rem; }
+    .meal-input-inline { font-size: .88rem; }
+    .meal-cook-heading { margin-left: 0; text-align: left; }
+}
 
 .chores-grid {
     display: grid;
@@ -1262,9 +1267,6 @@ nav.bottom-nav, .bottom-nav {
     .week-day-row { padding: 8px; gap: 7px; min-height: 58px; font-size: .82rem; }
     .week-day-icon { width: 19px; min-width: 19px; font-size: .95rem; }
     .week-day-header strong { font-size: .94rem; }
-    .meal-planner-heading { align-items: center; }
-    .meal-planner-heading .card-title, .meal-cook-heading { font-size: 1.02rem; }
-    .meal-cook-heading { max-width: none; }
     .todo-task-controls { justify-content: flex-start; }
     .todo-task-controls .date-tag { width: 124px; }
 }
@@ -2315,23 +2317,24 @@ function cycleCook(idx) {
     renderWeeklyPlanner();
 }
 
-// WEEKLY MEAL PLANNER WITH "WHO IS COOKING TEA?"
+// WEEKLY MEAL PLANNER
 function renderMeals() {
-    document.getElementById('meal-list-container').innerHTML = mealsData.map((m, idx) => {
-        const cookKey = m.cook || 'dad';
+    const container = document.getElementById('meal-list-container');
+    if (!container) return;
+    container.innerHTML = (mealsData || []).map((m, idx) => {
+        const cookKey = ['dad', 'mom', 'family'].includes(m.cook) ? m.cook : 'dad';
         const cookName = cookKey === 'dad' ? 'Kevin' : (cookKey === 'mom' ? 'Harriet' : 'Family');
+        const dayLabel = escapeToolText(m.day || 'Day');
+        const mealValue = escapeToolText(m.meal || '');
         return `
         <div class="meal-card-row cook-${cookKey}">
-            <div class="meal-tea-header">
-                <span>Who is cooking tea?</span>
-                <span class="assign-tag bg-${cookKey}" onclick="cycleCook(${idx})" title="Click to change who is cooking">${cookName}</span>
-            </div>
             <div class="meal-card-inner">
-                <div class="meal-day-name">${m.day}</div>
-                <input type="text" class="meal-input-inline" placeholder="Enter meal..." value="${m.meal}" onchange="mealsData[${idx}].meal = this.value; saveData(); renderDashboard(); renderWeeklyPlanner();">
+                <div class="meal-day-name">${dayLabel}</div>
+                <input type="text" class="meal-input-inline" placeholder="Add a meal..." aria-label="${dayLabel} meal" value="${mealValue}" onchange="mealsData[${idx}].meal = this.value; saveData(); renderDashboard(); renderWeeklyPlanner();">
+                <button type="button" class="assign-tag meal-cook-tag bg-${cookKey}" onclick="cycleCook(${idx})" title="Change who is cooking" aria-label="${cookName} is cooking; tap to change">${cookName}</button>
             </div>
-        </div>
-    `}).join('');
+        </div>`;
+    }).join('');
 }
 
 function addInlineShop(type) {
