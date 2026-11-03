@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FamilyPlan — Plan together. Make memories.</title>
     <!-- Leaflet CSS for Map -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="[https://unpkg.com/leaflet@1.9.4/dist/leaflet.css](https://unpkg.com/leaflet@1.9.4/dist/leaflet.css)" />
     <style>
         :root {
             --bg: #f3f6f5;
@@ -965,6 +964,18 @@
             flex-shrink: 0;
         }
 
+        .date-tag {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 10px;
+            background: #e2e8f0;
+            color: #334155;
+            cursor: pointer;
+            user-select: none;
+            flex-shrink: 0;
+        }
+
         .wishlist-scoped-input, .places-scoped-input, .restaurants-scoped-input {
             background: #fbfdfb;
             border: 1px solid #dce6e1;
@@ -1088,7 +1099,7 @@
         .tool-row small{display:block;color:var(--muted);font-size:.75rem}
         .tool-row button{border:0;background:transparent;color:#b42318;font-weight:800;padding:4px 6px;cursor:pointer}
         
-        /* 2-column grid layout for Weekly Planner */
+        /* Updated 2-column grid layout for Weekly Planner */
         .week-grid {
             display: flex;
             flex-direction: column;
@@ -1615,18 +1626,9 @@
     <div id="view-todo" class="view">
         <section class="compact-scoped-card">
             <div class="todo-scoped-title">📝 To-Do List</div>
-            <div class="compact-scoped-add-group">
-                <input type="text" id="todo-quick-input" class="compact-scoped-input" placeholder="Add task..." onkeypress="if(event.key==='Enter') addTodoItem()">
-                <select id="todo-day-select" class="compact-scoped-input" style="width: auto; flex-shrink: 0;">
-                    <option value="any">Any Day</option>
-                    <option value="Mon">Mon</option>
-                    <option value="Tue">Tue</option>
-                    <option value="Wed">Wed</option>
-                    <option value="Thu">Thu</option>
-                    <option value="Fri">Fri</option>
-                    <option value="Sat">Sat</option>
-                    <option value="Sun">Sun</option>
-                </select>
+            <div class="compact-scoped-add-group" style="flex-wrap:wrap; gap:6px;">
+                <input type="text" id="todo-quick-input" class="compact-scoped-input" style="flex:2; min-width:140px;" placeholder="Add task..." onkeypress="if(event.key==='Enter') addTodoItem()">
+                <input type="date" id="todo-date-input" class="compact-scoped-input" style="flex:1.2; min-width:130px; padding:2px 6px;" aria-label="Task date">
                 <button class="compact-scoped-add-btn" onclick="addTodoItem()">+</button>
             </div>
             <div id="todo-list-container" style="display:flex; flex-direction:column;"></div>
@@ -1767,7 +1769,7 @@
     </nav>
 
     <!-- Leaflet JS Library for Map -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="[https://unpkg.com/leaflet@1.9.4/dist/leaflet.js](https://unpkg.com/leaflet@1.9.4/dist/leaflet.js)"></script>
 
     <script>
         // Auth gate handlers
@@ -2203,11 +2205,11 @@
 
             const tasksCont = document.getElementById('dash-tasks');
             const uncompletedTasks = todosData.map((item, index) => ({ ...item, index })).filter(item => !item.done && filterItem(item.who));
-            const uncompletedFood = foodShopData.map((item, index) => ({ ...item, index })).filter(item => !item.done && filterItem(item.who));
+            const uncompletedFood = foodShopData.map((item, index) => ({ ...item, index })) .filter(item => !item.done && filterItem(item.who));
 
             let combinedItems = [];
             uncompletedFood.forEach(item => combinedItems.push({ text: item.text, sub: "Food Shopping List", type: "foodshop", index: item.index, icon: "🛒" }));
-            uncompletedTasks.forEach(item => combinedItems.push({ text: item.text, sub: "To-Do Task", type: "todo", index: item.index, icon: "📝" }));
+            uncompletedTasks.forEach(item => combinedItems.push({ text: item.text, sub: `To-Do Task (${item.date || 'Any Date'})`, type: "todo", index: item.index, icon: "📝" }));
 
             if (combinedItems.length === 0) {
                 tasksCont.innerHTML = `<div class="list-empty">No outstanding tasks or shopping items.</div>`;
@@ -2309,7 +2311,6 @@
             saveData();
             renderCalendar();
             renderDashboard();
-            renderWeeklyPlanner();
         }
 
         function navigateCalendar(dir) {
@@ -2464,6 +2465,14 @@
             renderAllViews();
         }
 
+        function updateTodoDate(idx, newDate) {
+            todosData[idx].date = newDate;
+            saveData();
+            renderTodos();
+            renderDashboard();
+            renderWeeklyPlanner();
+        }
+
         function addPlacesItem() {
             const nameInput = document.getElementById('places-name-input');
             const pcInput = document.getElementById('places-postcode-input');
@@ -2513,9 +2522,9 @@
 
             if (!mapInstance) {
                 mapInstance = L.map('places-map').setView([53.858, -1.685], 11);
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                L.tileLayer('https://{s}[.basemaps.cartocdn.com/rastertiles/voyager/](https://.basemaps.cartocdn.com/rastertiles/voyager/){z}/{x}/{y}{r}.png', {
                     maxZoom: 19,
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                    attribution: '&copy; <a href="[https://www.openstreetmap.org/copyright](https://www.openstreetmap.org/copyright)">OpenStreetMap</a> contributors &copy; <a href="[https://carto.com/attributions](https://carto.com/attributions)">CARTO</a>'
                 }).addTo(mapInstance);
 
                 const resizeObserver = new ResizeObserver(() => {
@@ -2534,7 +2543,7 @@
             for (const item of allLocations) {
                 if (!item.postcode) continue;
                 try {
-                    const res = await fetch(`https://api.postcodes.io/postcodes/${encodeURIComponent(item.postcode)}`);
+                    const res = await fetch(`[https://api.postcodes.io/postcodes/$](https://api.postcodes.io/postcodes/$){encodeURIComponent(item.postcode)}`);
                     const data = await res.json();
                     if (data.status === 200) {
                         const { latitude, longitude } = data.result;
@@ -2563,7 +2572,7 @@
 
             const title = nameInput.value.trim();
             const postcode = pcInput.value.trim();
-            let imageUrl = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60';
+            let imageUrl = '[https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60](https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60)';
 
             destinationsData.restaurants.push({ title, postcode, who: currentUser, image: imageUrl });
             nameInput.value = '';
@@ -2580,7 +2589,7 @@
 
             container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No restaurants added yet.</div>` : list.map((item, idx) => {
                 if (!filterItem(item.who)) return '';
-                const img = item.image || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60';
+                const img = item.image || '[https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60](https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60)';
                 const displayWho = item.who === 'dad' ? 'Kevin' : (item.who === 'mom' ? 'Harriet' : 'Family');
                 return `
                     <div class="restaurant-card-item">
@@ -2600,27 +2609,17 @@
 
         function addTodoItem() {
             const input = document.getElementById('todo-quick-input');
-            const daySelect = document.getElementById('todo-day-select');
+            const dateInput = document.getElementById('todo-date-input');
             if (!input || !input.value.trim()) return;
-            const assignedDay = daySelect ? daySelect.value : 'any';
-            todosData.push({ text: input.value.trim(), who: currentUser, day: assignedDay, done: false, isEditing: false, quickAdded: true });
+            const chosenDate = dateInput ? dateInput.value : '';
+            todosData.push({ text: input.value.trim(), who: currentUser, date: chosenDate, done: false, isEditing: false, quickAdded: true });
             input.value = '';
+            if (dateInput) dateInput.value = '';
             saveData();
             renderTodos();
             renderDashboard();
             renderWeeklyPlanner();
             showToast('Task added');
-        }
-
-        function cycleTodoDay(idx) {
-            const days = ['any', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-            const currentDay = todosData[idx].day || 'any';
-            const nextDay = days[(days.indexOf(currentDay) + 1) % days.length];
-            todosData[idx].day = nextDay;
-            saveData();
-            renderTodos();
-            renderDashboard();
-            renderWeeklyPlanner();
         }
 
         function toggleTodoCheck(idx) {
@@ -2652,7 +2651,7 @@
             container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No tasks remaining.</div>` : todosData.map((t, idx) => {
                 if (!filterItem(t.who)) return '';
                 const displayWho = t.who === 'dad' ? 'Kevin' : (t.who === 'mom' ? 'Harriet' : 'Family');
-                const displayDay = t.day && t.day !== 'any' ? t.day : 'Any Day';
+                const displayDate = t.date ? t.date : 'Any Date';
                 return `
                     <div class="compact-scoped-item ${t.done ? 'completed' : ''} ${t.quickAdded ? 'quick-added-task' : ''}">
                         <div class="compact-scoped-left">
@@ -2663,7 +2662,7 @@
                             }
                         </div>
                         <button class="action-btn" onclick="enableTodoEdit(${idx})">✏️</button>
-                        <span class="compact-scoped-tag" style="background:#64748b;" onclick="cycleTodoDay(${idx})" title="Click to change day">${displayDay}</span>
+                        <input type="date" class="date-tag" value="${t.date || ''}" onchange="updateTodoDate(${idx}, this.value)" title="Change task date" style="width:110px; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:8px; padding:2px 4px; font-size:0.72rem; color:#334155; cursor:pointer;">
                         <span class="compact-scoped-tag bg-${t.who}" onclick="cycleAssignee('todo', ${idx})">${displayWho}</span>
                         <button class="action-btn delete-btn" onclick="todosData.splice(${idx},1); saveData(); renderTodos(); renderDashboard(); renderWeeklyPlanner();">✕</button>
                     </div>
@@ -2827,12 +2826,12 @@
             } else if (category === 'foodshop') foodShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
             else if (category === 'familyshop') familyShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
             else if (category === 'places') destinationsData.places.push({ title: finalTitle, who: assignee, postcode });
-            else if (category === 'restaurants') destinationsData.restaurants.push({ title: finalTitle, who: assignee, postcode, image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60' });
+            else if (category === 'restaurants') destinationsData.restaurants.push({ title: finalTitle, who: assignee, postcode, image: '[https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60](https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60)' });
             else if (['cinema','home'].includes(category)) {
                 if (!destinationsData[category]) destinationsData[category] = [];
                 destinationsData[category].push({ title: finalTitle, who: assignee });
             }
-            else if (category === 'todo') todosData.push({ text: finalTitle, who: assignee, day: 'any', done: false, isEditing: false, quickAdded: true });
+            else if (category === 'todo') todosData.push({ text: finalTitle, who: assignee, date: dateVal, done: false, isEditing: false, quickAdded: true });
             else if (category === 'wishlist') wishlistData.push({ title: finalTitle, who: assignee });
             else if (category === 'chores') {
                 const target = choresData.find(c => c.kid.toLowerCase() === assignee.toLowerCase()) || choresData[0];
@@ -2860,7 +2859,11 @@
             const html = days.map((day, i) => {
                 const d = new Date(monday);
                 d.setDate(monday.getDate() + i);
-                const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                const yyyy = d.getFullYear();
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const dd = String(d.getDate()).padStart(2, '0');
+                const key = `${yyyy}-${mm}-${dd}`;
+                
                 const mObj = mealsData.find(m => m.day === day);
                 const meal = mObj?.meal || 'No meal planned';
                 const cookKey = mObj?.cook || 'dad';
@@ -2874,7 +2877,7 @@
                       }).join(', ')
                     : 'No appointments';
 
-                const dayTaskCount = todosData.filter(t => !t.done && filterItem(t.who) && (t.day === day || t.day === 'any' || !t.day)).length;
+                const dayTaskCount = todosData.filter(t => !t.done && filterItem(t.who) && (t.date === key || !t.date)).length;
 
                 return `
                     <div class="week-day" style="border-left: 4px solid var(--${cookKey});">
@@ -3008,7 +3011,7 @@
 
             const upcoming=document.getElementById('finance-upcoming-list');
             if(upcoming){
-                const items=[...householdBillsData.filter(x=>x.due).map(x=>({name:x.name,date:x.due,detail:`Payment · ${moneyGBP(x.amount)} · ${x.frequency}`})),...renewalsData.filter(x=>x.date).map(x=>({name:x.name,date:x.date,detail:`Renewal · ${moneyGBP(x.cost)} · ${x.frequency}`}))].filter(x=>x.date>=new Date().toISOString().slice(0,10)).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,6);
+                const items=[...householdBillsData.filter(x=>x.due).map(x=>({name:x.name,date:x.due,detail:`Payment · ${moneyGBP(x.amount)} · ${x.frequency}`})),...renewalsData.filter(x=>x.date).map(x=>({name:x.date,date:x.date,detail:`Renewal · ${moneyGBP(x.cost)} · ${x.frequency}`}))].filter(x=>x.date>=new Date().toISOString().slice(0,10)).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,6);
                 upcoming.innerHTML=items.length?items.map(x=>`<div class="tool-row"><div><strong>${escapeToolText(x.name)}</strong><small>${dateLabel(x.date)} · ${escapeToolText(x.detail)}</small></div></div>`).join(''):'<p class="tool-note">No upcoming payments recorded yet.</p>';
             }
         }
@@ -3041,7 +3044,7 @@
         function renderSimpleToolList(id,items,formatter,type,empty){const el=document.getElementById(id);if(!el)return;el.innerHTML=items.length?items.map((item,i)=>`<div class="tool-row"><div>${formatter(item)}</div><button onclick="deleteToolItem('${type}',${i})">✕</button></div>`).join(''):`<p class="tool-note">${empty}</p>`;}
         function addAddressBookEntry(e){e.preventDefault();const name=document.getElementById('address-book-name').value.trim(),address=document.getElementById('address-book-address').value.trim(),postcode=document.getElementById('address-book-postcode').value.trim();if(!name||!address||!postcode)return;addressBookData.push({id:crypto.randomUUID(),name,address,postcode});saveData();e.target.reset();renderAddressBook();showToast('Address saved');}
         function editAddressBookEntry(i){const entry=addressBookData[i];if(!entry)return;const name=prompt('Name',entry.name);if(name===null)return;const address=prompt('Address',entry.address);if(address===null)return;const postcode=prompt('Postcode',entry.postcode);if(postcode===null)return;if(!name.trim()||!address.trim()||!postcode.trim()){showToast('Please complete all address fields');return;}entry.name=name.trim();entry.address=address.trim();entry.postcode=postcode.trim();saveData();renderAddressBook();}
-        function deleteAddressBookEntry(i){if(!addressBookData[i]||!confirm('Delete this saved address?'))return;addressBookData.splice(i,1);saveData();renderAddressBook();}
+        function deleteAddressBookEntry(i){if(!addressBookData[i]||!confirm('Delete this saved address?'))return;addressBookData.splice(1,1);saveData();renderAddressBook();}
         function renderAddressBook(){const list=document.getElementById('address-book-list');if(!list)return;list.innerHTML=addressBookData.length?addressBookData.map((entry,i)=>`<div class="tool-row"><div><strong>${escapeToolText(entry.name)}</strong><small>${escapeToolText(entry.address)}<br>${escapeToolText(entry.postcode)}</small></div><div style="display:flex;gap:6px;flex-shrink:0"><button type="button" onclick="editAddressBookEntry(${i})">Edit</button><button type="button" onclick="deleteAddressBookEntry(${i})">✕</button></div></div>`).join(''):'<p class="tool-note">No saved addresses yet. Add your first key address above.</p>'; }
         function renderEnhancementLists(){renderSimpleToolList('renewals-list',renewalsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${moneyGBP(x.cost)} · ${escapeToolText(x.frequency)} · Renewal: ${dateLabel(x.date)}</small>`,'renewals','No renewals tracked yet.');renderSimpleToolList('family-ideas-list',familyIdeasData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${escapeToolText(x.category)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'ideas','Your saved family ideas will appear here.');renderSimpleToolList('handover-list',handoverData,x=>`<strong>${dateLabel(x.date)}${x.person?' · '+escapeToolText(x.person):''}</strong><small>${escapeToolText(x.notes)}</small>`,'handover','No handover notes yet.');renderSimpleToolList('family-occasions-list',occasionsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${dateLabel(x.date)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'occasions','No occasions added yet.');renderAddressBook();renderFinanceOverview();}
         function renderFamilyTools(){renderWeeklyPlanner();renderBills();renderEnhancementLists();}
@@ -3068,10 +3071,10 @@
         if(document.getElementById('handover-date')) document.getElementById('handover-date').value = new Date().toISOString().slice(0,10);
         if(document.getElementById('unplanned-date')) document.getElementById('unplanned-date').value = new Date().toISOString().slice(0,10);
         
+        updateHeaderDialog = updateHeaderDisplay;
         updateHeaderDisplay();
         renderFinanceOverview();
         renderAllViews();
     </script>
 </body>
 </html>
-```
