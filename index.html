@@ -1270,6 +1270,42 @@ nav.bottom-nav, .bottom-nav {
     .todo-task-controls { justify-content: flex-start; }
     .todo-task-controls .date-tag { width: 124px; }
 }
+
+/* Final meal-planner heading alignment: consistent type and clean mobile stacking */
+.meal-planner-heading {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 18px;
+}
+.meal-planner-heading .card-title,
+.meal-planner-heading .meal-cook-heading {
+    margin: 0;
+    color: #263b42;
+    font-size: 1.12rem;
+    font-weight: 800;
+    line-height: 1.25;
+    letter-spacing: -.025em;
+    text-align: left;
+}
+.meal-planner-heading .meal-cook-heading {
+    margin-left: auto;
+}
+@media (max-width: 600px) {
+    .meal-planner-heading {
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        gap: 8px;
+    }
+    .meal-planner-heading .meal-cook-heading {
+        margin-left: 0;
+        text-align: left;
+    }
+}
+
 </style>
 </head>
 <body>
