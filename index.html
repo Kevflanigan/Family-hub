@@ -1083,12 +1083,13 @@ nav.bottom-nav, .bottom-nav {
 .tool-row small{display:block;color:var(--muted);font-size:.75rem}
 .tool-row button{border:0;background:transparent;color:#b42318;font-weight:800;padding:4px 6px;cursor:pointer}
 
-/* Fixed 2-column grid layout for Weekly Planner */
+/* Weekly planner: two-column layout, with each day's items arranged 2 x 2 */
 .week-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
     width: 100%;
+    align-items: stretch;
 }
 .week-day {
     border: 1px solid var(--border);
@@ -1100,6 +1101,7 @@ nav.bottom-nav, .bottom-nav {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    min-width: 0;
 }
 .week-day-header {
     display: flex;
@@ -1115,17 +1117,19 @@ nav.bottom-nav, .bottom-nav {
     font-weight: 800;
 }
 .week-day-details {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+    align-content: start;
 }
 .week-day-row {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 6px;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
+    line-height: 1.35;
     color: var(--muted);
-    min-height: 28px;
+    min-height: 42px;
     overflow: hidden;
     background: #f8fafc;
     border: 1px solid #edf2f0;
@@ -1152,9 +1156,10 @@ nav.bottom-nav, .bottom-nav {
     flex: 1;
     min-width: 0;
     overflow-wrap: anywhere;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    overflow-wrap: anywhere;
 }
 
 .tool-note{font-size:.78rem;color:#78878a;line-height:1.4;margin:6px 0}
@@ -1218,10 +1223,10 @@ nav.bottom-nav, .bottom-nav {
 .meal-planner-heading { align-items: center; }
 .meal-cook-heading {
     margin-left: auto;
-    color: var(--muted);
-    font-size: .72rem;
+    color: #263b42;
+    font-size: 1.02rem;
     font-weight: 800;
-    letter-spacing: .045em;
+    letter-spacing: -.025em;
     text-align: right;
 }
 .todo-task-item {
@@ -1248,8 +1253,14 @@ nav.bottom-nav, .bottom-nav {
 #places-map { position: relative; overflow: hidden; background: #edf3f0; }
 .map-status { min-height: 320px; display: grid; place-items: center; padding: 24px; color: var(--muted); text-align: center; font-size: .9rem; }
 @media (max-width: 420px) {
+    .week-grid { gap: 8px; }
+    .week-day { padding: 9px; }
+    .week-day-details { gap: 5px; }
+    .week-day-row { padding: 6px 5px; gap: 4px; min-height: 46px; font-size: .76rem; }
+    .week-day-icon { width: 17px; min-width: 17px; font-size: .82rem; }
+    .week-day-header strong { font-size: .84rem; }
     .meal-planner-heading { align-items: flex-start; }
-    .meal-cook-heading { max-width: 45%; font-size: .65rem; line-height: 1.3; }
+    .meal-cook-heading { max-width: 52%; font-size: .9rem; line-height: 1.25; }
     .todo-task-controls { justify-content: flex-start; }
     .todo-task-controls .date-tag { width: 124px; }
 }
