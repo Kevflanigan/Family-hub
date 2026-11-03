@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FamilyPlan — Plan together. Make memories.</title>
     <!-- Leaflet CSS for Map -->
-    <link rel="stylesheet" href="[https://unpkg.com/leaflet@1.9.4/dist/leaflet.css](https://unpkg.com/leaflet@1.9.4/dist/leaflet.css)" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
             --bg: #f3f6f5;
@@ -1138,17 +1138,22 @@
         .week-day-row {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             font-size: 0.88rem;
             color: var(--muted);
-            min-height: 24px;
+            min-height: 28px;
             overflow: hidden;
+            background: #f8fafc;
+            border: 1px solid #edf2f0;
+            border-radius: 8px;
+            padding: 6px 8px;
+            box-sizing: border-box;
         }
         .week-day-icon {
-            width: 24px;
-            min-width: 24px;
+            width: 20px;
+            min-width: 20px;
             text-align: center;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             flex-shrink: 0;
             display: inline-block;
         }
@@ -1769,7 +1774,7 @@
     </nav>
 
     <!-- Leaflet JS Library for Map -->
-    <script src="[https://unpkg.com/leaflet@1.9.4/dist/leaflet.js](https://unpkg.com/leaflet@1.9.4/dist/leaflet.js)"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
         // Auth gate handlers
@@ -2522,9 +2527,9 @@
 
             if (!mapInstance) {
                 mapInstance = L.map('places-map').setView([53.858, -1.685], 11);
-                L.tileLayer('https://{s}[.basemaps.cartocdn.com/rastertiles/voyager/](https://.basemaps.cartocdn.com/rastertiles/voyager/){z}/{x}/{y}{r}.png', {
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
                     maxZoom: 19,
-                    attribution: '&copy; <a href="[https://www.openstreetmap.org/copyright](https://www.openstreetmap.org/copyright)">OpenStreetMap</a> contributors &copy; <a href="[https://carto.com/attributions](https://carto.com/attributions)">CARTO</a>'
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
                 }).addTo(mapInstance);
 
                 const resizeObserver = new ResizeObserver(() => {
@@ -2543,7 +2548,7 @@
             for (const item of allLocations) {
                 if (!item.postcode) continue;
                 try {
-                    const res = await fetch(`[https://api.postcodes.io/postcodes/$](https://api.postcodes.io/postcodes/$){encodeURIComponent(item.postcode)}`);
+                    const res = await fetch(`https://api.postcodes.io/postcodes/${encodeURIComponent(item.postcode)}`);
                     const data = await res.json();
                     if (data.status === 200) {
                         const { latitude, longitude } = data.result;
@@ -2572,7 +2577,7 @@
 
             const title = nameInput.value.trim();
             const postcode = pcInput.value.trim();
-            let imageUrl = '[https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60](https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60)';
+            let imageUrl = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60';
 
             destinationsData.restaurants.push({ title, postcode, who: currentUser, image: imageUrl });
             nameInput.value = '';
@@ -2589,7 +2594,7 @@
 
             container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No restaurants added yet.</div>` : list.map((item, idx) => {
                 if (!filterItem(item.who)) return '';
-                const img = item.image || '[https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60](https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60)';
+                const img = item.image || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60';
                 const displayWho = item.who === 'dad' ? 'Kevin' : (item.who === 'mom' ? 'Harriet' : 'Family');
                 return `
                     <div class="restaurant-card-item">
@@ -2826,7 +2831,7 @@
             } else if (category === 'foodshop') foodShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
             else if (category === 'familyshop') familyShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
             else if (category === 'places') destinationsData.places.push({ title: finalTitle, who: assignee, postcode });
-            else if (category === 'restaurants') destinationsData.restaurants.push({ title: finalTitle, who: assignee, postcode, image: '[https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60](https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60)' });
+            else if (category === 'restaurants') destinationsData.restaurants.push({ title: finalTitle, who: assignee, postcode, image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60' });
             else if (['cinema','home'].includes(category)) {
                 if (!destinationsData[category]) destinationsData[category] = [];
                 destinationsData[category].push({ title: finalTitle, who: assignee });
