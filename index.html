@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1067,40 +1066,53 @@
         .tool-row small{display:block;color:var(--muted);font-size:.75rem}
         .tool-row button{border:0;background:transparent;color:#b42318;font-weight:800;padding:4px 6px;cursor:pointer}
         
-        /* Updated Horizontal Weekly Planner Container & Day Cards */
+        /* Updated full-width stacked grid layout for Weekly Planner */
         .week-grid {
             display: flex;
-            overflow-x: auto;
+            flex-direction: column;
             gap: 10px;
-            padding-bottom: 8px;
-            flex-wrap: nowrap;
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
+            width: 100%;
         }
         .week-day {
             border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 9px;
+            border-radius: 12px;
+            padding: 12px 14px;
             background: #fff;
-            flex: 0 0 160px;
-            min-width: 150px;
-            scroll-snap-align: start;
+            width: 100%;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
+            gap: 6px;
         }
-        .week-day strong {
+        .week-day-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #edf2f0;
+            padding-bottom: 6px;
+            margin-bottom: 2px;
+        }
+        .week-day-header strong {
             color: var(--accent);
-            font-size: .85rem;
-            display: block;
-            margin-bottom: 4px;
+            font-size: 0.95rem;
+            font-weight: 800;
         }
-        .week-day p {
-            font-size: .78rem;
+        .week-day-details {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px 20px;
+        }
+        .week-day-details p {
+            font-size: 0.85rem;
             color: var(--muted);
-            margin-top: 4px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
             overflow-wrap: anywhere;
         }
+
         .tool-note{font-size:.78rem;color:var(--muted);line-height:1.4;margin:6px 0}
         .account-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
         .tool-total{font-size:1.45rem;font-weight:850;color:var(--accent)}
@@ -3026,22 +3038,44 @@
         function monthlyBillEquivalent(b) { const n=Number(b.amount)||0; return n * ({weekly:52/12,monthly:1,quarterly:1/3,yearly:1/12}[b.frequency]||1); }
 
         function renderWeeklyPlanner() {
-            const today=new Date(); const monday=getMonday(today);
-            const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-            const html=days.map((day,i)=>{
-                const d=new Date(monday);
-                d.setDate(monday.getDate()+i);
-                const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-                const mObj=mealsData.find(m=>m.day===day);
-                const meal=mObj?.meal||'No meal planned';
-                const cookKey=mObj?.cook||'dad';
-                const cookName=cookKey==='dad'?'Kevin':(cookKey==='mom'?'Harriet':'Family');
-                const events=(calendarEvents[key]||[]).filter(ev=>filterItem(ev.who)).map(ev=>ev.title);
-                const taskCount=todosData.filter(t=>!t.done).length;
-                return `<div class="week-day" style="border-left: 4px solid var(--${cookKey});"><strong>${day} · ${d.getDate()} ${d.toLocaleDateString('en-GB',{month:'short'})}</strong><p>🍽️ ${escapeToolText(meal)} <small style="color:var(--${cookKey}); font-weight:700;">(${cookName})</small></p><p>📅 ${events.length?events.map(escapeToolText).join(', '):'No appointments'}</p>${i===0?`<p>☑️ ${taskCount} open to-do(s)</p>`:''}</div>`
+            const today = new Date(); 
+            const monday = getMonday(today);
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+            const html = days.map((day, i) => {
+                const d = new Date(monday);
+                d.setDate(monday.getDate() + i);
+                const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                const mObj = mealsData.find(m => m.day === day);
+                const meal = mObj?.meal || 'No meal planned';
+                const cookKey = mObj?.cook || 'dad';
+                const cookName = cookKey === 'dad' ? 'Kevin' : (cookKey === 'mom' ? 'Harriet' : 'Family');
+                const events = (calendarEvents[key] || []).filter(ev => filterItem(ev.who)).map(ev => ev.title);
+                const taskCount = todosData.filter(t => !t.done).length;
+
+                return `
+                    <div class="week-day" style="border-left: 4px solid var(--${cookKey});">
+                        <div class="week-day-header">
+                            <strong>${day} · ${d.getDate()} ${d.toLocaleDateString('en-GB', { month: 'short' })}</strong>
+                        </div>
+                        <div class="week-day-details">
+                            <p>🍽️ <span>${escapeToolText(meal)}</span> <small style="color:var(--${cookKey}); font-weight:700;">(${cookName})</small></p>
+                            <p>📅 <span>${events.length ? events.map(escapeToolText).join(', ') : 'No appointments'}</span></p>
+                            ${i === 0 ? `<p>☑️ <span>${taskCount} open to-do(s)</span></p>` : ''}
+                        </div>
+                    </div>
+                `;
             }).join('');
-            const grid=document.getElementById('weekly-planner-grid');if(grid)grid.innerHTML=html;
-            const summary=document.getElementById('family-week-summary');if(summary){const events=Object.values(calendarEvents).flat().length;const open=todosData.filter(t=>!t.done).length;summary.textContent=`7-day meal plan · ${events} calendar entries saved · ${open} outstanding to-do(s) · ${householdBillsData.length} household bill(s) tracked.`;}
+
+            const grid = document.getElementById('weekly-planner-grid');
+            if (grid) grid.innerHTML = html;
+
+            const summary = document.getElementById('family-week-summary');
+            if (summary) {
+                const events = Object.values(calendarEvents).flat().length;
+                const open = todosData.filter(t => !t.done).length;
+                summary.textContent = `7-day meal plan · ${events} calendar entries saved · ${open} outstanding to-do(s) · ${householdBillsData.length} household bill(s) tracked.`;
+            }
         }
 
         let householdMonthlyBudget = Number(localStorage.getItem('fam_household_monthly_budget')) || 1500;
@@ -3208,4 +3242,3 @@
     </script>
 </body>
 </html>
-```
