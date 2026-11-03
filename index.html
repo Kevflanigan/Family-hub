@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1087,7 +1088,7 @@
         .tool-row small{display:block;color:var(--muted);font-size:.75rem}
         .tool-row button{border:0;background:transparent;color:#b42318;font-weight:800;padding:4px 6px;cursor:pointer}
         
-        /* Updated 2-column grid layout for Weekly Planner */
+        /* 2-column grid layout for Weekly Planner */
         .week-grid {
             display: flex;
             flex-direction: column;
@@ -1616,6 +1617,16 @@
             <div class="todo-scoped-title">📝 To-Do List</div>
             <div class="compact-scoped-add-group">
                 <input type="text" id="todo-quick-input" class="compact-scoped-input" placeholder="Add task..." onkeypress="if(event.key==='Enter') addTodoItem()">
+                <select id="todo-day-select" class="compact-scoped-input" style="width: auto; flex-shrink: 0;">
+                    <option value="any">Any Day</option>
+                    <option value="Mon">Mon</option>
+                    <option value="Tue">Tue</option>
+                    <option value="Wed">Wed</option>
+                    <option value="Thu">Thu</option>
+                    <option value="Fri">Fri</option>
+                    <option value="Sat">Sat</option>
+                    <option value="Sun">Sun</option>
+                </select>
                 <button class="compact-scoped-add-btn" onclick="addTodoItem()">+</button>
             </div>
             <div id="todo-list-container" style="display:flex; flex-direction:column;"></div>
@@ -2148,6 +2159,7 @@
             renderShopping();
             renderTodos();
             renderDashboard();
+            renderWeeklyPlanner();
             showToast(type === 'foodshop' ? 'Shopping item completed' : 'Task completed');
         }
 
@@ -2297,6 +2309,7 @@
             saveData();
             renderCalendar();
             renderDashboard();
+            renderWeeklyPlanner();
         }
 
         function navigateCalendar(dir) {
@@ -2587,13 +2600,27 @@
 
         function addTodoItem() {
             const input = document.getElementById('todo-quick-input');
+            const daySelect = document.getElementById('todo-day-select');
             if (!input || !input.value.trim()) return;
-            todosData.push({ text: input.value.trim(), who: currentUser, done: false, isEditing: false, quickAdded: true });
+            const assignedDay = daySelect ? daySelect.value : 'any';
+            todosData.push({ text: input.value.trim(), who: currentUser, day: assignedDay, done: false, isEditing: false, quickAdded: true });
             input.value = '';
             saveData();
             renderTodos();
             renderDashboard();
+            renderWeeklyPlanner();
             showToast('Task added');
+        }
+
+        function cycleTodoDay(idx) {
+            const days = ['any', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const currentDay = todosData[idx].day || 'any';
+            const nextDay = days[(days.indexOf(currentDay) + 1) % days.length];
+            todosData[idx].day = nextDay;
+            saveData();
+            renderTodos();
+            renderDashboard();
+            renderWeeklyPlanner();
         }
 
         function toggleTodoCheck(idx) {
@@ -2601,6 +2628,7 @@
             saveData();
             renderTodos();
             renderDashboard();
+            renderWeeklyPlanner();
         }
 
         function enableTodoEdit(idx) {
@@ -2614,6 +2642,7 @@
             saveData();
             renderTodos();
             renderDashboard();
+            renderWeeklyPlanner();
         }
 
         function renderTodos() {
@@ -2623,6 +2652,7 @@
             container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No tasks remaining.</div>` : todosData.map((t, idx) => {
                 if (!filterItem(t.who)) return '';
                 const displayWho = t.who === 'dad' ? 'Kevin' : (t.who === 'mom' ? 'Harriet' : 'Family');
+                const displayDay = t.day && t.day !== 'any' ? t.day : 'Any Day';
                 return `
                     <div class="compact-scoped-item ${t.done ? 'completed' : ''} ${t.quickAdded ? 'quick-added-task' : ''}">
                         <div class="compact-scoped-left">
@@ -2633,8 +2663,9 @@
                             }
                         </div>
                         <button class="action-btn" onclick="enableTodoEdit(${idx})">✏️</button>
+                        <span class="compact-scoped-tag" style="background:#64748b;" onclick="cycleTodoDay(${idx})" title="Click to change day">${displayDay}</span>
                         <span class="compact-scoped-tag bg-${t.who}" onclick="cycleAssignee('todo', ${idx})">${displayWho}</span>
-                        <button class="action-btn delete-btn" onclick="todosData.splice(${idx},1); saveData(); renderTodos(); renderDashboard();">✕</button>
+                        <button class="action-btn delete-btn" onclick="todosData.splice(${idx},1); saveData(); renderTodos(); renderDashboard(); renderWeeklyPlanner();">✕</button>
                     </div>
                 `;
             }).join('');
@@ -2801,7 +2832,7 @@
                 if (!destinationsData[category]) destinationsData[category] = [];
                 destinationsData[category].push({ title: finalTitle, who: assignee });
             }
-            else if (category === 'todo') todosData.push({ text: finalTitle, who: assignee, done: false, isEditing: false, quickAdded: true });
+            else if (category === 'todo') todosData.push({ text: finalTitle, who: assignee, day: 'any', done: false, isEditing: false, quickAdded: true });
             else if (category === 'wishlist') wishlistData.push({ title: finalTitle, who: assignee });
             else if (category === 'chores') {
                 const target = choresData.find(c => c.kid.toLowerCase() === assignee.toLowerCase()) || choresData[0];
@@ -2843,7 +2874,7 @@
                       }).join(', ')
                     : 'No appointments';
 
-                const taskCount = todosData.filter(t => !t.done).length;
+                const dayTaskCount = todosData.filter(t => !t.done && filterItem(t.who) && (t.day === day || t.day === 'any' || !t.day)).length;
 
                 return `
                     <div class="week-day" style="border-left: 4px solid var(--${cookKey});">
@@ -2861,7 +2892,7 @@
                             </div>
                             <div class="week-day-row">
                                 <span class="week-day-icon">☑️</span>
-                                <span class="week-day-content">${taskCount} open to-do(s)</span>
+                                <span class="week-day-content">${dayTaskCount} open to-do(s)</span>
                             </div>
                         </div>
                     </div>
@@ -3043,3 +3074,4 @@
     </script>
 </body>
 </html>
+```
