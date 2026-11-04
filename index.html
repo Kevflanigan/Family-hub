@@ -1591,17 +1591,13 @@ nav.bottom-nav, .bottom-nav {
 
     <!-- VIEW 1: Calendar -->
     <div id="view-calendar" class="view" style="padding-left:0; padding-right:0;">
-        <div class="calendar-view-picker">
-            <label for="calendar-view-select">Calendar view</label>
-            <select id="calendar-view-select" class="form-select" onchange="setCalendarPage(this.value)">
-                <option value="week">Weekly planner</option>
-                <option value="month">Monthly calendar</option>
-                <option value="handover">Family handover</option>
-                <option value="occasions">Family occasions</option>
-            </select>
+        <div class="calendar-main-tabs" role="group" aria-label="Calendar view navigation" style="display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:6px; margin:0 10px 14px 10px; background:#e9f0ed; padding:5px; border-radius:14px;">
+            <button type="button" id="cal-tab-handover" class="cal-main-tab" onclick="setCalendarPage('handover')">🤝 Handover</button>
+            <button type="button" id="cal-tab-week" class="cal-main-tab active" onclick="setCalendarPage('week')">🗓️ Weekly</button>
+            <button type="button" id="cal-tab-month" class="cal-main-tab" onclick="setCalendarPage('month')">📅 Monthly</button>
         </div>
-        <div id="calendar-handover-panel">
-            <section class="tool-section" style="margin: 0 10px 12px 10px;">
+        <div id="calendar-handover-panel" style="display:none; padding: 0 10px;">
+            <section class="tool-section">
                 <h3>🤝 Family handover</h3>
                 <p class="tool-note">A simple shared note for pickups, activities, dinner and things the next person needs to know.</p>
                 <form class="tool-form" onsubmit="saveHandover(event)">
@@ -1613,7 +1609,7 @@ nav.bottom-nav, .bottom-nav {
                 <div id="handover-list" class="tool-list"></div>
             </section>
         </div>
-        <div id="calendar-week-panel" style="display:none; padding: 0 10px;">
+        <div id="calendar-week-panel" style="padding: 0 10px;">
             <section class="card">
                 <div class="card-title" style="margin-bottom:10px;">🗓️ Weekly Family Planner</div>
                 <div id="weekly-planner-grid" class="week-grid"></div>
@@ -1631,19 +1627,6 @@ nav.bottom-nav, .bottom-nav {
             </div>
             <div id="calendar-grid-container"><div class="calendar-grid" id="calendar-grid"></div></div>
         </section>
-        <div id="calendar-occasions-panel" style="display:none; padding:0 10px;">
-            <section class="tool-section">
-                <h3>🎂 Family occasions</h3>
-                <p class="tool-note">Add birthdays and special dates so they stay with the family calendar.</p>
-                <form class="tool-form" onsubmit="addFamilyOccasion(event)">
-                    <input id="occasion-name" required placeholder="Occasion / person">
-                    <input id="occasion-date" type="date" required>
-                    <input id="occasion-notes" class="wide" placeholder="Gift or preparation notes (optional)">
-                    <button class="tool-btn" type="submit">Add occasion</button>
-                </form>
-                <div id="family-occasions-list" class="tool-list"></div>
-            </section>
-        </div>
     </div>
 
     <!-- VIEW 2: Shopping -->
@@ -1997,7 +1980,7 @@ function togglePasswordVisibility() {
 const initialCalendarDate = new Date();
 let currentMonth = initialCalendarDate.getMonth();
 let currentYear = initialCalendarDate.getFullYear();
-let calendarPageMode = ['week','month','handover','occasions'].includes(localStorage.getItem('fam_cal_page_mode')) ? localStorage.getItem('fam_cal_page_mode') : 'week';
+let calendarPageMode = ['week','month','handover'].includes(localStorage.getItem('fam_cal_page_mode')) ? localStorage.getItem('fam_cal_page_mode') : 'week';
 let selectedPopoverDateKey = null;
 
 function getMonday(d) {
@@ -2178,19 +2161,21 @@ function handleCategoryChange(val) {
 }
 
 function setCalendarPage(page) {
-    const allowed = ['handover', 'week', 'month', 'occasions'];
+    const allowed = ['handover', 'week', 'month'];
     if (!allowed.includes(page)) page = 'week';
     calendarPageMode = page;
     saveData();
     document.getElementById('calendar-handover-panel').style.display = page === 'handover' ? 'block' : 'none';
     document.getElementById('calendar-week-panel').style.display = page === 'week' ? 'block' : 'none';
     document.getElementById('calendar-events-panel').style.display = page === 'month' ? 'block' : 'none';
-    document.getElementById('calendar-occasions-panel').style.display = page === 'occasions' ? 'block' : 'none';
-    const picker = document.getElementById('calendar-view-select');
-    if (picker) picker.value = page;
+    
+    document.getElementById('cal-tab-handover')?.classList.toggle('active', page === 'handover');
+    document.getElementById('cal-tab-week')?.classList.toggle('active', page === 'week');
+    document.getElementById('cal-tab-month')?.classList.toggle('active', page === 'month');
+    
     if (page === 'week') renderWeeklyPlanner();
     if (page === 'month') renderCalendarMonth();
-    if (page === 'handover' || page === 'occasions') renderEnhancementLists();
+    if (page === 'handover') renderEnhancementLists();
 }
 
 function renderCalendarMonth() {
