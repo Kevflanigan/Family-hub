@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +6,7 @@
     <title>FamilyPlan — Plan together. Make memories.</title>
     <!-- Leaflet CSS for Map -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="styles.css" />
 <style>
 :root {
     --bg: #f3f6f5;
@@ -70,6 +70,23 @@ body {
     gap: 7px;
 }
 
+.top-home-btn {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #dce9e3;
+    border-radius: 50%;
+    background: #edf4f1;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.top-home-btn:active { transform: scale(.95); }
+.top-home-btn.active { background: #dce9e3; border-color: #b8d2c6; }
+
 .account-icon-btn {
     background: #edf4f1;
     border: 1px solid #dce9e3;
@@ -113,7 +130,7 @@ body {
     border: 1px solid var(--border);
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.12);
-    width: 230px;
+    width: 210px;
     overflow: hidden;
     z-index: 1001;
 }
@@ -284,6 +301,11 @@ nav.bottom-nav, .bottom-nav {
     text-overflow: ellipsis !important;
 }
 
+#nav-btn-restaurants,
+#nav-btn-watchlist {
+    display: none !important;
+}
+
 .nav-item.active {
     color: #245b67 !important;
     background: #edf5f1 !important;
@@ -337,6 +359,14 @@ nav.bottom-nav, .bottom-nav {
     font-size: 0.7rem;
     font-weight: 800;
 }
+
+/* Dashboard task checkboxes */
+.dashboard-task-item { gap: 10px; }
+.dashboard-task-left { display:flex; align-items:center; gap:12px; flex:1; min-width:0; cursor:pointer; }
+.dashboard-task-left > span { display:block; min-width:0; }
+.dashboard-task-left strong { display:block; }
+.dashboard-task-left .sub-text { display:block; }
+.dashboard-task-checkbox { width:22px; height:22px; flex-shrink:0; accent-color:var(--accent); cursor:pointer; }
 
 /* Standard Cards & Inputs */
 .card, .tool-section, .places-scoped-card, .restaurants-scoped-card,
@@ -586,6 +616,19 @@ nav.bottom-nav, .bottom-nav {
 .meal-input-inline::placeholder { color: var(--muted); font-weight: 400; }
 .meal-input-inline:focus { border-bottom-color: var(--accent); }
 .meal-cook-tag { flex: 0 0 auto; border: 0; }
+.meal-planner-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
+.meal-planner-heading .card-title, .meal-cook-heading {
+    margin: 0; color: var(--text); font-size: 1rem; font-weight: 800;
+    line-height: 1.25; letter-spacing: -.015em;
+}
+.meal-cook-heading { margin-left: auto; text-align: right; }
+@media (max-width: 420px) {
+    .meal-card-row { gap: 7px; padding-top: 8px; padding-bottom: 8px; }
+    .meal-card-inner { gap: 7px; }
+    .meal-day-name { flex-basis: 40px; font-size: .76rem; }
+    .meal-input-inline { font-size: .88rem; }
+    .meal-cook-heading { margin-left: 0; text-align: left; }
+}
 
 .chores-grid {
     display: grid;
@@ -1175,6 +1218,7 @@ nav.bottom-nav, .bottom-nav {
     font-size: 1.05rem;
 }
 
+
 /* Family Plan usability refinements */
 .meal-planner-heading {
     align-items: center;
@@ -1227,6 +1271,41 @@ nav.bottom-nav, .bottom-nav {
     .todo-task-controls .date-tag { width: 124px; }
 }
 
+/* Final meal-planner heading alignment: consistent type and clean mobile stacking */
+.meal-planner-heading {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 18px;
+}
+.meal-planner-heading .card-title,
+.meal-planner-heading .meal-cook-heading {
+    margin: 0;
+    color: #263b42;
+    font-size: 1.12rem;
+    font-weight: 800;
+    line-height: 1.25;
+    letter-spacing: -.025em;
+    text-align: left;
+}
+.meal-planner-heading .meal-cook-heading {
+    margin-left: auto;
+}
+@media (max-width: 600px) {
+    .meal-planner-heading {
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        gap: 8px;
+    }
+    .meal-planner-heading .meal-cook-heading {
+        margin-left: 0;
+        text-align: left;
+    }
+}
+
 /* Meal planner header: compact, clear, and always on one line */
 .meal-planner-heading {
     display: flex;
@@ -1256,6 +1335,7 @@ nav.bottom-nav, .bottom-nav {
     flex-shrink: 0;
     text-align: right;
 }
+
 
 /* Monthly calendar: keep the full seven-column grid inside the mobile viewport. */
 #calendar-events-panel {
@@ -1295,7 +1375,15 @@ nav.bottom-nav, .bottom-nav {
     #calendar-grid-container .event-pill { font-size: .52rem; padding: 2px 2px; }
 }
 
-/* Weekly Family Planner styling */
+
+.calendar-view-picker { display:flex; align-items:center; gap:10px; padding:0 10px 12px; }
+.calendar-view-picker label { flex:0 0 auto; color:var(--muted); font-size:.82rem; font-weight:750; }
+.calendar-view-picker select { flex:1; min-width:0; min-height:42px; padding:8px 12px; }
+#family-ideas-panel .tool-section { margin-top:0; }
+@media(max-width:380px){ .calendar-view-picker { gap:6px; } .calendar-view-picker label { font-size:.75rem; } }
+
+
+/* Weekly Family Planner styling matching screenshot 2 */
 .wp-day-card {
     background: #ffffff;
     border: 1px solid #e3ebe7;
@@ -1358,27 +1446,6 @@ nav.bottom-nav, .bottom-nav {
 }
 .wp-add-item-btn:hover { background: #e3f0ea; }
 
-/* Member configuration pills in Household setup */
-.member-tag-chip {
-    display: inline-flex;
-    align-items: center;
-    background: #edf4f1;
-    border: 1px solid #dce9e3;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: var(--accent);
-    margin: 3px;
-}
-.member-tag-chip button {
-    background: none;
-    border: none;
-    color: #b42318;
-    margin-left: 6px;
-    cursor: pointer;
-    font-weight: 800;
-}
 </style>
 </head>
 <body>
@@ -1387,16 +1454,16 @@ nav.bottom-nav, .bottom-nav {
     <div id="auth-gate">
       <section class="auth-card" aria-labelledby="auth-heading">
         <div class="auth-brand">
-          <img src="https://placehold.co/220x220/245b67/ffffff?text=FamilyPlan" alt="Family Plan logo" class="auth-brand-mark" onerror="this.src='https://placehold.co/220x220/245b67/ffffff?text=FamilyPlan'">
+          <img src="familiplan-icon.png" alt="Family Plan logo" class="auth-brand-mark">
         </div>
         <p class="auth-subtitle" id="auth-heading">Your family life, planned together.</p>
 
         <div id="auth-account-panel">
           <div class="auth-tabs">
-            <button type="button" id="auth-signin-tab" class="active" onclick="fpSetAuthMode('signin')">Sign in</button>
-            <button type="button" id="auth-signup-tab" onclick="fpSetAuthMode('signup')">Create account</button>
+            <button type="button" id="auth-signin-tab" class="active" onclick="window.fpSetAuthMode('signin')">Sign in</button>
+            <button type="button" id="auth-signup-tab" onclick="window.fpSetAuthMode('signup')">Create account</button>
           </div>
-          <form id="firebase-auth-form" onsubmit="handleAuthSubmit(event)">
+          <form id="firebase-auth-form">
             <label class="auth-field" for="auth-name" id="auth-name-label" hidden>Your name</label>
             <input class="auth-input" id="auth-name" type="text" autocomplete="name" placeholder="Your name" hidden>
             <label class="auth-field" for="auth-email">Email address</label>
@@ -1412,37 +1479,27 @@ nav.bottom-nav, .bottom-nav {
                 </button>
             </div>
             <button class="auth-primary" id="auth-submit" type="submit">Sign in</button>
-            <button class="auth-secondary" type="button" id="auth-reset" onclick="fpResetPassword()">Forgot password?</button>
+            <button class="auth-secondary" type="button" id="auth-reset" onclick="window.fpResetPassword()">Forgot password?</button>
           </form>
           <div class="auth-message" id="auth-message" role="status" aria-live="polite"></div>
-          <p class="auth-small">Each adult or family member has their own secure account synced instantly via Firebase.</p>
+          <p class="auth-small">Each adult or family member has their own account. After signing in, create a household or join one using its household ID.</p>
         </div>
 
         <div id="household-panel" class="household-panel">
-          <div class="auth-user-line"><span id="auth-signed-in-email"></span><button type="button" onclick="fpSignOut()">Sign out</button></div>
+          <div class="auth-user-line"><span id="auth-signed-in-email"></span><button type="button" onclick="window.fpSignOut()">Sign out</button></div>
           <h2 style="font-size:1.2rem;margin-top:18px;">Set up your household</h2>
-          <p class="auth-small">Create a brand new family space or paste a shared Household ID to join your family's live cloud space.</p>
-          
+          <p class="auth-small">A household connects separate accounts to the same family space. Keep the household ID private and share it only with people you want to join.</p>
           <div class="household-choice">
             <strong>Create a new household</strong>
-            <label class="auth-field" for="household-name">Family name</label>
+            <label class="auth-field" for="household-name">Household name</label>
             <input class="auth-input" id="household-name" maxlength="60" placeholder="e.g. Parker Flanigan">
-            
-            <label class="auth-field" style="margin-top:10px;">Configure family members (up to 8 additional, 9 total)</label>
-            <div style="display:flex; gap:6px; margin-bottom:6px;">
-                <input class="auth-input" id="new-member-name" placeholder="Member name (e.g. Leo, Mia)">
-                <button type="button" class="tool-btn" onclick="addConfiguredMember()" style="white-space:nowrap;">+ Add</button>
-            </div>
-            <div id="configured-members-container" style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;"></div>
-
-            <button class="auth-primary" type="button" onclick="fpCreateHousehold()">Create household & generate key</button>
+            <button class="auth-primary" type="button" onclick="window.fpCreateHousehold()">Create household</button>
           </div>
-
           <div class="household-choice">
             <strong>Join an existing household</strong>
-            <label class="auth-field" for="household-id">Household Key (ID)</label>
-            <input class="auth-input" id="household-id" autocomplete="off" placeholder="Paste the unique Household ID">
-            <button class="auth-secondary" type="button" onclick="fpJoinHousehold()">Join household space</button>
+            <label class="auth-field" for="household-id">Household ID</label>
+            <input class="auth-input" id="household-id" autocomplete="off" placeholder="Paste the household ID">
+            <button class="auth-secondary" type="button" onclick="window.fpJoinHousehold()">Join household</button>
           </div>
           <div class="auth-message" id="household-message" role="status" aria-live="polite"></div>
         </div>
@@ -1528,7 +1585,6 @@ nav.bottom-nav, .bottom-nav {
                 <div class="user-dropdown-item" style="cursor:default; background:#f8fafc; font-size:0.8rem; color:var(--muted); flex-direction:column; align-items:flex-start; gap:2px; padding:8px 12px;">
                     <span style="font-weight:800; color:var(--text);" id="dropdown-user-name">Kevin</span>
                     <span id="dropdown-household-name" style="font-size:0.75rem;">Parker Flanigan</span>
-                    <span id="dropdown-household-key-display" style="font-size:0.7rem; color:var(--accent); font-weight:700; cursor:pointer;" onclick="copyHouseholdKey()" title="Click to copy Household ID">Key: ... (Tap to copy)</span>
                 </div>
                 <div style="height:1px; background:#eff6ff;"></div>
                 <div id="opt-family" class="user-dropdown-item" onclick="selectFamilyView()">
@@ -1541,9 +1597,9 @@ nav.bottom-nav, .bottom-nav {
                     <span class="account-avatar-dot bg-mom"></span> <span>Harriet's Plan</span>
                 </div>
                 <div style="height:1px; background:#eff6ff;"></div>
-                <div class="user-dropdown-item" onclick="showView('account'); document.getElementById('user-dropdown').classList.remove('open');">⚙️ Account & Household ID</div>
+                <div class="user-dropdown-item" onclick="showView('account'); document.getElementById('user-dropdown').classList.remove('open');">⚙️ Account & backups</div>
                 <div style="height:1px; background:#eff6ff;"></div>
-                <div class="user-dropdown-item" onclick="fpSignOut()" style="color:#ef4444;">
+                <div class="user-dropdown-item" onclick="window.fpSignOut()" style="color:#ef4444;">
                     ↪ Sign out
                 </div>
             </div>
@@ -1551,7 +1607,7 @@ nav.bottom-nav, .bottom-nav {
         </div>
 
         <div class="header-center" onclick="showView('dashboard', document.getElementById('nav-btn-home'))">
-            <img src="https://placehold.co/190x48/245b67/ffffff?text=FamilyPlan" alt="FamilyPlan Logo" class="brand-logo-img" onerror="this.src='https://placehold.co/190x48/245b67/ffffff?text=FamilyPlan'">
+            <img src="familiplan-icon.png" alt="FamilyPlan Logo" class="brand-logo-img">
         </div>
 
         <div class="header-right">
@@ -1881,23 +1937,17 @@ nav.bottom-nav, .bottom-nav {
 
     <!-- Account page -->
     <div id="view-account" class="view">
-        <section class="card"><div class="card-title">⚙️ Account & Household ID</div><p class="tool-note">Manage your cloud household connection and backups here.</p></section>
+        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Manage your Family Plan backup files here.</p></section>
         <section class="tool-section">
-            <h3>🔑 Your Household Key (ID)</h3>
-            <p class="tool-note">Share this key with family members so they can sign in and join your exact family space.</p>
-            <div style="display:flex; gap:8px; margin:10px 0;">
-                <input id="account-household-key-input" class="form-input" readonly style="font-weight:700; color:var(--accent);">
-                <button class="tool-btn" type="button" onclick="copyHouseholdKey()">Copy Key</button>
-            </div>
-            <h3 style="margin-top:20px;">⚙️ Data backup & JSON export</h3>
-            <p class="tool-note">Export or import a local JSON backup of your current family plan.</p>
+            <h3>⚙️ Account & data backup</h3>
+            <p class="tool-note">Export a backup of your planner data or restore it from a Family Plan JSON backup. Import replaces the current data on this browser, so export a backup first.</p>
             <div class="account-actions">
-                <button class="tool-btn" type="button" onclick="exportFamilyPlanData()">Export JSON backup</button>
-                <button class="tool-btn secondary" type="button" onclick="document.getElementById('family-import-file').click()">Import JSON backup</button>
+                <button class="tool-btn" type="button" onclick="exportFamilyPlanData()">Export all entries</button>
+                <button class="tool-btn secondary" type="button" onclick="document.getElementById('family-import-file').click()">Import backup</button>
                 <input id="family-import-file" type="file" accept="application/json,.json" hidden onchange="importFamilyPlanData(event)">
                 <a id="a" style="display:none"></a>
             </div>
-            <p class="tool-note" id="backup-status" aria-live="polite" style="margin-top:10px;"></p>
+            <p class="tool-note" id="backup-status" aria-live="polite"></p>
         </section>
     </div>
 
@@ -1913,48 +1963,10 @@ nav.bottom-nav, .bottom-nav {
 
     <!-- Leaflet JS Library for Map -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" onerror="this.onerror=null;this.src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js';"></script>
-    
-    <!-- Firebase SDKs (v10 Modular via CDN) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, onSnapshot, updateCode } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        // Your Firebase configuration from Firebase Console
-        const firebaseConfig = {
-            apiKey: "AIzaSyAelVi8AqXY9BdvRwR6g8YhaTarM00v1Y",
-            authDomain: "family-plan-f5168.firebaseapp.com",
-            databaseURL: "https://family-plan-f5168-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "family-plan-f5168",
-            storageBucket: "family-plan-f5168.appspot.com",
-            messagingSenderId: "114463971604",
-            appId: "1:114463971604:web:f29686947d4f2282f68a01",
-            measurementId: "G-RKJSNJRHP0"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // Expose Firebase handles globally for app logic
-        window.firebaseApp = app;
-        window.firebaseAuth = auth;
-        window.firebaseDb = db;
-        window.FB = { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, signOut, onAuthStateChanged, doc, setDoc, getDoc, onSnapshot };
-        
-        // Trigger initialization check once SDKs load
-        if (typeof window.initFirebaseListener === 'function') {
-            window.initFirebaseListener();
-        }
-    </script>
-
+    <script src="app.js"></script>
 <script>
-// --- FamilyPlan Application Logic & Firebase Real-Time Sync ---
-
-let authMode = 'signin';
+// Auth gate handlers
 function fpSetAuthMode(mode) {
-    authMode = mode;
     const isSignin = mode === 'signin';
     document.getElementById('auth-signin-tab').classList.toggle('active', isSignin);
     document.getElementById('auth-signup-tab').classList.toggle('active', !isSignin);
@@ -1970,6 +1982,52 @@ function fpSetAuthMode(mode) {
 }
 window.fpSetAuthMode = fpSetAuthMode;
 
+function fpResetPassword() {
+    alert('Password reset instructions sent to your email.');
+}
+window.fpResetPassword = fpResetPassword;
+
+function fpSignOut() {
+    localStorage.removeItem('fam_logged_in');
+    document.getElementById('auth-gate').style.display = 'flex';
+    document.getElementById('auth-account-panel').style.display = 'block';
+    document.getElementById('household-panel').classList.remove('visible');
+}
+window.fpSignOut = fpSignOut;
+
+function fpCreateHousehold() {
+    const name = document.getElementById('household-name').value.trim();
+    if (!name) { alert('Please enter a household name'); return; }
+    localStorage.setItem('fam_household_name', name);
+    localStorage.setItem('fam_logged_in', 'true');
+    document.getElementById('auth-gate').style.display = 'none';
+    showToast('Household created!');
+}
+window.fpCreateHousehold = fpCreateHousehold;
+
+function fpJoinHousehold() {
+    const id = document.getElementById('household-id').value.trim();
+    if (!id) { alert('Please enter a household ID'); return; }
+    localStorage.setItem('fam_household_id', id);
+    localStorage.setItem('fam_logged_in', 'true');
+    document.getElementById('auth-gate').style.display = 'none';
+    showToast('Joined household!');
+}
+window.fpJoinHousehold = fpJoinHousehold;
+
+document.getElementById('firebase-auth-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const email = document.getElementById('auth-email').value;
+    localStorage.setItem('fam_user_email', email);
+    document.getElementById('auth-account-panel').style.display = 'none';
+    document.getElementById('household-panel').classList.add('visible');
+    document.getElementById('auth-signed-in-email').textContent = email;
+});
+
+if (localStorage.getItem('fam_logged_in') === 'true') {
+    document.getElementById('auth-gate').style.display = 'none';
+}
+
 function togglePasswordVisibility() {
     const passwordInput = document.getElementById('auth-password');
     const eyeIcon = document.getElementById('eye-icon');
@@ -1981,325 +2039,12 @@ function togglePasswordVisibility() {
         eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
     }
 }
-window.togglePasswordVisibility = togglePasswordVisibility;
 
-async function handleAuthSubmit(e) {
-    e.preventDefault();
-    const email = document.getElementById('auth-email').value.trim();
-    const password = document.getElementById('auth-password').value;
-    const msgEl = document.getElementById('auth-message');
-    msgEl.textContent = '';
-    msgEl.className = 'auth-message';
-
-    if (!window.firebaseAuth || !window.FB) {
-        msgEl.textContent = 'Firebase is still loading. Please try again in a moment.';
-        return;
-    }
-
-    try {
-        if (authMode === 'signin') {
-            await window.FB.signInWithEmailAndPassword(window.firebaseAuth, email, password);
-        } else {
-            const userName = document.getElementById('auth-name').value.trim() || 'Member';
-            const cred = await window.FB.createUserWithEmailAndPassword(window.firebaseAuth, email, password);
-            // Save user profile default
-            await window.FB.setDoc(window.FB.doc(window.firebaseDb, 'users', cred.user.uid), { name: userName, email }, { merge: true });
-        }
-    } catch (err) {
-        msgEl.textContent = err.message;
-    }
-}
-window.handleAuthSubmit = handleAuthSubmit;
-
-async function fpResetPassword() {
-    const email = document.getElementById('auth-email').value.trim();
-    const msgEl = document.getElementById('auth-message');
-    if (!email) {
-        msgEl.textContent = 'Please enter your email address above first.';
-        return;
-    }
-    try {
-        await window.FB.sendPasswordResetEmail(window.firebaseAuth, email);
-        msgEl.className = 'auth-message ok';
-        msgEl.textContent = 'Password reset instructions sent to ' + email;
-    } catch (err) {
-        msgEl.className = 'auth-message';
-        msgEl.textContent = err.message;
-    }
-}
-window.fpResetPassword = fpResetPassword;
-
-async function fpSignOut() {
-    if (window.firebaseAuth) {
-        await window.FB.signOut(window.firebaseAuth);
-    }
-    localStorage.removeItem('fam_household_id');
-    location.reload();
-}
-window.fpSignOut = fpSignOut;
-
-// Family members configuration for new households (up to 8 additional, 9 total including primary)
-let configuredFamilyMembers = ['Harriet', 'Leo', 'Mia'];
-
-function addConfiguredMember() {
-    const input = document.getElementById('new-member-name');
-    const name = input.value.trim();
-    if (!name) return;
-    if (configuredFamilyMembers.length >= 8) {
-        alert('You can configure up to 8 additional family members (9 total).');
-        return;
-    }
-    if (!configuredFamilyMembers.includes(name)) {
-        configuredFamilyMembers.push(name);
-        renderConfiguredMembers();
-    }
-    input.value = '';
-}
-window.addConfiguredMember = addConfiguredMember;
-
-function removeConfiguredMember(name) {
-    configuredFamilyMembers = configuredFamilyMembers.filter(m => m !== name);
-    renderConfiguredMembers();
-}
-window.removeConfiguredMember = removeConfiguredMember;
-
-function renderConfiguredMembers() {
-    const container = document.getElementById('configured-members-container');
-    if (!container) return;
-    container.innerHTML = configuredFamilyMembers.map(m => `
-        <span class="member-tag-chip">${escapeToolText(m)} <button type="button" onclick="removeConfiguredMember('${escapeToolText(m)}')">✕</button></span>
-    `).join('');
-}
-renderConfiguredMembers();
-
-let currentHouseholdId = localStorage.getItem('fam_household_id') || '';
-let currentUserId = '';
-let currentUserEmail = '';
-let firestoreUnsubscribe = null;
-
-// Default Application Data State
-let familyData = {
-    householdName: 'Parker Flanigan',
-    members: ['Kevin', 'Harriet', 'Leo', 'Mia'],
-    meals: [
-        { day: "Mon", meal: "Spaghetti Bolognese", cook: "dad" },
-        { day: "Tue", meal: "Chicken Fajitas", cook: "mom" },
-        { day: "Wed", meal: "Fish & Chips", cook: "dad" },
-        { day: "Thu", meal: "Vegetarian Curry", cook: "mom" },
-        { day: "Fri", meal: "Pizza Night", cook: "family" },
-        { day: "Sat", meal: "BBQ Burgers", cook: "dad" },
-        { day: "Sun", meal: "Roast Dinner", cook: "family" }
-    ],
-    foodshop: [{ text: "Milk (2 pints)", who: "family", done: false }, { text: "Free range eggs", who: "mom", done: false }],
-    familyshop: [{ text: "Kitchen roll", who: "family", done: false }],
-    destinations: { places: [], restaurants: [], cinema: [], home: [] },
-    chores: [{ kid: "Leo", chores: [{ text: "Tidy bedroom", done: false }] }, { kid: "Mia", chores: [{ text: "Feed the cat", done: false }] }],
-    wishlist: [{ title: "Board game", who: "family" }],
-    todos: [{ text: "Book dentist appointment", who: "dad", date: new Date().toISOString().split('T')[0], done: false }],
-    calendar: {},
-    bills: [],
-    monthlyBudgets: [],
-    renewals: [],
-    ideas: [],
-    handover: [],
-    occasions: [],
-    addressBook: [],
-    unplannedSpending: [],
-    monthlyBudget: 1500
-};
-
-let currentUser = 'dad';
-let currentUserName = 'Kevin';
-let viewMode = 'family';
-let calendarPageMode = 'week';
-let currentMonth = new Date().getMonth();
-let currentYear = new Date().getFullYear();
+const initialCalendarDate = new Date();
+let currentMonth = initialCalendarDate.getMonth();
+let currentYear = initialCalendarDate.getFullYear();
+let calendarPageMode = ['week','month','handover'].includes(localStorage.getItem('fam_cal_page_mode')) ? localStorage.getItem('fam_cal_page_mode') : 'week';
 let selectedPopoverDateKey = null;
-
-// Firebase Auth Listener & Firestore Sync Setup
-window.initFirebaseListener = function() {
-    window.FB.onAuthStateChanged(window.firebaseAuth, async (user) => {
-        const authGate = document.getElementById('auth-gate');
-        const authAccountPanel = document.getElementById('auth-account-panel');
-        const householdPanel = document.getElementById('household-panel');
-
-        if (!user) {
-            authGate.hidden = false;
-            authAccountPanel.style.display = 'block';
-            householdPanel.classList.remove('visible');
-            if (firestoreUnsubscribe) { firestoreUnsubscribe(); firestoreUnsubscribe = null; }
-            return;
-        }
-
-        currentUserId = user.uid;
-        currentUserEmail = user.email;
-        document.getElementById('auth-signed-in-email').textContent = currentUserEmail;
-
-        // Check if user already linked to a household in user profile
-        try {
-            const userDocSnap = await window.FB.getDoc(window.FB.doc(window.firebaseDb, 'users', currentUserId));
-            if (userDocSnap.exists() && userDocSnap.data().householdId) {
-                currentHouseholdId = userDocSnap.data().householdId;
-                localStorage.setItem('fam_household_id', currentHouseholdId);
-                authGate.hidden = true;
-                connectToHouseholdFirestore(currentHouseholdId);
-                return;
-            }
-        } catch (err) {
-            console.error('Error fetching user profile:', err);
-        }
-
-        // If saved household in localStorage, try connecting
-        if (currentHouseholdId) {
-            try {
-                const hhSnap = await window.FB.getDoc(window.FB.doc(window.firebaseDb, 'households', currentHouseholdId));
-                if (hhSnap.exists()) {
-                    authGate.hidden = true;
-                    connectToHouseholdFirestore(currentHouseholdId);
-                    return;
-                }
-            } catch (err) {
-                console.warn('Household not found:', err);
-            }
-        }
-
-        // Prompt user to create or join household
-        authGate.hidden = false;
-        authAccountPanel.style.display = 'none';
-        householdPanel.classList.add('visible');
-    });
-};
-
-async function fpCreateHousehold() {
-    const name = document.getElementById('household-name').value.trim();
-    const msgEl = document.getElementById('household-message');
-    if (!name) {
-        msgEl.textContent = 'Please enter a household name.';
-        return;
-    }
-
-    try {
-        // Generate a unique 8-character uppercase Household Key
-        const householdKey = 'FP-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-        
-        familyData.householdName = name;
-        familyData.members = ['Kevin', ...configuredFamilyMembers];
-
-        // Save household document to Firestore
-        await window.FB.setDoc(window.FB.doc(window.firebaseDb, 'households', householdKey), {
-            ...familyData,
-            createdBy: currentUserId,
-            createdAt: new Date().toISOString()
-        });
-
-        // Link user to this household
-        await window.FB.setDoc(window.FB.doc(window.firebaseDb, 'users', currentUserId), {
-            householdId: householdKey,
-            email: currentUserEmail
-        }, { merge: true });
-
-        currentHouseholdId = householdKey;
-        localStorage.setItem('fam_household_id', householdKey);
-        
-        document.getElementById('auth-gate').hidden = true;
-        connectToHouseholdFirestore(householdKey);
-        showToast('Household created successfully!');
-    } catch (err) {
-        msgEl.textContent = err.message;
-    }
-}
-window.fpCreateHousehold = fpCreateHousehold;
-
-async function fpJoinHousehold() {
-    const id = document.getElementById('household-id').value.trim().toUpperCase();
-    const msgEl = document.getElementById('household-message');
-    if (!id) {
-        msgEl.textContent = 'Please enter a valid Household ID.';
-        return;
-    }
-
-    try {
-        const hhDoc = await window.FB.getDoc(window.FB.doc(window.firebaseDb, 'households', id));
-        if (!hhDoc.exists()) {
-            msgEl.textContent = 'Household not found. Please check the ID.';
-            return;
-        }
-
-        // Link user to this household
-        await window.FB.setDoc(window.FB.doc(window.firebaseDb, 'users', currentUserId), {
-            householdId: id,
-            email: currentUserEmail
-        }, { merge: true });
-
-        currentHouseholdId = id;
-        localStorage.setItem('fam_household_id', id);
-
-        document.getElementById('auth-gate').hidden = true;
-        connectToHouseholdFirestore(id);
-        showToast('Joined household successfully!');
-    } catch (err) {
-        msgEl.textContent = err.message;
-    }
-}
-window.fpJoinHousehold = fpJoinHousehold;
-
-function connectToHouseholdFirestore(householdId) {
-    if (firestoreUnsubscribe) firestoreUnsubscribe();
-
-    firestoreUnsubscribe = window.FB.onSnapshot(window.FB.doc(window.firebaseDb, 'households', householdId), (docSnap) => {
-        if (docSnap.exists()) {
-            const cloudData = docSnap.data();
-            familyData = { ...familyData, ...cloudData };
-            renderAllViews();
-            updateDropdownHouseholdDisplay();
-        }
-    }, (error) => {
-        console.error("Firestore sync error:", error);
-    });
-}
-
-// Save local changes to Firestore in real-time
-let saveTimeout = null;
-function saveCloudData() {
-    if (!currentHouseholdId || !window.firebaseDb) return;
-    if (saveTimeout) clearTimeout(saveTimeout);
-    saveTimeout = setTimeout(async () => {
-        try {
-            await window.FB.setDoc(window.FB.doc(window.firebaseDb, 'households', currentHouseholdId), familyData, { merge: true });
-        } catch (err) {
-            console.error("Error saving to Firestore:", err);
-        }
-    }, 300);
-}
-
-function updateDropdownHouseholdDisplay() {
-    const nameEl = document.getElementById('dropdown-household-name');
-    const keyEl = document.getElementById('dropdown-household-key-display');
-    const accKeyInput = document.getElementById('account-household-key-input');
-    if (nameEl) nameEl.textContent = familyData.householdName || 'Family Space';
-    if (keyEl) keyEl.textContent = `Key: ${currentHouseholdId} (Tap to copy)`;
-    if (accKeyInput) accKeyInput.value = currentHouseholdId;
-}
-
-function copyHouseholdKey() {
-    if (!currentHouseholdId) return;
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(currentHouseholdId).then(() => {
-            showToast('Household Key copied to clipboard!');
-        });
-    } else {
-        const dummy = document.createElement('input');
-        document.body.appendChild(dummy);
-        dummy.value = currentHouseholdId;
-        dummy.select();
-        document.execCommand('copy');
-        document.body.removeChild(dummy);
-        showToast('Household Key copied!');
-    }
-}
-window.copyHouseholdKey = copyHouseholdKey;
-
-// --- UI Navigation & Interaction Wrappers ---
 
 function getMonday(d) {
     const date = new Date(d);
@@ -2310,6 +2055,37 @@ function getMonday(d) {
 
 const assignees = ['family', 'mom', 'dad'];
 const cooks = ['dad', 'mom', 'family'];
+
+let currentUser = localStorage.getItem('fam_user') || 'dad';
+let currentUserName = localStorage.getItem('fam_user_name') || 'Kevin';
+let viewMode = localStorage.getItem('fam_view_mode') || 'family';
+
+let mealsData = JSON.parse(localStorage.getItem('fam_meals')) || [
+    { day: "Mon", meal: "", cook: "dad" }, { day: "Tue", meal: "", cook: "mom" }, 
+    { day: "Wed", meal: "", cook: "dad" }, { day: "Thu", meal: "", cook: "mom" }, 
+    { day: "Fri", meal: "", cook: "family" }, { day: "Sat", meal: "", cook: "dad" }, 
+    { day: "Sun", meal: "", cook: "family" }
+];
+let foodShopData = JSON.parse(localStorage.getItem('fam_foodshop')) || [];
+let familyShopData = JSON.parse(localStorage.getItem('fam_familyshop')) || [];
+let destinationsData = JSON.parse(localStorage.getItem('fam_destinations')) || { 
+    places: [], 
+    restaurants: [], 
+    cinema: [], home: [] 
+};
+destinationsData.places = Array.isArray(destinationsData.places) ? destinationsData.places : [];
+let choresData = JSON.parse(localStorage.getItem('fam_chores')) || [{ kid: "Leo", chores: [] }, { kid: "Mia", chores: [] }];
+let wishlistData = JSON.parse(localStorage.getItem('fam_wishlist')) || [];
+let todosData = JSON.parse(localStorage.getItem('fam_todos')) || [];
+let calendarEvents = JSON.parse(localStorage.getItem('fam_calendar')) || {};
+let householdBillsData = JSON.parse(localStorage.getItem('fam_bills')) || [];
+let monthlyBudgetsData = JSON.parse(localStorage.getItem('fam_monthly_budgets')) || [];
+let renewalsData = JSON.parse(localStorage.getItem('fam_renewals')) || [];
+let familyIdeasData = JSON.parse(localStorage.getItem('fam_ideas')) || [];
+let handoverData = JSON.parse(localStorage.getItem('fam_handover')) || [];
+let occasionsData = JSON.parse(localStorage.getItem('fam_occasions')) || [];
+let addressBookData = JSON.parse(localStorage.getItem('fam_address_book')) || [];
+let unplannedSpendingData = JSON.parse(localStorage.getItem('fam_unplanned_spending')) || [];
 
 let toastTimer = null;
 function showToast(msg) {
@@ -2322,6 +2098,29 @@ function showToast(msg) {
     }, 2500);
 }
 
+function saveData() {
+    localStorage.setItem('fam_meals', JSON.stringify(mealsData));
+    localStorage.setItem('fam_foodshop', JSON.stringify(foodShopData));
+    localStorage.setItem('fam_familyshop', JSON.stringify(familyShopData));
+    localStorage.setItem('fam_destinations', JSON.stringify(destinationsData));
+    localStorage.setItem('fam_chores', JSON.stringify(choresData));
+    localStorage.setItem('fam_wishlist', JSON.stringify(wishlistData));
+    localStorage.setItem('fam_todos', JSON.stringify(todosData));
+    localStorage.setItem('fam_calendar', JSON.stringify(calendarEvents));
+    localStorage.setItem('fam_bills', JSON.stringify(householdBillsData));
+    localStorage.setItem('fam_monthly_budgets', JSON.stringify(monthlyBudgetsData));
+    localStorage.setItem('fam_renewals', JSON.stringify(renewalsData));
+    localStorage.setItem('fam_ideas', JSON.stringify(familyIdeasData));
+    localStorage.setItem('fam_handover', JSON.stringify(handoverData));
+    localStorage.setItem('fam_occasions', JSON.stringify(occasionsData));
+    localStorage.setItem('fam_address_book', JSON.stringify(addressBookData));
+    localStorage.setItem('fam_unplanned_spending', JSON.stringify(unplannedSpendingData));
+    localStorage.setItem('fam_user', currentUser);
+    localStorage.setItem('fam_user_name', currentUserName);
+    localStorage.setItem('fam_view_mode', viewMode);
+    localStorage.setItem('fam_cal_page_mode', calendarPageMode);
+}
+
 function toggleQuickAddModal() {
     const modal = document.getElementById('quick-add-modal');
     modal.classList.toggle('active');
@@ -2331,21 +2130,19 @@ function toggleQuickAddModal() {
         if(document.getElementById('handover-date')) document.getElementById('handover-date').value = new Date().toISOString().slice(0,10);
     }
 }
-window.toggleQuickAddModal = toggleQuickAddModal;
 
 function toggleUserDropdown() {
     document.getElementById('user-dropdown').classList.toggle('open');
 }
-window.toggleUserDropdown = toggleUserDropdown;
 
 function selectFamilyView() {
     viewMode = 'family';
     toggleUserDropdown();
     updateHeaderDisplay();
+    saveData();
     renderAllViews();
     showToast("Showing Family Plans (Everyone)");
 }
-window.selectFamilyView = selectFamilyView;
 
 function selectUser(userKey, userName) {
     currentUser = userKey;
@@ -2353,10 +2150,10 @@ function selectUser(userKey, userName) {
     viewMode = 'individual';
     toggleUserDropdown();
     updateHeaderDisplay();
+    saveData();
     renderAllViews();
     showToast(`Showing ${userName}'s Personal View`);
 }
-window.selectUser = selectUser;
 
 function updateHeaderDisplay() {
     const indicatorEl = document.getElementById('account-indicator');
@@ -2394,6 +2191,7 @@ function showView(viewId, navBtn) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.bottom-nav .nav-item').forEach(btn => btn.classList.remove('active'));
     document.getElementById(`view-${viewId}`).classList.add('active');
+    document.getElementById('top-home-btn')?.classList.toggle('active', viewId === 'dashboard');
     if (viewId === 'dashboard') document.getElementById('nav-btn-home')?.classList.add('active');
     if (navBtn && navBtn.classList.contains('nav-item')) navBtn.classList.add('active');
     window.scrollTo(0, 0);
@@ -2414,7 +2212,6 @@ function showView(viewId, navBtn) {
         setCalendarPage(calendarPageMode);
     }
 }
-window.showView = showView;
 
 function handleCategoryChange(val) {
     const isCal = (val === 'calendar' || val === 'birthday' || val === 'events');
@@ -2425,12 +2222,12 @@ function handleCategoryChange(val) {
     }
     document.getElementById('postcode-row').style.display = (val === 'places' || val === 'restaurants') ? 'flex' : 'none';
 }
-window.handleCategoryChange = handleCategoryChange;
 
 function setCalendarPage(page) {
     const allowed = ['handover', 'week', 'month'];
     if (!allowed.includes(page)) page = 'week';
     calendarPageMode = page;
+    saveData();
     document.getElementById('calendar-handover-panel').style.display = page === 'handover' ? 'block' : 'none';
     document.getElementById('calendar-week-panel').style.display = page === 'week' ? 'block' : 'none';
     document.getElementById('calendar-events-panel').style.display = page === 'month' ? 'block' : 'none';
@@ -2443,7 +2240,6 @@ function setCalendarPage(page) {
     if (page === 'month') renderCalendarMonth();
     if (page === 'handover') renderEnhancementLists();
 }
-window.setCalendarPage = setCalendarPage;
 
 function renderCalendarMonth() {
     const container = document.getElementById('calendar-grid-container');
@@ -2465,8 +2261,8 @@ function renderCalendarMonth() {
         const dStr = String(i).padStart(2, '0');
         const dateKey = `${currentYear}-${mStr}-${dStr}`;
         let eventsHtml = '';
-        if (familyData.calendar[dateKey]) {
-            familyData.calendar[dateKey].filter(ev => filterItem(ev.who)).forEach(ev => {
+        if (calendarEvents[dateKey]) {
+            calendarEvents[dateKey].filter(ev => filterItem(ev.who)).forEach(ev => {
                 const assigneeLabel = ev.who === 'dad' ? ' (Kevin)' : (ev.who === 'mom' ? ' (Harriet)' : ' (Family)');
                 eventsHtml += `<div class="event-pill bg-${ev.who} ${ev.quickAdded ? 'quick-added' : ''}" title="${ev.title}${assigneeLabel}">${ev.title}${assigneeLabel}</div>`;
             });
@@ -2483,22 +2279,21 @@ function renderCalendarMonth() {
 }
 
 function toggleDashboardTask(type, index) {
-    const target = type === 'foodshop' ? familyData.foodshop : familyData.todos;
+    const target = type === 'foodshop' ? foodShopData : todosData;
     if (!target[index]) return;
     target[index].done = true;
-    saveCloudData();
+    saveData();
     renderShopping();
     renderTodos();
     renderDashboard();
     renderWeeklyPlanner();
     showToast(type === 'foodshop' ? 'Shopping item completed' : 'Task completed');
 }
-window.toggleDashboardTask = toggleDashboardTask;
 
 function renderDashboard() {
     const todayStr = new Date().toISOString().split('T')[0];
     const schedCont = document.getElementById('dash-schedule');
-    const todayEvents = (familyData.calendar[todayStr] || []).filter(ev => filterItem(ev.who));
+    const todayEvents = (calendarEvents[todayStr] || []).filter(ev => filterItem(ev.who));
     if (todayEvents.length === 0) {
         schedCont.innerHTML = `<div class="list-empty">No events scheduled for today.</div>`;
     } else {
@@ -2516,7 +2311,7 @@ function renderDashboard() {
     const dinnerCont = document.getElementById('dash-dinner');
     const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const todayDay = dayNames[new Date().getDay()];
-    const todayMeal = familyData.meals.find(m => m.day === todayDay);
+    const todayMeal = mealsData.find(m => m.day === todayDay);
 
     if (!todayMeal || !todayMeal.meal) {
         dinnerCont.innerHTML = `<div class="list-empty">No dinner plan set for tonight.</div>`;
@@ -2534,8 +2329,8 @@ function renderDashboard() {
     }
 
     const tasksCont = document.getElementById('dash-tasks');
-    const uncompletedTasks = familyData.todos.map((item, index) => ({ ...item, index })).filter(item => !item.done && filterItem(item.who));
-    const uncompletedFood = familyData.foodshop.map((item, index) => ({ ...item, index })) .filter(item => !item.done && filterItem(item.who));
+    const uncompletedTasks = todosData.map((item, index) => ({ ...item, index })).filter(item => !item.done && filterItem(item.who));
+    const uncompletedFood = foodShopData.map((item, index) => ({ ...item, index })) .filter(item => !item.done && filterItem(item.who));
 
     let combinedItems = [];
     uncompletedFood.forEach(item => combinedItems.push({ text: item.text, sub: "Food Shopping List", type: "foodshop", index: item.index, icon: "🛒" }));
@@ -2560,8 +2355,8 @@ function renderDashboard() {
 
     const datesCont = document.getElementById('dash-dates');
     let upcomingDates = [];
-    Object.keys(familyData.calendar).forEach(dateStr => {
-        familyData.calendar[dateStr].forEach(ev => {
+    Object.keys(calendarEvents).forEach(dateStr => {
+        calendarEvents[dateStr].forEach(ev => {
             if (ev.title.includes('Birthday') || ev.title.includes('🎂') || ev.title.includes('Term') || ev.title.includes('School')) {
                 upcomingDates.push({ date: dateStr, title: ev.title });
             }
@@ -2590,7 +2385,7 @@ function openDayPopover(dateKey, dayNum) {
     const formattedDate = `${d} ${monthNames[parseInt(m, 10) - 1]} ${y}`;
     
     document.getElementById('bubble-date-title').textContent = formattedDate;
-    const events = (familyData.calendar[dateKey] || []).filter(ev => filterItem(ev.who));
+    const events = (calendarEvents[dateKey] || []).filter(ev => filterItem(ev.who));
     const listCont = document.getElementById('bubble-events-list');
 
     if (events.length === 0) {
@@ -2610,14 +2405,12 @@ function openDayPopover(dateKey, dayNum) {
     document.getElementById('day-popover-backdrop').classList.add('active');
     document.getElementById('day-detail-bubble').classList.add('active');
 }
-window.openDayPopover = openDayPopover;
 
 function closeDayPopover() {
     document.getElementById('day-popover-backdrop').classList.remove('active');
     document.getElementById('day-detail-bubble').classList.remove('active');
     selectedPopoverDateKey = null;
 }
-window.closeDayPopover = closeDayPopover;
 
 function addEventFromPopover() {
     const dateKey = selectedPopoverDateKey;
@@ -2629,24 +2422,22 @@ function addEventFromPopover() {
         document.getElementById('add-date').value = dateKey;
     }
 }
-window.addEventFromPopover = addEventFromPopover;
 
 function deleteCalEvent(dateStr, index, eventId) {
     if (eventId) {
-        Object.keys(familyData.calendar).forEach(d => {
-            familyData.calendar[d] = familyData.calendar[d].filter(ev => ev.eventId !== eventId);
-            if (familyData.calendar[d].length === 0) delete familyData.calendar[d];
+        Object.keys(calendarEvents).forEach(d => {
+            calendarEvents[d] = calendarEvents[d].filter(ev => ev.eventId !== eventId);
+            if (calendarEvents[d].length === 0) delete calendarEvents[d];
         });
-    } else if (familyData.calendar[dateStr]) {
-        familyData.calendar[dateStr].splice(index, 1);
-        if (familyData.calendar[dateStr].length === 0) delete familyData.calendar[dateStr];
+    } else if (calendarEvents[dateStr]) {
+        calendarEvents[dateStr].splice(index, 1);
+        if (calendarEvents[dateStr].length === 0) delete calendarEvents[dateStr];
     }
-    saveCloudData();
+    saveData();
     if (calendarPageMode === 'month') renderCalendarMonth();
     if (calendarPageMode === 'week') renderWeeklyPlanner();
     renderDashboard();
 }
-window.deleteCalEvent = deleteCalEvent;
 
 function navigateCalendar(dir) {
     currentMonth += dir;
@@ -2654,24 +2445,22 @@ function navigateCalendar(dir) {
     else if (currentMonth < 0) { currentMonth = 11; currentYear--; }
     renderCalendarMonth();
 }
-window.navigateCalendar = navigateCalendar;
 
 function cycleCook(idx) {
-    const currentCook = familyData.meals[idx].cook || 'dad';
+    const currentCook = mealsData[idx].cook || 'dad';
     const nextCook = cooks[(cooks.indexOf(currentCook) + 1) % cooks.length];
-    familyData.meals[idx].cook = nextCook;
-    saveCloudData();
+    mealsData[idx].cook = nextCook;
+    saveData();
     renderMeals();
     renderDashboard();
     renderWeeklyPlanner();
 }
-window.cycleCook = cycleCook;
 
 // WEEKLY MEAL PLANNER
 function renderMeals() {
     const container = document.getElementById('meal-list-container');
     if (!container) return;
-    container.innerHTML = (familyData.meals || []).map((m, idx) => {
+    container.innerHTML = (mealsData || []).map((m, idx) => {
         const cookKey = ['dad', 'mom', 'family'].includes(m.cook) ? m.cook : 'dad';
         const cookName = cookKey === 'dad' ? 'Kevin' : (cookKey === 'mom' ? 'Harriet' : 'Family');
         const dayLabel = escapeToolText(m.day || 'Day');
@@ -2680,7 +2469,7 @@ function renderMeals() {
         <div class="meal-card-row cook-${cookKey}">
             <div class="meal-card-inner">
                 <div class="meal-day-name">${dayLabel}</div>
-                <input type="text" class="meal-input-inline" placeholder="Add a meal..." aria-label="${dayLabel} meal" value="${mealValue}" onchange="familyData.meals[${idx}].meal = this.value; saveCloudData(); renderDashboard(); renderWeeklyPlanner();">
+                <input type="text" class="meal-input-inline" placeholder="Add a meal..." aria-label="${dayLabel} meal" value="${mealValue}" onchange="mealsData[${idx}].meal = this.value; saveData(); renderDashboard(); renderWeeklyPlanner();">
                 <button type="button" class="assign-tag meal-cook-tag bg-${cookKey}" onclick="cycleCook(${idx})" title="Change who is cooking" aria-label="${cookName} is cooking; tap to change">${cookName}</button>
             </div>
         </div>`;
@@ -2691,41 +2480,37 @@ function addInlineShop(type) {
     const inputId = type === 'foodshop' ? 'foodshop-quick-input' : 'familyshop-quick-input';
     const input = document.getElementById(inputId);
     if (!input || !input.value.trim()) return;
-    const target = type === 'foodshop' ? familyData.foodshop : familyData.familyshop;
+    const target = type === 'foodshop' ? foodShopData : familyShopData;
     target.push({ text: input.value.trim(), who: currentUser, done: false, isEditing: false });
     input.value = '';
-    saveCloudData();
+    saveData();
     renderShopping();
     renderDashboard();
     showToast('Item added to list');
 }
-window.addInlineShop = addInlineShop;
 
 function toggleShopCheck(type, idx) {
-    const target = type === 'foodshop' ? familyData.foodshop : familyData.familyshop;
+    const target = type === 'foodshop' ? foodShopData : familyShopData;
     target[idx].done = !target[idx].done;
-    saveCloudData();
+    saveData();
     renderShopping();
     renderDashboard();
 }
-window.toggleShopCheck = toggleShopCheck;
 
 function enableShopEdit(type, idx) {
-    const target = type === 'foodshop' ? familyData.foodshop : familyData.familyshop;
+    const target = type === 'foodshop' ? foodShopData : familyShopData;
     target[idx].isEditing = true;
     renderShopping();
 }
-window.enableShopEdit = enableShopEdit;
 
 function saveShopEdit(type, idx, newText) {
-    const target = type === 'foodshop' ? familyData.foodshop : familyData.familyshop;
+    const target = type === 'foodshop' ? foodShopData : familyShopData;
     if (newText.trim()) target[idx].text = newText.trim();
     target[idx].isEditing = false;
-    saveCloudData();
+    saveData();
     renderShopping();
     renderDashboard();
 }
-window.saveShopEdit = saveShopEdit;
 
 function setFamilyHubView(mode) {
     const tasks = mode !== 'ideas';
@@ -2739,7 +2524,6 @@ function setFamilyHubView(mode) {
     ideasBtn.setAttribute('aria-pressed', String(!tasks));
     if (!tasks) renderEnhancementLists();
 }
-window.setFamilyHubView = setFamilyHubView;
 
 function setShoppingView(mode) {
     const meals = mode === 'meals';
@@ -2752,7 +2536,6 @@ function setShoppingView(mode) {
     mealBtn.setAttribute('aria-pressed', String(meals)); 
     listBtn.setAttribute('aria-pressed', String(!meals));
 }
-window.setShoppingView = setShoppingView;
 
 function setAddressPlacesView(mode) {
     const addresses = mode === 'addresses';
@@ -2768,14 +2551,13 @@ function setAddressPlacesView(mode) {
         setTimeout(() => initMap(), 180);
     }
 }
-window.setAddressPlacesView = setAddressPlacesView;
 
 function renderShopping() {
     const foodCont = document.getElementById('foodshop-list-container');
     const famCont = document.getElementById('familyshop-list-container');
 
-    const filteredFood = familyData.foodshop.filter(item => filterItem(item.who));
-    foodCont.innerHTML = filteredFood.length === 0 ? `<div class="list-empty">Food list empty.</div>` : familyData.foodshop.map((item, idx) => {
+    const filteredFood = foodShopData.filter(item => filterItem(item.who));
+    foodCont.innerHTML = filteredFood.length === 0 ? `<div class="list-empty">Food list empty.</div>` : foodShopData.map((item, idx) => {
         if (!filterItem(item.who)) return '';
         const displayWho = item.who === 'dad' ? 'Kevin' : (item.who === 'mom' ? 'Harriet' : 'Family');
         return `
@@ -2789,13 +2571,13 @@ function renderShopping() {
                 </div>
                 <button class="action-btn" onclick="enableShopEdit('foodshop', ${idx})">✏️</button>
                 <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('foodshop', ${idx})">${displayWho}</span>
-                <button class="action-btn delete-btn" onclick="familyData.foodshop.splice(${idx},1); saveCloudData(); renderShopping(); renderDashboard();">✕</button>
+                <button class="action-btn delete-btn" onclick="foodShopData.splice(${idx},1); saveData(); renderShopping(); renderDashboard();">✕</button>
             </div>
         `;
     }).join('');
 
-    const filteredFam = familyData.familyshop.filter(item => filterItem(item.who));
-    famCont.innerHTML = filteredFam.length === 0 ? `<div class="list-empty">Family list empty.</div>` : familyData.familyshop.map((item, idx) => {
+    const filteredFam = familyShopData.filter(item => filterItem(item.who));
+    famCont.innerHTML = filteredFam.length === 0 ? `<div class="list-empty">Family list empty.</div>` : familyShopData.map((item, idx) => {
         if (!filterItem(item.who)) return '';
         const displayWho = item.who === 'dad' ? 'Kevin' : (item.who === 'mom' ? 'Harriet' : 'Family');
         return `
@@ -2809,48 +2591,45 @@ function renderShopping() {
                 </div>
                 <button class="action-btn" onclick="enableShopEdit('familyshop', ${idx})">✏️</button>
                 <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('familyshop', ${idx})">${displayWho}</span>
-                <button class="action-btn delete-btn" onclick="familyData.familyshop.splice(${idx},1); saveCloudData(); renderShopping(); renderDashboard();">✕</button>
+                <button class="action-btn delete-btn" onclick="familyShopData.splice(${idx},1); saveData(); renderShopping(); renderDashboard();">✕</button>
             </div>
         `;
     }).join('');
 }
 
 function cycleAssignee(type, index) {
-    let data = type === 'foodshop' ? familyData.foodshop : (type === 'familyshop' ? familyData.familyshop : (type === 'wishlist' ? familyData.wishlist : (type === 'cinema' ? familyData.destinations.cinema : (type === 'home' ? familyData.destinations.home : familyData.todos))));
+    let data = type === 'foodshop' ? foodShopData : (type === 'familyshop' ? familyShopData : (type === 'wishlist' ? wishlistData : (type === 'cinema' ? destinationsData.cinema : (type === 'home' ? destinationsData.home : todosData))));
     if (!data) return;
     const currentWho = data[index].who || 'family';
     data[index].who = assignees[(assignees.indexOf(currentWho) + 1) % assignees.length];
-    saveCloudData();
+    saveData();
     renderAllViews();
 }
-window.cycleAssignee = cycleAssignee;
 
 function updateTodoDate(idx, newDate) {
-    familyData.todos[idx].date = newDate;
-    saveCloudData();
+    todosData[idx].date = newDate;
+    saveData();
     renderTodos();
     renderDashboard();
     renderWeeklyPlanner();
 }
-window.updateTodoDate = updateTodoDate;
 
 function addPlacesItem() {
     const nameInput = document.getElementById('places-name-input');
     const pcInput = document.getElementById('places-postcode-input');
     if (!nameInput || !nameInput.value.trim()) return;
 
-    familyData.destinations.places.push({ title: nameInput.value.trim(), postcode: pcInput.value.trim(), who: currentUser });
+    destinationsData.places.push({ title: nameInput.value.trim(), postcode: pcInput.value.trim(), who: currentUser });
     nameInput.value = '';
     pcInput.value = '';
-    saveCloudData();
+    saveData();
     renderPlacesView();
     showToast('Place added');
 }
-window.addPlacesItem = addPlacesItem;
 
 function renderPlacesView() {
     const container = document.getElementById('places-dynamic-list-container');
-    const list = familyData.destinations.places || [];
+    const list = destinationsData.places || [];
     const filtered = list.filter(item => filterItem(item.who));
 
     container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No places added yet.</div>` : list.map((item, idx) => {
@@ -2864,7 +2643,7 @@ function renderPlacesView() {
                 </div>
                 <div style="display:flex; align-items:center; gap:6px;">
                     <span class="compact-scoped-tag bg-${item.who}">${displayWho}</span>
-                    <button class="action-btn delete-btn" onclick="familyData.destinations.places.splice(${idx},1); saveCloudData(); renderPlacesView();">✕</button>
+                    <button class="action-btn delete-btn" onclick="destinationsData.places.splice(${idx},1); saveData(); renderPlacesView();">✕</button>
                 </div>
             </div>
         `;
@@ -2891,6 +2670,7 @@ async function initMap() {
     const requestToken = ++mapRequestToken;
     try {
         if (!mapInstance) {
+            // Clear any stale Leaflet state left by a previous interrupted initialisation.
             if (mapContainer._leaflet_id) {
                 try { mapContainer.innerHTML = ''; delete mapContainer._leaflet_id; } catch (_) {}
             }
@@ -2900,6 +2680,9 @@ async function initMap() {
                 subdomains: 'abc',
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             });
+            tiles.on('tileerror', () => {
+                console.warn('A map tile could not be loaded; Leaflet will retry as tiles become available.');
+            });
             tiles.addTo(mapInstance);
         }
         await new Promise(resolve => requestAnimationFrame(resolve));
@@ -2907,7 +2690,7 @@ async function initMap() {
         mapMarkers.forEach(marker => mapInstance.removeLayer(marker));
         mapMarkers = [];
 
-        const allLocations = (familyData.destinations.places || []).filter(item => filterItem(item.who));
+        const allLocations = (destinationsData.places || []).filter(item => filterItem(item.who));
         const bounds = [];
         for (const item of allLocations) {
             if (requestToken !== mapRequestToken) return;
@@ -2955,18 +2738,17 @@ async function addRestaurantItem() {
     const postcode = pcInput.value.trim();
     let imageUrl = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60';
 
-    familyData.destinations.restaurants.push({ title, postcode, who: currentUser, image: imageUrl });
+    destinationsData.restaurants.push({ title, postcode, who: currentUser, image: imageUrl });
     nameInput.value = '';
     pcInput.value = '';
-    saveCloudData();
+    saveData();
     renderRestaurantsView();
     showToast('Restaurant added');
 }
-window.addRestaurantItem = addRestaurantItem;
 
 function renderRestaurantsView() {
     const container = document.getElementById('restaurants-dynamic-list-container');
-    const list = familyData.destinations.restaurants || [];
+    const list = destinationsData.restaurants || [];
     const filtered = list.filter(item => filterItem(item.who));
 
     container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No restaurants added yet.</div>` : list.map((item, idx) => {
@@ -2982,7 +2764,7 @@ function renderRestaurantsView() {
                 </div>
                 <div style="display:flex; align-items:center; gap:6px;">
                     <span class="compact-scoped-tag bg-${item.who}">${displayWho}</span>
-                    <button class="action-btn delete-btn" onclick="familyData.destinations.restaurants.splice(${idx},1); saveCloudData(); renderRestaurantsView();">✕</button>
+                    <button class="action-btn delete-btn" onclick="destinationsData.restaurants.splice(${idx},1); saveData(); renderRestaurantsView();">✕</button>
                 </div>
             </div>
         `;
@@ -2994,47 +2776,43 @@ function addTodoItem() {
     const dateInput = document.getElementById('todo-date-input');
     if (!input || !input.value.trim()) return;
     const chosenDate = dateInput ? dateInput.value : '';
-    familyData.todos.push({ text: input.value.trim(), who: currentUser, date: chosenDate, done: false, isEditing: false, quickAdded: true });
+    todosData.push({ text: input.value.trim(), who: currentUser, date: chosenDate, done: false, isEditing: false, quickAdded: true });
     input.value = '';
     if (dateInput) dateInput.value = '';
-    saveCloudData();
+    saveData();
     renderTodos();
     renderDashboard();
     renderWeeklyPlanner();
     showToast('Task added');
 }
-window.addTodoItem = addTodoItem;
 
 function toggleTodoCheck(idx) {
-    familyData.todos[idx].done = !familyData.todos[idx].done;
-    saveCloudData();
+    todosData[idx].done = !todosData[idx].done;
+    saveData();
     renderTodos();
     renderDashboard();
     renderWeeklyPlanner();
 }
-window.toggleTodoCheck = toggleTodoCheck;
 
 function enableTodoEdit(idx) {
-    familyData.todos[idx].isEditing = true;
+    todosData[idx].isEditing = true;
     renderTodos();
 }
-window.enableTodoEdit = enableTodoEdit;
 
 function saveTodoEdit(idx, newText) {
-    if (newText.trim()) familyData.todos[idx].text = newText.trim();
-    familyData.todos[idx].isEditing = false;
-    saveCloudData();
+    if (newText.trim()) todosData[idx].text = newText.trim();
+    todosData[idx].isEditing = false;
+    saveData();
     renderTodos();
     renderDashboard();
     renderWeeklyPlanner();
 }
-window.saveTodoEdit = saveTodoEdit;
 
 function renderTodos() {
     const container = document.getElementById('todo-list-container');
-    const filtered = familyData.todos.filter(t => filterItem(t.who));
+    const filtered = todosData.filter(t => filterItem(t.who));
     
-    container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No tasks remaining.</div>` : familyData.todos.map((t, idx) => {
+    container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No tasks remaining.</div>` : todosData.map((t, idx) => {
         if (!filterItem(t.who)) return '';
         const displayWho = t.who === 'dad' ? 'Kevin' : (t.who === 'mom' ? 'Harriet' : 'Family');
         return `
@@ -3050,7 +2828,7 @@ function renderTodos() {
                     <input type="date" class="date-tag" value="${t.date || ''}" onchange="updateTodoDate(${idx}, this.value)" title="Change task date">
                     <span class="compact-scoped-tag bg-${t.who}" onclick="cycleAssignee('todo', ${idx})">${displayWho}</span>
                     <button class="action-btn" onclick="enableTodoEdit(${idx})" aria-label="Edit task">✏️</button>
-                    <button class="action-btn delete-btn" onclick="familyData.todos.splice(${idx},1); saveCloudData(); renderTodos(); renderDashboard(); renderWeeklyPlanner();" aria-label="Delete task">✕</button>
+                    <button class="action-btn delete-btn" onclick="todosData.splice(${idx},1); saveData(); renderTodos(); renderDashboard(); renderWeeklyPlanner();" aria-label="Delete task">✕</button>
                 </div>
             </div>
         `;
@@ -3061,23 +2839,22 @@ function addWatchlistItem(type) {
     const inputId = type === 'cinema' ? 'cinema-quick-input' : 'home-quick-input';
     const input = document.getElementById(inputId);
     if (!input || !input.value.trim()) return;
-    if (!familyData.destinations[type]) familyData.destinations[type] = [];
-    familyData.destinations[type].push({ title: input.value.trim(), who: currentUser });
+    if (!destinationsData[type]) destinationsData[type] = [];
+    destinationsData[type].push({ title: input.value.trim(), who: currentUser });
     input.value = '';
-    saveCloudData();
+    saveData();
     renderWatchlist();
     showToast('Added to watchlist');
 }
-window.addWatchlistItem = addWatchlistItem;
 
 function renderWatchlist() {
     const cinemaCont = document.getElementById('cinema-list-container');
     const homeCont = document.getElementById('home-list-container');
 
-    const cinemaList = (familyData.destinations.cinema || []).filter(item => filterItem(item.who));
-    const homeList = (familyData.destinations.home || []).filter(item => filterItem(item.who));
+    const cinemaList = (destinationsData.cinema || []).filter(item => filterItem(item.who));
+    const homeList = (destinationsData.home || []).filter(item => filterItem(item.who));
 
-    cinemaCont.innerHTML = cinemaList.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">Cinema watchlist empty.</div>` : (familyData.destinations.cinema || []).map((item, idx) => {
+    cinemaCont.innerHTML = cinemaList.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">Cinema watchlist empty.</div>` : (destinationsData.cinema || []).map((item, idx) => {
         if (!filterItem(item.who)) return '';
         const displayWho = item.who === 'dad' ? 'Kevin' : (item.who === 'mom' ? 'Harriet' : 'Family');
         return `
@@ -3085,13 +2862,13 @@ function renderWatchlist() {
                 <span class="compact-scoped-label">🎬 ${item.title}</span>
                 <div style="display:flex; align-items:center; gap:6px;">
                     <span class="compact-scoped-tag bg-${item.who}" onclick="cycleAssignee('cinema', ${idx})">${displayWho}</span>
-                    <button class="action-btn delete-btn" onclick="familyData.destinations.cinema.splice(${idx},1); saveCloudData(); renderWatchlist();">✕</button>
+                    <button class="action-btn delete-btn" onclick="destinationsData.cinema.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
                 </div>
             </div>
         `;
     }).join('');
 
-    homeCont.innerHTML = homeList.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">Home watchlist empty.</div>` : (familyData.destinations.home || []).map((item, idx) => {
+    homeCont.innerHTML = homeList.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">Home watchlist empty.</div>` : (destinationsData.home || []).map((item, idx) => {
         if (!filterItem(item.who)) return '';
         const displayWho = item.who === 'dad' ? 'Kevin' : (item.who === 'mom' ? 'Harriet' : 'Family');
         return `
@@ -3099,7 +2876,7 @@ function renderWatchlist() {
                 <span class="compact-scoped-label">📺 ${item.title}</span>
                 <div style="display:flex; align-items:center; gap:6px;">
                     <span class="compact-scoped-tag bg-${item.who}" onclick="cycleAssignee('home', ${idx})">${displayWho}</span>
-                    <button class="action-btn delete-btn" onclick="familyData.destinations.home.splice(${idx},1); saveCloudData(); renderWatchlist();">✕</button>
+                    <button class="action-btn delete-btn" onclick="destinationsData.home.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
                 </div>
             </div>
         `;
@@ -3109,25 +2886,21 @@ function renderWatchlist() {
 function addKidChore(kidIndex) {
     const input = document.getElementById(`chore-input-${kidIndex}`);
     if (!input || !input.value.trim()) return;
-    familyData.chores[kidIndex].chores.push({ text: input.value.trim(), done: false });
+    choresData[kidIndex].chores.push({ text: input.value.trim(), done: false });
     input.value = '';
-    saveCloudData();
+    saveData();
     renderChores();
     showToast('Chore added');
 }
-window.addKidChore = addKidChore;
 
 function deleteKidChore(kidIndex, choreIndex) {
-    familyData.chores[kidIndex].chores.splice(choreIndex, 1);
-    saveCloudData();
+    choresData[kidIndex].chores.splice(choreIndex, 1);
+    saveData();
     renderChores();
 }
-window.deleteKidChore = deleteKidChore;
 
 function renderChores() {
-    const container = document.getElementById('chores-list-container');
-    if (!container) return;
-    container.innerHTML = familyData.chores.map((k, kIdx) => `
+    document.getElementById('chores-list-container').innerHTML = choresData.map((k, kIdx) => `
         <div style="background:#f8fafc; border:1px solid #eae7e1; border-radius:8px; padding:8px 10px; margin-bottom:6px;">
             <div style="font-weight:800; font-size:0.88rem; margin-bottom:6px;">${k.kid}</div>
             <div class="compact-scoped-add-group" style="margin-bottom:6px;">
@@ -3155,17 +2928,16 @@ function renderChores() {
 function addWishlistItem() {
     const input = document.getElementById('wishlist-quick-input');
     if (!input || !input.value.trim()) return;
-    familyData.wishlist.push({ title: input.value.trim(), who: currentUser });
+    wishlistData.push({ title: input.value.trim(), who: currentUser });
     input.value = '';
-    saveCloudData();
+    saveData();
     renderWishlist();
     showToast('Added to wishlist');
 }
-window.addWishlistItem = addWishlistItem;
 
 function renderWishlist() {
-    const filtered = familyData.wishlist.filter(w => filterItem(w.who));
-    document.getElementById('wishlist-list-container').innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">Wishlist is empty.</div>` : familyData.wishlist.map((w, idx) => {
+    const filtered = wishlistData.filter(w => filterItem(w.who));
+    document.getElementById('wishlist-list-container').innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">Wishlist is empty.</div>` : wishlistData.map((w, idx) => {
         if (!filterItem(w.who)) return '';
         const displayWho = w.who === 'dad' ? 'Kevin' : (w.who === 'mom' ? 'Harriet' : 'Family');
         return `
@@ -3173,7 +2945,7 @@ function renderWishlist() {
                 <span class="todo-item-label">🎁 ${w.title}</span>
                 <div style="display:flex; align-items:center; gap:6px;">
                     <span class="compact-scoped-tag bg-${w.who}" onclick="cycleAssignee('wishlist', ${idx})">${displayWho}</span>
-                    <button class="action-btn delete-btn" onclick="familyData.wishlist.splice(${idx},1); saveCloudData(); renderWishlist();">✕</button>
+                    <button class="action-btn delete-btn" onclick="wishlistData.splice(${idx},1); saveData(); renderWishlist();">✕</button>
                 </div>
             </div>
         `;
@@ -3208,37 +2980,36 @@ function handleQuickAdd(e) {
                 const mm = String(curDate.getMonth() + 1).padStart(2, '0');
                 const dd = String(curDate.getDate()).padStart(2, '0');
                 const key = `${yyyy}-${mm}-${dd}`;
-                if (!familyData.calendar[key]) familyData.calendar[key] = [];
-                familyData.calendar[key].push({ eventId, title: finalTitle, who: assignee, quickAdded: true });
+                if (!calendarEvents[key]) calendarEvents[key] = [];
+                calendarEvents[key].push({ eventId, title: finalTitle, who: assignee, quickAdded: true });
                 curDate.setDate(curDate.getDate() + 1);
             }
         } else if (dateVal) {
-            if (!familyData.calendar[dateVal]) familyData.calendar[dateVal] = [];
-            familyData.calendar[dateVal].push({ eventId, title: finalTitle, who: assignee, quickAdded: true });
+            if (!calendarEvents[dateVal]) calendarEvents[dateVal] = [];
+            calendarEvents[dateVal].push({ eventId, title: finalTitle, who: assignee, quickAdded: true });
         }
-    } else if (category === 'foodshop') familyData.foodshop.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
-    else if (category === 'familyshop') familyData.familyshop.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
-    else if (category === 'places') familyData.destinations.places.push({ title: finalTitle, who: assignee, postcode });
-    else if (category === 'restaurants') familyData.destinations.restaurants.push({ title: finalTitle, who: assignee, postcode, image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60' });
+    } else if (category === 'foodshop') foodShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
+    else if (category === 'familyshop') familyShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
+    else if (category === 'places') destinationsData.places.push({ title: finalTitle, who: assignee, postcode });
+    else if (category === 'restaurants') destinationsData.restaurants.push({ title: finalTitle, who: assignee, postcode, image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60' });
     else if (['cinema','home'].includes(category)) {
-        if (!familyData.destinations[category]) familyData.destinations[category] = [];
-        familyData.destinations[category].push({ title: finalTitle, who: assignee });
+        if (!destinationsData[category]) destinationsData[category] = [];
+        destinationsData[category].push({ title: finalTitle, who: assignee });
     }
-    else if (category === 'todo') familyData.todos.push({ text: finalTitle, who: assignee, date: dateVal, done: false, isEditing: false, quickAdded: true });
-    else if (category === 'wishlist') familyData.wishlist.push({ title: finalTitle, who: assignee });
+    else if (category === 'todo') todosData.push({ text: finalTitle, who: assignee, date: dateVal, done: false, isEditing: false, quickAdded: true });
+    else if (category === 'wishlist') wishlistData.push({ title: finalTitle, who: assignee });
     else if (category === 'chores') {
-        const target = familyData.chores.find(c => c.kid.toLowerCase() === assignee.toLowerCase()) || familyData.chores[0];
+        const target = choresData.find(c => c.kid.toLowerCase() === assignee.toLowerCase()) || choresData[0];
         target.chores.push({ text: finalTitle, done: false });
     }
 
-    saveCloudData();
+    saveData();
     document.getElementById('add-title').value = '';
     document.getElementById('add-postcode').value = '';
     toggleQuickAddModal();
     renderAllViews();
     showToast('Item added successfully!');
 }
-window.handleQuickAdd = handleQuickAdd;
 
 function moneyGBP(value) { return new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(Number(value)||0); }
 function escapeToolText(value) { return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
@@ -3249,9 +3020,8 @@ function jumpToTaskDetails() {
     showView('todo', document.getElementById('nav-btn-todo'));
     showToast('Showing task details');
 }
-window.jumpToTaskDetails = jumpToTaskDetails;
 
-// WEEKLY PLANNER RENDERING
+// WEEKLY PLANNER RENDERING WITH TASKS FILTER & ASSIGNEE
 function renderWeeklyPlanner() {
     const today = new Date(); 
     const monday = getMonday(today);
@@ -3265,16 +3035,17 @@ function renderWeeklyPlanner() {
         const dd = String(d.getDate()).padStart(2, '0');
         const key = `${yyyy}-${mm}-${dd}`;
         
-        const mObj = familyData.meals.find(m => m.day === day);
+        const mObj = mealsData.find(m => m.day === day);
         const meal = mObj?.meal || '';
         const cookKey = mObj?.cook || 'dad';
         const cookName = cookKey === 'dad' ? 'Kevin' : (cookKey === 'mom' ? 'Harriet' : 'Family');
         
-        const dayTasks = familyData.todos.filter(t => !t.done && filterItem(t.who) && (t.date === key || (!t.date && i === 0)));
+        // Get tasks for this specific day
+        const dayTasks = todosData.filter(t => !t.done && filterItem(t.who) && (t.date === key || (!t.date && i === 0)));
 
         const dayEvents = [];
         const seenEventIds = new Set();
-        Object.entries(familyData.calendar || {}).forEach(([eventDate, entries]) => {
+        Object.entries(calendarEvents || {}).forEach(([eventDate, entries]) => {
             (Array.isArray(entries) ? entries : []).forEach(ev => {
                 const isBirthday = /\[(yearly|birthday)\]/i.test(ev.title || '') && eventDate.slice(5) === key.slice(5);
                 if ((eventDate === key || isBirthday) && filterItem(ev.who) && !seenEventIds.has(`${ev.eventId || ev.title}-${eventDate}`)) {
@@ -3284,6 +3055,7 @@ function renderWeeklyPlanner() {
             });
         });
 
+        // Build Events / Reminders rows
         let eventsRemindersHtml = '';
         dayEvents.forEach(ev => {
             const whoName = ev.who === 'dad' ? 'Kevin' : (ev.who === 'mom' ? 'Harriet' : 'Family');
@@ -3337,9 +3109,9 @@ function renderWeeklyPlanner() {
 
     const summary = document.getElementById('family-week-summary');
     if (summary) {
-        const events = Object.values(familyData.calendar).flat().length;
-        const open = familyData.todos.filter(t => !t.done).length;
-        summary.textContent = `7-day meal plan · ${events} calendar entries saved · ${open} outstanding to-do(s) · ${familyData.bills.length} household bill(s) tracked.`;
+        const events = Object.values(calendarEvents).flat().length;
+        const open = todosData.filter(t => !t.done).length;
+        summary.textContent = `7-day meal plan · ${events} calendar entries saved · ${open} outstanding to-do(s) · ${householdBillsData.length} household bill(s) tracked.`;
     }
 }
 
@@ -3349,7 +3121,8 @@ function openDayQuickAdd(dateKey) {
     handleCategoryChange('events');
     document.getElementById('add-date').value = dateKey;
 }
-window.openDayQuickAdd = openDayQuickAdd;
+
+let householdMonthlyBudget = Number(localStorage.getItem('fam_household_monthly_budget')) || 1500;
 
 function setFinanceTab(tab, button){
     ['overview','bills','renewals'].forEach(name=>{const pane=document.getElementById('finance-pane-'+name);if(pane)pane.hidden=name!==tab;});
@@ -3359,33 +3132,30 @@ function setFinanceTab(tab, button){
     if(tab==='renewals')renderEnhancementLists();
     renderFinanceOverview();
 }
-window.setFinanceTab = setFinanceTab;
 
 function saveHouseholdBudget(e){
     e.preventDefault();
     const budget=Number(document.getElementById('household-monthly-budget').value);
     if(!Number.isFinite(budget)||budget<0)return;
-    familyData.monthlyBudget = budget;
-    saveCloudData();
+    householdMonthlyBudget=budget;
+    localStorage.setItem('fam_household_monthly_budget',String(budget));
     renderFinanceOverview();
     showToast('Monthly budget saved');
 }
-window.saveHouseholdBudget = saveHouseholdBudget;
 
 function resetMonthlySpending() {
-    if (familyData.unplannedSpending.length === 0) {
+    if (unplannedSpendingData.length === 0) {
         showToast('Spending is already cleared');
         return;
     }
     if (confirm('Are you sure you want to reset monthly spending and clear all manual entries?')) {
-        familyData.unplannedSpending = [];
-        saveCloudData();
+        unplannedSpendingData = [];
+        saveData();
         renderUnplannedSpending();
         renderFinanceOverview();
         showToast('Monthly spending reset to £0.00');
     }
 }
-window.resetMonthlySpending = resetMonthlySpending;
 
 function addUnplannedSpend(e){
     e.preventDefault();
@@ -3393,35 +3163,33 @@ function addUnplannedSpend(e){
     const amount=Number(document.getElementById('unplanned-amount').value);
     const date=document.getElementById('unplanned-date').value;
     if(!name||!Number.isFinite(amount)||amount<=0||!date)return;
-    familyData.unplannedSpending.push({ id: crypto.randomUUID(), name, amount, date });
-    familyData.unplannedSpending.sort((a,b)=>a.date.localeCompare(b.date));
-    saveCloudData();
+    unplannedSpendingData.push({ id: crypto.randomUUID(), name, amount, date });
+    unplannedSpendingData.sort((a,b)=>a.date.localeCompare(b.date));
+    saveData();
     e.target.reset();
     document.getElementById('unplanned-date').value = new Date().toISOString().slice(0,10);
     renderUnplannedSpending();
     renderFinanceOverview();
     showToast('Spending entry added');
 }
-window.addUnplannedSpend = addUnplannedSpend;
 
 function deleteUnplannedSpend(id){
-    familyData.unplannedSpending = familyData.unplannedSpending.filter(x=>x.id!==id);
-    saveCloudData();
+    unplannedSpendingData = unplannedSpendingData.filter(x=>x.id!==id);
+    saveData();
     renderUnplannedSpending();
     renderFinanceOverview();
     showToast('Entry removed');
 }
-window.deleteUnplannedSpend = deleteUnplannedSpend;
 
 function renderUnplannedSpending(){
     const list=document.getElementById('unplanned-spending-list');
     if(!list)return;
     let runningTotal = 0;
-    if(familyData.unplannedSpending.length===0){
+    if(unplannedSpendingData.length===0){
         list.innerHTML='<p class="tool-note">No unplanned spending recorded yet.</p>';
         return;
     }
-    list.innerHTML=familyData.unplannedSpending.map(item=>{
+    list.innerHTML=unplannedSpendingData.map(item=>{
         runningTotal += Number(item.amount)||0;
         return `
             <div class="tool-row" style="align-items:center;">
@@ -3436,23 +3204,23 @@ function renderUnplannedSpending(){
 }
 
 function renderFinanceOverview(){
-    const billsTotal = familyData.bills.reduce((sum,b)=>sum+monthlyBillEquivalent(b),0);
-    const unplannedTotal = familyData.unplannedSpending.reduce((sum,i)=>sum+(Number(i.amount)||0),0);
+    const billsTotal = householdBillsData.reduce((sum,b)=>sum+monthlyBillEquivalent(b),0);
+    const unplannedTotal = unplannedSpendingData.reduce((sum,i)=>sum+(Number(i.amount)||0),0);
     const totalSpent = unplannedTotal;
-    const remaining = (familyData.monthlyBudget || 1500) - billsTotal - totalSpent;
+    const remaining = householdMonthlyBudget - billsTotal - totalSpent;
 
     const put=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value;};
-    put('finance-overview-budget',moneyGBP(familyData.monthlyBudget || 1500));
+    put('finance-overview-budget',moneyGBP(householdMonthlyBudget));
     put('finance-overview-bills',moneyGBP(billsTotal));
     put('finance-overview-spent',moneyGBP(totalSpent));
     put('finance-overview-remaining',moneyGBP(remaining));
 
     const budgetInput = document.getElementById('household-monthly-budget');
-    if(budgetInput && document.activeElement !== budgetInput) budgetInput.value = familyData.monthlyBudget || 1500;
+    if(budgetInput && document.activeElement !== budgetInput) budgetInput.value = householdMonthlyBudget;
 
     const upcoming=document.getElementById('finance-upcoming-list');
     if(upcoming){
-        const items=[...familyData.bills.filter(x=>x.due).map(x=>({name:x.name,date:x.due,detail:`Payment · ${moneyGBP(x.amount)} · ${x.frequency}`})),...familyData.renewals.filter(x=>x.date).map(x=>({name:x.date,date:x.date,detail:`Renewal · ${moneyGBP(x.cost)} · ${x.frequency}`}))].filter(x=>x.date>=new Date().toISOString().slice(0,10)).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,6);
+        const items=[...householdBillsData.filter(x=>x.due).map(x=>({name:x.name,date:x.due,detail:`Payment · ${moneyGBP(x.amount)} · ${x.frequency}`})),...renewalsData.filter(x=>x.date).map(x=>({name:x.date,date:x.date,detail:`Renewal · ${moneyGBP(x.cost)} · ${x.frequency}`}))].filter(x=>x.date>=new Date().toISOString().slice(0,10)).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,6);
         upcoming.innerHTML=items.length?items.map(x=>`<div class="tool-row"><div><strong>${escapeToolText(x.name)}</strong><small>${dateLabel(x.date)} · ${escapeToolText(x.detail)}</small></div></div>`).join(''):'<p class="tool-note">No upcoming payments recorded yet.</p>';
     }
 }
@@ -3460,9 +3228,9 @@ function renderFinanceOverview(){
 function renderBills(){
     const list=document.getElementById('household-bills-list');
     if(!list){renderFinanceOverview();return;}
-    const total=familyData.bills.reduce((sum,b)=>sum+monthlyBillEquivalent(b),0);
+    const total=householdBillsData.reduce((sum,b)=>sum+monthlyBillEquivalent(b),0);
     document.getElementById('bills-monthly-total').innerHTML=`${moneyGBP(total)} <span style="font-size:.75rem;font-weight:600">monthly equivalent</span>`;
-    list.innerHTML=familyData.bills.length?familyData.bills.map((b,i)=>`
+    list.innerHTML=householdBillsData.length?householdBillsData.map((b,i)=>`
         <div class="tool-row">
             <div>
                 <strong>${escapeToolText(b.name)}</strong>
@@ -3476,147 +3244,23 @@ function renderBills(){
     renderFinanceOverview();
 }
 
-function addHouseholdBill(e){
-    e.preventDefault();
-    const name=document.getElementById('bill-name').value.trim();
-    const amount=Number(document.getElementById('bill-amount').value);
-    if(!name||!Number.isFinite(amount)||amount<0)return;
-    familyData.bills.push({id:crypto.randomUUID(),name,amount,frequency:document.getElementById('bill-frequency').value,due:document.getElementById('bill-due').value,category:document.getElementById('bill-category').value});
-    saveCloudData();
-    e.target.reset();
-    renderBills();
-    showToast('Household bill added');
-}
-window.addHouseholdBill = addHouseholdBill;
+function addHouseholdBill(e){e.preventDefault();const name=document.getElementById('bill-name').value.trim();const amount=Number(document.getElementById('bill-amount').value);if(!name||!Number.isFinite(amount)||amount<0)return;householdBillsData.push({id:crypto.randomUUID(),name,amount,frequency:document.getElementById('bill-frequency').value,due:document.getElementById('bill-due').value,category:document.getElementById('bill-category').value});saveData();e.target.reset();renderBills();showToast('Household bill added');}
+function addRenewal(e){e.preventDefault();renewalsData.push({id:crypto.randomUUID(),name:document.getElementById('renewal-name').value.trim(),cost:Number(document.getElementById('renewal-cost').value)||0,date:document.getElementById('renewal-date').value,frequency:document.getElementById('renewal-frequency').value});saveData();e.target.reset();renderEnhancementLists();showToast('Renewal added');}
+function addFamilyIdea(e){e.preventDefault();familyIdeasData.push({id:crypto.randomUUID(),name:document.getElementById('idea-name').value.trim(),category:document.getElementById('idea-category').value,notes:document.getElementById('idea-notes').value.trim(),createdAt:new Date().toISOString()});saveData();e.target.reset();renderEnhancementLists();showToast('Idea saved');}
+function saveHandover(e){e.preventDefault();handoverData.push({id:crypto.randomUUID(),date:document.getElementById('handover-date').value,person:document.getElementById('handover-person').value.trim(),notes:document.getElementById('handover-notes').value.trim()});saveData();e.target.reset();document.getElementById('handover-date').value=new Date().toISOString().slice(0,10);renderEnhancementLists();showToast('Handover note added');}
+function addFamilyOccasion(e){e.preventDefault();occasionsData.push({id:crypto.randomUUID(),name:document.getElementById('occasion-name').value.trim(),date:document.getElementById('occasion-date').value,notes:document.getElementById('occasion-notes').value.trim()});saveData();e.target.reset();renderEnhancementLists();showToast('Occasion added');}
+function deleteToolItem(type,i){const map={bills:householdBillsData,renewals:renewalsData,ideas:familyIdeasData,handover:handoverData,occasions:occasionsData};if(!map[type]||!confirm('Delete this entry?'))return;map[type].splice(i,1);saveData();renderBills();renderEnhancementLists();}
+function renderSimpleToolList(id,items,formatter,type,empty){const el=document.getElementById(id);if(!el)return;el.innerHTML=items.length?items.map((item,i)=>`<div class="tool-row"><div>${formatter(item)}</div><button onclick="deleteToolItem('${type}',${i})">✕</button></div>`).join(''):`<p class="tool-note">${empty}</p>`;}
+function addAddressBookEntry(e){e.preventDefault();const name=document.getElementById('address-book-name').value.trim(),address=document.getElementById('address-book-address').value.trim(),postcode=document.getElementById('address-book-postcode').value.trim();if(!name||!address||!postcode)return;addressBookData.push({id:crypto.randomUUID(),name,address,postcode});saveData();e.target.reset();renderAddressBook();showToast('Address saved');}
+function editAddressBookEntry(i){const entry=addressBookData[i];if(!entry)return;const name=prompt('Name',entry.name);if(name===null)return;const address=prompt('Address',entry.address);if(address===null)return;const postcode=prompt('Postcode',entry.postcode);if(postcode===null)return;if(!name.trim()||!address.trim()||!postcode.trim()){showToast('Please complete all address fields');return;}entry.name=name.trim();entry.address=address.trim();entry.postcode=postcode.trim();saveData();renderAddressBook();}
+function deleteAddressBookEntry(i){if(!addressBookData[i]||!confirm('Delete this saved address?'))return;addressBookData.splice(1,1);saveData();renderAddressBook();}
+function renderAddressBook(){const list=document.getElementById('address-book-list');if(!list)return;list.innerHTML=addressBookData.length?addressBookData.map((entry,i)=>`<div class="tool-row"><div><strong>${escapeToolText(entry.name)}</strong><small>${escapeToolText(entry.address)}<br>${escapeToolText(entry.postcode)}</small></div><div style="display:flex;gap:6px;flex-shrink:0"><button type="button" onclick="editAddressBookEntry(${i})">Edit</button><button type="button" onclick="deleteAddressBookEntry(${i})">✕</button></div></div>`).join(''):'<p class="tool-note">No saved addresses yet. Add your first key address above.</p>'; }
+function renderEnhancementLists(){renderSimpleToolList('renewals-list',renewalsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${moneyGBP(x.cost)} · ${escapeToolText(x.frequency)} · Renewal: ${dateLabel(x.date)}</small>`,'renewals','No renewals tracked yet.');renderSimpleToolList('family-ideas-list',familyIdeasData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${escapeToolText(x.category)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'ideas','Your saved family ideas will appear here.');renderSimpleToolList('handover-list',handoverData,x=>`<strong>${dateLabel(x.date)}${x.person?' · '+escapeToolText(x.person):''}</strong><small>${escapeToolText(x.notes)}</small>`,'handover','No handover notes yet.');renderSimpleToolList('family-occasions-list',occasionsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${dateLabel(x.date)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'occasions','No occasions added yet.');renderAddressBook();renderFinanceOverview();}
+function renderFamilyTools(){renderWeeklyPlanner();renderBills();renderEnhancementLists();}
 
-function addRenewal(e){
-    e.preventDefault();
-    familyData.renewals.push({id:crypto.randomUUID(),name:document.getElementById('renewal-name').value.trim(),cost:Number(document.getElementById('renewal-cost').value)||0,date:document.getElementById('renewal-date').value,frequency:document.getElementById('renewal-frequency').value});
-    saveCloudData();
-    e.target.reset();
-    renderEnhancementLists();
-    showToast('Renewal added');
-}
-window.addRenewal = addRenewal;
-
-function addFamilyIdea(e){
-    e.preventDefault();
-    familyData.ideas.push({id:crypto.randomUUID(),name:document.getElementById('idea-name').value.trim(),category:document.getElementById('idea-category').value,notes:document.getElementById('idea-notes').value.trim(),createdAt:new Date().toISOString()});
-    saveCloudData();
-    e.target.reset();
-    renderEnhancementLists();
-    showToast('Idea saved');
-}
-window.addFamilyIdea = addFamilyIdea;
-
-function saveHandover(e){
-    e.preventDefault();
-    familyData.handover.push({id:crypto.randomUUID(),date:document.getElementById('handover-date').value,person:document.getElementById('handover-person').value.trim(),notes:document.getElementById('handover-notes').value.trim()});
-    saveCloudData();
-    e.target.reset();
-    document.getElementById('handover-date').value = new Date().toISOString().slice(0,10);
-    renderEnhancementLists();
-    showToast('Handover note added');
-}
-window.saveHandover = saveHandover;
-
-function deleteToolItem(type,i){
-    const map={bills:familyData.bills,renewals:familyData.renewals,ideas:familyData.ideas,handover:familyData.handover,occasions:familyData.occasions};
-    if(!map[type]||!confirm('Delete this entry?'))return;
-    map[type].splice(i,1);
-    saveCloudData();
-    renderBills();
-    renderEnhancementLists();
-}
-window.deleteToolItem = deleteToolItem;
-
-function renderSimpleToolList(id,items,formatter,type,empty){
-    const el=document.getElementById(id);
-    if(!el)return;
-    el.innerHTML=items.length?items.map((item,i)=>`<div class="tool-row"><div>${formatter(item)}</div><button onclick="deleteToolItem('${type}',${i})">✕</button></div>`).join(''):`<p class="tool-note">${empty}</p>`;
-}
-
-function addAddressBookEntry(e){
-    e.preventDefault();
-    const name=document.getElementById('address-book-name').value.trim(),address=document.getElementById('address-book-address').value.trim(),postcode=document.getElementById('address-book-postcode').value.trim();
-    if(!name||!address||!postcode)return;
-    familyData.addressBook.push({id:crypto.randomUUID(),name,address,postcode});
-    saveCloudData();
-    e.target.reset();
-    renderAddressBook();
-    showToast('Address saved');
-}
-window.addAddressBookEntry = addAddressBookEntry;
-
-function editAddressBookEntry(i){
-    const entry=familyData.addressBook[i];
-    if(!entry)return;
-    const name=prompt('Name',entry.name);if(name===null)return;
-    const address=prompt('Address',entry.address);if(address===null)return;
-    const postcode=prompt('Postcode',entry.postcode);if(postcode===null)return;
-    if(!name.trim()||!address.trim()||!postcode.trim()){showToast('Please complete all address fields');return;}
-    entry.name=name.trim();entry.address=address.trim();entry.postcode=postcode.trim();
-    saveCloudData();
-    renderAddressBook();
-}
-window.editAddressBookEntry = editAddressBookEntry;
-
-function deleteAddressBookEntry(i){
-    if(!familyData.addressBook[i]||!confirm('Delete this saved address?'))return;
-    familyData.addressBook.splice(i,1);
-    saveCloudData();
-    renderAddressBook();
-}
-window.deleteAddressBookEntry = deleteAddressBookEntry;
-
-function renderAddressBook(){
-    const list=document.getElementById('address-book-list');
-    if(!list)return;
-    list.innerHTML=familyData.addressBook.length?familyData.addressBook.map((entry,i)=>`<div class="tool-row"><div><strong>${escapeToolText(entry.name)}</strong><small>${escapeToolText(entry.address)}<br>${escapeToolText(entry.postcode)}</small></div><div style="display:flex;gap:6px;flex-shrink:0"><button type="button" onclick="editAddressBookEntry(${i})">Edit</button><button type="button" onclick="deleteAddressBookEntry(${i})">✕</button></div></div>`).join(''):'<p class="tool-note">No saved addresses yet. Add your first key address above.</p>';
-}
-
-function renderEnhancementLists(){
-    renderSimpleToolList('renewals-list',familyData.renewals,x=>`<strong>${escapeToolText(x.name)}</strong><small>${moneyGBP(x.cost)} · ${escapeToolText(x.frequency)} · Renewal: ${dateLabel(x.date)}</small>`,'renewals','No renewals tracked yet.');
-    renderSimpleToolList('family-ideas-list',familyData.ideas,x=>`<strong>${escapeToolText(x.name)}</strong><small>${escapeToolText(x.category)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'ideas','Your saved family ideas will appear here.');
-    renderSimpleToolList('handover-list',familyData.handover,x=>`<strong>${dateLabel(x.date)}${x.person?' · '+escapeToolText(x.person):''}</strong><small>${escapeToolText(x.notes)}</small>`,'handover','No handover notes yet.');
-    renderAddressBook();
-    renderFinanceOverview();
-}
-
-function exportFamilyPlanData(){
-    const payload={app:'Family Plan',formatVersion:2,exportedAt:new Date().toISOString(),householdId:currentHouseholdId,data:familyData};
-    const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-    const url=URL.createObjectURL(blob);
-    const a=document.getElementById('a');
-    a.href=url;
-    a.download=`family-plan-backup-${new Date().toISOString().slice(0,10)}.json`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(()=>URL.revokeObjectURL(url),1000);
-    document.getElementById('backup-status').textContent=`Backup exported successfully.`;
-}
-window.exportFamilyPlanData = exportFamilyPlanData;
-
-async function importFamilyPlanData(e){
-    const file=e.target.files?.[0];
-    if(!file)return;
-    try{
-        const payload=JSON.parse(await file.text());
-        if(payload.app!=='Family Plan'||!payload.data||typeof payload.data!=='object')throw new Error('This does not look like a Family Plan backup.');
-        if(!confirm('Importing will replace the Family Plan data for this household. Continue?'))return;
-        familyData = { ...familyData, ...payload.data };
-        saveCloudData();
-        renderAllViews();
-        document.getElementById('backup-status').textContent='Backup imported and synced to Firestore.';
-        showToast('Family Plan backup restored');
-    }catch(err){
-        document.getElementById('backup-status').textContent='Import failed: '+err.message;
-    }finally{
-        e.target.value='';
-    }
-}
-window.importFamilyPlanData = importFamilyPlanData;
+function exportFamilyPlanData(){const keys=Object.keys(localStorage).filter(k=>k.startsWith('fam_')).sort();const payload={app:'Family Plan',formatVersion:2,exportedAt:new Date().toISOString(),data:{}};keys.forEach(k=>{const raw=localStorage.getItem(k);if(raw!==null){try{payload.data[k]=JSON.parse(raw)}catch{payload.data[k]=raw}}});const addressCount=Array.isArray(payload.data.fam_address_book)?payload.data.fam_address_book.length:0;const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.getElementById('a');a.href=url;a.download=`family-plan-backup-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);document.getElementById('backup-status').textContent=`Backup exported: ${keys.length} data/settings items, including ${addressCount} saved address(es). Keep this file somewhere safe.;`}
+async function importFamilyPlanData(e){const file=e.target.files?.[0];if(!file)return;try{const payload=JSON.parse(await file.text());if(payload.app!=='Family Plan'||!payload.data||typeof payload.data!=='object')throw new Error('This does not look like a Family Plan backup.');if(!confirm('Importing will replace the Family Plan data stored in this browser. Export a backup first. Continue?'))return;Object.entries(payload.data).forEach(([key,value])=>{if(/^fam_[a-z0-9_]+$/i.test(key))localStorage.setItem(key,typeof value==='string'?value:JSON.stringify(value));});mealsData=JSON.parse(localStorage.getItem('fam_meals'))||mealsData;foodShopData=JSON.parse(localStorage.getItem('fam_foodshop'))||[];familyShopData=JSON.parse(localStorage.getItem('fam_familyshop'))||[];destinationsData=JSON.parse(localStorage.getItem('fam_destinations'))||destinationsData;choresData=JSON.parse(localStorage.getItem('fam_chores'))||[];wishlistData=JSON.parse(localStorage.getItem('fam_wishlist'))||[];todosData=JSON.parse(localStorage.getItem('fam_todos'))||[];calendarEvents=JSON.parse(localStorage.getItem('fam_calendar'))||{};householdBillsData=JSON.parse(localStorage.getItem('fam_bills'))||[];monthlyBudgetsData=JSON.parse(localStorage.getItem('fam_monthly_budgets'))||[];renewalsData=JSON.parse(localStorage.getItem('fam_renewals'))||[];familyIdeasData=JSON.parse(localStorage.getItem('fam_ideas'))||[];handoverData=JSON.parse(localStorage.getItem('fam_handover'))||[];occasionsData=JSON.parse(localStorage.getItem('fam_occasions'))||[];addressBookData=JSON.parse(localStorage.getItem('fam_address_book'))||[];unplannedSpendingData=JSON.parse(localStorage.getItem('fam_unplanned_spending'))||[];renderAllViews();renderFamilyTools();document.getElementById('backup-status').textContent='Backup imported. Any existing Family Plan items not present in this backup were left untouched.';showToast('Family Plan backup restored');}catch(err){document.getElementById('backup-status').textContent='Import failed: '+er
+r.message;}finally{e.target.value='';}}
 
 function renderAllViews() {
     setCalendarPage(calendarPageMode);
@@ -3629,11 +3273,8 @@ function renderAllViews() {
     renderChores();
     renderWishlist();
     renderDashboard();
-    renderWeeklyPlanner();
-    renderBills();
-    renderEnhancementLists();
+    renderFamilyTools();
     renderUnplannedSpending();
-    updateDropdownHouseholdDisplay();
 }
 
 document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
@@ -3647,4 +3288,3 @@ renderAllViews();
 </script>
 </body>
 </html>
-```
