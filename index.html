@@ -1375,6 +1375,13 @@ nav.bottom-nav, .bottom-nav {
     #calendar-grid-container .event-pill { font-size: .52rem; padding: 2px 2px; }
 }
 
+
+.calendar-view-picker { display:flex; align-items:center; gap:10px; padding:0 10px 12px; }
+.calendar-view-picker label { flex:0 0 auto; color:var(--muted); font-size:.82rem; font-weight:750; }
+.calendar-view-picker select { flex:1; min-width:0; min-height:42px; padding:8px 12px; }
+#family-ideas-panel .tool-section { margin-top:0; }
+@media(max-width:380px){ .calendar-view-picker { gap:6px; } .calendar-view-picker label { font-size:.75rem; } }
+
 </style>
 </head>
 <body>
@@ -1585,10 +1592,14 @@ nav.bottom-nav, .bottom-nav {
 
     <!-- VIEW 1: Calendar -->
     <div id="view-calendar" class="view" style="padding-left:0; padding-right:0;">
-        <div class="calendar-main-tabs" role="tablist" aria-label="Calendar views">
-            <button id="cal-tab-handover" class="cal-main-tab active" onclick="setCalendarPage('handover')">🤝 Handover</button>
-            <button id="cal-tab-week" class="cal-main-tab" onclick="setCalendarPage('week')">Weekly planner</button>
-            <button id="cal-tab-month" class="cal-main-tab" onclick="setCalendarPage('month')">Monthly calendar</button>
+        <div class="calendar-view-picker">
+            <label for="calendar-view-select">Calendar view</label>
+            <select id="calendar-view-select" class="form-select" onchange="setCalendarPage(this.value)">
+                <option value="week">Weekly planner</option>
+                <option value="month">Monthly calendar</option>
+                <option value="handover">Family handover</option>
+                <option value="occasions">Family occasions</option>
+            </select>
         </div>
         <div id="calendar-handover-panel">
             <section class="tool-section" style="margin: 0 10px 12px 10px;">
@@ -1621,6 +1632,19 @@ nav.bottom-nav, .bottom-nav {
             </div>
             <div id="calendar-grid-container"><div class="calendar-grid" id="calendar-grid"></div></div>
         </section>
+        <div id="calendar-occasions-panel" style="display:none; padding:0 10px;">
+            <section class="tool-section">
+                <h3>🎂 Family occasions</h3>
+                <p class="tool-note">Add birthdays and special dates so they stay with the family calendar.</p>
+                <form class="tool-form" onsubmit="addFamilyOccasion(event)">
+                    <input id="occasion-name" required placeholder="Occasion / person">
+                    <input id="occasion-date" type="date" required>
+                    <input id="occasion-notes" class="wide" placeholder="Gift or preparation notes (optional)">
+                    <button class="tool-btn" type="submit">Add occasion</button>
+                </form>
+                <div id="family-occasions-list" class="tool-list"></div>
+            </section>
+        </div>
     </div>
 
     <!-- VIEW 2: Shopping -->
@@ -1786,7 +1810,12 @@ nav.bottom-nav, .bottom-nav {
     </div>
 
     <!-- VIEW 6: To-Do & Tasks Hub -->
-    <div id="view-todo" class="view">
+    <div id="view-familyhub" class="view">
+        <div class="calendar-main-tabs" role="group" aria-label="Tasks and family ideas" style="display:flex;gap:8px;margin:0 0 14px;background:#e9f0ed;padding:5px;border-radius:14px;">
+            <button type="button" id="family-toggle-tasks" class="cal-main-tab active" onclick="setFamilyHubView('tasks')" aria-pressed="true" style="flex:1;">📝 Tasks</button>
+            <button type="button" id="family-toggle-ideas" class="cal-main-tab" onclick="setFamilyHubView('ideas')" aria-pressed="false" style="flex:1;">💡 Family ideas</button>
+        </div>
+        <div id="family-tasks-panel">
         <section class="compact-scoped-card">
             <div class="todo-scoped-title">📝 To-Do List</div>
             <div class="compact-scoped-add-group" style="flex-wrap:wrap; gap:6px;">
@@ -1810,6 +1839,20 @@ nav.bottom-nav, .bottom-nav {
             </div>
             <div id="wishlist-list-container" style="display:flex; flex-direction:column;"></div>
         </section>
+        </div>
+        <div id="family-ideas-panel" style="display:none;">
+            <section class="card"><div class="card-title">💡 Family Ideas</div><p class="tool-note">Save ideas before deciding: days out, restaurants, films, holidays or gifts.</p></section>
+            <section class="tool-section">
+                <h3>Ideas inbox</h3>
+                <form class="tool-form" onsubmit="addFamilyIdea(event)">
+                    <input id="idea-name" required placeholder="What should we remember?">
+                    <select id="idea-category"><option>Day out</option><option>Restaurant</option><option>Holiday</option><option>Film / TV</option><option>Gift</option><option>Buy</option><option>Other</option></select>
+                    <input id="idea-notes" class="wide" placeholder="Notes (optional)">
+                    <button class="tool-btn" type="submit">Save idea</button>
+                </form>
+                <div id="family-ideas-list" class="tool-list"></div>
+            </section>
+        </div>
     </div>
 
     <!-- Dedicated Address Book page -->
@@ -1847,33 +1890,6 @@ nav.bottom-nav, .bottom-nav {
         </div>
     </div>
 
-    <!-- Family tools -->
-    <div id="view-familytools" class="view">
-        <section class="card"><div class="card-title">✨ Family Plan tools</div><p class="tool-note">A connected place to organise the week, household commitments and family ideas.</p></section>
-        <section class="tool-section">
-            <h3>💡 Family ideas inbox</h3>
-            <p class="tool-note">Save ideas before deciding: days out, restaurants, films, holidays or gifts.</p>
-            <form class="tool-form" onsubmit="addFamilyIdea(event)">
-                <input id="idea-name" required placeholder="What should we remember?">
-                <select id="idea-category"><option>Day out</option><option>Restaurant</option><option>Holiday</option><option>Film / TV</option><option>Gift</option><option>Buy</option><option>Other</option></select>
-                <input id="idea-notes" class="wide" placeholder="Notes (optional)">
-                <button class="tool-btn" type="submit">Save idea</button>
-            </form>
-            <div id="family-ideas-list" class="tool-list"></div>
-        </section>
-        <section class="tool-section">
-            <h3>🎂 Family occasions</h3>
-            <p class="tool-note">Keep birthdays and special dates connected to preparation and gift reminders.</p>
-            <form class="tool-form" onsubmit="addFamilyOccasion(event)">
-                <input id="occasion-name" required placeholder="Occasion / person">
-                <input id="occasion-date" type="date" required>
-                <input id="occasion-notes" class="wide" placeholder="Gift or preparation notes (optional)">
-                <button class="tool-btn" type="submit">Add occasion</button>
-            </form>
-            <div id="family-occasions-list" class="tool-list"></div>
-        </section>
-    </div>
-
     <!-- Account page -->
     <div id="view-account" class="view">
         <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Manage your Family Plan backup files here.</p></section>
@@ -1891,43 +1907,17 @@ nav.bottom-nav, .bottom-nav {
     </div>
 
     <!-- FIXED Bottom Navigation Bar -->
-    <nav class="bottom-nav">
-        <button id="nav-btn-addressbook" class="nav-item" onclick="showView('addressbook', this)">
-            <span class="nav-icon">📇</span>
-            <span>Places</span>
-        </button>
-        <button id="nav-btn-calendar" class="nav-item" onclick="showView('calendar', this)">
-            <span class="nav-icon">📅</span>
-            <span>Calendar</span>
-        </button>
-        <button id="nav-btn-shopping" class="nav-item" onclick="showView('shopping', this)">
-            <span class="nav-icon">🛒</span>
-            <span>Shopping</span>
-        </button>
-        <button id="nav-btn-restaurants" class="nav-item" onclick="showView('restaurants', this)">
-            <span class="nav-icon">🍽️</span>
-            <span>Dining</span>
-        </button>
-        <button id="nav-btn-watchlist" class="nav-item" onclick="showView('watchlist', this)">
-            <span class="nav-icon">🎬</span>
-            <span>Watchlist</span>
-        </button>
-        <button id="nav-btn-monthlybudget" class="nav-item" onclick="showView('monthlybudget', this)">
-            <span class="nav-icon">📊</span>
-            <span>Money</span>
-        </button>
-        <button id="nav-btn-todo" class="nav-item" onclick="showView('todo', this)">
-            <span class="nav-icon">📝</span>
-            <span>Tasks</span>
-        </button>
-        <button id="nav-btn-tools" class="nav-item" onclick="showView('familytools', this)">
-            <span class="nav-icon">✨</span>
-            <span>More</span>
-        </button>
+    <nav class="bottom-nav" aria-label="Main navigation">
+        <button id="nav-btn-home" class="nav-item" onclick="showView('dashboard', this)"><span class="nav-icon">🏠</span><span>Home</span></button>
+        <button id="nav-btn-addressbook" class="nav-item" onclick="showView('addressbook', this)"><span class="nav-icon">📍</span><span>Places</span></button>
+        <button id="nav-btn-calendar" class="nav-item" onclick="showView('calendar', this)"><span class="nav-icon">📅</span><span>Calendar</span></button>
+        <button id="nav-btn-shopping" class="nav-item" onclick="showView('shopping', this)"><span class="nav-icon">🛒</span><span>Shopping</span></button>
+        <button id="nav-btn-monthlybudget" class="nav-item" onclick="showView('monthlybudget', this)"><span class="nav-icon">📊</span><span>Money</span></button>
+        <button id="nav-btn-familyideas" class="nav-item" onclick="showView('familyhub', this); setFamilyHubView('ideas')"><span class="nav-icon">💡</span><span>Family Ideas</span></button>
     </nav>
 
     <!-- Leaflet JS Library for Map -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" onerror="this.onerror=null;this.src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js';"></script>
     <script src="app.js"></script>
 <script>
 // Auth gate handlers
@@ -2008,7 +1998,7 @@ function togglePasswordVisibility() {
 const initialCalendarDate = new Date();
 let currentMonth = initialCalendarDate.getMonth();
 let currentYear = initialCalendarDate.getFullYear();
-let calendarPageMode = localStorage.getItem('fam_cal_page_mode') || 'week';
+let calendarPageMode = ['week','month','handover','occasions'].includes(localStorage.getItem('fam_cal_page_mode')) ? localStorage.getItem('fam_cal_page_mode') : 'week';
 let selectedPopoverDateKey = null;
 
 function getMonday(d) {
@@ -2152,10 +2142,12 @@ function filterItem(itemWho) {
 }
 
 function showView(viewId, navBtn) {
+    if (viewId === 'todo' || viewId === 'familytools') viewId = 'familyhub';
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.bottom-nav .nav-item').forEach(btn => btn.classList.remove('active'));
     document.getElementById(`view-${viewId}`).classList.add('active');
     document.getElementById('top-home-btn')?.classList.toggle('active', viewId === 'dashboard');
+    if (viewId === 'dashboard') document.getElementById('nav-btn-home')?.classList.add('active');
     if (navBtn && navBtn.classList.contains('nav-item')) navBtn.classList.add('active');
     window.scrollTo(0, 0);
 
@@ -2187,24 +2179,19 @@ function handleCategoryChange(val) {
 }
 
 function setCalendarPage(page) {
+    const allowed = ['handover', 'week', 'month', 'occasions'];
+    if (!allowed.includes(page)) page = 'week';
     calendarPageMode = page;
     saveData();
-    const handover = page === 'handover';
-    const week = page === 'week';
-    const month = page === 'month';
-
-    document.getElementById('calendar-handover-panel').style.display = handover ? 'block' : 'none';
-    document.getElementById('calendar-week-panel').style.display = week ? 'block' : 'none';
-    document.getElementById('calendar-events-panel').style.display = month ? 'block' : 'none';
-
-    ['handover','week','month'].forEach(key => {
-        const tab = document.getElementById('cal-tab-' + key);
-        if (tab) tab.classList.toggle('active', key === page);
-    });
-
-    if (week) renderWeeklyPlanner();
-    if (month) renderCalendarMonth();
-    if (handover) renderEnhancementLists();
+    document.getElementById('calendar-handover-panel').style.display = page === 'handover' ? 'block' : 'none';
+    document.getElementById('calendar-week-panel').style.display = page === 'week' ? 'block' : 'none';
+    document.getElementById('calendar-events-panel').style.display = page === 'month' ? 'block' : 'none';
+    document.getElementById('calendar-occasions-panel').style.display = page === 'occasions' ? 'block' : 'none';
+    const picker = document.getElementById('calendar-view-select');
+    if (picker) picker.value = page;
+    if (page === 'week') renderWeeklyPlanner();
+    if (page === 'month') renderCalendarMonth();
+    if (page === 'handover' || page === 'occasions') renderEnhancementLists();
 }
 
 function renderCalendarMonth() {
@@ -2478,6 +2465,19 @@ function saveShopEdit(type, idx, newText) {
     renderDashboard();
 }
 
+function setFamilyHubView(mode) {
+    const tasks = mode !== 'ideas';
+    document.getElementById('family-tasks-panel').style.display = tasks ? 'block' : 'none';
+    document.getElementById('family-ideas-panel').style.display = tasks ? 'none' : 'block';
+    const taskBtn = document.getElementById('family-toggle-tasks');
+    const ideasBtn = document.getElementById('family-toggle-ideas');
+    taskBtn.classList.toggle('active', tasks);
+    ideasBtn.classList.toggle('active', !tasks);
+    taskBtn.setAttribute('aria-pressed', String(tasks));
+    ideasBtn.setAttribute('aria-pressed', String(!tasks));
+    if (!tasks) renderEnhancementLists();
+}
+
 function setShoppingView(mode) {
     const meals = mode === 'meals';
     document.getElementById('shopping-meals-panel').style.display = meals ? 'block' : 'none';
@@ -2623,11 +2623,20 @@ async function initMap() {
     const requestToken = ++mapRequestToken;
     try {
         if (!mapInstance) {
-            mapInstance = L.map(mapContainer).setView([53.858, -1.685], 11);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            // Clear any stale Leaflet state left by a previous interrupted initialisation.
+            if (mapContainer._leaflet_id) {
+                try { mapContainer.innerHTML = ''; delete mapContainer._leaflet_id; } catch (_) {}
+            }
+            mapInstance = L.map(mapContainer, { scrollWheelZoom: false }).setView([53.858, -1.685], 11);
+            const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-            }).addTo(mapInstance);
+                subdomains: 'abc',
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            });
+            tiles.on('tileerror', () => {
+                console.warn('A map tile could not be loaded; Leaflet will retry as tiles become available.');
+            });
+            tiles.addTo(mapInstance);
         }
         await new Promise(resolve => requestAnimationFrame(resolve));
         mapInstance.invalidateSize(true);
@@ -2665,8 +2674,11 @@ async function initMap() {
         mapInstance.invalidateSize(true);
     } catch (error) {
         console.error('Places map initialisation failed:', error);
-        mapContainer.innerHTML = '<div class="map-status">Unable to load the map right now. Please try again.</div>';
-        mapInstance = null;
+        if (mapInstance) {
+            try { mapInstance.remove(); } catch (_) {}
+            mapInstance = null;
+        }
+        mapContainer.innerHTML = '<div class="map-status">The map could not be started. Check your connection, then switch away from Places and back to retry.</div>';
     }
 }
 
