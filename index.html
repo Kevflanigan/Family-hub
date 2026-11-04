@@ -1382,6 +1382,70 @@ nav.bottom-nav, .bottom-nav {
 #family-ideas-panel .tool-section { margin-top:0; }
 @media(max-width:380px){ .calendar-view-picker { gap:6px; } .calendar-view-picker label { font-size:.75rem; } }
 
+
+/* Weekly Family Planner styling matching screenshot 2 */
+.wp-day-card {
+    background: #ffffff;
+    border: 1px solid #e3ebe7;
+    border-left: 4px solid #245b67;
+    border-radius: 18px;
+    padding: 12px 14px 14px 14px;
+    margin-bottom: 12px;
+    box-shadow: 0 3px 12px rgba(31,61,62,.04);
+}
+.wp-day-card.cook-border-dad { border-left-color: var(--dad); }
+.wp-day-card.cook-border-mom { border-left-color: var(--mom); }
+.wp-day-card.cook-border-family { border-left-color: var(--family); }
+
+.wp-day-header {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #1a2e35;
+    margin-bottom: 8px;
+}
+.wp-section-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #2c3e45;
+    margin-bottom: 6px;
+}
+.wp-item-pill {
+    background: #edf5f1;
+    border: 1px solid #e0ebe5;
+    border-radius: 12px;
+    padding: 9px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.92rem;
+    color: var(--text);
+    cursor: pointer;
+    margin-bottom: 6px;
+    transition: background 0.15s ease;
+}
+.wp-item-pill:hover { background: #e3f0ea; }
+.wp-meal-pill { background: #eef6f3; }
+.wp-pill-icon { font-size: 1rem; flex-shrink: 0; }
+.wp-pill-text { font-weight: 600; flex: 1; word-break: break-word; }
+.wp-pill-who { font-weight: 500; color: #607377; font-size: 0.86rem; }
+.wp-empty-note { font-size: 0.82rem; color: var(--muted); font-style: italic; padding: 4px 2px 8px 2px; }
+
+.wp-add-item-btn {
+    width: 100%;
+    background: #f0f6f3;
+    border: 1px solid #dce8e2;
+    border-radius: 12px;
+    padding: 9px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: #2b4c52;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.15s ease;
+}
+.wp-add-item-btn:hover { background: #e3f0ea; }
+
 </style>
 </head>
 <body>
@@ -1471,9 +1535,8 @@ nav.bottom-nav, .bottom-nav {
                 <div class="form-row" style="gap:8px;">
                     <select id="add-category" class="form-select input-half" onchange="handleCategoryChange(this.value)">
                         <option value="calendar">Calendar Event</option>
+                        <option value="events">Family Events</option>
                         <option value="birthday">Birthday 🎂</option>
-                        <option value="foodshop">Food Shopping</option>
-                        <option value="familyshop">Family Shopping</option>
                         <option value="places">Place to Visit</option>
                         <option value="restaurants">Restaurant</option>
                         <option value="cinema">Cinema Film</option>
@@ -2151,7 +2214,7 @@ function showView(viewId, navBtn) {
 }
 
 function handleCategoryChange(val) {
-    const isCal = (val === 'calendar' || val === 'birthday');
+    const isCal = (val === 'calendar' || val === 'birthday' || val === 'events');
     document.getElementById('date-row').style.display = isCal ? 'flex' : 'none';
     document.getElementById('recurring-row').style.display = isCal ? 'flex' : 'none';
     if (val === 'birthday') {
@@ -2907,7 +2970,7 @@ function handleQuickAdd(e) {
     const recLabel = recurring !== 'none' ? ` [${recurring}]` : '';
     const finalTitle = title + recLabel;
 
-    if (category === 'calendar' || category === 'birthday') {
+    if (category === 'calendar' || category === 'birthday' || category === 'events') {
         const eventId = crypto.randomUUID();
         if (endDateVal && endDateVal >= dateVal) {
             let curDate = new Date(dateVal);
@@ -2973,11 +3036,11 @@ function renderWeeklyPlanner() {
         const key = `${yyyy}-${mm}-${dd}`;
         
         const mObj = mealsData.find(m => m.day === day);
-        const meal = mObj?.meal || 'No meal planned';
+        const meal = mObj?.meal || '';
         const cookKey = mObj?.cook || 'dad';
         const cookName = cookKey === 'dad' ? 'Kevin' : (cookKey === 'mom' ? 'Harriet' : 'Family');
         
-        // Get tasks for this specific day (or undated tasks assigned to first day)
+        // Get tasks for this specific day
         const dayTasks = todosData.filter(t => !t.done && filterItem(t.who) && (t.date === key || (!t.date && i === 0)));
 
         const dayEvents = [];
@@ -2991,43 +3054,52 @@ function renderWeeklyPlanner() {
                 }
             });
         });
-        const eventsHtml = dayEvents.map(ev => {
+
+        // Build Events / Reminders rows
+        let eventsRemindersHtml = '';
+        dayEvents.forEach(ev => {
             const whoName = ev.who === 'dad' ? 'Kevin' : (ev.who === 'mom' ? 'Harriet' : 'Family');
             const cleanTitle = (ev.title || 'Calendar event').replace(/\s*\[(yearly|birthday)\]/ig, '');
-            return `
-                <div class="week-day-row" onclick="openDayPopover('${key}', ${d.getDate()})" title="Click to view calendar details">
-                    <span class="week-day-icon">${ev.birthday ? '🎂' : '📅'}</span>
-                    <span class="week-day-content"><strong>${escapeToolText(cleanTitle)}</strong> <small style="color:var(--${ev.who || 'family'}); font-weight:700;">(${whoName})</small></span>
+            eventsRemindersHtml += `
+                <div class="wp-item-pill" onclick="openDayPopover('${key}', ${d.getDate()})">
+                    <span class="wp-pill-icon">${ev.birthday ? '🎂' : '📅'}</span>
+                    <span class="wp-pill-text">${escapeToolText(cleanTitle)} <span class="wp-pill-who">(${whoName})</span></span>
                 </div>
             `;
-        }).join('');
+        });
 
-        let tasksHtml = '';
-        if (dayTasks.length > 0) {
-            tasksHtml = dayTasks.map(t => {
-                const whoName = t.who === 'dad' ? 'Kevin' : (t.who === 'mom' ? 'Harriet' : 'Family');
-                return `
-                    <div class="week-day-row" onclick="jumpToTaskDetails()" title="Click to view task details">
-                        <span class="week-day-icon">☑️</span>
-                        <span class="week-day-content"><strong>${escapeToolText(t.text)}</strong> <small style="color:var(--${t.who}); font-weight:700;">(${whoName})</small></span>
-                    </div>
-                `;
-            }).join('');
+        dayTasks.forEach(t => {
+            const whoName = t.who === 'dad' ? 'Kevin' : (t.who === 'mom' ? 'Harriet' : 'Family');
+            eventsRemindersHtml += `
+                <div class="wp-item-pill" onclick="jumpToTaskDetails()">
+                    <span class="wp-pill-icon">☑️</span>
+                    <span class="wp-pill-text">${escapeToolText(t.text)} <span class="wp-pill-who">(${whoName})</span></span>
+                </div>
+            `;
+        });
+
+        if (!eventsRemindersHtml) {
+            eventsRemindersHtml = `<div class="wp-empty-note">No events or reminders</div>`;
         }
 
+        const formattedDateStr = `${day} · ${d.getDate()} ${d.toLocaleDateString('en-GB', { month: 'short' })}`;
+
         return `
-            <div class="week-day" style="border-left: 4px solid var(--${cookKey});">
-                <div class="week-day-header">
-                    <strong>${day} · ${d.getDate()} ${d.toLocaleDateString('en-GB', { month: 'short' })}</strong>
+            <div class="wp-day-card cook-border-${cookKey}">
+                <div class="wp-day-header">${formattedDateStr}</div>
+                
+                <div class="wp-section-title">Meals 🧑‍🍳</div>
+                <div class="wp-item-pill wp-meal-pill" onclick="showView('shopping', document.getElementById('nav-btn-shopping'))">
+                    <span class="wp-pill-icon">🍽️</span>
+                    <span class="wp-pill-text">${meal ? escapeToolText(meal) : 'No meal planned'} ${meal ? `<span class="wp-pill-who">(${cookName})</span>` : ''}</span>
                 </div>
-                <div class="week-day-details">
-                    <div class="week-day-row" onclick="showView('shopping', document.getElementById('nav-btn-shopping'))" title="Click to view meal plan">
-                        <span class="week-day-icon">🍽️</span>
-                        <span class="week-day-content">${escapeToolText(meal)} <small style="color:var(--${cookKey}); font-weight:700;">(${cookName})</small></span>
-                    </div>
-                    ${eventsHtml}
-                    ${tasksHtml}
+
+                <div class="wp-section-title" style="margin-top:10px;">Events / Reminders</div>
+                <div class="wp-events-container">
+                    ${eventsRemindersHtml}
                 </div>
+
+                <button type="button" class="wp-add-item-btn" onclick="openDayQuickAdd('${key}')">Add Item +</button>
             </div>
         `;
     }).join('');
@@ -3041,6 +3113,13 @@ function renderWeeklyPlanner() {
         const open = todosData.filter(t => !t.done).length;
         summary.textContent = `7-day meal plan · ${events} calendar entries saved · ${open} outstanding to-do(s) · ${householdBillsData.length} household bill(s) tracked.`;
     }
+}
+
+function openDayQuickAdd(dateKey) {
+    toggleQuickAddModal();
+    document.getElementById('add-category').value = 'events';
+    handleCategoryChange('events');
+    document.getElementById('add-date').value = dateKey;
 }
 
 let householdMonthlyBudget = Number(localStorage.getItem('fam_household_monthly_budget')) || 1500;
