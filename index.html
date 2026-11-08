@@ -1863,8 +1863,13 @@ nav.bottom-nav, .bottom-nav {
         <div id="family-tasks-panel">
         <section class="compact-scoped-card">
             <div class="todo-scoped-title">📝 To-Do List</div>
+            <div class="calendar-main-tabs" role="group" aria-label="Family or private to-do list" style="margin:0 0 10px;padding:4px;">
+                <button type="button" id="todo-scope-family" class="cal-main-tab active" onclick="setTodoScope('family')" aria-pressed="true" style="flex:1;">👨‍👩‍👧‍👦 Family</button>
+                <button type="button" id="todo-scope-private" class="cal-main-tab" onclick="setTodoScope('private')" aria-pressed="false" style="flex:1;">🔒 Private</button>
+            </div>
+            <p id="todo-scope-note" class="tool-note" style="margin:0 0 8px;">Family to-do items. These are currently stored in this browser; household syncing is a separate step.</p>
             <div class="compact-scoped-add-group" style="flex-wrap:wrap; gap:6px;">
-                <input type="text" id="todo-quick-input" class="compact-scoped-input" style="flex:2; min-width:140px;" placeholder="Add task..." onkeypress="if(event.key==='Enter') addTodoItem()">
+                <input type="text" id="todo-quick-input" class="compact-scoped-input" style="flex:2; min-width:140px;" placeholder="Add family task..." onkeypress="if(event.key==='Enter') addTodoItem()">
                 <input type="date" id="todo-date-input" class="compact-scoped-input" style="flex:1.2; min-width:130px; padding:2px 6px;" aria-label="Task date">
                 <button class="compact-scoped-add-btn" onclick="addTodoItem()">+</button>
             </div>
@@ -1964,10 +1969,54 @@ nav.bottom-nav, .bottom-nav {
     <!-- Leaflet JS Library for Map -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" onerror="this.onerror=null;this.src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js';"></script>
     <script src="app.js"></script>
+    <!-- Firebase compat SDKs: Authentication and Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script>
+// Firebase initialisation. The web API key identifies the project; access is controlled by Firebase Auth and Firestore Rules.
+const firebaseConfig = {
+    apiKey: "AIzaSyAeLviH8AqXY9BdvRwR6g8YhaTarM00v1Y",
+    authDomain: "family-plan-f5168.firebaseapp.com",
+    databaseURL: "https://family-plan-f5168-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "family-plan-f5168",
+    storageBucket: "family-plan-f5168.firebasestorage.app",
+    messagingSenderId: "114463971604",
+    appId: "1:114463971604:web:164a6cec9efddf89f68a01",
+    measurementId: "G-8YVRJNML2Z"
+};
+let firebaseAuth = null;
+let firebaseDb = null;
+let firebaseUser = null;
+let firebaseReady = false;
+let privateTodosData = [];
+let privateTodosUnsubscribe = null;
+let privateTodosLoaded = false;
+let activeTodoScope = 'family';
+let fpAuthMode = 'signin';
+
+try {
+    if (window.firebase && !firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    if (window.firebase) {
+        firebaseAuth = firebase.auth();
+        firebaseDb = firebase.firestore();
+        firebaseReady = true;
+    }
+} catch (firebaseInitError) {
+    console.error('Firebase could not be initialised:', firebaseInitError);
+}
+
 // Auth gate handlers
+function setAuthMessage(message, isOk = false) {
+    const el = document.getElementById('auth-message');
+    if (!el) return;
+    el.textContent = message || '';
+    el.classList.toggle('ok', !!isOk);
+}
+
 function fpSetAuthMode(mode) {
-    const isSignin = mode === 'signin';
+    fpAuthMode = mode === 'signup' ? 'signup' : 'signin';
+    const isSignin = fpAuthMode === 'signin';
     document.getElementById('auth-signin-tab').classList.toggle('active', isSignin);
     document.getElementById('auth-signup-tab').classList.toggle('active', !isSignin);
     const nameEl = document.getElementById('auth-name');
@@ -1975,57 +2024,129 @@ function fpSetAuthMode(mode) {
     if (nameEl && nameLabel) {
         nameEl.hidden = isSignin;
         nameLabel.hidden = isSignin;
-        if (!isSignin) nameEl.setAttribute('required', 'true');
-        else nameEl.removeAttribute('required');
+        if (isSignin) nameEl.removeAttribute('required');
+        else nameEl.setAttribute('required', 'required');
     }
     document.getElementById('auth-submit').textContent = isSignin ? 'Sign in' : 'Create account';
+    const password = document.getElementById('auth-password');
+    if (password) password.autocomplete = isSignin ? 'current-password' : 'new-password';
+    setAuthMessage('');
 }
 window.fpSetAuthMode = fpSetAuthMode;
 
-function fpResetPassword() {
-    alert('Password reset instructions sent to your email.');
+async function fpResetPassword() {
+    if (!firebaseReady || !firebaseAuth) {
+        setAuthMessage('Firebase is not available. Please refresh and try again.');
+        return;
+    }
+    const email = document.getElementById('auth-email').value.trim();
+    if (!email) {
+        setAuthMessage('Enter your email address first, then select Forgot password.');
+        return;
+    }
+    try {
+        await firebaseAuth.sendPasswordResetEmail(email);
+        setAuthMessage('Password reset email sent. Check your inbox.', true);
+    } catch (error) {
+        setAuthMessage(error.message || 'Could not send the password reset email.');
+    }
 }
 window.fpResetPassword = fpResetPassword;
 
-function fpSignOut() {
-    localStorage.removeItem('fam_logged_in');
-    document.getElementById('auth-gate').style.display = 'flex';
-    document.getElementById('auth-account-panel').style.display = 'block';
-    document.getElementById('household-panel').classList.remove('visible');
+async function fpSignOut() {
+    try {
+        if (firebaseAuth) await firebaseAuth.signOut();
+        localStorage.removeItem('fam_logged_in');
+        localStorage.removeItem('fam_user_email');
+    } catch (error) {
+        showToast('Sign out failed. Please try again.');
+        console.error(error);
+    }
 }
 window.fpSignOut = fpSignOut;
 
 function fpCreateHousehold() {
     const name = document.getElementById('household-name').value.trim();
     if (!name) { alert('Please enter a household name'); return; }
+    if (!firebaseUser) { alert('Please sign in before creating a household.'); return; }
+    // Household creation remains local-only at this stage; Firestore household sync is a separate next step.
     localStorage.setItem('fam_household_name', name);
     localStorage.setItem('fam_logged_in', 'true');
     document.getElementById('auth-gate').style.display = 'none';
-    showToast('Household created!');
+    showToast('Household saved on this device');
 }
 window.fpCreateHousehold = fpCreateHousehold;
 
 function fpJoinHousehold() {
     const id = document.getElementById('household-id').value.trim();
     if (!id) { alert('Please enter a household ID'); return; }
+    if (!firebaseUser) { alert('Please sign in before joining a household.'); return; }
+    // Household joining remains local-only at this stage; Firestore membership is a separate next step.
     localStorage.setItem('fam_household_id', id);
     localStorage.setItem('fam_logged_in', 'true');
     document.getElementById('auth-gate').style.display = 'none';
-    showToast('Joined household!');
+    showToast('Household ID saved on this device');
 }
 window.fpJoinHousehold = fpJoinHousehold;
 
-document.getElementById('firebase-auth-form').addEventListener('submit', function(e) {
+document.getElementById('firebase-auth-form').addEventListener('submit', async function(e) {
     e.preventDefault();
-    const email = document.getElementById('auth-email').value;
-    localStorage.setItem('fam_user_email', email);
-    document.getElementById('auth-account-panel').style.display = 'none';
-    document.getElementById('household-panel').classList.add('visible');
-    document.getElementById('auth-signed-in-email').textContent = email;
+    if (!firebaseReady || !firebaseAuth) {
+        setAuthMessage('Firebase could not be loaded. Check your internet connection and refresh the page.');
+        return;
+    }
+    const email = document.getElementById('auth-email').value.trim();
+    const password = document.getElementById('auth-password').value;
+    const name = document.getElementById('auth-name').value.trim();
+    const submit = document.getElementById('auth-submit');
+    submit.disabled = true;
+    submit.textContent = fpAuthMode === 'signup' ? 'Creating account…' : 'Signing in…';
+    setAuthMessage('');
+    try {
+        if (fpAuthMode === 'signup') {
+            if (!name) throw new Error('Please enter your name.');
+            const credential = await firebaseAuth.createUserWithEmailAndPassword(email, password);
+            await credential.user.updateProfile({ displayName: name });
+        } else {
+            await firebaseAuth.signInWithEmailAndPassword(email, password);
+        }
+        localStorage.setItem('fam_user_email', email);
+    } catch (error) {
+        setAuthMessage(error.message || 'Authentication failed. Please try again.');
+    } finally {
+        submit.disabled = false;
+        submit.textContent = fpAuthMode === 'signup' ? 'Create account' : 'Sign in';
+    }
 });
 
-if (localStorage.getItem('fam_logged_in') === 'true') {
-    document.getElementById('auth-gate').style.display = 'none';
+if (firebaseReady && firebaseAuth) {
+    firebaseAuth.onAuthStateChanged(async user => {
+        firebaseUser = user || null;
+        if (user) {
+            localStorage.setItem('fam_user_email', user.email || '');
+            document.getElementById('auth-signed-in-email').textContent = user.email || '';
+            document.getElementById('auth-account-panel').style.display = 'none';
+            if (localStorage.getItem('fam_logged_in') === 'true') {
+                document.getElementById('auth-gate').style.display = 'none';
+            } else {
+                document.getElementById('household-panel').classList.add('visible');
+                document.getElementById('auth-gate').style.display = 'flex';
+            }
+            await loadPrivateTodos(user.uid);
+        } else {
+            if (privateTodosUnsubscribe) privateTodosUnsubscribe();
+            privateTodosUnsubscribe = null;
+            privateTodosData = [];
+            privateTodosLoaded = false;
+            localStorage.removeItem('fam_logged_in');
+            document.getElementById('auth-gate').style.display = 'flex';
+            document.getElementById('auth-account-panel').style.display = 'block';
+            document.getElementById('household-panel').classList.remove('visible');
+            renderTodos();
+        }
+    });
+} else {
+    setAuthMessage('Firebase could not be loaded. Authentication and private lists are unavailable.');
 }
 
 function togglePasswordVisibility() {
@@ -2771,14 +2892,152 @@ function renderRestaurantsView() {
     }).join('');
 }
 
+function setTodoScope(scope) {
+    activeTodoScope = scope === 'private' ? 'private' : 'family';
+    const familyButton = document.getElementById('todo-scope-family');
+    const privateButton = document.getElementById('todo-scope-private');
+    if (familyButton) {
+        familyButton.classList.toggle('active', activeTodoScope === 'family');
+        familyButton.setAttribute('aria-pressed', String(activeTodoScope === 'family'));
+    }
+    if (privateButton) {
+        privateButton.classList.toggle('active', activeTodoScope === 'private');
+        privateButton.setAttribute('aria-pressed', String(activeTodoScope === 'private'));
+    }
+    const note = document.getElementById('todo-scope-note');
+    const input = document.getElementById('todo-quick-input');
+    if (note) note.textContent = activeTodoScope === 'private'
+        ? 'Your personal items are stored under your signed-in account and protected by Firestore security rules.'
+        : 'Family to-do items. These are currently stored in this browser; household syncing is a separate step.';
+    if (input) input.placeholder = activeTodoScope === 'private' ? 'Add a private idea…' : 'Add family task…';
+    renderTodos();
+}
+window.setTodoScope = setTodoScope;
+
+async function loadPrivateTodos(uid) {
+    if (!firebaseDb || !uid) return;
+    if (privateTodosUnsubscribe) privateTodosUnsubscribe();
+    privateTodosLoaded = false;
+    privateTodosData = [];
+    renderTodos();
+    const collection = firebaseDb.collection('users').doc(uid).collection('privateTodos');
+    privateTodosUnsubscribe = collection.onSnapshot(snapshot => {
+        privateTodosData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+            .sort((a, b) => String(a.createdAt || '').localeCompare(String(b.createdAt || '')));
+        privateTodosLoaded = true;
+        renderTodos();
+    }, error => {
+        console.error('Private to-do list could not be loaded:', error);
+        privateTodosLoaded = true;
+        privateTodosData = [];
+        renderTodos();
+        showToast('Private list unavailable — check Firestore security rules');
+    });
+}
+
+function privateTodosCollection() {
+    if (!firebaseDb || !firebaseUser) return null;
+    return firebaseDb.collection('users').doc(firebaseUser.uid).collection('privateTodos');
+}
+
+async function addPrivateTodo(text, date) {
+    const collection = privateTodosCollection();
+    if (!collection) {
+        showToast('Sign in to use your private list');
+        return;
+    }
+    try {
+        await collection.add({
+            text,
+            date: date || '',
+            done: false,
+            createdAt: new Date().toISOString(),
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        showToast('Private item saved');
+    } catch (error) {
+        console.error('Private item save failed:', error);
+        showToast('Could not save private item — check Firestore rules');
+    }
+}
+
+async function togglePrivateTodo(id, done) {
+    const collection = privateTodosCollection();
+    if (!collection) return;
+    try {
+        await collection.doc(id).update({ done: !!done, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+    } catch (error) {
+        console.error(error);
+        showToast('Could not update private item');
+    }
+}
+
+async function editPrivateTodo(id) {
+    const item = privateTodosData.find(todo => todo.id === id);
+    const collection = privateTodosCollection();
+    if (!item || !collection) return;
+    const updatedText = prompt('Edit private item', item.text || '');
+    if (updatedText === null || !updatedText.trim()) return;
+    try {
+        await collection.doc(id).update({ text: updatedText.trim(), updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+    } catch (error) {
+        console.error(error);
+        showToast('Could not edit private item');
+    }
+}
+
+async function deletePrivateTodo(id) {
+    const collection = privateTodosCollection();
+    if (!collection || !confirm('Delete this private item?')) return;
+    try {
+        await collection.doc(id).delete();
+    } catch (error) {
+        console.error(error);
+        showToast('Could not delete private item');
+    }
+}
+
+function renderPrivateTodos(container) {
+    if (!firebaseUser) {
+        container.innerHTML = '<div class="list-empty">Sign in to see your private list. It is never shared with the family list.</div>';
+        return;
+    }
+    if (!privateTodosLoaded) {
+        container.innerHTML = '<div class="list-empty">Loading your private list…</div>';
+        return;
+    }
+    if (!privateTodosData.length) {
+        container.innerHTML = '<div class="list-empty">Your private list is empty. Add a present idea or personal reminder above.</div>';
+        return;
+    }
+    container.innerHTML = privateTodosData.map(item => `
+        <div class="todo-task-item ${item.done ? 'completed' : ''}">
+            <div class="todo-task-main">
+                <input type="checkbox" class="compact-scoped-checkbox" ${item.done ? 'checked' : ''} onchange="togglePrivateTodo('${item.id}', this.checked)" aria-label="Mark private item complete">
+                <span class="todo-item-label">${escapeToolText(item.text || '')}</span>
+            </div>
+            <div class="todo-task-controls">
+                ${item.date ? `<span class="date-tag" style="cursor:default;">${escapeToolText(item.date)}</span>` : ''}
+                <button class="action-btn" onclick="editPrivateTodo('${item.id}')" aria-label="Edit private item">✏️</button>
+                <button class="action-btn delete-btn" onclick="deletePrivateTodo('${item.id}')" aria-label="Delete private item">✕</button>
+            </div>
+        </div>
+    `).join('');
+}
+
 function addTodoItem() {
     const input = document.getElementById('todo-quick-input');
     const dateInput = document.getElementById('todo-date-input');
     if (!input || !input.value.trim()) return;
     const chosenDate = dateInput ? dateInput.value : '';
-    todosData.push({ text: input.value.trim(), who: currentUser, date: chosenDate, done: false, isEditing: false, quickAdded: true });
+    const text = input.value.trim();
     input.value = '';
     if (dateInput) dateInput.value = '';
+    if (activeTodoScope === 'private') {
+        addPrivateTodo(text, chosenDate);
+        return;
+    }
+    todosData.push({ text, who: currentUser, date: chosenDate, done: false, isEditing: false, quickAdded: true });
     saveData();
     renderTodos();
     renderDashboard();
@@ -2810,18 +3069,22 @@ function saveTodoEdit(idx, newText) {
 
 function renderTodos() {
     const container = document.getElementById('todo-list-container');
+    if (!container) return;
+    if (activeTodoScope === 'private') {
+        renderPrivateTodos(container);
+        return;
+    }
     const filtered = todosData.filter(t => filterItem(t.who));
-    
-    container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No tasks remaining.</div>` : todosData.map((t, idx) => {
+    container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No family tasks yet.</div>` : todosData.map((t, idx) => {
         if (!filterItem(t.who)) return '';
         const displayWho = t.who === 'dad' ? 'Kevin' : (t.who === 'mom' ? 'Harriet' : 'Family');
         return `
             <div class="todo-task-item ${t.done ? 'completed' : ''} ${t.quickAdded ? 'quick-added-task' : ''}">
                 <div class="todo-task-main">
                     <input type="checkbox" class="compact-scoped-checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodoCheck(${idx})">
-                    ${t.isEditing ? 
-                        `<input type="text" class="compact-scoped-input" value="${t.text}" onkeypress="if(event.key==='Enter') saveTodoEdit(${idx}, this.value)" onblur="saveTodoEdit(${idx}, this.value)" autofocus>` : 
-                        `<span class="todo-item-label">${t.text}</span>`
+                    ${t.isEditing ?
+                        `<input type="text" class="compact-scoped-input" value="${escapeToolText(t.text || '')}" onkeypress="if(event.key==='Enter') saveTodoEdit(${idx}, this.value)" onblur="saveTodoEdit(${idx}, this.value)" autofocus>` :
+                        `<span class="todo-item-label">${escapeToolText(t.text || '')}</span>`
                     }
                 </div>
                 <div class="todo-task-controls">
@@ -3281,6 +3544,7 @@ if(document.getElementById('handover-date')) document.getElementById('handover-d
 if(document.getElementById('unplanned-date')) document.getElementById('unplanned-date').value = new Date().toISOString().slice(0,10);
 
 updateHeaderDisplay();
+setTodoScope('family');
 renderFinanceOverview();
 renderAllViews();
 
