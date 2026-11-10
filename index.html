@@ -1476,6 +1476,22 @@ nav.bottom-nav, .bottom-nav {
     letter-spacing: -.025em;
     color: #263b42;
 }
+
+.household-management-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 12px;background:#f7faf8;border:1px solid #e5eee9;border-radius:12px;margin:10px 0}
+.household-management-meta span{font-size:.78rem;color:var(--muted);font-weight:700}
+.household-management-meta code{font-size:.76rem;overflow-wrap:anywhere;flex:1;min-width:100px}
+.household-management-list{display:flex;flex-direction:column;gap:9px;margin:8px 0 16px}
+.household-member-card,.household-request-card{border:1px solid #e3ebe7;background:#fbfdfb;border-radius:12px;padding:11px;display:flex;flex-direction:column;gap:8px}
+.household-member-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.household-member-top strong{font-size:.9rem;overflow-wrap:anywhere}
+.household-permission-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.household-permission-grid label{font-size:.72rem;color:var(--muted);font-weight:700;display:flex;flex-direction:column;gap:3px}
+.household-permission-grid select,.household-role-select{min-width:0;width:100%;border:1px solid #dce6e1;background:#fff;border-radius:8px;padding:7px;font-size:.78rem;color:var(--text)}
+.household-request-actions{display:flex;gap:8px}
+.household-request-actions button{flex:1}
+#household-owner-controls h4{font-size:.88rem;margin:14px 0 6px;color:#344b50}
+@media(max-width:360px){.household-permission-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -1903,7 +1919,7 @@ nav.bottom-nav, .bottom-nav {
                 <button type="button" id="todo-scope-family" class="cal-main-tab active" onclick="setTodoScope('family')" aria-pressed="true" style="flex:1;">👨‍👩‍👧‍👦 Family</button>
                 <button type="button" id="todo-scope-private" class="cal-main-tab" onclick="setTodoScope('private')" aria-pressed="false" style="flex:1;">🔒 Private</button>
             </div>
-            <p id="todo-scope-note" class="tool-note" style="margin:0 0 8px;">Family to-do items. These are currently stored in this browser; household syncing is a separate step.</p>
+            <p id="todo-scope-note" class="tool-note" style="margin:0 0 8px;">Family to-do items are shared with household members according to their permissions.</p>
             <div class="compact-scoped-add-group" style="flex-wrap:wrap; gap:6px;">
                 <input type="text" id="todo-quick-input" class="compact-scoped-input" style="flex:2; min-width:140px;" placeholder="Add family task..." onkeypress="if(event.key==='Enter') addTodoItem()">
                 <input type="date" id="todo-date-input" class="compact-scoped-input" style="flex:1.2; min-width:130px; padding:2px 6px;" aria-label="Task date">
@@ -1979,6 +1995,16 @@ nav.bottom-nav, .bottom-nav {
     <!-- Account page -->
     <div id="view-account" class="view">
         <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Manage your Family Plan backup files here.</p></section>
+        <section class="tool-section" id="household-management-section">
+            <h3>🏡 Shared household</h3>
+            <p class="tool-note" id="household-sync-status">Sign in and connect to a household to synchronise family information across devices.</p>
+            <div class="household-management-meta"><span>Household ID</span><code id="household-id-display">Not connected</code><button type="button" class="tool-btn secondary" onclick="fpCopyHouseholdId()">Copy ID</button><button type="button" class="tool-btn secondary" onclick="fpSignOut()">Sign out</button></div>
+            <div id="household-owner-controls" hidden>
+                <h4 id="household-requests-heading">Join requests</h4><div id="household-requests-list" class="household-management-list"><p class="tool-note">No pending requests.</p></div>
+                <h4>Members & permissions</h4><div id="household-members-list" class="household-management-list"><p class="tool-note">Loading members…</p></div>
+            </div>
+            <p class="tool-note" id="household-member-note">Your private to-do list remains private to your account.</p>
+        </section>
         <section class="tool-section">
             <h3>⚙️ Account & data backup</h3>
             <p class="tool-note">Export a backup of your planner data or restore it from a Family Plan JSON backup. Import replaces the current data on this browser, so export a backup first.</p>
@@ -2283,7 +2309,504 @@ function toggleQuickAddModal() {
     const modal = document.getElementById('quick-add-modal');
     modal.classList.toggle('active');
     if (modal.classList.contains('active')) {
-        document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
+        
+
+// ---------------------------------------------------------------------------
+// FIRESTORE HOUSEHOLD DATA LAYER
+// Shared records are stored as individual documents to avoid replacing an
+// entire household array when one person changes a single item.
+// ---------------------------------------------------------------------------
+const FP_EXISTING_HOUSEHOLD_ID = 'WPUTr7S3VpT2rctN3kCD';
+const FP_SHARED_GROUPS = {
+  finance: ['bills','monthlyBudgets','financeSettings','renewals','unplannedSpending'],
+  planner: ['meals','calendar','handover','occasions'],
+  tasks: ['todos','chores'],
+  shopping: ['foodshop','familyshop','wishlist'],
+  places: ['places','restaurants','cinema','home','addressBook'],
+  ideas: ['ideas']
+};
+const FP_SHARED_CATEGORIES = Object.values(FP_SHARED_GROUPS).flat();
+const FP_GROUP_LABELS = {finance:'Money & bills',planner:'Calendar & planner',tasks:'To-do & chores',shopping:'Shopping & lists',places:'Address book & places',ideas:'Family ideas'};
+const fpDefaultPermissions = () => Object.fromEntries(FP_SHARED_CATEGORIES.map(k => [k, 'Contribute']));
+let fpHouseholdId = null;
+let fpMemberData = null;
+let fpSharedUnsubs = {};
+let fpMemberUnsub = null;
+let fpMembersUnsub = null;
+let fpRequestsUnsub = null;
+let fpJoinRequestUnsub = null;
+let fpSharedReady = {};
+let fpSharedDirty = {};
+let fpSharedBaseline = {};
+let fpSharedFlushTimers = {};
+let fpHouseholdConnecting = false;
+let fpHouseholdOwner = false;
+let fpCurrentJoinRequest = null;
+
+function fpIsOwnerOrParent(){ return !!fpMemberData && ['owner','parent'].includes(String(fpMemberData.role||'').toLowerCase()); }
+function fpCanReadCategory(category){
+  if (!fpHouseholdId || !fpMemberData) return false;
+  if (fpIsOwnerOrParent()) return true;
+  const permission = fpMemberData.permissions && fpMemberData.permissions[category];
+  return permission === 'View only' || permission === 'Contribute';
+}
+function fpCanWriteCategory(category){
+  if (!fpHouseholdId || !fpMemberData) return false;
+  if (fpIsOwnerOrParent()) return true;
+  return !!fpMemberData.permissions && fpMemberData.permissions[category] === 'Contribute';
+}
+function fpEnsureItemId(category,item,index){
+  if (category === 'meals') item.id = item.id || String(item.day || index).toLowerCase();
+  else if (category === 'chores') item.id = item.id || String(item.kid || index).toLowerCase().replace(/[^a-z0-9_-]/g,'_');
+  else if (category === 'calendar') item.id = item.id || item.eventId || (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}_${index}`);
+  else item.id = item.id || (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}_${index}_${Math.random().toString(36).slice(2,7)}`);
+  if (category === 'calendar') item.eventId = item.eventId || item.id;
+  return item;
+}
+function fpGetCategoryItems(category){
+  if(category==='meals') return mealsData;
+  if(category==='foodshop') return foodShopData;
+  if(category==='familyshop') return familyShopData;
+  if(category==='chores') return choresData;
+  if(category==='wishlist') return wishlistData;
+  if(category==='todos') return todosData;
+  if(category==='calendar') return Object.entries(calendarEvents||{}).flatMap(([dateKey,items])=>(Array.isArray(items)?items:[]).map(item=>{item.eventId=item.eventId||item.id||(crypto.randomUUID?crypto.randomUUID():`${Date.now()}_${Math.random().toString(36).slice(2,7)}`);item.id=item.id||item.eventId;return {...item,dateKey};}));
+  if(category==='bills') return householdBillsData;
+  if(category==='monthlyBudgets') return monthlyBudgetsData;
+  if(category==='renewals') return renewalsData;
+  if(category==='ideas') return familyIdeasData;
+  if(category==='handover') return handoverData;
+  if(category==='occasions') return occasionsData;
+  if(category==='addressBook') return addressBookData;
+  if(category==='unplannedSpending') return unplannedSpendingData;
+  if(category==='places') return destinationsData.places||[];
+  if(category==='restaurants') return destinationsData.restaurants||[];
+  if(category==='cinema') return destinationsData.cinema||[];
+  if(category==='home') return destinationsData.home||[];
+  if(category==='financeSettings') return [{id:'monthlyBudget',value:Number(householdMonthlyBudget)||0}];
+  return [];
+}
+function fpSetCategoryItems(category,items){
+  if(category==='meals') mealsData=items;
+  else if(category==='foodshop') foodShopData=items;
+  else if(category==='familyshop') familyShopData=items;
+  else if(category==='chores'){const defaults=[{kid:'Leo',chores:[],id:'leo'},{kid:'Mia',chores:[],id:'mia'}];const byKid=new Map(items.map(x=>[String(x.kid||'').toLowerCase(),x]));choresData=defaults.map(x=>({...x,...(byKid.get(x.kid.toLowerCase())||{})}));items.filter(x=>!defaults.some(d=>String(d.kid).toLowerCase()===String(x.kid||'').toLowerCase())).forEach(x=>choresData.push(x));}
+  else if(category==='wishlist') wishlistData=items;
+  else if(category==='todos') todosData=items;
+  else if(category==='calendar'){
+    const grouped={}; items.forEach(item=>{const dateKey=item.dateKey||''; if(!dateKey)return; const clean={...item}; delete clean.dateKey; if(!grouped[dateKey])grouped[dateKey]=[]; grouped[dateKey].push(clean);}); calendarEvents=grouped;
+  }
+  else if(category==='bills') householdBillsData=items;
+  else if(category==='monthlyBudgets') monthlyBudgetsData=items;
+  else if(category==='renewals') renewalsData=items;
+  else if(category==='ideas') familyIdeasData=items;
+  else if(category==='handover') handoverData=items;
+  else if(category==='occasions') occasionsData=items;
+  else if(category==='addressBook') addressBookData=items;
+  else if(category==='unplannedSpending') unplannedSpendingData=items;
+  else if(['places','restaurants','cinema','home'].includes(category)) destinationsData[category]=items;
+  else if(category==='financeSettings'){
+    const budget=items.find(x=>x.id==='monthlyBudget');
+    householdMonthlyBudget=budget ? (Number(budget.value)||0) : 1500;
+    localStorage.setItem('fam_household_monthly_budget',String(householdMonthlyBudget));
+  }
+}
+function fpNormaliseCategoryItems(category){
+  const items=fpGetCategoryItems(category);
+  items.forEach((item,index)=>fpEnsureItemId(category,item,index));
+  return items;
+}
+function fpMapItems(items){return new Map(items.map(item=>[String(item.id),JSON.stringify(item)]));}
+function fpHasMeaningfulLocalItems(category,items){
+  if(category==='meals')return items.some(x=>String(x.meal||'').trim());
+  if(category==='chores')return items.some(x=>Array.isArray(x.chores)&&x.chores.length>0);
+  if(category==='financeSettings')return items.some(x=>Number(x.value)!==1500);
+  return items.length>0;
+}
+function fpCaptureLocalBaseline(){
+  FP_SHARED_CATEGORIES.forEach(category=>{fpNormaliseCategoryItems(category);fpSharedBaseline[category]=fpMapItems(fpGetCategoryItems(category));});
+}
+function fpPersistLocalOnly(){
+  if(typeof fpOriginalSaveData==='function') fpOriginalSaveData();
+  localStorage.setItem('fam_household_monthly_budget',String(Number(householdMonthlyBudget)||0));
+}
+function fpMarkSharedChanges(){
+  if(!fpHouseholdId || !fpMemberData || fpHouseholdConnecting) return;
+  FP_SHARED_CATEGORIES.forEach(category=>{
+    if(!fpSharedReady[category]) return;
+    if(!fpCanWriteCategory(category)){
+      const currentMap=fpMapItems(fpNormaliseCategoryItems(category));
+      const baseline=fpSharedBaseline[category] || new Map();
+      const changed=currentMap.size!==baseline.size || Array.from(currentMap.entries()).some(([id,json])=>baseline.get(id)!==json);
+      if(changed){const restored=Array.from(baseline.values()).map(json=>JSON.parse(json));fpSetCategoryItems(category,restored);fpSharedBaseline[category]=fpMapItems(fpGetCategoryItems(category));fpPersistLocalOnly();renderAllViews();showToast('This household section is view-only or unavailable for your account.');}
+      return;
+    }
+    const current=fpNormaliseCategoryItems(category);
+    const currentMap=fpMapItems(current);
+    const baseline=fpSharedBaseline[category] || new Map();
+    const dirty=fpSharedDirty[category] || (fpSharedDirty[category]=new Map());
+    baseline.forEach((json,id)=>{if(!currentMap.has(id)) dirty.set(id,null);});
+    current.forEach(item=>{const id=String(item.id),json=JSON.stringify(item);if(baseline.get(id)!==json)dirty.set(id,item);});
+    fpSharedBaseline[category]=currentMap;
+    fpScheduleSharedFlush(category);
+  });
+}
+function fpScheduleSharedFlush(category){
+  if(fpSharedFlushTimers[category]) clearTimeout(fpSharedFlushTimers[category]);
+  fpSharedFlushTimers[category]=setTimeout(()=>fpFlushSharedCategory(category),180);
+}
+async function fpFlushSharedCategory(category){
+  const dirty=fpSharedDirty[category];
+  if(!dirty || !dirty.size || !fpSharedReady[category] || !fpCanWriteCategory(category) || !fpHouseholdId) return;
+  const sent=Array.from(dirty.entries());
+  try{
+    const orderMap=new Map(fpGetCategoryItems(category).map((item,index)=>[String(item.id),index]));
+    for(let start=0;start<sent.length;start+=450){
+      const batch=firebaseDb.batch();
+      sent.slice(start,start+450).forEach(([id,item])=>{
+        const ref=firebaseDb.collection('households').doc(fpHouseholdId).collection('sharedData').doc(category).collection('items').doc(id);
+        if(item===null) batch.delete(ref);
+        else {const payload={...item,sortOrder:orderMap.get(String(id))??0,updatedBy:firebaseUser.uid,updatedAt:firebase.firestore.FieldValue.serverTimestamp()};batch.set(ref,payload);}
+      });
+      await batch.commit();
+    }
+    sent.forEach(([id,item])=>{
+      const latest=dirty.get(id);
+      if((item===null && latest===null) || (item!==null && latest!==null && JSON.stringify(item)===JSON.stringify(latest))) dirty.delete(id);
+    });
+  }catch(error){
+    console.error(`Shared ${category} sync failed:`,error);
+    showToast(`Could not sync ${FP_GROUP_LABELS[Object.keys(FP_SHARED_GROUPS).find(g=>FP_SHARED_GROUPS[g].includes(category))]||category}. Check household permissions.`);
+  }
+}
+function fpApplySnapshot(category,snapshot,isInitial){
+  const remote=snapshot.docs.map(doc=>({id:doc.id,...doc.data()})).sort((a,b)=>(Number(a.sortOrder)||0)-(Number(b.sortOrder)||0)||String(a.id).localeCompare(String(b.id)));
+  const dirty=fpSharedDirty[category] || new Map();
+  if(isInitial && snapshot.empty && String(fpMemberData?.role||'').toLowerCase()==='owner'){
+    const local=fpNormaliseCategoryItems(category);
+    if(local.length){
+      local.forEach(item=>dirty.set(String(item.id),item));
+      fpSharedDirty[category]=dirty;
+      fpSharedReady[category]=true;
+      fpSharedBaseline[category]=fpMapItems(local);
+      fpScheduleSharedFlush(category);
+      return;
+    }
+  }
+  const merged=remote.filter(item=>!dirty.has(String(item.id)));
+  dirty.forEach((item,id)=>{if(item!==null) merged.push(item);});
+  fpSetCategoryItems(category,merged);
+  fpSharedReady[category]=true;
+  fpSharedBaseline[category]=fpMapItems(fpGetCategoryItems(category));
+  fpPersistLocalOnly();
+  renderAllViews();
+  if(dirty.size) fpScheduleSharedFlush(category);
+}
+function fpRefreshCategoryAccess(){
+  FP_SHARED_CATEGORIES.forEach(category=>{
+    const canRead=fpCanReadCategory(category);
+    if(!canRead && fpSharedUnsubs[category]){fpSharedUnsubs[category]();delete fpSharedUnsubs[category];fpSharedReady[category]=true;fpSharedDirty[category]=new Map();fpSetCategoryItems(category,[]);fpSharedBaseline[category]=new Map();fpPersistLocalOnly();}
+    else if(canRead && !fpSharedUnsubs[category]){
+      const ref=firebaseDb.collection('households').doc(fpHouseholdId).collection('sharedData').doc(category).collection('items');
+      let initial=true;fpSharedUnsubs[category]=ref.onSnapshot(snapshot=>{const wasInitial=initial;initial=false;fpApplySnapshot(category,snapshot,wasInitial);},error=>{console.error(error);showToast(`Could not load shared ${category}`);});
+    }
+  });
+}
+function fpStopSharedListeners(){
+  Object.values(fpSharedUnsubs).forEach(unsub=>{try{unsub();}catch(e){}});
+  fpSharedUnsubs={}; fpSharedReady={}; fpSharedDirty={}; fpSharedBaseline={};
+  Object.values(fpSharedFlushTimers).forEach(clearTimeout); fpSharedFlushTimers={};
+  if(fpMembersUnsub){fpMembersUnsub();fpMembersUnsub=null;}
+  if(fpRequestsUnsub){fpRequestsUnsub();fpRequestsUnsub=null;}
+  if(fpMemberUnsub){fpMemberUnsub();fpMemberUnsub=null;}
+}
+function fpAttachSharedListeners(){
+  fpStopSharedListeners();
+  if(!fpHouseholdId || !fpMemberData) return;
+  fpCaptureLocalBaseline();
+  FP_SHARED_CATEGORIES.forEach(category=>{
+    if(!fpCanReadCategory(category)){
+      fpSetCategoryItems(category,[]); fpSharedReady[category]=true;
+      fpSharedBaseline[category]=new Map();
+      return;
+    }
+    const ref=firebaseDb.collection('households').doc(fpHouseholdId).collection('sharedData').doc(category).collection('items');
+    let initial=true;
+    fpSharedUnsubs[category]=ref.onSnapshot(snapshot=>{
+      const wasInitial=initial; initial=false;
+      fpApplySnapshot(category,snapshot,wasInitial);
+    },error=>{console.error(`Could not read shared ${category}:`,error);showToast(`Could not load shared ${category}`);});
+  });
+  if(fpIsOwnerOrParent()){
+    const householdRef=firebaseDb.collection('households').doc(fpHouseholdId);
+    fpMembersUnsub=householdRef.collection('members').onSnapshot(s=>fpRenderMembers(s));
+    if(String(fpMemberData.role||'').toLowerCase()==='owner') fpRequestsUnsub=householdRef.collection('joinRequests').where('status','==','pending').onSnapshot(s=>fpRenderJoinRequests(s));
+  }
+  const membershipRef=firebaseDb.collection('households').doc(fpHouseholdId).collection('members').doc(firebaseUser.uid);
+  fpMemberUnsub=membershipRef.onSnapshot(s=>{
+    if(!s.exists){fpStopSharedListeners();const oldHouseholdId=fpHouseholdId;fpHouseholdId=null;fpMemberData=null;localStorage.removeItem('fam_logged_in');if(oldHouseholdId)firebaseDb.collection('users').doc(firebaseUser.uid).update({householdId:null,updatedAt:firebase.firestore.FieldValue.serverTimestamp()}).catch(error=>console.warn('Could not clear removed household link:',error));FP_SHARED_CATEGORIES.forEach(category=>fpSetCategoryItems(category,[]));fpPersistLocalOnly();fpShowHouseholdGate('Your household membership is no longer active.');return;}
+    const next={uid:firebaseUser.uid,...s.data()};
+    if(JSON.stringify(next)!==JSON.stringify(fpMemberData)){fpMemberData=next;fpHouseholdOwner=fpIsOwnerOrParent();fpRefreshCategoryAccess();fpUpdateHouseholdPanel();}
+  });
+  fpUpdateHouseholdPanel();
+}
+function fpUpdateHouseholdPanel(){
+  const id=document.getElementById('household-id-display'); if(id)id.textContent=fpHouseholdId||'Not connected';
+  const status=document.getElementById('household-sync-status');
+  if(status) status.textContent=fpHouseholdId ? `Connected to ${fpHouseholdName||'your household'}. Shared changes sync automatically across members' devices.` : 'Sign in and connect to a household to synchronise family information across devices.';
+  const controls=document.getElementById('household-owner-controls'); if(controls)controls.hidden=!fpIsOwnerOrParent();
+  const isOwner=String(fpMemberData?.role||'').toLowerCase()==='owner';
+  const requestsHeading=document.getElementById('household-requests-heading');if(requestsHeading)requestsHeading.hidden=!isOwner;
+  const requestsList=document.getElementById('household-requests-list');if(requestsList)requestsList.hidden=!isOwner;
+}
+let fpHouseholdName='';
+function fpCopyHouseholdId(){if(!fpHouseholdId)return showToast('No household is connected');if(navigator.clipboard?.writeText)navigator.clipboard.writeText(fpHouseholdId).then(()=>showToast('Household ID copied')).catch(()=>showToast('Could not copy household ID'));else showToast('Household ID: '+fpHouseholdId);}
+window.fpCopyHouseholdId=fpCopyHouseholdId;
+function fpShowHouseholdGate(message){
+  const gate=document.getElementById('auth-gate'); if(gate)gate.style.display='flex';
+  const account=document.getElementById('auth-account-panel'); if(account)account.style.display='none';
+  const panel=document.getElementById('household-panel'); if(panel)panel.classList.add('visible');
+  const msg=document.getElementById('household-message'); if(msg)msg.textContent=message||'';
+}
+async function fpEnsureUserProfile(user){
+  const ref=firebaseDb.collection('users').doc(user.uid);
+  const snap=await ref.get();
+  if(!snap.exists) await ref.set({uid:user.uid,householdId:null,email:user.email||'',displayName:user.displayName||'',createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+  return ref;
+}
+async function fpActivateHousehold(user,householdId){
+  fpHouseholdConnecting=true;
+  try{
+    const householdRef=firebaseDb.collection('households').doc(householdId);
+    const [householdSnap,memberSnap]=await Promise.all([householdRef.get(),householdRef.collection('members').doc(user.uid).get()]);
+    if(!householdSnap.exists || !memberSnap.exists) throw new Error('Your account is not an approved member of this household.');
+    fpHouseholdId=householdId; fpHouseholdName=householdSnap.data().name||'Family household'; fpMemberData={uid:user.uid,...memberSnap.data()}; fpHouseholdOwner=fpIsOwnerOrParent();
+    const profileRef=await fpEnsureUserProfile(user);
+    await profileRef.update({householdId,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+    localStorage.setItem('fam_household_id',householdId); localStorage.setItem('fam_household_name',fpHouseholdName); localStorage.setItem('fam_logged_in','true');
+    // Preserve this device's pre-cloud data as part of the normal exportable backup.
+    const backupKey=`fam_precloud_backup_${user.uid}`;
+    if(!localStorage.getItem(backupKey)){
+      const backup={}; Object.keys(localStorage).filter(k=>k.startsWith('fam_')&&!k.startsWith('fam_precloud_backup_')).forEach(k=>{try{backup[k]=JSON.parse(localStorage.getItem(k));}catch{backup[k]=localStorage.getItem(k);}});
+      localStorage.setItem(backupKey,JSON.stringify({savedAt:new Date().toISOString(),data:backup}));
+    }
+    // Do not briefly expose another household's browser-local data to a joining member.
+    // The owner's local data is retained for the one-time first-cloud migration.
+    if(String(fpMemberData.role||'').toLowerCase()!=='owner'){
+      FP_SHARED_CATEGORIES.forEach(category=>fpSetCategoryItems(category,[]));
+      fpPersistLocalOnly();
+    }
+    fpAttachSharedListeners();
+    if(privateTodosUnsubscribe)privateTodosUnsubscribe();
+    await loadPrivateTodos(user.uid);
+    const gate=document.getElementById('auth-gate'); if(gate)gate.style.display='none';
+    fpUpdateHouseholdPanel();
+  } finally {fpHouseholdConnecting=false;}
+}
+async function fpFindExistingHousehold(user){
+  const profile=await firebaseDb.collection('users').doc(user.uid).get();
+  if(profile.exists && profile.data().householdId){
+    try{await fpActivateHousehold(user,profile.data().householdId);return true;}
+    catch(error){
+      const oldId=profile.data().householdId;
+      const oldMember=await firebaseDb.collection('households').doc(oldId).collection('members').doc(user.uid).get();
+      if(oldMember.exists) throw error;
+      await firebaseDb.collection('users').doc(user.uid).update({householdId:null,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+    }
+  }
+  // Recover the already-created Parker Flanigan household for existing members
+  // whose older local profile did not yet contain householdId.
+  const legacyMember=await firebaseDb.collection('households').doc(FP_EXISTING_HOUSEHOLD_ID).collection('members').doc(user.uid).get();
+  if(legacyMember.exists){
+    await fpActivateHousehold(user,FP_EXISTING_HOUSEHOLD_ID); return true;
+  }
+  return false;
+}
+async function fpCreateHousehold(){
+  if(!firebaseUser || !firebaseDb)return showToast('Please sign in first');
+  const name=document.getElementById('household-name').value.trim();
+  if(!name)return showToast('Enter a household name');
+  try{
+    const profileRef=await fpEnsureUserProfile(firebaseUser);
+    const householdRef=firebaseDb.collection('households').doc();
+    await householdRef.set({name,ownerUid:firebaseUser.uid,createdAt:firebase.firestore.FieldValue.serverTimestamp(),createdBy:firebaseUser.uid,memberLimit:9,memberCount:1});
+    await firebaseDb.runTransaction(async transaction=>{
+      const profile=await transaction.get(profileRef);
+      if(!profile.exists || profile.data().householdId){throw new Error('This account is already linked to a household.');}
+      transaction.set(householdRef.collection('members').doc(firebaseUser.uid),{uid:firebaseUser.uid,role:'owner',name:firebaseUser.displayName||firebaseUser.email||'Owner',email:firebaseUser.email||'',permissions:fpDefaultPermissions(),joinedAt:firebase.firestore.FieldValue.serverTimestamp()});
+      transaction.update(profileRef,{householdId:householdRef.id,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+    });
+    await fpActivateHousehold(firebaseUser,householdRef.id);
+    showToast('Household created');
+  }catch(error){console.error('Household creation failed:',error);const el=document.getElementById('household-message');if(el)el.textContent=error.message||'Could not create household. Check Firestore rules.';}
+}
+window.fpCreateHousehold=fpCreateHousehold;
+async function fpJoinHousehold(){
+  if(!firebaseUser || !firebaseDb)return showToast('Please sign in first');
+  const id=document.getElementById('household-id').value.trim();
+  if(!id)return showToast('Enter the household ID');
+  try{
+    await fpEnsureUserProfile(firebaseUser);
+    const householdRef=firebaseDb.collection('households').doc(id);
+    const household=await householdRef.get();
+    if(!household.exists)throw new Error('That household ID was not found. Check the ID and try again.');
+    const member=await householdRef.collection('members').doc(firebaseUser.uid).get();
+    if(member.exists){await fpActivateHousehold(firebaseUser,id);return;}
+    const requestRef=householdRef.collection('joinRequests').doc(firebaseUser.uid);
+    const priorRequest=await requestRef.get();
+    let requestNeedsCreate=!priorRequest.exists;
+    if(priorRequest.exists && priorRequest.data().status==='approved'){
+      const approvedMember=await householdRef.collection('members').doc(firebaseUser.uid).get();
+      if(approvedMember.exists){await fpActivateHousehold(firebaseUser,id);return;}
+      await requestRef.delete();requestNeedsCreate=true;
+    }
+    if(priorRequest.exists && priorRequest.data().status==='denied'){await requestRef.delete();requestNeedsCreate=true;}
+    if(requestNeedsCreate) await requestRef.set({uid:firebaseUser.uid,name:firebaseUser.displayName||firebaseUser.email||'New member',email:firebaseUser.email||'',status:'pending',requestedAt:firebase.firestore.FieldValue.serverTimestamp()});
+    fpCurrentJoinRequest={householdId:id};
+    if(fpJoinRequestUnsub)fpJoinRequestUnsub();
+    fpJoinRequestUnsub=requestRef.onSnapshot(async snap=>{
+      if(!snap.exists)return;
+      const request=snap.data();
+      if(request.status==='approved'){
+        if(fpJoinRequestUnsub){fpJoinRequestUnsub();fpJoinRequestUnsub=null;}
+        try{await fpActivateHousehold(firebaseUser,id);showToast('You have joined the household');}
+        catch(err){console.error(err);const el=document.getElementById('household-message');if(el)el.textContent='Approved, but your membership could not be loaded. Please sign out and back in.';}
+      }else if(request.status==='denied'){
+        const el=document.getElementById('household-message');if(el)el.textContent='The household owner declined this request.';
+      }
+    });
+    const el=document.getElementById('household-message');if(el)el.textContent='Request sent. You can use the household once the owner approves it.';
+  }catch(error){console.error('Join request failed:',error);const el=document.getElementById('household-message');if(el)el.textContent=error.message||'Could not request to join this household.';}
+}
+window.fpJoinHousehold=fpJoinHousehold;
+async function fpEnsureHouseholdMemberCount(householdRef){
+  const household=await householdRef.get();
+  if(!household.exists)throw new Error('Household no longer exists.');
+  if(typeof household.data().memberCount==='number')return household.data().memberCount;
+  const members=await householdRef.collection('members').get();
+  if(members.size>9)throw new Error('This household already exceeds the 9-member limit.');
+  await householdRef.update({memberCount:members.size});
+  return members.size;
+}
+async function fpApproveJoinRequest(uid,approve){
+  if(!fpMemberData || String(fpMemberData.role||'').toLowerCase()!=='owner' || !fpHouseholdId)return;
+  try{
+    const householdRef=firebaseDb.collection('households').doc(fpHouseholdId);
+    const requestRef=householdRef.collection('joinRequests').doc(uid);
+    const memberRef=householdRef.collection('members').doc(uid);
+    if(approve){
+      await fpEnsureHouseholdMemberCount(householdRef);
+      await firebaseDb.runTransaction(async transaction=>{
+        const household=await transaction.get(householdRef);
+        const request=await transaction.get(requestRef);
+        const existingMember=await transaction.get(memberRef);
+        const profileRef=firebaseDb.collection('users').doc(uid);
+        const profile=await transaction.get(profileRef);
+        if(!request.exists)throw new Error('Join request no longer exists.');
+        if(existingMember.exists)throw new Error('This person is already a household member.');
+        if(!profile.exists || profile.data().householdId)throw new Error('This account is already linked to another household.');
+        const count=Number(household.data().memberCount)||1;
+        if(count>=9)throw new Error('This household has reached its maximum of 9 members.');
+        const data=request.data();
+        transaction.set(memberRef,{uid,role:'member',name:data.name||data.email||'Member',email:data.email||'',permissions:fpDefaultPermissions(),joinedAt:firebase.firestore.FieldValue.serverTimestamp()});
+        transaction.update(profileRef,{householdId:fpHouseholdId,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+        transaction.update(requestRef,{status:'approved',reviewedAt:firebase.firestore.FieldValue.serverTimestamp(),reviewedBy:firebaseUser.uid});
+        transaction.update(householdRef,{memberCount:count+1});
+      });
+    }else await requestRef.update({status:'denied',reviewedAt:firebase.firestore.FieldValue.serverTimestamp(),reviewedBy:firebaseUser.uid});
+    showToast(approve?'Member approved':'Request declined');
+  }catch(error){console.error(error);showToast(error.message||'Could not update join request');}
+}
+window.fpApproveJoinRequest=fpApproveJoinRequest;
+function fpRenderJoinRequests(snapshot){
+  const el=document.getElementById('household-requests-list');if(!el)return;
+  const docs=snapshot.docs;
+  el.innerHTML=docs.length?docs.map(doc=>{const r=doc.data();return `<div class="household-request-card"><strong>${escapeToolText(r.name||r.email||'New member')}</strong><small>${escapeToolText(r.email||'')} · Requested to join</small><div class="household-request-actions"><button class="tool-btn" type="button" onclick="fpApproveJoinRequest('${doc.id}',true)">Approve</button><button class="tool-btn secondary" type="button" onclick="fpApproveJoinRequest('${doc.id}',false)">Decline</button></div></div>`;}).join(''):'<p class="tool-note">No pending requests.</p>';
+}
+function fpRenderMembers(snapshot){
+  const el=document.getElementById('household-members-list');if(!el)return;
+  const docs=snapshot.docs;
+  el.innerHTML=docs.map(doc=>{
+    const m=doc.data(),uid=doc.id,role=String(m.role||'member').toLowerCase();
+    const roleLabel=role==='owner'?'Owner':role==='parent'?'Parent':'Member';
+    let permissionHtml='';
+    if(role!=='owner') permissionHtml=`<div class="household-permission-grid">${Object.entries(FP_SHARED_GROUPS).map(([group,categories])=>{const values=categories.map(c=>(m.permissions||{})[c]||'No access');const value=values.every(v=>v===values[0])?values[0]:'Mixed';return `<label>${FP_GROUP_LABELS[group]}<select onchange="fpSetMemberPermission('${uid}','${group}',this.value)" ${fpIsOwnerOrParent()&&fpMemberData.role==='owner'?'':'disabled'}><option ${value==='No access'?'selected':''}>No access</option><option ${value==='View only'?'selected':''}>View only</option><option ${value==='Contribute'?'selected':''}>Contribute</option>${value==='Mixed'?'<option selected disabled>Mixed</option>':''}</select></label>`;}).join('')}</div>`;
+    return `<div class="household-member-card"><div class="household-member-top"><strong>${escapeToolText(m.name||m.email||uid)}${uid===firebaseUser.uid?' (you)':''}</strong><span class="badge">${roleLabel}</span></div>${role!=='owner'?`<label class="auth-field">Role<select class="household-role-select" ${fpMemberData.role==='owner'?'':'disabled'} onchange="fpSetMemberRole('${uid}',this.value)"><option value="member" ${role==='member'?'selected':''}>Member</option><option value="parent" ${role==='parent'?'selected':''}>Parent</option></select></label>${permissionHtml}${fpMemberData.role==='owner'?`<button class="tool-btn secondary" type="button" onclick="fpRemoveMember('${uid}')">Remove member</button>`:''}`:''}</div>`;
+  }).join('')||'<p class="tool-note">No members found.</p>';
+}
+async function fpSetMemberPermission(uid,group,value){
+  if(!fpMemberData || fpMemberData.role!=='owner')return;
+  const categories=FP_SHARED_GROUPS[group];if(!categories)return;
+  try{const ref=firebaseDb.collection('households').doc(fpHouseholdId).collection('members').doc(uid);const snap=await ref.get();if(!snap.exists)return;const permissions={...(snap.data().permissions||{})};categories.forEach(category=>permissions[category]=value);await ref.update({permissions});showToast('Permissions updated');}
+  catch(error){console.error(error);showToast('Could not update permissions');}
+}
+window.fpSetMemberPermission=fpSetMemberPermission;
+async function fpSetMemberRole(uid,role){
+  if(!fpMemberData || fpMemberData.role!=='owner' || !['member','parent'].includes(role))return;
+  try{await firebaseDb.collection('households').doc(fpHouseholdId).collection('members').doc(uid).update({role});showToast('Member role updated');}
+  catch(error){console.error(error);showToast('Could not update member role');}
+}
+window.fpSetMemberRole=fpSetMemberRole;
+async function fpRemoveMember(uid){
+  if(!fpMemberData || fpMemberData.role!=='owner' || !confirm('Remove this person from the household? Their private list will not be affected.'))return;
+  try{
+    const householdRef=firebaseDb.collection('households').doc(fpHouseholdId);
+    const memberRef=householdRef.collection('members').doc(uid);
+    await fpEnsureHouseholdMemberCount(householdRef);
+    await firebaseDb.runTransaction(async transaction=>{
+      const household=await transaction.get(householdRef);
+      const member=await transaction.get(memberRef);
+      if(!member.exists)return;
+      const count=Number(household.data().memberCount)||1;
+      if(count<=1)throw new Error('The household owner cannot remove the final member.');
+      transaction.delete(memberRef);
+      transaction.update(householdRef,{memberCount:count-1});
+    });
+    await householdRef.collection('joinRequests').doc(uid).delete().catch(()=>{});
+    showToast('Member removed');
+  }catch(error){console.error(error);showToast(error.message||'Could not remove member');}
+}
+window.fpRemoveMember=fpRemoveMember;
+
+// Keep the existing local backup behaviour, then sync only the items changed
+// since the last Firestore snapshot. Private todos are deliberately excluded.
+const fpOriginalSaveData=saveData;
+saveData=function(){
+  fpNormaliseAllSharedIds();
+  fpOriginalSaveData();
+  fpMarkSharedChanges();
+};
+function fpNormaliseAllSharedIds(){FP_SHARED_CATEGORIES.forEach(fpNormaliseCategoryItems);}
+
+// Budget is a shared household setting too.
+const fpOriginalSaveHouseholdBudget=saveHouseholdBudget;
+saveHouseholdBudget=function(e){fpOriginalSaveHouseholdBudget(e);fpMarkSharedChanges();};
+
+// Replace the earlier local-only authentication gate with membership-aware startup.
+if(firebaseReady && firebaseAuth){
+  firebaseAuth.onAuthStateChanged(async user=>{
+    firebaseUser=user||null;
+    if(!user){
+      fpStopSharedListeners();fpHouseholdId=null;fpMemberData=null;fpHouseholdName='';
+      if(privateTodosUnsubscribe)privateTodosUnsubscribe();privateTodosUnsubscribe=null;privateTodosData=[];privateTodosLoaded=false;
+      localStorage.removeItem('fam_logged_in');
+      const gate=document.getElementById('auth-gate');if(gate)gate.style.display='flex';
+      const account=document.getElementById('auth-account-panel');if(account)account.style.display='block';
+      const panel=document.getElementById('household-panel');if(panel)panel.classList.remove('visible');
+      fpUpdateHouseholdPanel();renderTodos();return;
+    }
+    try{
+      localStorage.setItem('fam_user_email',user.email||'');
+      const signed=document.getElementById('auth-signed-in-email');if(signed)signed.textContent=user.email||'';
+      const account=document.getElementById('auth-account-panel');if(account)account.style.display='none';
+      const found=await fpFindExistingHousehold(user);
+      if(!found){fpShowHouseholdGate('Create a household or request to join an existing one.');await loadPrivateTodos(user.uid);}
+    }catch(error){console.error('Household startup failed:',error);fpShowHouseholdGate(error.message||'Could not load your household.');}
+  });
+}
+
+
+document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
         document.getElementById('add-end-date').value = '';
         if(document.getElementById('handover-date')) document.getElementById('handover-date').value = new Date().toISOString().slice(0,10);
     }
@@ -2945,7 +3468,7 @@ function setTodoScope(scope) {
     const input = document.getElementById('todo-quick-input');
     if (note) note.textContent = activeTodoScope === 'private'
         ? 'Your personal items are stored under your signed-in account and protected by Firestore security rules.'
-        : 'Family to-do items. These are currently stored in this browser; household syncing is a separate step.';
+        : 'Family to-do items are shared with household members according to their permissions.';
     if (input) input.placeholder = activeTodoScope === 'private' ? 'Add a private idea…' : 'Add family task…';
     renderTodos();
 }
@@ -3573,7 +4096,7 @@ function renderEnhancementLists(){renderSimpleToolList('renewals-list',renewalsD
 function renderFamilyTools(){renderWeeklyPlanner();renderBills();renderEnhancementLists();}
 
 function exportFamilyPlanData(){const keys=Object.keys(localStorage).filter(k=>k.startsWith('fam_')).sort();const payload={app:'Family Plan',formatVersion:2,exportedAt:new Date().toISOString(),data:{}};keys.forEach(k=>{const raw=localStorage.getItem(k);if(raw!==null){try{payload.data[k]=JSON.parse(raw)}catch{payload.data[k]=raw}}});const addressCount=Array.isArray(payload.data.fam_address_book)?payload.data.fam_address_book.length:0;const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.getElementById('a');a.href=url;a.download=`family-plan-backup-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);document.getElementById('backup-status').textContent=`Backup exported: ${keys.length} data/settings items, including ${addressCount} saved address(es). Keep this file somewhere safe.`}
-async function importFamilyPlanData(e){const file=e.target.files?.[0];if(!file)return;try{const payload=JSON.parse(await file.text());if(payload.app!=='Family Plan'||!payload.data||typeof payload.data!=='object')throw new Error('This does not look like a Family Plan backup.');if(!confirm('Importing will update matching Family Plan data in this browser. Existing data keys not included in the backup will be kept. Export a backup first. Continue?'))return;Object.entries(payload.data).forEach(([key,value])=>{if(/^fam_[a-z0-9_]+$/i.test(key))localStorage.setItem(key,typeof value==='string'?value:JSON.stringify(value));});mealsData=JSON.parse(localStorage.getItem('fam_meals'))||mealsData;foodShopData=JSON.parse(localStorage.getItem('fam_foodshop'))||[];familyShopData=JSON.parse(localStorage.getItem('fam_familyshop'))||[];destinationsData=JSON.parse(localStorage.getItem('fam_destinations'))||destinationsData;choresData=JSON.parse(localStorage.getItem('fam_chores'))||[];wishlistData=JSON.parse(localStorage.getItem('fam_wishlist'))||[];todosData=JSON.parse(localStorage.getItem('fam_todos'))||[];calendarEvents=JSON.parse(localStorage.getItem('fam_calendar'))||{};householdBillsData=JSON.parse(localStorage.getItem('fam_bills'))||[];monthlyBudgetsData=JSON.parse(localStorage.getItem('fam_monthly_budgets'))||[];renewalsData=JSON.parse(localStorage.getItem('fam_renewals'))||[];familyIdeasData=JSON.parse(localStorage.getItem('fam_ideas'))||[];handoverData=JSON.parse(localStorage.getItem('fam_handover'))||[];occasionsData=JSON.parse(localStorage.getItem('fam_occasions'))||[];addressBookData=JSON.parse(localStorage.getItem('fam_address_book'))||[];unplannedSpendingData=JSON.parse(localStorage.getItem('fam_unplanned_spending'))||[];renderAllViews();renderFamilyTools();document.getElementById('backup-status').textContent='Backup imported. Matching data keys were updated; data keys not included in the backup were kept.';showToast('Family Plan backup restored');}catch(err){document.getElementById('backup-status').textContent='Import failed: '+(err&&err.message?err.message:'Unknown error');}finally{e.target.value='';}}
+async function importFamilyPlanData(e){const file=e.target.files?.[0];if(!file)return;try{const payload=JSON.parse(await file.text());if(payload.app!=='Family Plan'||!payload.data||typeof payload.data!=='object')throw new Error('This does not look like a Family Plan backup.');if(!confirm('Importing will update matching Family Plan data in this browser. Existing data keys not included in the backup will be kept. Export a backup first. Continue?'))return;Object.entries(payload.data).forEach(([key,value])=>{if(/^fam_[a-z0-9_]+$/i.test(key))localStorage.setItem(key,typeof value==='string'?value:JSON.stringify(value));});mealsData=JSON.parse(localStorage.getItem('fam_meals'))||mealsData;foodShopData=JSON.parse(localStorage.getItem('fam_foodshop'))||[];familyShopData=JSON.parse(localStorage.getItem('fam_familyshop'))||[];destinationsData=JSON.parse(localStorage.getItem('fam_destinations'))||destinationsData;choresData=JSON.parse(localStorage.getItem('fam_chores'))||[];wishlistData=JSON.parse(localStorage.getItem('fam_wishlist'))||[];todosData=JSON.parse(localStorage.getItem('fam_todos'))||[];calendarEvents=JSON.parse(localStorage.getItem('fam_calendar'))||{};householdBillsData=JSON.parse(localStorage.getItem('fam_bills'))||[];monthlyBudgetsData=JSON.parse(localStorage.getItem('fam_monthly_budgets'))||[];renewalsData=JSON.parse(localStorage.getItem('fam_renewals'))||[];familyIdeasData=JSON.parse(localStorage.getItem('fam_ideas'))||[];handoverData=JSON.parse(localStorage.getItem('fam_handover'))||[];occasionsData=JSON.parse(localStorage.getItem('fam_occasions'))||[];addressBookData=JSON.parse(localStorage.getItem('fam_address_book'))||[];unplannedSpendingData=JSON.parse(localStorage.getItem('fam_unplanned_spending'))||[];householdMonthlyBudget=Number(localStorage.getItem('fam_household_monthly_budget'))||1500;saveData();renderAllViews();renderFamilyTools();document.getElementById('backup-status').textContent='Backup imported. Matching data keys were updated; data keys not included in the backup were kept.';showToast('Family Plan backup restored');}catch(err){document.getElementById('backup-status').textContent='Import failed: '+(err&&err.message?err.message:'Unknown error');}finally{e.target.value='';}}
 
 function renderAllViews() {
     setCalendarPage(calendarPageMode);
