@@ -2016,6 +2016,18 @@ nav.bottom-nav, .bottom-nav {
             </div>
             <p class="tool-note" id="backup-status" aria-live="polite"></p>
         </section>
+<section class="tool-section" id="account-deletion-section">
+    <h3>Delete account and household</h3>
+    <p class="tool-note">
+        Permanently delete your account and associated household data.
+        This cannot be undone.
+    </p>
+    <button class="tool-btn secondary" type="button"
+        onclick="fpDeleteHouseholdAndAccount()">
+        Delete my account and household
+    </button>
+    <p class="tool-note" id="account-deletion-status" aria-live="polite"></p>
+</section>
     </div>
 
     <!-- FIXED Bottom Navigation Bar -->
@@ -2767,6 +2779,122 @@ async function fpRemoveMember(uid){
   }catch(error){console.error(error);showToast(error.message||'Could not remove member');}
 }
 window.fpRemoveMember=fpRemoveMember;
+
+async function fpDeleteHouseholdAndAccount() {
+    const status = document.getElementById('account-deletion-status');
+    const setStatus = message => {
+        if (status) status.textContent = message;
+    };
+
+    if (!firebaseUser || !firebaseDb || !firebaseAuth) {
+        setStatus('Please sign in before deleting your account.');
+        return;
+    }
+
+    if (!confirm('Permanently delete your account and all associated household data? This cannot be undone.')) return;
+
+    // Confirm the user's identity before making any changes.
+    const password = prompt('Enter your account password to confirm deletion:');
+    if (password === null) return;
+    if (!password) {
+        setStatus('Password is required.');
+        return;
+    }
+
+    try {
+        setStatus('Verifying account…');
+
+        const provider = firebaseUser.providerData.find(
+            p => p.providerId === 'password'
+        );
+        if (!provider || !firebaseUser.email) {
+            throw new Error('This account needs provider-specific reauthentication. No data has been deleted.');
+        }
+
+        const credential = firebase.auth.EmailAuthProvider.credential(
+            firebaseUser.email, password
+        );
+        await firebaseUser.reauthenticateWithCredential(credential);
+
+        const uid = firebaseUser.uid;
+        const profileRef = firebaseDb.collection('users').doc(uid);
+        const profileSnap = await profileRef.get();
+        const householdId = fpHouseholdId ||
+            (profileSnap.exists ? profileSnap.data().householdId : null);
+
+        // Delete collections in manageable batches.
+        async function deleteCollection(query) {
+            const snapshot = await query.get();
+            for (let i = 0; i < snapshot.docs.length; i += 450) {
+                const batch = firebaseDb.batch();
+                snapshot.docs.slice(i, i + 450).forEach(doc => batch.delete(doc.ref));
+                await batch.commit();
+            }
+        }
+
+        // Remove this account's private to-dos.
+        await deleteCollection(
+            profileRef.collection('privateTodos')
+        );
+
+        if (householdId) {
+            setStatus('Checking household membership…');
+
+            const householdRef = firebaseDb.collection('households').doc(householdId);
+            const householdSnap = await householdRef.get();
+
+            if (householdSnap.exists) {
+                const [members, ownMember] = await Promise.all([
+                    householdRef.collection('members').get(),
+                    householdRef.collection('members').doc(uid).get()
+                ]);
+
+                if (members.size !== 1 || !ownMember.exists ||
+                    String(ownMember.data().role || '').toLowerCase() !== 'owner' ||
+                    Number(householdSnap.data().memberCount) !== 1) {
+                    throw new Error('The household must have you as its sole member and owner before it can be deleted. No household data has been deleted.');
+                }
+
+                setStatus('Deleting shared household data…');
+
+                for (const category of FP_SHARED_CATEGORIES) {
+                    await deleteCollection(
+                        householdRef.collection('sharedData')
+                            .doc(category).collection('items')
+                    );
+                }
+
+                await deleteCollection(
+                    householdRef.collection('joinRequests')
+                );
+
+                // Delete membership, household and profile atomically.
+                const batch = firebaseDb.batch();
+                batch.delete(householdRef.collection('members').doc(uid));
+                batch.delete(householdRef);
+                if (profileSnap.exists) batch.delete(profileRef);
+                await batch.commit();
+            } else if (profileSnap.exists) {
+                await profileRef.delete();
+            }
+        } else if (profileSnap.exists) {
+            await profileRef.delete();
+        }
+
+        setStatus('Deleting sign-in account…');
+        await firebaseUser.delete();
+
+        Object.keys(localStorage)
+            .filter(key => key.startsWith('fam_'))
+            .forEach(key => localStorage.removeItem(key));
+
+        setStatus('Account and associated data deleted.');
+    } catch (error) {
+        console.error('Account deletion failed:', error);
+        setStatus(error.message || 'Deletion failed. Please try again.');
+    }
+}
+window.fpDeleteHouseholdAndAccount = fpDeleteHouseholdAndAccount;
 
 // Keep the existing local backup behaviour, then sync only the items changed
 // since the last Firestore snapshot. Private todos are deliberately excluded.
