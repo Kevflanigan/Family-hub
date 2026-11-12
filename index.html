@@ -2721,11 +2721,23 @@ async function fpActivateHousehold(user,householdId){
   fpHouseholdConnecting=true;
   try{
     const householdRef=firebaseDb.collection('households').doc(householdId);
+   
     const [householdSnap,memberSnap]=await Promise.all([householdRef.get(),householdRef.collection('members').doc(user.uid).get()]);
     if(!householdSnap.exists || !memberSnap.exists) throw new Error('Your account is not an approved member of this household.');
-    fpHouseholdId=householdId; fpHouseholdName=householdSnap.data().name||'Family household'; fpMemberData={uid:user.uid,...memberSnap.data(),name:memberSnap.data().name||memberSnap.data().displayName||user.displayName||''}; fpHouseholdOwner=fpIsOwnerOrParent();
+
     const profileRef=await fpEnsureUserProfile(user);
+    const profileSnap=await profileRef.get();
+    const memberRecord=memberSnap.data();
+    const possibleNames=[memberRecord.name,memberRecord.displayName,profileSnap.data()?.displayName,user.displayName];
+    const realName=possibleNames.find(name=>name&&name.trim()&&name.trim().toLowerCase()!==(user.email||'').toLowerCase());
+
+    fpHouseholdId=householdId;
+    fpHouseholdName=householdSnap.data().name||'Family household';
+    fpMemberData={uid:user.uid,...memberRecord,name:realName||'Account'};
+    fpHouseholdOwner=fpIsOwnerOrParent();
+
     await profileRef.update({householdId,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+
     localStorage.setItem('fam_household_id',householdId); localStorage.setItem('fam_household_name',fpHouseholdName); localStorage.setItem('fam_logged_in','true');
     // Preserve this device's pre-cloud data as part of the normal exportable backup.
     const backupKey=`fam_precloud_backup_${user.uid}`;
