@@ -2345,6 +2345,7 @@ const FP_GROUP_LABELS = {finance:'Money & bills',planner:'Calendar & planner',ta
 const fpDefaultPermissions = () => Object.fromEntries(FP_SHARED_CATEGORIES.map(k => [k, 'Contribute']));
 let fpHouseholdId = null;
 let fpMemberData = null;
+let fpHouseholdMembers = [];
 let fpSharedUnsubs = {};
 let fpMemberUnsub = null;
 let fpMembersUnsub = null;
