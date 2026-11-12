@@ -3068,7 +3068,8 @@ if(firebaseReady && firebaseAuth){
       localStorage.setItem('fam_user_email',user.email||'');
       const signed=document.getElementById('auth-signed-in-email');if(signed)signed.textContent=user.email||'';
       const account=document.getElementById('auth-account-panel');if(account)account.style.display='none';
-      const found=await fpFindExistingHousehold(user);
+    setAuthMessage('Step 4: Authentication handler reached household startup.',true);  
+    const found=await fpFindExistingHousehold(user);
      if(!found){
   fpShowHouseholdGate('Create a household or request to join an existing one.');
   await loadPrivateTodos(user.uid);
