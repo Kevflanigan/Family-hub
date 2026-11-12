@@ -2186,7 +2186,7 @@ document.getElementById('firebase-auth-form').addEventListener('submit', async f
             await firebaseAuth.signInWithEmailAndPassword(email, password);
         }
 
-        setAuthMessage('Step 2: Firebase accepted your login. Loading your household…', true);
+        setAuthMessage('Step 3: Login completed. User: '+(firebaseAuth.currentUser?.uid||'NO CURRENT USER'),true);
         localStorage.setItem('fam_user_email', email);
 
     } catch (error) {
