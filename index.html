@@ -4185,8 +4185,8 @@ function renderWeeklyPlanner() {
         
         const mObj = mealsData.find(m => m.day === day);
         const meal = mObj?.meal || '';
-        const cookKey = mObj?.cook || 'dad';
-        const cookName = cookKey === 'dad' ? 'Kevin' : (cookKey === 'mom' ? 'Harriet' : 'Family');
+const cookKey = fpAssigneeStyle(mObj?.cook);
+const cookName = fpDisplayAssignee(mObj?.cook);
         
         // Get tasks for this specific day
         const dayTasks = todosData.filter(t => !t.done && filterItem(t.who) && (t.date === key || (!t.date && i === 0)));
