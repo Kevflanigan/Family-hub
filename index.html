@@ -3234,7 +3234,7 @@ function renderCalendarMonth() {
         let eventsHtml = '';
         if (calendarEvents[dateKey]) {
             calendarEvents[dateKey].filter(ev => filterItem(ev.who)).forEach(ev => {
-                const assigneeLabel = ev.who === 'dad' ? ' (Kevin)' : (ev.who === 'mom' ? ' (Harriet)' : ' (Family)');
+       const assigneeLabel = ` (${fpDisplayAssignee(ev.who)})`;
                 eventsHtml += `<div class="event-pill bg-${ev.who} ${ev.quickAdded ? 'quick-added' : ''}" title="${ev.title}${assigneeLabel}">${ev.title}${assigneeLabel}</div>`;
             });
         }
