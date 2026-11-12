@@ -2592,7 +2592,7 @@ function fpAttachSharedListeners(){
       return;
     }
 
-    const next={uid:firebaseUser.uid,...s.data()};
+   const next={uid:firebaseUser.uid,...s.data(),name:s.data().name||s.data().displayName||''};
 
     if(JSON.stringify(next)!==JSON.stringify(fpMemberData)){
       fpMemberData=next;
