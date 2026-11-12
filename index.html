@@ -4206,7 +4206,7 @@ const cookName = fpDisplayAssignee(mObj?.cook);
         // Build Events / Reminders rows
         let eventsRemindersHtml = '';
         dayEvents.forEach(ev => {
-            const whoName = ev.who === 'dad' ? 'Kevin' : (ev.who === 'mom' ? 'Harriet' : 'Family');
+          const whoName = fpDisplayAssignee(ev.who);
             const cleanTitle = (ev.title || 'Calendar event').replace(/\s*\[(yearly|birthday)\]/ig, '');
             eventsRemindersHtml += `
                 <div class="wp-item-pill" onclick="openDayPopover('${key}', ${d.getDate()})">
