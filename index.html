@@ -2572,7 +2572,13 @@ function fpAttachSharedListeners(){
       return;
     }
 
-   const next={uid:firebaseUser.uid,...s.data(),name:s.data().name||s.data().displayName||''};
+       const memberRecord=s.data();
+    const storedName=memberRecord.name||memberRecord.displayName||'';
+    const email=(firebaseUser?.email||'').toLowerCase();
+    const nextName=storedName&&storedName.trim().toLowerCase()!==email
+      ? storedName
+      : fpMemberData?.name||firebaseUser?.displayName||'Account';
+    const next={uid:firebaseUser.uid,...memberRecord,name:nextName};
 
     if(JSON.stringify(next)!==JSON.stringify(fpMemberData)){
       fpMemberData=next;
