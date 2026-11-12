@@ -1629,18 +1629,21 @@ nav.bottom-nav, .bottom-nav {
             </button>
             <div id="user-dropdown" class="user-dropdown-menu">
                 <div class="user-dropdown-item" style="cursor:default; background:#f8fafc; font-size:0.8rem; color:var(--muted); flex-direction:column; align-items:flex-start; gap:2px; padding:8px 12px;">
-                    <span style="font-weight:800; color:var(--text);" id="dropdown-user-name">Kevin</span>
-                    <span id="dropdown-household-name" style="font-size:0.75rem;">Parker Flanigan</span>
+                    <span style="font-weight:800; color:var(--text);" id="dropdown-user-name"></span>
+                    <span id="dropdown-household-name" style="font-size:0.75rem;"></span>
                 </div>
                 <div style="height:1px; background:#eff6ff;"></div>
                 <div id="opt-family" class="user-dropdown-item" onclick="selectFamilyView()">
                     <span style="font-size:1.1rem;">👨‍👩‍👧‍👦</span> Family (Everyone)
                 </div>
-                <div id="opt-user" class="user-dropdown-item" onclick="selectUser('dad', 'Kevin')">
-                    <span class="account-avatar-dot bg-dad"></span> <span id="opt-user-name">Kevin's Plan</span>
+                <div id="opt-user" class="user-dropdown-item" style="display:none;">
+                    <span class="account-avatar-dot"></span>
+                    <span id="opt-user-name"></span>
                 </div>
-                <div id="opt-harriet" class="user-dropdown-item" onclick="selectUser('mom', 'Harriet')">
-                    <span class="account-avatar-dot bg-mom"></span> <span>Harriet's Plan</span>
+                <div id="opt-harriet" class="user-dropdown-item" style="display:none;">
+                    <span class="account-avatar-dot"></span>
+                    <span></span>
+                </div>
                 </div>
                 <div style="height:1px; background:#eff6ff;"></div>
                 <div class="user-dropdown-item" onclick="showView('account'); document.getElementById('user-dropdown').classList.remove('open');">⚙️ Account & backups</div>
@@ -2563,6 +2566,10 @@ function fpAttachSharedListeners(){
   fpUpdateHouseholdPanel();
 }
 function fpUpdateHouseholdPanel(){
+const userName=document.getElementById('dropdown-user-name');
+  if(userName)userName.textContent=fpMemberData?.name||firebaseUser?.displayName||'Account';
+  const householdName=document.getElementById('dropdown-household-name');
+  if(householdName)householdName.textContent=fpHouseholdName||'Your household';
   const id=document.getElementById('household-id-display'); if(id)id.textContent=fpHouseholdId||'Not connected';
   const status=document.getElementById('household-sync-status');
   if(status) status.textContent=fpHouseholdId ? `Connected to ${fpHouseholdName||'your household'}. Shared changes sync automatically across members' devices.` : 'Sign in and connect to a household to synchronise family information across devices.';
