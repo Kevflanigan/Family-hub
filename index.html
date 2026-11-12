@@ -2552,18 +2552,93 @@ function fpAttachSharedListeners(){
       fpApplySnapshot(category,snapshot,wasInitial);
     },error=>{console.error(`Could not read shared ${category}:`,error);showToast(`Could not load shared ${category}`);});
   });
-  if(fpIsOwnerOrParent()){
-    const householdRef=firebaseDb.collection('households').doc(fpHouseholdId);
-    fpMembersUnsub=householdRef.collection('members').onSnapshot(s=>fpRenderMembers(s));
-    if(String(fpMemberData.role||'').toLowerCase()==='owner') fpRequestsUnsub=householdRef.collection('joinRequests').where('status','==','pending').onSnapshot(s=>fpRenderJoinRequests(s));
-  }
-  const membershipRef=firebaseDb.collection('households').doc(fpHouseholdId).collection('members').doc(firebaseUser.uid);
-  fpMemberUnsub=membershipRef.onSnapshot(s=>{
-    if(!s.exists){fpStopSharedListeners();const oldHouseholdId=fpHouseholdId;fpHouseholdId=null;fpMemberData=null;localStorage.removeItem('fam_logged_in');if(oldHouseholdId)firebaseDb.collection('users').doc(firebaseUser.uid).update({householdId:null,updatedAt:firebase.firestore.FieldValue.serverTimestamp()}).catch(error=>console.warn('Could not clear removed household link:',error));FP_SHARED_CATEGORIES.forEach(category=>fpSetCategoryItems(category,[]));fpPersistLocalOnly();fpShowHouseholdGate('Your household membership is no longer active.');return;}
-    const next={uid:firebaseUser.uid,...s.data()};
-    if(JSON.stringify(next)!==JSON.stringify(fpMemberData)){fpMemberData=next;fpHouseholdOwner=fpIsOwnerOrParent();fpRefreshCategoryAccess();fpUpdateHouseholdPanel();}
+  const householdRef=firebaseDb.collection('households').doc(fpHouseholdId);
+
+  fpMembersUnsub=householdRef.collection('members').onSnapshot(s=>{
+    fpHouseholdMembers=s.docs.map(doc=>({
+      uid:doc.id,
+      ...doc.data()
+    }));
+
+    fpRenderPlanMemberOptions();
+
+    if(fpIsOwnerOrParent()){
+      fpRenderMembers(s);
+    }
+  },error=>{
+    console.error('Could not load household members:',error);
   });
+
+  if(String(fpMemberData.role||'').toLowerCase()==='owner'){
+    fpRequestsUnsub=householdRef.collection('joinRequests')
+      .where('status','==','pending')
+      .onSnapshot(s=>fpRenderJoinRequests(s));
+  }
+
+  const membershipRef=householdRef.collection('members').doc(firebaseUser.uid);
+
+  fpMemberUnsub=membershipRef.onSnapshot(s=>{
+    if(!s.exists){
+      fpStopSharedListeners();
+      const oldHouseholdId=fpHouseholdId;
+      fpHouseholdId=null;
+      fpMemberData=null;
+      localStorage.removeItem('fam_logged_in');
+
+      if(oldHouseholdId){
+        firebaseDb.collection('users').doc(firebaseUser.uid).update({
+          householdId:null,
+          updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+        }).catch(error=>console.warn('Could not clear removed household link:',error));
+      }
+
+      FP_SHARED_CATEGORIES.forEach(category=>fpSetCategoryItems(category,[]));
+      fpPersistLocalOnly();
+      fpShowHouseholdGate('Your household membership is no longer active.');
+      return;
+    }
+
+    const next={uid:firebaseUser.uid,...s.data()};
+
+    if(JSON.stringify(next)!==JSON.stringify(fpMemberData)){
+      fpMemberData=next;
+      fpHouseholdOwner=fpIsOwnerOrParent();
+      fpRefreshCategoryAccess();
+      fpUpdateHouseholdPanel();
+    }
+  });
+
   fpUpdateHouseholdPanel();
+}
+
+function fpUpdateHouseholdPanel(){
+  const userName=document.getElementById('dropdown-user-name');
+  if(userName)userName.textContent=fpMemberData?.name||firebaseUser?.displayName||'Account';
+
+  const householdName=document.getElementById('dropdown-household-name');
+  if(householdName)householdName.textContent=fpHouseholdName||'Your household';
+
+  const id=document.getElementById('household-id-display');
+  if(id)id.textContent=fpHouseholdId||'Not connected';
+
+  const status=document.getElementById('household-sync-status');
+  if(status){
+    status.textContent=fpHouseholdId
+      ? `Connected to ${fpHouseholdName||'your household'}. Shared changes sync automatically across members' devices.`
+      : 'Sign in and connect to a household to synchronise family information across devices.';
+  }
+
+  const controls=document.getElementById('household-owner-controls');
+  if(controls)controls.hidden=!fpIsOwnerOrParent();
+
+  const isOwner=String(fpMemberData?.role||'').toLowerCase()==='owner';
+
+  const requestsHeading=document.getElementById('household-requests-heading');
+  if(requestsHeading)requestsHeading.hidden=!isOwner;
+
+  const requestsList=document.getElementById('household-requests-list');
+  if(requestsList)requestsList.hidden=!isOwner;
+}
 }
 function fpUpdateHouseholdPanel(){
 const userName=document.getElementById('dropdown-user-name');
