@@ -4217,7 +4217,7 @@ const cookName = fpDisplayAssignee(mObj?.cook);
         });
 
         dayTasks.forEach(t => {
-            const whoName = t.who === 'dad' ? 'Kevin' : (t.who === 'mom' ? 'Harriet' : 'Family');
+           const whoName = fpDisplayAssignee(t.who);
             eventsRemindersHtml += `
                 <div class="wp-item-pill" onclick="jumpToTaskDetails()">
                     <span class="wp-pill-icon">☑️</span>
