@@ -2745,7 +2745,8 @@ async function fpActivateHousehold(user,householdId){
   } finally {fpHouseholdConnecting=false;}
 }
 async function fpFindExistingHousehold(user){
-  const profile=await firebaseDb.collection('users').doc(user.uid).get();
+  setAuthMessage('Step 4: Checking your Firestore user profile...',true);
+const profile=await firebaseDb.collection('users').doc(user.uid).get();
   if(profile.exists && profile.data().householdId){
     try{await fpActivateHousehold(user,profile.data().householdId);return true;}
     catch(error){
