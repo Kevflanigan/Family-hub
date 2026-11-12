@@ -3235,7 +3235,7 @@ function renderCalendarMonth() {
         if (calendarEvents[dateKey]) {
             calendarEvents[dateKey].filter(ev => filterItem(ev.who)).forEach(ev => {
        const assigneeLabel = ` (${fpDisplayAssignee(ev.who)})`;
-                eventsHtml += `<div class="event-pill bg-${ev.who} ${ev.quickAdded ? 'quick-added' : ''}" title="${ev.title}${assigneeLabel}">${ev.title}${assigneeLabel}</div>`;
+        eventsHtml += `<div class="event-pill bg-${fpAssigneeStyle(ev.who)} ${ev.quickAdded ? 'quick-added' : ''}" title="${ev.title}${assigneeLabel}">${ev.title}${assigneeLabel}</div>`;
             });
         }
         html += `
@@ -3272,7 +3272,7 @@ function renderDashboard() {
             <div class="dashboard-item">
                 <div>
                     <strong>${ev.title}</strong>
-                    <div class="sub-text">Assigned to: ${ev.who === 'dad' ? 'Kevin' : (ev.who === 'mom' ? 'Harriet' : 'Family')}</div>
+              <div class="sub-text">Assigned to: ${fpDisplayAssignee(ev.who)}</div>
                 </div>
                 <span>📅</span>
             </div>
@@ -3366,7 +3366,7 @@ function openDayPopover(dateKey, dayNum) {
             <div class="bubble-event-item" style="border-left-color: var(--${ev.who});">
                 <div class="bubble-event-title">${ev.title}</div>
                 <div style="display:flex; align-items:center; gap:6px;">
-                    <span class="compact-scoped-tag bg-${ev.who}">${ev.who === 'dad' ? 'Kevin' : (ev.who === 'mom' ? 'Harriet' : 'Family')}</span>
+              <span class="compact-scoped-tag bg-${fpAssigneeStyle(ev.who)}">${fpDisplayAssignee(ev.who)}</span>
                     <button class="action-btn delete-btn" onclick="deleteCalEvent('${dateKey}', ${idx}, '${ev.eventId || ''}'); openDayPopover('${dateKey}', ${dayNum});">✕</button>
                 </div>
             </div>
@@ -3550,7 +3550,7 @@ function renderShopping() {
                     }
                 </div>
                 <button class="action-btn" onclick="enableShopEdit('foodshop', ${idx})">✏️</button>
-                <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('foodshop', ${idx})">${displayWho}</span>
+           <span class="assign-tag bg-${fpAssigneeStyle(item.who)}" onclick="cycleAssignee('foodshop', ${idx})">${displayWho}</span>
                 <button class="action-btn delete-btn" onclick="foodShopData.splice(${idx},1); saveData(); renderShopping(); renderDashboard();">✕</button>
             </div>
         `;
@@ -3570,7 +3570,7 @@ function renderShopping() {
                     }
                 </div>
                 <button class="action-btn" onclick="enableShopEdit('familyshop', ${idx})">✏️</button>
-                <span class="assign-tag bg-${item.who}" onclick="cycleAssignee('familyshop', ${idx})">${displayWho}</span>
+         <span class="assign-tag bg-${fpAssigneeStyle(item.who)}" onclick="cycleAssignee('familyshop', ${idx})">${displayWho}</span>
                 <button class="action-btn delete-btn" onclick="familyShopData.splice(${idx},1); saveData(); renderShopping(); renderDashboard();">✕</button>
             </div>
         `;
