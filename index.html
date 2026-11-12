@@ -3539,7 +3539,7 @@ function renderShopping() {
     const filteredFood = foodShopData.filter(item => filterItem(item.who));
     foodCont.innerHTML = filteredFood.length === 0 ? `<div class="list-empty">Food list empty.</div>` : foodShopData.map((item, idx) => {
         if (!filterItem(item.who)) return '';
-        const displayWho = item.who === 'dad' ? 'Kevin' : (item.who === 'mom' ? 'Harriet' : 'Family');
+      const displayWho = fpDisplayAssignee(item.who);
         return `
             <div class="shopping-item ${item.done ? 'completed' : ''}">
                 <div class="shop-left">
