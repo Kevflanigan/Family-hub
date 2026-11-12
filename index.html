@@ -2295,8 +2295,11 @@ function toggleQuickAddModal() {
     const modal = document.getElementById('quick-add-modal');
     modal.classList.toggle('active');
     if (modal.classList.contains('active')) {
-        
-
+        document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
+        document.getElementById('add-end-date').value = '';
+        if(document.getElementById('handover-date')) document.getElementById('handover-date').value = new Date().toISOString().slice(0,10);
+    }
+}
 // ---------------------------------------------------------------------------
 // FIRESTORE HOUSEHOLD DATA LAYER
 // Shared records are stored as individual documents to avoid replacing an
