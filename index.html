@@ -2158,19 +2158,25 @@ function fpJoinHousehold() {
 }
 window.fpJoinHousehold = fpJoinHousehold;
 
+
 document.getElementById('firebase-auth-form').addEventListener('submit', async function(e) {
     e.preventDefault();
+
+    setAuthMessage('Step 1: Sign-in form received.');
+
     if (!firebaseReady || !firebaseAuth) {
-        setAuthMessage('Firebase could not be loaded. Check your internet connection and refresh the page.');
+        setAuthMessage('Firebase could not be loaded. Please refresh and try again.');
         return;
     }
+
     const email = document.getElementById('auth-email').value.trim();
     const password = document.getElementById('auth-password').value;
     const name = document.getElementById('auth-name').value.trim();
     const submit = document.getElementById('auth-submit');
+
     submit.disabled = true;
     submit.textContent = fpAuthMode === 'signup' ? 'Creating account…' : 'Signing in…';
-    setAuthMessage('');
+
     try {
         if (fpAuthMode === 'signup') {
             if (!name) throw new Error('Please enter your name.');
@@ -2179,9 +2185,12 @@ document.getElementById('firebase-auth-form').addEventListener('submit', async f
         } else {
             await firebaseAuth.signInWithEmailAndPassword(email, password);
         }
+
+        setAuthMessage('Step 2: Firebase accepted your login. Loading your household…', true);
         localStorage.setItem('fam_user_email', email);
+
     } catch (error) {
-        setAuthMessage(error.message || 'Authentication failed. Please try again.');
+        setAuthMessage('Sign-in failed: ' + (error.message || 'Unknown error'));
     } finally {
         submit.disabled = false;
         submit.textContent = fpAuthMode === 'signup' ? 'Create account' : 'Sign in';
