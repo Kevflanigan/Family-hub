@@ -3960,7 +3960,7 @@ function renderTodos() {
                 </div>
                 <div class="todo-task-controls">
                     <input type="date" class="date-tag" value="${t.date || ''}" onchange="updateTodoDate(${idx}, this.value)" title="Change task date">
-                    <span class="compact-scoped-tag bg-${t.who}" onclick="cycleAssignee('todo', ${idx})">${displayWho}</span>
+           <span class="compact-scoped-tag bg-${fpAssigneeStyle(t.who)}" onclick="cycleAssignee('todo', ${idx})">${displayWho}</span>
                     <button class="action-btn" onclick="enableTodoEdit(${idx})" aria-label="Edit task">✏️</button>
                     <button class="action-btn delete-btn" onclick="todosData.splice(${idx},1); saveData(); renderTodos(); renderDashboard(); renderWeeklyPlanner();" aria-label="Delete task">✕</button>
                 </div>
