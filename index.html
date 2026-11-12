@@ -2252,8 +2252,9 @@ function getMonday(d) {
     return new Date(date.setDate(diff));
 }
 
-const assignees = ['family', 'mom', 'dad'];
-const cooks = ['dad', 'mom', 'family'];
+function fpAssignmentOptions() {
+    return ['family', ...fpHouseholdMembers.map(m => m.uid)];
+}
 
 let currentUser = localStorage.getItem('fam_user') || 'dad';
 let currentUserName = localStorage.getItem('fam_user_name') || 'Kevin';
