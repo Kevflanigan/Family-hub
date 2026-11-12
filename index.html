@@ -3441,8 +3441,8 @@ function renderMeals() {
     const container = document.getElementById('meal-list-container');
     if (!container) return;
     container.innerHTML = (mealsData || []).map((m, idx) => {
-        const cookKey = ['dad', 'mom', 'family'].includes(m.cook) ? m.cook : 'dad';
-        const cookName = cookKey === 'dad' ? 'Kevin' : (cookKey === 'mom' ? 'Harriet' : 'Family');
+  const cookKey = fpAssigneeStyle(m.cook);
+const cookName = fpDisplayAssignee(m.cook);
         const dayLabel = escapeToolText(m.day || 'Day');
         const mealValue = escapeToolText(m.meal || '');
         return `
