@@ -2831,7 +2831,24 @@ async function fpDeleteHouseholdAndAccount() {
                 await batch.commit();
             }
         }
+        // Validate the household before deleting any account data.
+        if (householdId) {
+            const checkRef = firebaseDb.collection('households').doc(householdId);
+            const checkSnap = await checkRef.get();
 
+            if (checkSnap.exists) {
+                const [members, ownMember] = await Promise.all([
+                    checkRef.collection('members').get(),
+                    checkRef.collection('members').doc(uid).get()
+                ]);
+
+                if (members.size !== 1 || !ownMember.exists ||
+                    String(ownMember.data().role || '').toLowerCase() !== 'owner' ||
+                    Number(checkSnap.data().memberCount) !== 1) {
+                    throw new Error('The household must have you as its sole member and owner before deletion. No data has been deleted.');
+                }
+            }
+        }
         // Remove this account's private to-dos.
         await deleteCollection(
             profileRef.collection('privateTodos')
