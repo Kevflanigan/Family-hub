@@ -2657,7 +2657,7 @@ function fpRenderPlanMemberOptions() {
         container.innerHTML = '';
 
         fpHouseholdMembers.forEach(member => {
-            const name = member.name || member.email || 'Member';
+          const name = member.displayName || member.name || 'Member';
             const option = document.createElement('div');
             option.className = 'user-dropdown-item';
             option.classList.toggle(
@@ -2687,7 +2687,7 @@ function fpRenderPlanMemberOptions() {
         fpHouseholdMembers.forEach(member => {
             const option = document.createElement('option');
             option.value = member.uid;
-            option.textContent = member.name || member.email || 'Member';
+          option.textContent = member.displayName || member.name || 'Member';
             select.appendChild(option);
         });
 
