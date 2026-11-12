@@ -1628,10 +1628,10 @@ nav.bottom-nav, .bottom-nav {
                 </svg>
             </button>
             <div id="user-dropdown" class="user-dropdown-menu">
-                <div class="user-dropdown-item" style="cursor:default; background:#f8fafc; font-size:0.8rem; color:var(--muted); flex-direction:column; align-items:flex-start; gap:2px; padding:8px 12px;">
-                    <span style="font-weight:800; color:var(--text);" id="dropdown-user-name"></span>
-                    <span id="dropdown-household-name" style="font-size:0.75rem;"></span>
-                </div>
+<div class="user-dropdown-item" style="display:block; cursor:default; background:#f8fafc; font-size:0.8rem; color:var(--muted); padding:8px 12px;">
+    <div id="dropdown-user-name" style="display:block; font-weight:800; color:var(--text); line-height:1.4;"></div>
+    <div id="dropdown-household-name" style="display:block; font-size:0.75rem; line-height:1.4; margin-top:3px;"></div>
+</div>
                 <div style="height:1px; background:#eff6ff;"></div>
             <div id="opt-family" class="user-dropdown-item" onclick="selectFamilyView()">
     <span style="font-size:1.1rem;">👨‍👩‍👧‍👦</span> Family (Everyone)
