@@ -3119,6 +3119,7 @@ function selectUser(userKey, userName) {
     currentUser = userKey;
     currentUserName = userName;
     viewMode = 'individual';
+    fpRenderPlanMemberOptions();
     toggleUserDropdown();
     updateHeaderDisplay();
     saveData();
