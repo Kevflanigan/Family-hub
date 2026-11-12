@@ -2743,7 +2743,7 @@ async function fpActivateHousehold(user,householdId){
     const householdRef=firebaseDb.collection('households').doc(householdId);
     const [householdSnap,memberSnap]=await Promise.all([householdRef.get(),householdRef.collection('members').doc(user.uid).get()]);
     if(!householdSnap.exists || !memberSnap.exists) throw new Error('Your account is not an approved member of this household.');
-    fpHouseholdId=householdId; fpHouseholdName=householdSnap.data().name||'Family household'; fpMemberData={uid:user.uid,...memberSnap.data()}; fpHouseholdOwner=fpIsOwnerOrParent();
+    fpHouseholdId=householdId; fpHouseholdName=householdSnap.data().name||'Family household'; fpMemberData={uid:user.uid,...memberSnap.data(),name:memberSnap.data().name||memberSnap.data().displayName||user.displayName||''}; fpHouseholdOwner=fpIsOwnerOrParent();
     const profileRef=await fpEnsureUserProfile(user);
     await profileRef.update({householdId,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
     localStorage.setItem('fam_household_id',householdId); localStorage.setItem('fam_household_name',fpHouseholdName); localStorage.setItem('fam_logged_in','true');
