@@ -3746,7 +3746,7 @@ function renderRestaurantsView() {
     container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No restaurants added yet.</div>` : list.map((item, idx) => {
         if (!filterItem(item.who)) return '';
         const img = item.image || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60';
-        const displayWho = item.who === 'dad' ? 'Kevin' : (item.who === 'mom' ? 'Harriet' : 'Family');
+        const displayWho = fpDisplayAssignee(item.who);
         return `
             <div class="restaurant-card-item">
                 <img src="${img}" alt="${item.title}" class="restaurant-thumb">
