@@ -3626,7 +3626,7 @@ function renderPlacesView() {
 
     container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No places added yet.</div>` : list.map((item, idx) => {
         if (!filterItem(item.who)) return '';
-        const displayWho = item.who === 'dad' ? 'Kevin' : (item.who === 'mom' ? 'Harriet' : 'Family');
+        const displayWho = fpDisplayAssignee(item.who);
         return `
             <div class="places-scoped-item">
                 <div>
