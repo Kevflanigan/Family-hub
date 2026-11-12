@@ -2639,19 +2639,6 @@ function fpUpdateHouseholdPanel(){
   const requestsList=document.getElementById('household-requests-list');
   if(requestsList)requestsList.hidden=!isOwner;
 }
-function fpUpdateHouseholdPanel(){
-const userName=document.getElementById('dropdown-user-name');
-  if(userName)userName.textContent=fpMemberData?.name||firebaseUser?.displayName||'Account';
-  const householdName=document.getElementById('dropdown-household-name');
-  if(householdName)householdName.textContent=fpHouseholdName||'Your household';
-  const id=document.getElementById('household-id-display'); if(id)id.textContent=fpHouseholdId||'Not connected';
-  const status=document.getElementById('household-sync-status');
-  if(status) status.textContent=fpHouseholdId ? `Connected to ${fpHouseholdName||'your household'}. Shared changes sync automatically across members' devices.` : 'Sign in and connect to a household to synchronise family information across devices.';
-  const controls=document.getElementById('household-owner-controls'); if(controls)controls.hidden=!fpIsOwnerOrParent();
-  const isOwner=String(fpMemberData?.role||'').toLowerCase()==='owner';
-  const requestsHeading=document.getElementById('household-requests-heading');if(requestsHeading)requestsHeading.hidden=!isOwner;
-  const requestsList=document.getElementById('household-requests-list');if(requestsList)requestsList.hidden=!isOwner;
-}
 let fpHouseholdName='';
 function fpCopyHouseholdId(){if(!fpHouseholdId)return showToast('No household is connected');if(navigator.clipboard?.writeText)navigator.clipboard.writeText(fpHouseholdId).then(()=>showToast('Household ID copied')).catch(()=>showToast('Could not copy household ID'));else showToast('Household ID: '+fpHouseholdId);}
 window.fpCopyHouseholdId=fpCopyHouseholdId;
