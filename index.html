@@ -3948,7 +3948,7 @@ function renderTodos() {
     const filtered = todosData.filter(t => filterItem(t.who));
     container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No family tasks yet.</div>` : todosData.map((t, idx) => {
         if (!filterItem(t.who)) return '';
-        const displayWho = t.who === 'dad' ? 'Kevin' : (t.who === 'mom' ? 'Harriet' : 'Family');
+    const displayWho = fpDisplayAssignee(t.who);
         return `
             <div class="todo-task-item ${t.done ? 'completed' : ''} ${t.quickAdded ? 'quick-added-task' : ''}">
                 <div class="todo-task-main">
