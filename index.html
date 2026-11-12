@@ -4004,7 +4004,7 @@ function renderWatchlist() {
 
     homeCont.innerHTML = homeList.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">Home watchlist empty.</div>` : (destinationsData.home || []).map((item, idx) => {
         if (!filterItem(item.who)) return '';
-        const displayWho = item.who === 'dad' ? 'Kevin' : (item.who === 'mom' ? 'Harriet' : 'Family');
+        const displayWho = fpDisplayAssignee(item.who);
         return `
             <div class="compact-scoped-item">
                 <span class="compact-scoped-label">📺 ${item.title}</span>
