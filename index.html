@@ -2186,8 +2186,7 @@ document.getElementById('firebase-auth-form').addEventListener('submit', async f
             await firebaseAuth.signInWithEmailAndPassword(email, password);
         }
 
-        setAuthMessage('Step 3: Login completed. User: '+(firebaseAuth.currentUser?.uid||'NO CURRENT USER'),true);
-        localStorage.setItem('fam_user_email', email);
+            localStorage.setItem('fam_user_email', email);
 
     } catch (error) {
         setAuthMessage('Sign-in failed: ' + (error.message || 'Unknown error'));
