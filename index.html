@@ -3053,7 +3053,7 @@ saveHouseholdBudget=function(e){fpOriginalSaveHouseholdBudget(e);fpMarkSharedCha
 // Replace the earlier local-only authentication gate with membership-aware startup.
 if(firebaseReady && firebaseAuth){
   firebaseAuth.onAuthStateChanged(async user=>{
-    firebaseUser=user||null;
+  if(user)setAuthMessage('Step 3: Firebase authentication state detected.');
     if(!user){
       fpStopSharedListeners();fpHouseholdId=null;fpMemberData=null;fpHouseholdName='';
       if(privateTodosUnsubscribe)privateTodosUnsubscribe();privateTodosUnsubscribe=null;privateTodosData=[];privateTodosLoaded=false;
