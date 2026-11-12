@@ -3990,7 +3990,7 @@ function renderWatchlist() {
 
     cinemaCont.innerHTML = cinemaList.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">Cinema watchlist empty.</div>` : (destinationsData.cinema || []).map((item, idx) => {
         if (!filterItem(item.who)) return '';
-        const displayWho = item.who === 'dad' ? 'Kevin' : (item.who === 'mom' ? 'Harriet' : 'Family');
+       const displayWho = fpDisplayAssignee(item.who);
         return `
             <div class="compact-scoped-item">
                 <span class="compact-scoped-label">🎬 ${item.title}</span>
