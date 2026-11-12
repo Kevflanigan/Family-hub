@@ -4073,7 +4073,7 @@ function renderWishlist() {
     const filtered = wishlistData.filter(w => filterItem(w.who));
     document.getElementById('wishlist-list-container').innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">Wishlist is empty.</div>` : wishlistData.map((w, idx) => {
         if (!filterItem(w.who)) return '';
-        const displayWho = w.who === 'dad' ? 'Kevin' : (w.who === 'mom' ? 'Harriet' : 'Family');
+       const displayWho = fpDisplayAssignee(w.who);
         return `
             <div class="wishlist-scoped-item">
                 <span class="todo-item-label">🎁 ${w.title}</span>
