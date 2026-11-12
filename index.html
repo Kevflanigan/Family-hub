@@ -3634,7 +3634,7 @@ function renderPlacesView() {
                     ${item.postcode ? `<span style="font-size:0.75rem; color:var(--muted); margin-left:6px;">(${item.postcode})</span>` : ''}
                 </div>
                 <div style="display:flex; align-items:center; gap:6px;">
-                    <span class="compact-scoped-tag bg-${item.who}">${displayWho}</span>
+          <span class="compact-scoped-tag bg-${fpAssigneeStyle(item.who)}">${displayWho}</span>
                     <button class="action-btn delete-btn" onclick="destinationsData.places.splice(${idx},1); saveData(); renderPlacesView();">✕</button>
                 </div>
             </div>
@@ -3755,7 +3755,7 @@ function renderRestaurantsView() {
                     ${item.postcode ? `<div style="font-size:0.75rem; color:var(--muted);">Postcode: ${item.postcode}</div>` : ''}
                 </div>
                 <div style="display:flex; align-items:center; gap:6px;">
-                    <span class="compact-scoped-tag bg-${item.who}">${displayWho}</span>
+           <span class="compact-scoped-tag bg-${fpAssigneeStyle(item.who)}">${displayWho}</span>
                     <button class="action-btn delete-btn" onclick="destinationsData.restaurants.splice(${idx},1); saveData(); renderRestaurantsView();">✕</button>
                 </div>
             </div>
@@ -3995,7 +3995,7 @@ function renderWatchlist() {
             <div class="compact-scoped-item">
                 <span class="compact-scoped-label">🎬 ${item.title}</span>
                 <div style="display:flex; align-items:center; gap:6px;">
-                    <span class="compact-scoped-tag bg-${item.who}" onclick="cycleAssignee('cinema', ${idx})">${displayWho}</span>
+           <span class="compact-scoped-tag bg-${fpAssigneeStyle(item.who)}" onclick="cycleAssignee('cinema', ${idx})">${displayWho}</span>
                     <button class="action-btn delete-btn" onclick="destinationsData.cinema.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
                 </div>
             </div>
@@ -4009,7 +4009,7 @@ function renderWatchlist() {
             <div class="compact-scoped-item">
                 <span class="compact-scoped-label">📺 ${item.title}</span>
                 <div style="display:flex; align-items:center; gap:6px;">
-                    <span class="compact-scoped-tag bg-${item.who}" onclick="cycleAssignee('home', ${idx})">${displayWho}</span>
+         <span class="compact-scoped-tag bg-${fpAssigneeStyle(item.who)}" onclick="cycleAssignee('home', ${idx})">${displayWho}</span>
                     <button class="action-btn delete-btn" onclick="destinationsData.home.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
                 </div>
             </div>
@@ -4078,7 +4078,7 @@ function renderWishlist() {
             <div class="wishlist-scoped-item">
                 <span class="todo-item-label">🎁 ${w.title}</span>
                 <div style="display:flex; align-items:center; gap:6px;">
-                    <span class="compact-scoped-tag bg-${w.who}" onclick="cycleAssignee('wishlist', ${idx})">${displayWho}</span>
+    <span class="compact-scoped-tag bg-${fpAssigneeStyle(w.who)}" onclick="cycleAssignee('wishlist', ${idx})">${displayWho}</span>
                     <button class="action-btn delete-btn" onclick="wishlistData.splice(${idx},1); saveData(); renderWishlist();">✕</button>
                 </div>
             </div>
