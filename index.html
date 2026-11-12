@@ -2626,12 +2626,6 @@ async function fpFindExistingHousehold(user){
       await firebaseDb.collection('users').doc(user.uid).update({householdId:null,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
     }
   }
-  // Recover the already-created Parker Flanigan household for existing members
-  // whose older local profile did not yet contain householdId.
-  const legacyMember=await firebaseDb.collection('households').doc(FP_EXISTING_HOUSEHOLD_ID).collection('members').doc(user.uid).get();
-  if(legacyMember.exists){
-    await fpActivateHousehold(user,FP_EXISTING_HOUSEHOLD_ID); return true;
-  }
   return false;
 }
 async function fpCreateHousehold(){
