@@ -2640,6 +2640,95 @@ function fpUpdateHouseholdPanel(){
   const requestsList=document.getElementById('household-requests-list');
   if(requestsList)requestsList.hidden=!isOwner;
 }
+function fpLegacyKeyForMember(member) {
+    if (!member) return null;
+    if (member.legacyKey === 'dad' || member.legacyKey === 'mom') return member.legacyKey;
+
+    const name = String(member.name || '').trim().toLowerCase();
+    if (name.includes('kevin')) return 'dad';
+    if (name.includes('harriet')) return 'mom';
+
+    return null;
+}
+
+function fpMemberForLegacyKey(key) {
+    return fpHouseholdMembers.find(member => fpLegacyKeyForMember(member) === key) || null;
+}
+
+function fpDisplayAssignee(who) {
+    if (!who || who === 'family') return 'Family';
+    if (who === 'dad') return fpMemberForLegacyKey('dad')?.name || 'Kevin';
+    if (who === 'mom') return fpMemberForLegacyKey('mom')?.name || 'Harriet';
+
+    const member = fpHouseholdMembers.find(m => m.uid === who);
+    return member?.name || member?.email || 'Member';
+}
+
+function fpAssigneeStyle(who) {
+    if (who === 'family') return 'family';
+    if (who === 'dad' || who === 'mom') return who;
+
+    const member = fpHouseholdMembers.find(m => m.uid === who);
+    return fpLegacyKeyForMember(member) || 'family';
+}
+
+function fpRenderPlanMemberOptions() {
+    const container = document.getElementById('plan-member-options');
+    if (container) {
+        container.innerHTML = '';
+
+        fpHouseholdMembers.forEach(member => {
+            const name = member.name || member.email || 'Member';
+            const option = document.createElement('div');
+            option.className = 'user-dropdown-item';
+            option.classList.toggle(
+                'active-mode',
+                viewMode === 'individual' && currentUser === member.uid
+            );
+            option.innerHTML = '<span class="account-avatar-dot"></span>';
+
+            const label = document.createElement('span');
+            label.textContent = name;
+            option.appendChild(label);
+            option.addEventListener('click', () => selectUser(member.uid, name));
+            container.appendChild(option);
+        });
+    }
+
+    const select = document.getElementById('add-assignee');
+    if (select) {
+        const previous = select.value;
+        select.innerHTML = '';
+
+        const familyOption = document.createElement('option');
+        familyOption.value = 'family';
+        familyOption.textContent = 'Family (Everyone)';
+        select.appendChild(familyOption);
+
+        fpHouseholdMembers.forEach(member => {
+            const option = document.createElement('option');
+            option.value = member.uid;
+            option.textContent = member.name || member.email || 'Member';
+            select.appendChild(option);
+        });
+
+        select.value = Array.from(select.options).some(o => o.value === previous)
+            ? previous
+            : 'family';
+    }
+
+    if (currentUser === 'dad' || currentUser === 'mom') {
+        const matchingMember = fpMemberForLegacyKey(currentUser);
+        if (matchingMember) {
+            currentUser = matchingMember.uid;
+            currentUserName = matchingMember.name || currentUserName;
+            localStorage.setItem('fam_user', currentUser);
+            localStorage.setItem('fam_user_name', currentUserName);
+        }
+    }
+
+    updateHeaderDisplay();
+}
 let fpHouseholdName='';
 function fpCopyHouseholdId(){if(!fpHouseholdId)return showToast('No household is connected');if(navigator.clipboard?.writeText)navigator.clipboard.writeText(fpHouseholdId).then(()=>showToast('Household ID copied')).catch(()=>showToast('Could not copy household ID'));else showToast('Household ID: '+fpHouseholdId);}
 window.fpCopyHouseholdId=fpCopyHouseholdId;
