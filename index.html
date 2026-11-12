@@ -2187,37 +2187,6 @@ document.getElementById('firebase-auth-form').addEventListener('submit', async f
         submit.textContent = fpAuthMode === 'signup' ? 'Create account' : 'Sign in';
     }
 });
-
-if (firebaseReady && firebaseAuth) {
-    firebaseAuth.onAuthStateChanged(async user => {
-        firebaseUser = user || null;
-        if (user) {
-            localStorage.setItem('fam_user_email', user.email || '');
-            document.getElementById('auth-signed-in-email').textContent = user.email || '';
-            document.getElementById('auth-account-panel').style.display = 'none';
-            if (localStorage.getItem('fam_logged_in') === 'true') {
-                document.getElementById('auth-gate').style.display = 'none';
-            } else {
-                document.getElementById('household-panel').classList.add('visible');
-                document.getElementById('auth-gate').style.display = 'flex';
-            }
-            await loadPrivateTodos(user.uid);
-        } else {
-            if (privateTodosUnsubscribe) privateTodosUnsubscribe();
-            privateTodosUnsubscribe = null;
-            privateTodosData = [];
-            privateTodosLoaded = false;
-            localStorage.removeItem('fam_logged_in');
-            document.getElementById('auth-gate').style.display = 'flex';
-            document.getElementById('auth-account-panel').style.display = 'block';
-            document.getElementById('household-panel').classList.remove('visible');
-            renderTodos();
-        }
-    });
-} else {
-    setAuthMessage('Firebase could not be loaded. Authentication and private lists are unavailable.');
-}
-
 function togglePasswordVisibility() {
     const passwordInput = document.getElementById('auth-password');
     const eyeIcon = document.getElementById('eye-icon');
