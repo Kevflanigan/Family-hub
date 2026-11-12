@@ -3138,31 +3138,23 @@ function updateHeaderDisplay() {
     const indicatorEl = document.getElementById('account-indicator');
     const badgeDotEl = document.getElementById('active-badge-dot');
     const badgeTextEl = document.getElementById('active-badge-text');
-
     const optFamily = document.getElementById('opt-family');
-    const optUser = document.getElementById('opt-user');
-    const optHarriet = document.getElementById('opt-harriet');
 
-    if (optFamily && optUser && optHarriet) {
-        optFamily.classList.toggle('active-mode', viewMode === 'family');
-        optUser.classList.toggle('active-mode', viewMode === 'individual' && currentUser === 'dad');
-        optHarriet.classList.toggle('active-mode', viewMode === 'individual' && currentUser === 'mom');
-    }
+    optFamily?.classList.toggle('active-mode', viewMode === 'family');
 
-    if (viewMode === 'family') {
-        indicatorEl.setAttribute('class', 'user-silhouette-icon text-family');
-        badgeDotEl.className = "account-avatar-dot bg-family";
-        badgeTextEl.textContent = "Family";
-    } else {
-        indicatorEl.setAttribute('class', `user-silhouette-icon text-${currentUser}`);
-        badgeDotEl.className = `account-avatar-dot bg-${currentUser}`;
-        badgeTextEl.textContent = currentUserName.split(' ')[0];
-    }
+    const styleKey = viewMode === 'family' ? 'family' : fpAssigneeStyle(currentUser);
+
+    if (indicatorEl) indicatorEl.setAttribute('class', `user-silhouette-icon text-${styleKey}`);
+    if (badgeDotEl) badgeDotEl.className = `account-avatar-dot bg-${styleKey}`;
+    if (badgeTextEl) badgeTextEl.textContent = viewMode === 'family' ? 'Family' : currentUserName.split(' ')[0];
 }
 
 function filterItem(itemWho) {
-    if (viewMode === 'family') return true;
-    return itemWho === currentUser || itemWho === 'family';
+    if (viewMode === 'family' || itemWho === 'family') return true;
+    if (itemWho === currentUser) return true;
+
+    const selectedMember = fpHouseholdMembers.find(m => m.uid === currentUser);
+    return itemWho === fpLegacyKeyForMember(selectedMember);
 }
 
 function showView(viewId, navBtn) {
