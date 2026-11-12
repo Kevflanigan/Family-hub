@@ -3108,6 +3108,7 @@ function toggleUserDropdown() {
 
 function selectFamilyView() {
     viewMode = 'family';
+    fpRenderPlanMemberOptions();
     toggleUserDropdown();
     updateHeaderDisplay();
     saveData();
