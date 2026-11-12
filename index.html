@@ -3287,7 +3287,7 @@ function renderDashboard() {
     if (!todayMeal || !todayMeal.meal) {
         dinnerCont.innerHTML = `<div class="list-empty">No dinner plan set for tonight.</div>`;
     } else {
-        const cookName = todayMeal.cook === 'dad' ? 'Kevin' : (todayMeal.cook === 'mom' ? 'Harriet' : 'Family');
+        const cookName = fpDisplayAssignee(todayMeal.cook);
         dinnerCont.innerHTML = `
             <div class="dashboard-item" style="border-left: 4px solid var(--${todayMeal.cook || 'dad'});">
                 <div>
