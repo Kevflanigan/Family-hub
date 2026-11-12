@@ -3418,9 +3418,18 @@ function navigateCalendar(dir) {
 }
 
 function cycleCook(idx) {
+    if (!mealsData[idx]) return;
+
+    const options = fpAssignmentOptions().filter(who => who !== 'family');
+    options.push('family');
+
     const currentCook = mealsData[idx].cook || 'dad';
-    const nextCook = cooks[(cooks.indexOf(currentCook) + 1) % cooks.length];
-    mealsData[idx].cook = nextCook;
+    const member = fpMemberForLegacyKey(currentCook);
+    const resolvedCook = member?.uid || currentCook;
+    const indexNow = options.indexOf(resolvedCook);
+
+    mealsData[idx].cook = options[(indexNow + 1) % options.length];
+
     saveData();
     renderMeals();
     renderDashboard();
