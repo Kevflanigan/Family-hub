@@ -3081,14 +3081,6 @@ if(firebaseReady && firebaseAuth){
     }catch(error){console.error('Household startup failed:',error);fpShowHouseholdGate(error.message||'Could not load your household.');}
   });
 }
-
-
-document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
-        document.getElementById('add-end-date').value = '';
-        if(document.getElementById('handover-date')) document.getElementById('handover-date').value = new Date().toISOString().slice(0,10);
-    }
-}
-
 function toggleUserDropdown() {
     fpUpdateHouseholdPanel();
     document.getElementById('user-dropdown').classList.toggle('open');
