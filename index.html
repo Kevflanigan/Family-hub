@@ -2639,7 +2639,6 @@ function fpUpdateHouseholdPanel(){
   const requestsList=document.getElementById('household-requests-list');
   if(requestsList)requestsList.hidden=!isOwner;
 }
-}
 function fpUpdateHouseholdPanel(){
 const userName=document.getElementById('dropdown-user-name');
   if(userName)userName.textContent=fpMemberData?.name||firebaseUser?.displayName||'Account';
