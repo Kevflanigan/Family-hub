@@ -3578,10 +3578,22 @@ function renderShopping() {
 }
 
 function cycleAssignee(type, index) {
-    let data = type === 'foodshop' ? foodShopData : (type === 'familyshop' ? familyShopData : (type === 'wishlist' ? wishlistData : (type === 'cinema' ? destinationsData.cinema : (type === 'home' ? destinationsData.home : todosData))));
-    if (!data) return;
+    const data = type === 'foodshop' ? foodShopData :
+        type === 'familyshop' ? familyShopData :
+        type === 'wishlist' ? wishlistData :
+        type === 'cinema' ? destinationsData.cinema :
+        type === 'home' ? destinationsData.home : todosData;
+
+    if (!data?.[index]) return;
+
+    const options = fpAssignmentOptions();
     const currentWho = data[index].who || 'family';
-    data[index].who = assignees[(assignees.indexOf(currentWho) + 1) % assignees.length];
+    const member = fpMemberForLegacyKey(currentWho);
+    const resolvedWho = member?.uid || currentWho;
+    const indexNow = options.indexOf(resolvedWho);
+
+    data[index].who = options[(indexNow + 1) % options.length];
+
     saveData();
     renderAllViews();
 }
