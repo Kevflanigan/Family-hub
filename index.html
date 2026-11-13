@@ -2986,8 +2986,25 @@ async function fpDeleteHouseholdAndAccount() {
         const uid = firebaseUser.uid;
         const profileRef = firebaseDb.collection('users').doc(uid);
         const profileSnap = await profileRef.get();
-        const householdId = fpHouseholdId ||
-            (profileSnap.exists ? profileSnap.data().householdId : null);
+let householdId = profileSnap.exists
+    ? (profileSnap.data().householdId || null)
+    : null;
+
+if (!householdId) {
+    const ownedHouseholds = await firebaseDb.collection('households')
+        .where('ownerUid', '==', uid)
+        .get();
+
+    if (ownedHouseholds.size > 1) {
+        throw new Error(
+            'Multiple households were found for this account. No data has been deleted. Please contact support.'
+        );
+    }
+
+    if (ownedHouseholds.size === 1) {
+        householdId = ownedHouseholds.docs[0].id;
+    }
+}
 
         // Delete collections in manageable batches.
         async function deleteCollection(query) {
