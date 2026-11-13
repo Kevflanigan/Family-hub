@@ -3115,11 +3115,13 @@ if(firebaseReady && firebaseAuth){
       const signed=document.getElementById('auth-signed-in-email');if(signed)signed.textContent=user.email||'';
       const account=document.getElementById('auth-account-panel');if(account)account.style.display='none';
     setAuthMessage('Step 4: Authentication handler reached household startup.',true);  
-    const found=await fpFindExistingHousehold(user);
-     if(!found){
+const found=await fpFindExistingHousehold(user);
+if(!found){
   fpShowHouseholdGate('Create a household or request to join an existing one.');
   await loadPrivateTodos(user.uid);
   fpUpdateHouseholdPanel();
+} else {
+  showView('dashboard', document.getElementById('nav-btn-home'));
 }
     }catch(error){console.error('Household startup failed:',error);fpShowHouseholdGate(error.message||'Could not load your household.');}
   });
