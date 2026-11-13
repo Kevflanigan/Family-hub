@@ -3136,7 +3136,7 @@ function updateHeaderDisplay() {
 }
 
 function filterItem(itemWho) {
-    if (viewMode === 'family' || itemWho === 'family') return true;
+    if (viewMode === 'family') return true;
     if (itemWho === currentUser) return true;
 
     const selectedMember = fpHouseholdMembers.find(m => m.uid === currentUser);
