@@ -1657,7 +1657,10 @@ nav.bottom-nav, .bottom-nav {
     <!-- VIEW 0: HOME DASHBOARD -->
     <div id="view-dashboard" class="view active">
         <section class="card" style="margin-bottom:12px;">
-            <div class="card-title"><span>🗓️ This Week in Our Family</span><button class="tool-btn secondary" onclick="showView('calendar',document.getElementById('nav-btn-calendar'))">Open calendar</button></div>
+            <div class="card-title" style="display:flex; flex-direction:column; align-items:flex-start; gap:8px;">
+                <span style="white-space:nowrap;">🗓️ This Week in Our Family</span>
+                <button class="tool-btn secondary" onclick="showView('calendar',document.getElementById('nav-btn-calendar'))">Open calendar</button>
+            </div>
             <div id="family-week-summary" class="tool-note">Your family week at a glance.</div>
         </section>
         <section class="card">
