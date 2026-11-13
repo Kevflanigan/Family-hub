@@ -2391,7 +2391,129 @@ function saveData() {
     localStorage.setItem('fam_view_mode', viewMode);
     localStorage.setItem('fam_cal_page_mode', calendarPageMode);
 }
+let fpVoiceAddStep = 1;
 
+function fpStartVoiceAdd() {
+    fpVoiceAddStep = 1;
+    document.getElementById('voice-add-panel').style.display = 'block';
+    document.getElementById('voice-add-step-title').style.display = 'block';
+    document.getElementById('voice-add-step-category').style.display = 'none';
+    document.getElementById('voice-add-step-date').style.display = 'none';
+    document.getElementById('voice-add-review').style.display = 'none';
+    document.getElementById('voice-add-title').value = '';
+    document.getElementById('voice-add-date').value = '';
+    document.getElementById('voice-add-question').textContent = 'What would you like to add?';
+    document.getElementById('voice-add-progress').textContent = 'Step 1 of 3';
+    document.getElementById('voice-add-title').focus();
+}
+
+function fpVoiceAddNext() {
+    if (fpVoiceAddStep === 1) {
+        const title = document.getElementById('voice-add-title').value.trim();
+        if (!title) return showToast('Please enter what you want to add.');
+        fpVoiceAddStep = 2;
+        document.getElementById('voice-add-step-title').style.display = 'none';
+        document.getElementById('voice-add-step-category').style.display = 'block';
+        document.getElementById('voice-add-question').textContent = 'What type of entry is it?';
+        document.getElementById('voice-add-progress').textContent = 'Step 2 of 3';
+    } else if (fpVoiceAddStep === 2) {
+        fpVoiceAddStep = 3;
+        document.getElementById('voice-add-step-category').style.display = 'none';
+        document.getElementById('voice-add-step-date').style.display = 'block';
+        document.getElementById('voice-add-question').textContent = 'What date is it for?';
+        document.getElementById('voice-add-progress').textContent = 'Step 3 of 3';
+        document.getElementById('voice-add-date').focus();
+        document.getElementById('voice-add-next').textContent = 'Review entry';
+    } else {
+        fpVoiceAddReview();
+    }
+    document.getElementById('voice-add-back').style.display = 'inline-block';
+}
+
+function fpVoiceAddReview() {
+    const title = document.getElementById('voice-add-title').value.trim();
+    const category = document.getElementById('voice-add-category').value;
+    const spokenDate = document.getElementById('voice-add-date').value.trim();
+
+    let date = '';
+    if (spokenDate) {
+        const parsed = new Date(spokenDate);
+        if (isNaN(parsed.getTime())) {
+            showToast('I could not understand that date. Please try again.');
+            document.getElementById('voice-add-date').focus();
+            return;
+        }
+        date = `${parsed.getFullYear()}-${String(parsed.getMonth()+1).padStart(2,'0')}-${String(parsed.getDate()).padStart(2,'0')}`;
+    }
+
+    document.getElementById('voice-review-title').value = title;
+    document.getElementById('voice-review-category').value = category;
+    document.getElementById('voice-review-date').value = date;
+    document.getElementById('voice-review-assignee').value = 'family';
+
+    document.getElementById('voice-add-step-date').style.display = 'none';
+    document.getElementById('voice-add-review').style.display = 'block';
+    document.getElementById('voice-add-question').textContent = 'Check your entry';
+    document.getElementById('voice-add-progress').textContent = 'Review before saving';
+    document.getElementById('voice-add-next').style.display = 'none';
+    document.getElementById('voice-add-approve').style.display = 'inline-block';
+}
+
+function fpVoiceAddBack() {
+    if (fpVoiceAddStep === 3) {
+        fpVoiceAddStep = 2;
+        document.getElementById('voice-add-step-date').style.display = 'none';
+        document.getElementById('voice-add-step-category').style.display = 'block';
+        document.getElementById('voice-add-question').textContent = 'What type of entry is it?';
+        document.getElementById('voice-add-progress').textContent = 'Step 2 of 3';
+        document.getElementById('voice-add-next').textContent = 'Next';
+    } else if (fpVoiceAddStep === 2) {
+        fpVoiceAddStep = 1;
+        document.getElementById('voice-add-step-category').style.display = 'none';
+        document.getElementById('voice-add-step-title').style.display = 'block';
+        document.getElementById('voice-add-question').textContent = 'What would you like to add?';
+        document.getElementById('voice-add-progress').textContent = 'Step 1 of 3';
+        document.getElementById('voice-add-back').style.display = 'none';
+    } else {
+        return;
+    }
+    document.getElementById('voice-add-review').style.display = 'none';
+    document.getElementById('voice-add-next').style.display = 'inline-block';
+    document.getElementById('voice-add-approve').style.display = 'none';
+}
+
+function fpVoiceAddApprove() {
+    const title = document.getElementById('voice-review-title').value.trim();
+    if (!title) return showToast('Please enter an item title.');
+
+    const category = document.getElementById('voice-review-category').value;
+    const dateText = document.getElementById('voice-review-date').value.trim();
+    let date = '';
+
+    if (dateText) {
+        const parsed = new Date(dateText);
+        if (isNaN(parsed.getTime())) return showToast('Please enter a valid date.');
+        date = `${parsed.getFullYear()}-${String(parsed.getMonth()+1).padStart(2,'0')}-${String(parsed.getDate()).padStart(2,'0')}`;
+    }
+
+    document.getElementById('add-title').value = title;
+    document.getElementById('add-category').value = category;
+    document.getElementById('add-assignee').value = document.getElementById('voice-review-assignee').value;
+    document.getElementById('add-date').value = date;
+    document.getElementById('add-end-date').value = '';
+    document.getElementById('add-recurring').value = 'none';
+    document.getElementById('add-postcode').value = '';
+
+    handleQuickAdd({ preventDefault: () => {} });
+}
+
+function fpCancelVoiceAdd() {
+    document.getElementById('voice-add-panel').style.display = 'none';
+    document.getElementById('voice-add-next').style.display = 'inline-block';
+    document.getElementById('voice-add-next').textContent = 'Next';
+    document.getElementById('voice-add-approve').style.display = 'none';
+    document.getElementById('voice-add-back').style.display = 'none';
+}
 function toggleQuickAddModal() {
     const modal = document.getElementById('quick-add-modal');
     modal.classList.toggle('active');
