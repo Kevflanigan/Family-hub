@@ -2913,7 +2913,6 @@ async function fpApproveJoinRequest(uid,approve){
         const request=await transaction.get(requestRef);
         const existingMember=await transaction.get(memberRef);
         const profileRef=firebaseDb.collection('users').doc(uid);
-        const profile=await transaction.get(profileRef);
         if(!request.exists)throw new Error('Join request no longer exists.');
         if(existingMember.exists)throw new Error('This person is already a household member.');
         if(!profile.exists || profile.data().householdId)throw new Error('This account is already linked to another household.');
