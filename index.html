@@ -2221,7 +2221,15 @@ document.getElementById('firebase-auth-form').addEventListener('submit', async f
             localStorage.setItem('fam_user_email', email);
 
     } catch (error) {
-        setAuthMessage('Sign-in failed: ' + (error.message || 'Unknown error'));
+const message = error.code === 'auth/invalid-credential' ||
+                error.code === 'auth/wrong-password' ||
+                error.code === 'auth/user-not-found'
+    ? "We couldn't sign you in. Please check your email and password and try again. If you've forgotten your password, you can reset it."
+    : error.code === 'auth/too-many-requests'
+        ? "Too many attempts. Please wait a little while before trying again."
+        : "We couldn't sign you in. Please try again.";
+
+setAuthMessage(message);
     } finally {
         submit.disabled = false;
         submit.textContent = fpAuthMode === 'signup' ? 'Create account' : 'Sign in';
