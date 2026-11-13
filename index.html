@@ -3200,6 +3200,7 @@ saveHouseholdBudget=function(e){fpOriginalSaveHouseholdBudget(e);fpMarkSharedCha
 // Replace the earlier local-only authentication gate with membership-aware startup.
 if(firebaseReady && firebaseAuth){
   firebaseAuth.onAuthStateChanged(async user=>{
+          window.fpJoinRequestPromptedThisSession = false;
           const dropdown = document.getElementById('user-dropdown');
     if (dropdown) dropdown.classList.remove('open');
     firebaseUser=user||null;
