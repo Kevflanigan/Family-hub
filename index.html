@@ -2436,9 +2436,6 @@ function fpVoiceAddReview() {
     const spokenDate = document.getElementById('voice-add-date').value.trim();
 
     let date = '';
-    if (spokenDate) {
-        let date = '';
-    if (spokenDate) {
         const cleaned = spokenDate.replace(/,/g, ' ').replace(/\s+/g, ' ').trim();
         const match = cleaned.match(/^(\d{1,2})[\s/-]+([a-z]+|\d{1,2})(?:[\s/-]+(\d{4}))?$/i);
         let parsed = null;
