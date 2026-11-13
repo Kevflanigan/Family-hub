@@ -2915,7 +2915,6 @@ async function fpApproveJoinRequest(uid,approve){
         const profileRef=firebaseDb.collection('users').doc(uid);
         if(!request.exists)throw new Error('Join request no longer exists.');
         if(existingMember.exists)throw new Error('This person is already a household member.');
-        if(!profile.exists || profile.data().householdId)throw new Error('This account is already linked to another household.');
         const count=Number(household.data().memberCount)||1;
         if(count>=9)throw new Error('This household has reached its maximum of 9 members.');
         const data=request.data();
