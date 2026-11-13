@@ -2437,16 +2437,39 @@ function fpVoiceAddReview() {
 
     let date = '';
     if (spokenDate) {
-        const parsed = new Date(spokenDate);
-        if (isNaN(parsed.getTime())) {
+        let date = '';
+    if (spokenDate) {
+        const cleaned = spokenDate.replace(/,/g, ' ').replace(/\s+/g, ' ').trim();
+        const match = cleaned.match(/^(\d{1,2})[\s/-]+([a-z]+|\d{1,2})(?:[\s/-]+(\d{4}))?$/i);
+        let parsed = null;
+
+        if (match) {
+            const day = Number(match[1]);
+            const months = ['january','february','march','april','may','june','july','august','september','october','november','december'];
+            const month = /^\d+$/.test(match[2])
+                ? Number(match[2]) - 1
+                : months.findIndex(m => m.startsWith(match[2].toLowerCase()));
+            const year = Number(match[3]) || new Date().getFullYear();
+
+            if (month >= 0 && month < 12) {
+                const candidate = new Date(year, month, day);
+                if (candidate.getFullYear() === year && candidate.getMonth() === month && candidate.getDate() === day) {
+                    parsed = candidate;
+                }
+            }
+        } else {
+            const candidate = new Date(cleaned);
+            if (!isNaN(candidate.getTime())) parsed = candidate;
+        }
+
+        if (!parsed) {
             showToast('I could not understand that date. Please try again.');
             document.getElementById('voice-add-date').focus();
             return;
         }
+
         date = `${parsed.getFullYear()}-${String(parsed.getMonth()+1).padStart(2,'0')}-${String(parsed.getDate()).padStart(2,'0')}`;
     }
-
-    document.getElementById('voice-review-title').value = title;
     document.getElementById('voice-review-category').value = category;
     document.getElementById('voice-review-date').value = date;
     document.getElementById('voice-review-assignee').value = 'family';
