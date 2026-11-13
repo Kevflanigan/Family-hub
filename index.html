@@ -2938,11 +2938,56 @@ async function fpApproveJoinRequest(uid,approve){
   }catch(error){console.error(error);showToast(error.message||'Could not update join request');}
 }
 window.fpApproveJoinRequest=fpApproveJoinRequest;
+
 function fpRenderJoinRequests(snapshot){
-  const el=document.getElementById('household-requests-list');if(!el)return;
   const docs=snapshot.docs;
-  el.innerHTML=docs.length?docs.map(doc=>{const r=doc.data();return `<div class="household-request-card"><strong>${escapeToolText(r.name||r.email||'New member')}</strong><small>${escapeToolText(r.email||'')} · Requested to join</small><div class="household-request-actions"><button class="tool-btn" type="button" onclick="fpApproveJoinRequest('${doc.id}',true)">Approve</button><button class="tool-btn secondary" type="button" onclick="fpApproveJoinRequest('${doc.id}',false)">Decline</button></div></div>`;}).join(''):'<p class="tool-note">No pending requests.</p>';
+  const renderCards=(items)=>items.map(doc=>{
+    const r=doc.data();
+    const requestedAt=r.requestedAt?.toDate ? r.requestedAt.toDate() : null;
+    const dateTime=requestedAt
+      ? requestedAt.toLocaleString('en-GB',{dateStyle:'medium',timeStyle:'short'})
+      : 'Date/time unavailable';
+
+    return `<div class="household-request-card">
+      <strong>${escapeToolText(r.name||r.email||'New member')}</strong>
+      <small>${escapeToolText(r.email||'')}</small>
+      <small>Requested: ${dateTime}</small>
+      <div class="household-request-actions">
+        <button class="tool-btn" type="button" onclick="fpApproveJoinRequest('${doc.id}',true)">Approve</button>
+        <button class="tool-btn secondary" type="button" onclick="fpApproveJoinRequest('${doc.id}',false)">Decline</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  const el=document.getElementById('household-requests-list');
+  if(el) el.innerHTML=docs.length
+    ? renderCards(docs)
+    : '<p class="tool-note">No pending requests.</p>';
+
+  const modal=document.getElementById('join-request-modal');
+  const modalList=document.getElementById('join-request-modal-list');
+
+  if(!modal || !modalList) return;
+
+  if(!docs.length){
+    modal.classList.remove('active');
+    return;
+  }
+
+  modalList.innerHTML=renderCards(docs);
+
+  if(!window.fpJoinRequestPromptedThisSession){
+    window.fpJoinRequestPromptedThisSession=true;
+    modal.classList.add('active');
+  }
 }
+
+function fpCloseJoinRequestModal(){
+  const modal=document.getElementById('join-request-modal');
+  if(modal) modal.classList.remove('active');
+}
+window.fpCloseJoinRequestModal=fpCloseJoinRequestModal;
+
 function fpRenderMembers(snapshot){
   const el=document.getElementById('household-members-list');if(!el)return;
   const docs=snapshot.docs;
