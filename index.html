@@ -3097,6 +3097,8 @@ saveHouseholdBudget=function(e){fpOriginalSaveHouseholdBudget(e);fpMarkSharedCha
 // Replace the earlier local-only authentication gate with membership-aware startup.
 if(firebaseReady && firebaseAuth){
   firebaseAuth.onAuthStateChanged(async user=>{
+          const dropdown = document.getElementById('user-dropdown');
+    if (dropdown) dropdown.classList.remove('open');
     firebaseUser=user||null;
   if(user)setAuthMessage('Step 3: Firebase authentication state detected.');
     if(!user){
