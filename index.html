@@ -1597,6 +1597,16 @@ nav.bottom-nav, .bottom-nav {
                         <option value="dad">Kevin</option>
                     </select>
                 </div>
+<!-- Pending household join requests popup -->
+<div id="join-request-modal" class="modal-overlay">
+    <div class="modal-card">
+        <h3 style="margin:0 0 8px;">Household join request</h3>
+        <p class="tool-note">Someone wants to join your household.</p>
+        <div id="join-request-modal-list" class="household-management-list"></div>
+        <button type="button" class="tool-btn secondary" onclick="fpCloseJoinRequestModal()">Close</button>
+    </div>
+</div>
+                
                 <div class="form-row" id="date-row" style="gap:8px;">
                     <input type="date" id="add-date" class="form-input input-half" placeholder="Start Date">
                     <input type="date" id="add-end-date" class="form-input input-half" placeholder="End Date (Optional)">
