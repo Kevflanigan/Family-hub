@@ -3142,7 +3142,6 @@ function filterItem(itemWho) {
     const selectedMember = fpHouseholdMembers.find(m => m.uid === currentUser);
     return itemWho === fpLegacyKeyForMember(selectedMember);
 }
-
 function showView(viewId, navBtn) {
     if (viewId === 'todo' || viewId === 'familytools') viewId = 'familyhub';
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
