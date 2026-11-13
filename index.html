@@ -1991,8 +1991,16 @@ nav.bottom-nav, .bottom-nav {
         <section class="tool-section" id="household-management-section">
             <h3>🏡 Shared household</h3>
             <p class="tool-note" id="household-sync-status">Sign in and connect to a household to synchronise family information across devices.</p>
-            <div class="household-management-meta"><span>Household ID</span><code id="household-id-display">Not connected</code><button type="button" class="tool-btn secondary" onclick="fpCopyHouseholdId()">Copy ID</button><button type="button" class="tool-btn secondary" onclick="fpSignOut()">Sign out</button></div>
-            <div id="household-owner-controls" hidden>
+                      <div style="margin:10px 0;padding:12px;background:#f7faf8;border:1px solid #e5eee9;border-radius:12px;">
+                <div style="font-size:0.78rem;color:var(--muted);font-weight:700;margin-bottom:7px;">HOUSEHOLD ID</div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <code id="household-id-display" style="flex:1;min-width:0;font-size:0.78rem;overflow-wrap:anywhere;">Not connected</code>
+                    <button type="button" class="tool-btn secondary" onclick="fpCopyHouseholdId()">Copy ID</button>
+                </div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;margin:8px 0 12px;">
+                <button type="button" class="tool-btn secondary" onclick="fpSignOut()">Sign out</button>
+            </div>
                 <h4 id="household-requests-heading">Join requests</h4><div id="household-requests-list" class="household-management-list"><p class="tool-note">No pending requests.</p></div>
                 <h4>Members & permissions</h4><div id="household-members-list" class="household-management-list"><p class="tool-note">Loading members…</p></div>
             </div>
