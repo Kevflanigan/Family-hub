@@ -1576,6 +1576,73 @@ nav.bottom-nav, .bottom-nav {
                 <div class="card-title">Quick Add Item</div>
                 <button class="bubble-close-btn" onclick="toggleQuickAddModal()">✕</button>
             </div>
+
+<button type="button" class="tool-btn wide" onclick="fpStartVoiceAdd()" style="margin-bottom:8px;">
+    🎤 Add by Voice – Guided Entry
+</button>
+
+<div id="voice-add-panel" style="display:none; margin-bottom:12px;">
+    <div id="voice-add-progress" class="tool-note" style="margin-bottom:8px;">Step 1 of 3</div>
+    <h3 id="voice-add-question" style="margin:0 0 8px;">What would you like to add?</h3>
+    <p id="voice-add-instruction" class="tool-note">Tap the box, then tap the microphone on your phone keyboard.</p>
+
+    <div id="voice-add-step-title">
+        <input id="voice-add-title" type="text" class="form-input input-full" placeholder="What is the item?" autocomplete="off">
+    </div>
+
+    <div id="voice-add-step-category" style="display:none;">
+        <select id="voice-add-category" class="form-select input-full">
+            <option value="calendar">Calendar Event</option>
+            <option value="events">Family Events</option>
+            <option value="birthday">Birthday 🎂</option>
+            <option value="places">Place to Visit</option>
+            <option value="restaurants">Restaurant</option>
+            <option value="cinema">Cinema Film</option>
+            <option value="home">Home Watchlist</option>
+            <option value="todo">To-Do Task</option>
+            <option value="chores">Kid Chore</option>
+            <option value="wishlist">Gift Wishlist</option>
+        </select>
+    </div>
+
+    <div id="voice-add-step-date" style="display:none;">
+        <input id="voice-add-date" type="text" class="form-input input-full" placeholder="e.g. 14 November 2026" autocomplete="off">
+    </div>
+
+    <div id="voice-add-review" style="display:none;">
+        <p class="tool-note">Check your answers below. You can amend any of them before saving.</p>
+        <label>Item</label>
+        <input id="voice-review-title" type="text" class="form-input input-full">
+        <label style="display:block;margin-top:8px;">Category</label>
+        <select id="voice-review-category" class="form-select input-full">
+            <option value="calendar">Calendar Event</option>
+            <option value="events">Family Events</option>
+            <option value="birthday">Birthday 🎂</option>
+            <option value="places">Place to Visit</option>
+            <option value="restaurants">Restaurant</option>
+            <option value="cinema">Cinema Film</option>
+            <option value="home">Home Watchlist</option>
+            <option value="todo">To-Do Task</option>
+            <option value="chores">Kid Chore</option>
+            <option value="wishlist">Gift Wishlist</option>
+        </select>
+        <label style="display:block;margin-top:8px;">Date</label>
+        <input id="voice-review-date" type="text" class="form-input input-full" placeholder="Date (optional)">
+        <label style="display:block;margin-top:8px;">Assign to</label>
+        <select id="voice-review-assignee" class="form-select input-full">
+            <option value="family">Family (Everyone)</option>
+            <option value="mom">Harriet</option>
+            <option value="dad">Kevin</option>
+        </select>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:12px;">
+        <button type="button" id="voice-add-back" class="tool-btn secondary" onclick="fpVoiceAddBack()" style="display:none;">Back</button>
+        <button type="button" id="voice-add-next" class="tool-btn wide" onclick="fpVoiceAddNext()">Next</button>
+        <button type="button" id="voice-add-approve" class="tool-btn wide" onclick="fpVoiceAddApprove()" style="display:none;">Approve &amp; Save</button>
+    </div>
+    <button type="button" class="tool-btn secondary wide" onclick="fpCancelVoiceAdd()" style="margin-top:8px;">Cancel</button>
+</div>        
             <form class="add-form" style="gap:8px;" onsubmit="handleQuickAdd(event)">
                 <input type="text" id="add-title" class="form-input input-full" placeholder="Enter title / item / task..." required>
                 <div class="form-row" style="gap:8px;">
