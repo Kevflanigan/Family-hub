@@ -2787,20 +2787,53 @@ async function fpActivateHousehold(user,householdId){
     fpUpdateHouseholdPanel();
   } finally {fpHouseholdConnecting=false;}
 }
-async function fpFindExistingHousehold(user){
-  setAuthMessage('Step 4: Checking your Firestore user profile...',true);
-const profile=await firebaseDb.collection('users').doc(user.uid).get();
-  if(profile.exists && profile.data().householdId){
-    try{await fpActivateHousehold(user,profile.data().householdId);return true;}
-    catch(error){
-      const oldId=profile.data().householdId;
-      const oldMember=await firebaseDb.collection('households').doc(oldId).collection('members').doc(user.uid).get();
-      if(oldMember.exists) throw error;
-      await firebaseDb.collection('users').doc(user.uid).update({householdId:null,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+
+async function fpFindExistingHousehold(user) {
+    setAuthMessage('Step 4: Checking your Firestore user profile...', true);
+
+    const profile = await firebaseDb.collection('users').doc(user.uid).get();
+    let householdId = profile.exists
+        ? (profile.data().householdId || null)
+        : null;
+
+    // First try the household already linked to the user profile.
+    if (householdId) {
+        try {
+            await fpActivateHousehold(user, householdId);
+            return true;
+        } catch (error) {
+            const oldMember = await firebaseDb.collection('households')
+                .doc(householdId)
+                .collection('members')
+                .doc(user.uid)
+                .get();
+
+            if (oldMember.exists) throw error;
+
+            await firebaseDb.collection('users').doc(user.uid).update({
+                householdId: null,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }
     }
-  }
-  return false;
+
+    // Recover an owner whose user profile is missing or no longer linked.
+    const ownedHouseholds = await firebaseDb.collection('households')
+        .where('ownerUid', '==', user.uid)
+        .get();
+
+    if (ownedHouseholds.size > 1) {
+        throw new Error('Multiple owned households found. Please contact support.');
+    }
+
+    if (ownedHouseholds.size === 1) {
+        await fpActivateHousehold(user, ownedHouseholds.docs[0].id);
+        return true;
+    }
+
+    return false;
 }
+
 async function fpCreateHousehold(){
   if(!firebaseUser || !firebaseDb)return showToast('Please sign in first');
   const name=document.getElementById('household-name').value.trim();
