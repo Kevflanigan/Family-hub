@@ -1619,7 +1619,15 @@ nav.bottom-nav, .bottom-nav {
             </form>
         </div>
     </div>
-
+    <!-- Pending household join requests popup -->
+    <div id="join-request-modal" class="modal-overlay">
+        <div class="modal-card">
+            <h3 style="margin:0 0 8px;">Household join request</h3>
+            <p class="tool-note">Someone wants to join your household.</p>
+            <div id="join-request-modal-list" class="household-management-list"></div>
+            <button type="button" class="tool-btn secondary" onclick="fpCloseJoinRequestModal()">Close</button>
+        </div>
+    </div>
   <!-- Top Header Container -->
 <div class="top-header-container">
     <div class="header-left">
