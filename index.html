@@ -2878,13 +2878,40 @@ function fpMemberForLegacyKey(key) {
     return fpHouseholdMembers.find(member => fpLegacyKeyForMember(member) === key) || null;
 }
 
+function fpMemberDisplayName(member) {
+    if (!member) return 'Member';
+
+    const email = String(member.email || '').trim().toLowerCase();
+
+    const candidates = [member.displayName, member.name];
+
+    for (const candidate of candidates) {
+        const name = String(candidate || '').trim();
+        if (name && name.toLowerCase() !== email && !name.includes('@')) {
+            return name;
+        }
+    }
+
+    if (member.uid === firebaseUser?.uid) {
+        const authName = String(firebaseUser?.displayName || '').trim();
+        if (authName && !authName.includes('@')) return authName;
+    }
+
+    return 'Member';
+}
+
 function fpDisplayAssignee(who) {
     if (!who || who === 'family') return 'Family';
-    if (who === 'dad') return fpMemberForLegacyKey('dad')?.name || 'Kevin';
-    if (who === 'mom') return fpMemberForLegacyKey('mom')?.name || 'Harriet';
+    if (who === 'dad') return fpMemberDisplayName(fpMemberForLegacyKey('dad')) === 'Member'
+        ? 'Kevin' : fpMemberDisplayName(fpMemberForLegacyKey('dad'));
+    if (who === 'mom') return fpMemberDisplayName(fpMemberForLegacyKey('mom')) === 'Member'
+        ? 'Harriet' : fpMemberDisplayName(fpMemberForLegacyKey('mom'));
 
-    const member = fpHouseholdMembers.find(m => m.uid === who);
-    return member?.name || member?.email || 'Member';
+    const member = fpHouseholdMembers.find(m =>
+        m.uid === who || String(m.email || '').toLowerCase() === String(who).toLowerCase()
+    );
+
+    return fpMemberDisplayName(member);
 }
 
 function fpAssigneeStyle(who) {
