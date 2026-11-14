@@ -3526,10 +3526,22 @@ function updateHeaderDisplay() {
 
 function filterItem(itemWho) {
     if (viewMode === 'family') return true;
-    if (itemWho === currentUser) return true;
+    if (!itemWho) return false;
 
     const selectedMember = fpHouseholdMembers.find(m => m.uid === currentUser);
-    return itemWho === fpLegacyKeyForMember(selectedMember);
+
+    if (itemWho === currentUser) return true;
+
+    if (selectedMember) {
+        if (
+            selectedMember.email &&
+            String(itemWho).toLowerCase() === String(selectedMember.email).toLowerCase()
+        ) return true;
+
+        if (itemWho === fpLegacyKeyForMember(selectedMember)) return true;
+    }
+
+    return false;
 }
 function showView(viewId, navBtn) {
     if (viewId === 'todo' || viewId === 'familytools') viewId = 'familyhub';
