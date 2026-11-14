@@ -3528,20 +3528,31 @@ function filterItem(itemWho) {
     if (viewMode === 'family') return true;
     if (!itemWho) return false;
 
-    const selectedMember = fpHouseholdMembers.find(m => m.uid === currentUser);
+    const legacyKey = member => {
+        const name = `${member.displayName || ''} ${member.name || ''}`.toLowerCase();
+        if (member.legacyKey === 'dad' || member.legacyKey === 'mom') return member.legacyKey;
+        if (name.includes('kevin')) return 'dad';
+        if (name.includes('harriet')) return 'mom';
+        return null;
+    };
 
-    if (itemWho === currentUser) return true;
+    const selectedMember = fpHouseholdMembers.find(member =>
+        member.uid === currentUser || legacyKey(member) === currentUser
+    );
+
+    const aliases = [currentUser];
 
     if (selectedMember) {
-        if (
-            selectedMember.email &&
-            String(itemWho).toLowerCase() === String(selectedMember.email).toLowerCase()
-        ) return true;
-
-        if (itemWho === fpLegacyKeyForMember(selectedMember)) return true;
+        aliases.push(
+            selectedMember.uid,
+            selectedMember.email,
+            legacyKey(selectedMember)
+        );
     }
 
-    return false;
+    return aliases.some(alias =>
+        alias && String(alias).trim().toLowerCase() === String(itemWho).trim().toLowerCase()
+    );
 }
 function showView(viewId, navBtn) {
     if (viewId === 'todo' || viewId === 'familytools') viewId = 'familyhub';
