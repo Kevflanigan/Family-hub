@@ -3234,8 +3234,53 @@ function fpRenderMembers(snapshot){
     const roleLabel=role==='owner'?'Owner':role==='parent'?'Parent':'Member';
     let permissionHtml='';
     if(role!=='owner') permissionHtml=`<div class="household-permission-grid">${Object.entries(FP_SHARED_GROUPS).map(([group,categories])=>{const values=categories.map(c=>(m.permissions||{})[c]||'No access');const value=values.every(v=>v===values[0])?values[0]:'Mixed';return `<label>${FP_GROUP_LABELS[group]}<select onchange="fpSetMemberPermission('${uid}','${group}',this.value)" ${fpIsOwnerOrParent()&&fpMemberData.role==='owner'?'':'disabled'}><option ${value==='No access'?'selected':''}>No access</option><option ${value==='View only'?'selected':''}>View only</option><option ${value==='Contribute'?'selected':''}>Contribute</option>${value==='Mixed'?'<option selected disabled>Mixed</option>':''}</select></label>`;}).join('')}</div>`;
-    return `<div class="household-member-card"><div class="household-member-top"><strong>${escapeToolText(m.name||m.email||uid)}${uid===firebaseUser.uid?' (you)':''}</strong><span class="badge">${roleLabel}</span></div>${role!=='owner'?`<label class="auth-field">Role<select class="household-role-select" ${fpMemberData.role==='owner'?'':'disabled'} onchange="fpSetMemberRole('${uid}',this.value)"><option value="member" ${role==='member'?'selected':''}>Member</option><option value="parent" ${role==='parent'?'selected':''}>Parent</option></select></label>${permissionHtml}${fpMemberData.role==='owner'?`<button class="tool-btn secondary" type="button" onclick="fpRemoveMember('${uid}')">Remove member</button>`:''}`:''}</div>`;
-  }).join('')||'<p class="tool-note">No members found.</p>';
+    function fpRenderMembers(snapshot) {
+    const el = document.getElementById('household-members-list');
+    if (!el) return;
+
+    const docs = snapshot.docs;
+
+    el.innerHTML = docs.map(doc => {
+        const m = doc.data();
+        const uid = doc.id;
+        const role = String(m.role || 'member').toLowerCase();
+        const roleLabel = role === 'owner' ? 'Owner' : role === 'parent' ? 'Parent' : 'Member';
+
+        const memberName = fpMemberDisplayName({ ...m, uid });
+
+        let permissionHtml = '';
+
+        if (role !== 'owner') {
+            permissionHtml = `<div class="household-permission-grid">${Object.entries(FP_SHARED_GROUPS).map(([group, categories]) => {
+                const values = categories.map(c => (m.permissions || {})[c] || 'No access');
+                const value = values.every(v => v === values[0]) ? values[0] : 'Mixed';
+
+                return `<label>${FP_GROUP_LABELS[group]}<select onchange="fpSetMemberPermission('${uid}','${group}',this.value)" ${fpIsOwnerOrParent() && fpMemberData.role === 'owner' ? '' : 'disabled'}>
+                    <option ${value === 'No access' ? 'selected' : ''}>No access</option>
+                    <option ${value === 'View only' ? 'selected' : ''}>View only</option>
+                    <option ${value === 'Contribute' ? 'selected' : ''}>Contribute</option>
+                    ${value === 'Mixed' ? '<option selected disabled>Mixed</option>' : ''}
+                </select></label>`;
+            }).join('')}</div>`;
+        }
+
+        return `<div class="household-member-card">
+            <div class="household-member-top">
+                <strong>${escapeToolText(memberName)}${uid === firebaseUser.uid ? ' (you)' : ''}</strong>
+                <span class="badge">${roleLabel}</span>
+            </div>
+            ${role !== 'owner' ? `
+                <label class="auth-field">Role
+                    <select class="household-role-select" ${fpMemberData.role === 'owner' ? '' : 'disabled'} onchange="fpSetMemberRole('${uid}',this.value)">
+                        <option value="member" ${role === 'member' ? 'selected' : ''}>Member</option>
+                        <option value="parent" ${role === 'parent' ? 'selected' : ''}>Parent</option>
+                    </select>
+                </label>
+                ${permissionHtml}
+                ${fpMemberData.role === 'owner' ? `<button class="tool-btn secondary" type="button" onclick="fpRemoveMember('${uid}')">Remove member</button>` : ''}
+            ` : ''}
+        </div>`;
+    }).join('') || '<p class="tool-note">No members found.</p>';
 }
 async function fpSetMemberPermission(uid,group,value){
   if(!fpMemberData || fpMemberData.role!=='owner')return;
