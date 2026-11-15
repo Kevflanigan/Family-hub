@@ -1218,21 +1218,25 @@ nav.bottom-nav, .bottom-nav {
 }
 
 
-/* To-do list uses the same compact row and add-control layout as shopping */
-.todo-inline-add { align-items: stretch; }
-.todo-inline-add .todo-date-input { flex: 0 0 142px; width: 142px; padding: 10px 8px; }
-.todo-inline-add .inline-add-btn { flex: 0 0 auto; width: auto; min-height: 48px; padding: 0 16px; background: var(--accent); color: #fff; border: 0; border-radius: 10px; font-weight: 700; cursor: pointer; white-space: nowrap; }
-.todo-row-date { width: 112px; max-width: 112px; border: 0; cursor: pointer; }
-#todo-list-container .shopping-item { gap: 7px; }
-#todo-list-container .shop-left { gap: 9px; }
-#todo-list-container .item-text-label { overflow-wrap: anywhere; }
-@media (max-width: 420px) {
-    .todo-inline-add { flex-wrap: wrap; }
-    .todo-inline-add #todo-quick-input { flex: 1 1 100%; }
-    .todo-inline-add .todo-date-input { flex: 1 1 0; width: auto; }
-    #todo-list-container .shopping-item { padding: 9px 8px; gap: 4px; }
-    #todo-list-container .assign-tag { padding: 4px 7px; font-size: .62rem; }
-    #todo-list-container .todo-row-date { width: 94px; max-width: 94px; font-size: .62rem; padding: 2px 3px; }
+/* To-do list: vertical cards, following the shopping list's single-column rhythm */
+.todo-inline-add { display:flex; flex-direction:column; align-items:stretch; gap:8px; }
+.todo-inline-add #todo-quick-input { width:100%; flex:1 1 auto; }
+.todo-add-options { display:flex; align-items:center; gap:8px; width:100%; }
+.todo-inline-add .todo-date-input { flex:1 1 auto; width:auto; min-width:0; padding:10px 12px; }
+.todo-inline-add .inline-add-btn { flex:0 0 auto; width:auto; min-height:48px; padding:0 18px; background:var(--accent); color:#fff; border:0; border-radius:10px; font-weight:700; cursor:pointer; white-space:nowrap; }
+.todo-column-item { background:#f7faf8; border:1px solid #e7eeea; border-radius:12px; padding:11px 12px; display:flex; flex-direction:column; align-items:stretch; gap:9px; margin-bottom:6px; width:100%; box-sizing:border-box; }
+.todo-column-main { display:flex; align-items:flex-start; gap:10px; min-width:0; }
+.todo-column-main input[type=checkbox] { width:20px; height:20px; flex:0 0 20px; margin:1px 0 0; accent-color:var(--accent); }
+.todo-column-main .item-text-label { padding:0; min-width:0; overflow-wrap:anywhere; line-height:1.4; }
+.todo-column-controls { display:flex; align-items:center; justify-content:flex-start; flex-wrap:wrap; gap:7px; padding-left:30px; }
+.todo-column-controls .todo-row-date { width:132px; max-width:100%; min-height:32px; border:1px solid #dce6e1; border-radius:8px; background:#fff; padding:4px 7px; font-size:.76rem; }
+.todo-column-controls .assign-tag { margin:0; }
+.todo-column-item.completed .item-text-label { text-decoration:line-through; color:var(--muted); opacity:.7; }
+@media (max-width:420px) {
+  .todo-add-options { gap:7px; }
+  .todo-column-item { padding:10px; }
+  .todo-column-controls { padding-left:30px; gap:6px; }
+  .todo-column-controls .todo-row-date { width:124px; font-size:.72rem; }
 }
 
 /* Family Plan usability refinements */
@@ -2017,8 +2021,10 @@ nav.bottom-nav, .bottom-nav {
             <p id="todo-scope-note" class="tool-note" style="margin:0 0 8px;">Household tasks assigned to you or everyone.</p>
             <div class="inline-add-group todo-inline-add">
                 <input type="text" id="todo-quick-input" class="form-input input-full" placeholder="Add a family task..." onkeypress="if(event.key==='Enter') addTodoItem()">
-                <input type="date" id="todo-date-input" class="form-input todo-date-input" aria-label="Task date" title="Optional task date">
-                <button type="button" class="inline-add-btn" onclick="addTodoItem()">+ Add</button>
+                <div class="todo-add-options">
+                    <input type="date" id="todo-date-input" class="form-input todo-date-input" aria-label="Task date" title="Optional task date">
+                    <button type="button" class="inline-add-btn" onclick="addTodoItem()">+ Add</button>
+                </div>
             </div>
             <div id="todo-list-container" class="list-container"></div>
         </section>
@@ -4269,14 +4275,16 @@ function renderPrivateTodos(container) {
         return;
     }
     container.innerHTML = privateTodosData.map(item => `
-        <div class="shopping-item ${item.done ? 'completed' : ''}">
-            <div class="shop-left">
+        <div class="todo-column-item ${item.done ? 'completed' : ''}">
+            <div class="todo-column-main">
                 <input type="checkbox" ${item.done ? 'checked' : ''} onchange="togglePrivateTodo('${item.id}', this.checked)" aria-label="Mark private item complete">
                 <span class="item-text-label">${escapeToolText(item.text || '')}</span>
             </div>
-            ${item.date ? `<span class="date-tag" title="Due date">${escapeToolText(item.date)}</span>` : ''}
-            <button class="action-btn" onclick="editPrivateTodo('${item.id}')" aria-label="Edit private item">✏️</button>
-            <button class="action-btn delete-btn" onclick="deletePrivateTodo('${item.id}')" aria-label="Delete private item">✕</button>
+            <div class="todo-column-controls">
+                ${item.date ? `<span class="date-tag" title="Due date">${escapeToolText(item.date)}</span>` : ''}
+                <button class="action-btn" onclick="editPrivateTodo('${item.id}')" aria-label="Edit private item">✏️</button>
+                <button class="action-btn delete-btn" onclick="deletePrivateTodo('${item.id}')" aria-label="Delete private item">✕</button>
+            </div>
         </div>
     `).join('');
 }
@@ -4355,17 +4363,19 @@ function renderTodos() {
         : shared.map(({task:t, idx}) => {
             const displayWho = fpDisplayAssignee(t.who);
             return `
-                <div class="shopping-item ${t.done ? 'completed' : ''}">
-                    <div class="shop-left">
+                <div class="todo-column-item ${t.done ? 'completed' : ''}">
+                    <div class="todo-column-main">
                         <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodoCheck(${idx})" aria-label="Mark task complete">
                         ${t.isEditing ?
                             `<input type="text" class="edit-inline-input" value="${escapeToolText(t.text || '')}" onkeypress="if(event.key==='Enter') saveTodoEdit(${idx}, this.value)" onblur="saveTodoEdit(${idx}, this.value)" autofocus>` :
                             `<span class="item-text-label">${escapeToolText(t.text || '')}</span>`}
                     </div>
-                    <input type="date" class="date-tag todo-row-date" value="${t.date || ''}" onchange="updateTodoDate(${idx}, this.value)" title="Change task date" aria-label="Task date">
-                    <span class="assign-tag bg-${fpAssigneeStyle(t.who)}" onclick="cycleAssignee('todo', ${idx})">${displayWho}</span>
-                    <button class="action-btn" onclick="enableTodoEdit(${idx})" aria-label="Edit task">✏️</button>
-                    <button class="action-btn delete-btn" onclick="todosData.splice(${idx},1); saveData(); renderTodos(); renderDashboard(); renderWeeklyPlanner();" aria-label="Delete task">✕</button>
+                    <div class="todo-column-controls">
+                        <input type="date" class="date-tag todo-row-date" value="${t.date || ''}" onchange="updateTodoDate(${idx}, this.value)" title="Change task date" aria-label="Task date">
+                        <span class="assign-tag bg-${fpAssigneeStyle(t.who)}" onclick="cycleAssignee('todo', ${idx})">${displayWho}</span>
+                        <button class="action-btn" onclick="enableTodoEdit(${idx})" aria-label="Edit task">✏️</button>
+                        <button class="action-btn delete-btn" onclick="todosData.splice(${idx},1); saveData(); renderTodos(); renderDashboard(); renderWeeklyPlanner();" aria-label="Delete task">✕</button>
+                    </div>
                 </div>`;
         }).join('');
 }
