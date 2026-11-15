@@ -6,7 +6,6 @@
     <title>FamilyPlan — Plan together. Make memories.</title>
     <!-- Leaflet CSS for Map -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="styles.css" />
 <style>
 :root {
     --bg: #f3f6f5;
@@ -1711,22 +1710,26 @@ nav.bottom-nav, .bottom-nav {
     </div>
 
     <div class="header-right" style="position:relative;">
-        <div class="current-user-badge" onclick="toggleUserDropdown()" style="cursor:pointer;" title="Switch between personal and family plans">
+        <div class="current-user-badge" onclick="toggleUserDropdown()" style="cursor:pointer;" title="Switch between My View and Household View">
             <span id="active-badge-dot" class="account-avatar-dot bg-family" style="width:8px; height:8px;"></span>
-            <span id="active-badge-text">Family</span>
+            <span id="active-badge-text">My View</span>
             <span style="font-size:0.7rem;">▼</span>
         </div>
         <div id="user-dropdown" class="user-dropdown-menu" style="left:auto; right:0;">
-            <div class="user-dropdown-item" style="display:block; cursor:default; background:#f8fafc; font-size:0.8rem; color:var(--muted); padding:8px 12px;">
-                <div id="dropdown-user-name" style="display:block; font-weight:800; color:var(--text); line-height:1.4;"></div>
-                <div id="dropdown-household-name" style="display:block; font-size:0.75rem; line-height:1.4; margin-top:3px;"></div>
-            </div>
-            <div style="height:1px; background:#eff6ff;"></div>
-
-<div id="opt-family" class="user-dropdown-item" onclick="selectFamilyView()">
-    <span style="font-size:1.1rem;">👨‍👩‍👧‍👦</span> Family (Everyone)
+            <div id="opt-my-view" class="user-dropdown-item" onclick="selectMyView()" style="display:flex;align-items:center;gap:10px;">
+    <span style="font-size:1.1rem;">👤</span>
+    <span style="display:flex;flex-direction:column;line-height:1.35;">
+        <strong id="opt-my-view-label">My account</strong>
+        <small style="font-size:.72rem;color:var(--muted);">My View</small>
+    </span>
 </div>
-<div id="plan-member-options"></div>
+<div id="opt-family" class="user-dropdown-item" onclick="selectFamilyView()" style="display:flex;align-items:center;gap:10px;">
+    <span style="font-size:1.1rem;">👨‍👩‍👧‍👦</span>
+    <span style="display:flex;flex-direction:column;line-height:1.35;">
+        <strong id="opt-family-label">Your household</strong>
+        <small style="font-size:.72rem;color:var(--muted);">Household View</small>
+    </span>
+</div>
 <div style="height:1px; background:#eff6ff; margin:5px 0;"></div>
 <div class="user-dropdown-item" onclick="fpSignOut()" style="color:#c0392b; font-weight:700;">
     <span style="font-size:1.1rem;">↪</span> Sign out
@@ -1990,15 +1993,19 @@ nav.bottom-nav, .bottom-nav {
         <div id="family-tasks-panel">
         <section class="compact-scoped-card">
             <div class="todo-scoped-title">📝 To-Do List</div>
-            <div class="calendar-main-tabs" role="group" aria-label="Family or private to-do list" style="margin:0 0 10px;padding:4px;">
-                <button type="button" id="todo-scope-family" class="cal-main-tab active" onclick="setTodoScope('family')" aria-pressed="true" style="flex:1;">👨‍👩‍👧‍👦 Family</button>
-                <button type="button" id="todo-scope-private" class="cal-main-tab" onclick="setTodoScope('private')" aria-pressed="false" style="flex:1;">🔒 Private</button>
-            </div>
-            <p id="todo-scope-note" class="tool-note" style="margin:0 0 8px;">Family to-do items are shared with household members according to their permissions.</p>
+            <p id="todo-scope-note" class="tool-note" style="margin:0 0 8px;">My View combines your private reminders with household tasks assigned to you or everyone. Private reminders are not shown in Household View.</p>
             <div class="compact-scoped-add-group" style="flex-wrap:wrap; gap:6px;">
-                <input type="text" id="todo-quick-input" class="compact-scoped-input" style="flex:2; min-width:140px;" placeholder="Add family task..." onkeypress="if(event.key==='Enter') addTodoItem()">
+                <input type="text" id="todo-quick-input" class="compact-scoped-input" style="flex:2; min-width:140px;" placeholder="Add a household task..." onkeypress="if(event.key==='Enter') addTodoItem()">
                 <input type="date" id="todo-date-input" class="compact-scoped-input" style="flex:1.2; min-width:130px; padding:2px 6px;" aria-label="Task date">
                 <button class="compact-scoped-add-btn" onclick="addTodoItem()">+</button>
+            </div>
+            <div id="private-todo-add" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
+                <div style="font-size:.75rem;font-weight:800;color:var(--muted);margin-bottom:5px;">🔒 ADD A PRIVATE REMINDER</div>
+                <div class="compact-scoped-add-group" style="flex-wrap:wrap;gap:6px;">
+                    <input type="text" id="private-todo-quick-input" class="compact-scoped-input" style="flex:2;min-width:140px;" placeholder="Only visible to you..." onkeypress="if(event.key==='Enter') addPrivateTodoFromInput()">
+                    <input type="date" id="private-todo-date-input" class="compact-scoped-input" style="flex:1.2;min-width:130px;padding:2px 6px;" aria-label="Private reminder date">
+                    <button class="compact-scoped-add-btn" type="button" onclick="addPrivateTodoFromInput()">+</button>
+                </div>
             </div>
             <div id="todo-list-container" style="display:flex; flex-direction:column;"></div>
         </section>
@@ -2131,7 +2138,6 @@ nav.bottom-nav, .bottom-nav {
 
     <!-- Leaflet JS Library for Map -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" onerror="this.onerror=null;this.src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js';"></script>
-    <script src="app.js"></script>
     <!-- Firebase compat SDKs: Authentication and Firestore -->
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
@@ -2155,7 +2161,7 @@ let firebaseReady = false;
 let privateTodosData = [];
 let privateTodosUnsubscribe = null;
 let privateTodosLoaded = false;
-let activeTodoScope = 'family';
+let activeTodoScope = 'combined';
 let fpAuthMode = 'signin';
 
 try {
@@ -2329,7 +2335,7 @@ function fpAssignmentOptions() {
 
 let currentUser = localStorage.getItem('fam_user') || 'dad';
 let currentUserName = localStorage.getItem('fam_user_name') || 'Kevin';
-let viewMode = localStorage.getItem('fam_view_mode') || 'family';
+let viewMode = 'individual'; // My View is the safe default on every load.
 
 let mealsData = JSON.parse(localStorage.getItem('fam_meals')) || [
     { day: "Mon", meal: "", cook: "dad" }, { day: "Tue", meal: "", cook: "mom" }, 
@@ -2836,11 +2842,13 @@ function fpAttachSharedListeners(){
 }
 
 function fpUpdateHouseholdPanel(){
-  const userName=document.getElementById('dropdown-user-name');
-  if(userName)userName.textContent=fpMemberData?.name||firebaseUser?.displayName||'Account';
-
-  const householdName=document.getElementById('dropdown-household-name');
-  if(householdName)householdName.textContent=fpHouseholdName||'Your household';
+  const signedInMember = fpHouseholdMembers.find(member => member.uid === firebaseUser?.uid) || fpMemberData;
+  const signedInName = String(signedInMember?.displayName || signedInMember?.name || firebaseUser?.displayName || (firebaseUser?.email || '').split('@')[0] || 'My account').trim();
+  const householdLabel = String(fpHouseholdName || 'Your household').trim();
+  const myViewLabel = document.getElementById('opt-my-view-label');
+  if(myViewLabel)myViewLabel.textContent=signedInName;
+  const familyViewLabel = document.getElementById('opt-family-label');
+  if(familyViewLabel)familyViewLabel.textContent=householdLabel;
 
   const id=document.getElementById('household-id-display');
   if(id)id.textContent=fpHouseholdId||'Not connected';
@@ -2924,59 +2932,28 @@ function fpAssigneeStyle(who) {
 
 function fpRenderPlanMemberOptions() {
     const container = document.getElementById('plan-member-options');
-    if (container) {
-        container.innerHTML = '';
-
-        fpHouseholdMembers.forEach(member => {
-          const name = member.displayName || member.name || 'Member';
-            const option = document.createElement('div');
-            option.className = 'user-dropdown-item';
-            option.classList.toggle(
-                'active-mode',
-                viewMode === 'individual' && currentUser === member.uid
-            );
-            option.innerHTML = '<span class="account-avatar-dot"></span>';
-
-            const label = document.createElement('span');
-            label.textContent = name;
-            option.appendChild(label);
-            option.addEventListener('click', () => selectUser(member.uid, name));
-            container.appendChild(option);
-        });
-    }
-
+    if (container) container.innerHTML = '';
     const select = document.getElementById('add-assignee');
     if (select) {
         const previous = select.value;
         select.innerHTML = '';
-
         const familyOption = document.createElement('option');
         familyOption.value = 'family';
         familyOption.textContent = 'Family (Everyone)';
         select.appendChild(familyOption);
-
         fpHouseholdMembers.forEach(member => {
             const option = document.createElement('option');
             option.value = member.uid;
-          option.textContent = member.displayName || member.name || 'Member';
+            option.textContent = fpMemberDisplayName(member);
             select.appendChild(option);
         });
-
-        select.value = Array.from(select.options).some(o => o.value === previous)
-            ? previous
-            : 'family';
+        select.value = Array.from(select.options).some(o => o.value === previous) ? previous : 'family';
     }
-
-    if (currentUser === 'dad' || currentUser === 'mom') {
-        const matchingMember = fpMemberForLegacyKey(currentUser);
-        if (matchingMember) {
-            currentUser = matchingMember.uid;
-            currentUserName = matchingMember.name || currentUserName;
-            localStorage.setItem('fam_user', currentUser);
-            localStorage.setItem('fam_user_name', currentUserName);
-        }
+    if (firebaseUser) {
+        currentUser = firebaseUser.uid;
+        const member = fpHouseholdMembers.find(m => m.uid === firebaseUser.uid);
+        currentUserName = fpMemberDisplayName(member) || firebaseUser.displayName || currentUserName;
     }
-
     updateHeaderDisplay();
 }
 let fpHouseholdName='';
@@ -3472,13 +3449,21 @@ if(firebaseReady && firebaseAuth){
       const signed=document.getElementById('auth-signed-in-email');if(signed)signed.textContent=user.email||'';
       const account=document.getElementById('auth-account-panel');if(account)account.style.display='none';
     setAuthMessage('Step 4: Authentication handler reached household startup.',true);  
+currentUser = user.uid;
+currentUserName = user.displayName || (user.email || 'My').split('@')[0];
+viewMode = 'individual';
+localStorage.setItem('fam_user', currentUser);
+localStorage.setItem('fam_user_name', currentUserName);
+localStorage.setItem('fam_view_mode', viewMode);
 const found=await fpFindExistingHousehold(user);
+await loadPrivateTodos(user.uid);
 if(!found){
   fpShowHouseholdGate('Create a household or request to join an existing one.');
-  await loadPrivateTodos(user.uid);
   fpUpdateHouseholdPanel();
 } else {
   showView('dashboard', document.getElementById('nav-btn-home'));
+  updateHeaderDisplay();
+  renderAllViews();
 }
     }catch(error){console.error('Household startup failed:',error);fpShowHouseholdGate(error.message||'Could not load your household.');}
   });
@@ -3487,26 +3472,32 @@ function toggleUserDropdown() {
     fpUpdateHouseholdPanel();
     document.getElementById('user-dropdown').classList.toggle('open');
 }
-function selectFamilyView() {
-    viewMode = 'family';
-    fpRenderPlanMemberOptions();
+function selectMyView() {
+    if (firebaseUser) {
+        currentUser = firebaseUser.uid;
+        currentUserName = fpMemberDisplayName(fpHouseholdMembers.find(m => m.uid === firebaseUser.uid)) ||
+            firebaseUser.displayName || (firebaseUser.email || 'My').split('@')[0];
+    }
+    viewMode = 'individual';
     toggleUserDropdown();
     updateHeaderDisplay();
     saveData();
     renderAllViews();
-    showToast("Showing Family Plans (Everyone)");
+    showToast('Showing My View');
 }
 
-function selectUser(userKey, userName) {
-    currentUser = userKey;
-    currentUserName = userName;
-    viewMode = 'individual';
-    fpRenderPlanMemberOptions();
+function selectFamilyView() {
+    viewMode = 'family';
     toggleUserDropdown();
     updateHeaderDisplay();
     saveData();
     renderAllViews();
-    showToast(`Showing ${userName}'s Personal View`);
+    showToast('Showing Household View');
+}
+
+// Retained for older saved links, but a user can no longer switch into another member's identity.
+function selectUser(userKey, userName) {
+    selectMyView();
 }
 
 function updateHeaderDisplay() {
@@ -3514,45 +3505,27 @@ function updateHeaderDisplay() {
     const badgeDotEl = document.getElementById('active-badge-dot');
     const badgeTextEl = document.getElementById('active-badge-text');
     const optFamily = document.getElementById('opt-family');
-
+    const optMy = document.getElementById('opt-my-view');
     optFamily?.classList.toggle('active-mode', viewMode === 'family');
-
+    optMy?.classList.toggle('active-mode', viewMode !== 'family');
     const styleKey = viewMode === 'family' ? 'family' : fpAssigneeStyle(currentUser);
-
     if (indicatorEl) indicatorEl.setAttribute('class', `user-silhouette-icon text-${styleKey}`);
     if (badgeDotEl) badgeDotEl.className = `account-avatar-dot bg-${styleKey}`;
-    if (badgeTextEl) badgeTextEl.textContent = viewMode === 'family' ? 'Family' : currentUserName.split(' ')[0];
+    if (badgeTextEl) badgeTextEl.textContent = viewMode === 'family' ? 'Household' : 'My View';
 }
 
 function filterItem(itemWho) {
     if (viewMode === 'family') return true;
     if (!itemWho) return false;
-
-    const legacyKey = member => {
-        const name = `${member.displayName || ''} ${member.name || ''}`.toLowerCase();
-        if (member.legacyKey === 'dad' || member.legacyKey === 'mom') return member.legacyKey;
-        if (name.includes('kevin')) return 'dad';
-        if (name.includes('harriet')) return 'mom';
-        return null;
-    };
-
-    const selectedMember = fpHouseholdMembers.find(member =>
-        member.uid === currentUser || legacyKey(member) === currentUser
-    );
-
-    const aliases = [currentUser];
-
-    if (selectedMember) {
-        aliases.push(
-            selectedMember.uid,
-            selectedMember.email,
-            legacyKey(selectedMember)
-        );
-    }
-
-    return aliases.some(alias =>
-        alias && String(alias).trim().toLowerCase() === String(itemWho).trim().toLowerCase()
-    );
+    const who = String(itemWho).trim().toLowerCase();
+    if (who === 'family' || who === 'everyone' || who === 'household') return true;
+    const uid = String(firebaseUser?.uid || currentUser || '').trim().toLowerCase();
+    if (uid && who === uid) return true;
+    const member = fpHouseholdMembers.find(m => m.uid === firebaseUser?.uid || m.uid === currentUser);
+    const email = String(member?.email || firebaseUser?.email || '').trim().toLowerCase();
+    if (email && who === email) return true;
+    const legacy = fpLegacyKeyForMember(member);
+    return !!legacy && who === legacy;
 }
 function showView(viewId, navBtn) {
     if (viewId === 'todo' || viewId === 'familytools') viewId = 'familyhub';
@@ -4161,23 +4134,12 @@ function renderRestaurantsView() {
 }
 
 function setTodoScope(scope) {
-    activeTodoScope = scope === 'private' ? 'private' : 'family';
-    const familyButton = document.getElementById('todo-scope-family');
-    const privateButton = document.getElementById('todo-scope-private');
-    if (familyButton) {
-        familyButton.classList.toggle('active', activeTodoScope === 'family');
-        familyButton.setAttribute('aria-pressed', String(activeTodoScope === 'family'));
-    }
-    if (privateButton) {
-        privateButton.classList.toggle('active', activeTodoScope === 'private');
-        privateButton.setAttribute('aria-pressed', String(activeTodoScope === 'private'));
-    }
+    // Backwards-compatible handler: private tasks are now part of My View, not a separate mode.
+    activeTodoScope = 'combined';
     const note = document.getElementById('todo-scope-note');
-    const input = document.getElementById('todo-quick-input');
-    if (note) note.textContent = activeTodoScope === 'private'
-        ? 'Your personal items are stored under your signed-in account and protected by Firestore security rules.'
-        : 'Family to-do items are shared with household members according to their permissions.';
-    if (input) input.placeholder = activeTodoScope === 'private' ? 'Add a private idea…' : 'Add family task…';
+    if (note) note.textContent = viewMode === 'family'
+        ? 'Household View shows shared household tasks. Private reminders are never included.'
+        : 'My View combines your private reminders with household tasks assigned to you or everyone.';
     renderTodos();
 }
 window.setTodoScope = setTodoScope;
@@ -4206,6 +4168,17 @@ async function loadPrivateTodos(uid) {
 function privateTodosCollection() {
     if (!firebaseDb || !firebaseUser) return null;
     return firebaseDb.collection('users').doc(firebaseUser.uid).collection('privateTodos');
+}
+
+async function addPrivateTodoFromInput() {
+    const input = document.getElementById('private-todo-quick-input');
+    const dateInput = document.getElementById('private-todo-date-input');
+    if (!input || !input.value.trim()) return;
+    const text = input.value.trim();
+    const date = dateInput ? dateInput.value : '';
+    input.value = '';
+    if (dateInput) dateInput.value = '';
+    await addPrivateTodo(text, date);
 }
 
 async function addPrivateTodo(text, date) {
@@ -4301,16 +4274,13 @@ function addTodoItem() {
     const text = input.value.trim();
     input.value = '';
     if (dateInput) dateInput.value = '';
-    if (activeTodoScope === 'private') {
-        addPrivateTodo(text, chosenDate);
-        return;
-    }
-    todosData.push({ text, who: currentUser, date: chosenDate, done: false, isEditing: false, quickAdded: true });
+    const assignedTo = viewMode === 'family' ? 'family' : (firebaseUser?.uid || currentUser);
+    todosData.push({ text, who: assignedTo, date: chosenDate, done: false, isEditing: false, quickAdded: true });
     saveData();
     renderTodos();
     renderDashboard();
     renderWeeklyPlanner();
-    showToast('Task added');
+    showToast('Household task added');
 }
 
 function toggleTodoCheck(idx) {
@@ -4338,32 +4308,56 @@ function saveTodoEdit(idx, newText) {
 function renderTodos() {
     const container = document.getElementById('todo-list-container');
     if (!container) return;
-    if (activeTodoScope === 'private') {
-        renderPrivateTodos(container);
-        return;
-    }
-    const filtered = todosData.filter(t => filterItem(t.who));
-    container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No family tasks yet.</div>` : todosData.map((t, idx) => {
-        if (!filterItem(t.who)) return '';
-    const displayWho = fpDisplayAssignee(t.who);
+    const shared = todosData.map((task, idx) => ({ task, idx }))
+        .filter(({ task }) => filterItem(task.who));
+    const privateItems = viewMode === 'family' ? [] : privateTodosData;
+    const note = document.getElementById('todo-scope-note');
+    if (note) note.textContent = viewMode === 'family'
+        ? 'Household View shows shared household tasks. Private reminders are excluded.'
+        : 'My View combines your private reminders with household tasks assigned to you or everyone.';
+    const privateAdd = document.getElementById('private-todo-add');
+    if (privateAdd) privateAdd.hidden = viewMode === 'family';
+
+    const privateHtml = viewMode !== 'family' ? (() => {
+        if (!firebaseUser || !privateTodosLoaded) return '<div class="list-empty">Loading your private reminders…</div>';
+        if (!privateItems.length) return '<div class="list-empty">No private reminders yet.</div>';
+        return privateItems.map(item => `
+            <div class="todo-task-item ${item.done ? 'completed' : ''}">
+                <div class="todo-task-main">
+                    <input type="checkbox" class="compact-scoped-checkbox" ${item.done ? 'checked' : ''} onchange="togglePrivateTodo('${item.id}', this.checked)" aria-label="Mark private item complete">
+                    <span class="todo-item-label">${escapeToolText(item.text || '')}</span>
+                </div>
+                <div class="todo-task-controls">
+                    ${item.date ? `<span class="date-tag" style="cursor:default;">${escapeToolText(item.date)}</span>` : ''}
+                    <span class="compact-scoped-tag">Private</span>
+                    <button class="action-btn" onclick="editPrivateTodo('${item.id}')" aria-label="Edit private item">✏️</button>
+                    <button class="action-btn delete-btn" onclick="deletePrivateTodo('${item.id}')" aria-label="Delete private item">✕</button>
+                </div>
+            </div>`).join('');
+    })() : '';
+
+    const sharedHtml = shared.map(({task:t, idx}) => {
+        const displayWho = fpDisplayAssignee(t.who);
         return `
             <div class="todo-task-item ${t.done ? 'completed' : ''} ${t.quickAdded ? 'quick-added-task' : ''}">
                 <div class="todo-task-main">
                     <input type="checkbox" class="compact-scoped-checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodoCheck(${idx})">
                     ${t.isEditing ?
                         `<input type="text" class="compact-scoped-input" value="${escapeToolText(t.text || '')}" onkeypress="if(event.key==='Enter') saveTodoEdit(${idx}, this.value)" onblur="saveTodoEdit(${idx}, this.value)" autofocus>` :
-                        `<span class="todo-item-label">${escapeToolText(t.text || '')}</span>`
-                    }
+                        `<span class="todo-item-label">${escapeToolText(t.text || '')}</span>`}
                 </div>
                 <div class="todo-task-controls">
                     <input type="date" class="date-tag" value="${t.date || ''}" onchange="updateTodoDate(${idx}, this.value)" title="Change task date">
-           <span class="compact-scoped-tag bg-${fpAssigneeStyle(t.who)}" onclick="cycleAssignee('todo', ${idx})">${displayWho}</span>
+                    <span class="compact-scoped-tag bg-${fpAssigneeStyle(t.who)}" onclick="cycleAssignee('todo', ${idx})">${displayWho}</span>
                     <button class="action-btn" onclick="enableTodoEdit(${idx})" aria-label="Edit task">✏️</button>
                     <button class="action-btn delete-btn" onclick="todosData.splice(${idx},1); saveData(); renderTodos(); renderDashboard(); renderWeeklyPlanner();" aria-label="Delete task">✕</button>
                 </div>
-            </div>
-        `;
+            </div>`;
     }).join('');
+
+    container.innerHTML = `${viewMode !== 'family' ? `<div class="todo-section-label" style="font-size:.75rem;font-weight:800;color:var(--muted);padding:8px 2px 4px;">🔒 MY PRIVATE REMINDERS</div>${privateHtml}` : ''}
+        <div class="todo-section-label" style="font-size:.75rem;font-weight:800;color:var(--muted);padding:8px 2px 4px;">${viewMode === 'family' ? '🏡 HOUSEHOLD TASKS' : '👥 HOUSEHOLD TASKS FOR ME'}</div>
+        ${sharedHtml || '<div class="list-empty" style="font-size:0.85rem;padding:0.8rem;">No matching household tasks.</div>'}`;
 }
 
 function addWatchlistItem(type) {
@@ -4826,7 +4820,7 @@ if(document.getElementById('handover-date')) document.getElementById('handover-d
 if(document.getElementById('unplanned-date')) document.getElementById('unplanned-date').value = new Date().toISOString().slice(0,10);
 
 updateHeaderDisplay();
-setTodoScope('family');
+setTodoScope('combined');
 renderFinanceOverview();
 renderAllViews();
 
