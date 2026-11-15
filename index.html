@@ -1993,19 +1993,15 @@ nav.bottom-nav, .bottom-nav {
         <div id="family-tasks-panel">
         <section class="compact-scoped-card">
             <div class="todo-scoped-title">📝 To-Do List</div>
-            <p id="todo-scope-note" class="tool-note" style="margin:0 0 8px;">My View combines your private reminders with household tasks assigned to you or everyone. Private reminders are not shown in Household View.</p>
+            <div class="calendar-main-tabs" role="group" aria-label="Family or private to-do list" style="margin:0 0 10px;padding:4px;">
+                <button type="button" id="todo-scope-family" class="cal-main-tab active" onclick="setTodoScope('family')" aria-pressed="true" style="flex:1;">👨‍👩‍👧‍👦 Family</button>
+                <button type="button" id="todo-scope-private" class="cal-main-tab" onclick="setTodoScope('private')" aria-pressed="false" style="flex:1;">🔒 Private</button>
+            </div>
+            <p id="todo-scope-note" class="tool-note" style="margin:0 0 8px;">Household tasks assigned to you or everyone.</p>
             <div class="compact-scoped-add-group" style="flex-wrap:wrap; gap:6px;">
-                <input type="text" id="todo-quick-input" class="compact-scoped-input" style="flex:2; min-width:140px;" placeholder="Add a household task..." onkeypress="if(event.key==='Enter') addTodoItem()">
+                <input type="text" id="todo-quick-input" class="compact-scoped-input" style="flex:2; min-width:140px;" placeholder="Add a family task..." onkeypress="if(event.key==='Enter') addTodoItem()">
                 <input type="date" id="todo-date-input" class="compact-scoped-input" style="flex:1.2; min-width:130px; padding:2px 6px;" aria-label="Task date">
                 <button class="compact-scoped-add-btn" onclick="addTodoItem()">+</button>
-            </div>
-            <div id="private-todo-add" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
-                <div style="font-size:.75rem;font-weight:800;color:var(--muted);margin-bottom:5px;">🔒 ADD A PRIVATE REMINDER</div>
-                <div class="compact-scoped-add-group" style="flex-wrap:wrap;gap:6px;">
-                    <input type="text" id="private-todo-quick-input" class="compact-scoped-input" style="flex:2;min-width:140px;" placeholder="Only visible to you..." onkeypress="if(event.key==='Enter') addPrivateTodoFromInput()">
-                    <input type="date" id="private-todo-date-input" class="compact-scoped-input" style="flex:1.2;min-width:130px;padding:2px 6px;" aria-label="Private reminder date">
-                    <button class="compact-scoped-add-btn" type="button" onclick="addPrivateTodoFromInput()">+</button>
-                </div>
             </div>
             <div id="todo-list-container" style="display:flex; flex-direction:column;"></div>
         </section>
@@ -2161,7 +2157,7 @@ let firebaseReady = false;
 let privateTodosData = [];
 let privateTodosUnsubscribe = null;
 let privateTodosLoaded = false;
-let activeTodoScope = 'combined';
+let activeTodoScope = 'family';
 let fpAuthMode = 'signin';
 
 try {
@@ -3488,6 +3484,7 @@ function selectMyView() {
 
 function selectFamilyView() {
     viewMode = 'family';
+    if (activeTodoScope === 'private') activeTodoScope = 'family';
     toggleUserDropdown();
     updateHeaderDisplay();
     saveData();
@@ -4134,12 +4131,25 @@ function renderRestaurantsView() {
 }
 
 function setTodoScope(scope) {
-    // Backwards-compatible handler: private tasks are now part of My View, not a separate mode.
-    activeTodoScope = 'combined';
+    activeTodoScope = scope === 'private' ? 'private' : 'family';
+    const familyButton = document.getElementById('todo-scope-family');
+    const privateButton = document.getElementById('todo-scope-private');
+    if (familyButton) {
+        familyButton.classList.toggle('active', activeTodoScope === 'family');
+        familyButton.setAttribute('aria-pressed', String(activeTodoScope === 'family'));
+    }
+    if (privateButton) {
+        privateButton.classList.toggle('active', activeTodoScope === 'private');
+        privateButton.setAttribute('aria-pressed', String(activeTodoScope === 'private'));
+        privateButton.disabled = viewMode === 'family';
+        privateButton.title = viewMode === 'family' ? 'Private reminders are available in My View only' : '';
+    }
     const note = document.getElementById('todo-scope-note');
-    if (note) note.textContent = viewMode === 'family'
-        ? 'Household View shows shared household tasks. Private reminders are never included.'
-        : 'My View combines your private reminders with household tasks assigned to you or everyone.';
+    const input = document.getElementById('todo-quick-input');
+    if (note) note.textContent = activeTodoScope === 'private'
+        ? 'Your personal reminders are stored under your signed-in account and are not shared with the household.'
+        : (viewMode === 'family' ? 'All shared household tasks.' : 'Household tasks assigned to you or everyone.');
+    if (input) input.placeholder = activeTodoScope === 'private' ? 'Add a private reminder…' : 'Add a family task…';
     renderTodos();
 }
 window.setTodoScope = setTodoScope;
@@ -4170,16 +4180,6 @@ function privateTodosCollection() {
     return firebaseDb.collection('users').doc(firebaseUser.uid).collection('privateTodos');
 }
 
-async function addPrivateTodoFromInput() {
-    const input = document.getElementById('private-todo-quick-input');
-    const dateInput = document.getElementById('private-todo-date-input');
-    if (!input || !input.value.trim()) return;
-    const text = input.value.trim();
-    const date = dateInput ? dateInput.value : '';
-    input.value = '';
-    if (dateInput) dateInput.value = '';
-    await addPrivateTodo(text, date);
-}
 
 async function addPrivateTodo(text, date) {
     const collection = privateTodosCollection();
@@ -4274,6 +4274,10 @@ function addTodoItem() {
     const text = input.value.trim();
     input.value = '';
     if (dateInput) dateInput.value = '';
+    if (activeTodoScope === 'private') {
+        addPrivateTodo(text, chosenDate);
+        return;
+    }
     const assignedTo = viewMode === 'family' ? 'family' : (firebaseUser?.uid || currentUser);
     todosData.push({ text, who: assignedTo, date: chosenDate, done: false, isEditing: false, quickAdded: true });
     saveData();
@@ -4282,7 +4286,6 @@ function addTodoItem() {
     renderWeeklyPlanner();
     showToast('Household task added');
 }
-
 function toggleTodoCheck(idx) {
     todosData[idx].done = !todosData[idx].done;
     saveData();
@@ -4308,58 +4311,51 @@ function saveTodoEdit(idx, newText) {
 function renderTodos() {
     const container = document.getElementById('todo-list-container');
     if (!container) return;
-    const shared = todosData.map((task, idx) => ({ task, idx }))
-        .filter(({ task }) => filterItem(task.who));
-    const privateItems = viewMode === 'family' ? [] : privateTodosData;
+    const familyButton = document.getElementById('todo-scope-family');
+    const privateButton = document.getElementById('todo-scope-private');
+    if (familyButton) {
+        familyButton.classList.toggle('active', activeTodoScope === 'family');
+        familyButton.setAttribute('aria-pressed', String(activeTodoScope === 'family'));
+    }
+    if (privateButton) {
+        privateButton.classList.toggle('active', activeTodoScope === 'private');
+        privateButton.setAttribute('aria-pressed', String(activeTodoScope === 'private'));
+        privateButton.disabled = viewMode === 'family';
+        privateButton.title = viewMode === 'family' ? 'Private reminders are available in My View only' : '';
+    }
+    if (viewMode === 'family' && activeTodoScope === 'private') activeTodoScope = 'family';
     const note = document.getElementById('todo-scope-note');
-    if (note) note.textContent = viewMode === 'family'
-        ? 'Household View shows shared household tasks. Private reminders are excluded.'
-        : 'My View combines your private reminders with household tasks assigned to you or everyone.';
-    const privateAdd = document.getElementById('private-todo-add');
-    if (privateAdd) privateAdd.hidden = viewMode === 'family';
-
-    const privateHtml = viewMode !== 'family' ? (() => {
-        if (!firebaseUser || !privateTodosLoaded) return '<div class="list-empty">Loading your private reminders…</div>';
-        if (!privateItems.length) return '<div class="list-empty">No private reminders yet.</div>';
-        return privateItems.map(item => `
-            <div class="todo-task-item ${item.done ? 'completed' : ''}">
-                <div class="todo-task-main">
-                    <input type="checkbox" class="compact-scoped-checkbox" ${item.done ? 'checked' : ''} onchange="togglePrivateTodo('${item.id}', this.checked)" aria-label="Mark private item complete">
-                    <span class="todo-item-label">${escapeToolText(item.text || '')}</span>
-                </div>
-                <div class="todo-task-controls">
-                    ${item.date ? `<span class="date-tag" style="cursor:default;">${escapeToolText(item.date)}</span>` : ''}
-                    <span class="compact-scoped-tag">Private</span>
-                    <button class="action-btn" onclick="editPrivateTodo('${item.id}')" aria-label="Edit private item">✏️</button>
-                    <button class="action-btn delete-btn" onclick="deletePrivateTodo('${item.id}')" aria-label="Delete private item">✕</button>
-                </div>
-            </div>`).join('');
-    })() : '';
-
-    const sharedHtml = shared.map(({task:t, idx}) => {
-        const displayWho = fpDisplayAssignee(t.who);
-        return `
-            <div class="todo-task-item ${t.done ? 'completed' : ''} ${t.quickAdded ? 'quick-added-task' : ''}">
-                <div class="todo-task-main">
-                    <input type="checkbox" class="compact-scoped-checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodoCheck(${idx})">
-                    ${t.isEditing ?
-                        `<input type="text" class="compact-scoped-input" value="${escapeToolText(t.text || '')}" onkeypress="if(event.key==='Enter') saveTodoEdit(${idx}, this.value)" onblur="saveTodoEdit(${idx}, this.value)" autofocus>` :
-                        `<span class="todo-item-label">${escapeToolText(t.text || '')}</span>`}
-                </div>
-                <div class="todo-task-controls">
-                    <input type="date" class="date-tag" value="${t.date || ''}" onchange="updateTodoDate(${idx}, this.value)" title="Change task date">
-                    <span class="compact-scoped-tag bg-${fpAssigneeStyle(t.who)}" onclick="cycleAssignee('todo', ${idx})">${displayWho}</span>
-                    <button class="action-btn" onclick="enableTodoEdit(${idx})" aria-label="Edit task">✏️</button>
-                    <button class="action-btn delete-btn" onclick="todosData.splice(${idx},1); saveData(); renderTodos(); renderDashboard(); renderWeeklyPlanner();" aria-label="Delete task">✕</button>
-                </div>
-            </div>`;
-    }).join('');
-
-    container.innerHTML = `${viewMode !== 'family' ? `<div class="todo-section-label" style="font-size:.75rem;font-weight:800;color:var(--muted);padding:8px 2px 4px;">🔒 MY PRIVATE REMINDERS</div>${privateHtml}` : ''}
-        <div class="todo-section-label" style="font-size:.75rem;font-weight:800;color:var(--muted);padding:8px 2px 4px;">${viewMode === 'family' ? '🏡 HOUSEHOLD TASKS' : '👥 HOUSEHOLD TASKS FOR ME'}</div>
-        ${sharedHtml || '<div class="list-empty" style="font-size:0.85rem;padding:0.8rem;">No matching household tasks.</div>'}`;
+    if (note) note.textContent = activeTodoScope === 'private'
+        ? 'Your personal reminders are stored under your signed-in account and are not shared with the household.'
+        : (viewMode === 'family' ? 'All shared household tasks.' : 'Household tasks assigned to you or everyone.');
+    const input = document.getElementById('todo-quick-input');
+    if (input) input.placeholder = activeTodoScope === 'private' ? 'Add a private reminder…' : 'Add a family task…';
+    if (activeTodoScope === 'private') {
+        renderPrivateTodos(container);
+        return;
+    }
+    const shared = todosData.map((task, idx) => ({ task, idx })).filter(({ task }) => filterItem(task.who));
+    container.innerHTML = shared.length === 0
+        ? '<div class="list-empty" style="font-size:0.85rem;padding:0.8rem;">No household tasks yet.</div>'
+        : shared.map(({task:t, idx}) => {
+            const displayWho = fpDisplayAssignee(t.who);
+            return `
+                <div class="todo-task-item ${t.done ? 'completed' : ''} ${t.quickAdded ? 'quick-added-task' : ''}">
+                    <div class="todo-task-main">
+                        <input type="checkbox" class="compact-scoped-checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodoCheck(${idx})">
+                        ${t.isEditing ?
+                            `<input type="text" class="compact-scoped-input" value="${escapeToolText(t.text || '')}" onkeypress="if(event.key==='Enter') saveTodoEdit(${idx}, this.value)" onblur="saveTodoEdit(${idx}, this.value)" autofocus>` :
+                            `<span class="todo-item-label">${escapeToolText(t.text || '')}</span>`}
+                    </div>
+                    <div class="todo-task-controls">
+                        <input type="date" class="date-tag" value="${t.date || ''}" onchange="updateTodoDate(${idx}, this.value)" title="Change task date">
+                        <span class="compact-scoped-tag bg-${fpAssigneeStyle(t.who)}" onclick="cycleAssignee('todo', ${idx})">${displayWho}</span>
+                        <button class="action-btn" onclick="enableTodoEdit(${idx})" aria-label="Edit task">✏️</button>
+                        <button class="action-btn delete-btn" onclick="todosData.splice(${idx},1); saveData(); renderTodos(); renderDashboard(); renderWeeklyPlanner();" aria-label="Delete task">✕</button>
+                    </div>
+                </div>`;
+        }).join('');
 }
-
 function addWatchlistItem(type) {
     const inputId = type === 'cinema' ? 'cinema-quick-input' : 'home-quick-input';
     const input = document.getElementById(inputId);
