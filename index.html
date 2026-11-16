@@ -1549,7 +1549,18 @@ html[data-theme="dark"] .brand-logo-img { mix-blend-mode:normal; border-radius:1
 .wp-meal-pill { background: #eef6f3; }
 .wp-pill-icon { font-size: 1rem; flex-shrink: 0; }
 .wp-pill-text { font-weight: 600; flex: 1; word-break: break-word; }
-.wp-pill-who { font-weight: 500; color: #607377; font-size: 0.86rem; }
+.wp-pill-who { display:inline-flex; align-items:center; gap:5px; font-weight: 700; color: #607377; font-size: 0.86rem; white-space:nowrap; vertical-align:baseline; }
+.who-mom { color:#b0436f; }
+.who-dad { color:#0e7c5d; }
+.who-leo { color:#2f7a65; }
+.who-mia { color:#9a6a2b; }
+.who-family { color:#245b67; }
+.todo-person-name.who-mom, .todo-person-name.who-dad, .todo-person-name.who-leo, .todo-person-name.who-mia, .todo-person-name.who-family { font-weight:700; }
+html[data-theme="dark"] .who-mom { color:#f08ab0; }
+html[data-theme="dark"] .who-dad { color:#4fd1a5; }
+html[data-theme="dark"] .who-leo { color:#6fcfae; }
+html[data-theme="dark"] .who-mia { color:#e3b36b; }
+html[data-theme="dark"] .who-family { color:#6fc2c8; }
 .wp-empty-note { font-size: 0.82rem; color: var(--muted); font-style: italic; padding: 4px 2px 8px 2px; }
 
 .wp-add-item-btn {
@@ -1629,7 +1640,7 @@ html[data-theme="dark"] .brand-logo-img { mix-blend-mode:normal; border-radius:1
             <button class="auth-secondary" type="button" id="auth-reset" onclick="window.fpResetPassword()">Forgot password?</button>
           </form>
           <div class="auth-message" id="auth-message" role="status" aria-live="polite"></div>
-          <p class="auth-small" id="auth-version-label">Version 1.7 · build 2026-11-16.7</p>
+          <p class="auth-small" id="auth-version-label">Version 1.9 · build 2026-11-16.9</p>
           <p class="auth-small">Each adult or family member has their own account. After signing in, create a household or join one using its household ID.</p>
         </div>
 
@@ -2180,7 +2191,7 @@ html[data-theme="dark"] .brand-logo-img { mix-blend-mode:normal; border-radius:1
 
     <!-- Account page -->
     <div id="view-account" class="view">
-        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Your profile, household and data.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 1.7 · build 2026-11-16.7</p></section>
+        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Your profile, household and data.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 1.9 · build 2026-11-16.9</p></section>
         <section class="tool-section" id="profile-name-section">
             <h3>👤 Profile name</h3>
             <p class="tool-note">Changing your name updates it everywhere it appears: tasks, lists, calendar, meal plan and household members.</p>
@@ -3169,7 +3180,6 @@ async function fpSaveProfileName() {
         }
         if (deviceOnly) localStorage.setItem('fam_name_override_' + uid, newName);
         else localStorage.removeItem('fam_name_override_' + uid);
-        await firebaseDb.collection('users').doc(uid).set({ displayName: newName, updatedAt: stamp }, { merge: true }).catch(e => console.warn('Profile doc not updated:', e));
         await firebaseUser.updateProfile({ displayName: newName }).catch(e => console.warn('Auth profile not updated:', e));
 
         // Local state, so every screen updates immediately.
@@ -3276,6 +3286,11 @@ function fpDisplayAssignee(who) {
     );
 
     return fpMemberDisplayName(member);
+}
+
+function fpWhoTagHtml(who, cls = 'wp-pill-who') {
+    const style = fpAssigneeStyle(who);
+    return `<span class="${cls} who-${style}"><span class="person-dot bg-${style}" aria-hidden="true"></span>${escapeToolText(fpDisplayAssignee(who))}</span>`;
 }
 
 function fpAssigneeStyle(who) {
@@ -4775,7 +4790,7 @@ function renderTodos() {
                         ${t.isEditing
                             ? `<input type="text" class="edit-inline-input" value="${escapeToolText(t.text || '')}" onkeydown="if(event.key==='Enter') saveTodoEdit(${idx}, this.value)" onblur="saveTodoEdit(${idx}, this.value)" autofocus>`
                             : `<span class="todo-divider-title">${escapeToolText(t.text || '')}</span>`}
-                        <div class="todo-divider-meta">${todoDueHtml(t.date)}<span class="person-dot bg-${fpAssigneeStyle(t.who)}" aria-hidden="true"></span><span class="todo-person-name">${escapeToolText(displayWho)}</span></div>
+                        <div class="todo-divider-meta">${todoDueHtml(t.date)}<span class="person-dot bg-${fpAssigneeStyle(t.who)}" aria-hidden="true"></span><span class="todo-person-name who-${fpAssigneeStyle(t.who)}">${escapeToolText(displayWho)}</span></div>
                     </div>
                 </div>`;
         }).join('');
@@ -5022,7 +5037,7 @@ const cookName = fpDisplayAssignee(mObj?.cook);
             eventsRemindersHtml += `
                 <div class="wp-item-pill" onclick="openDayPopover('${key}', ${d.getDate()})">
                     <span class="wp-pill-icon">${ev.birthday ? '🎂' : '📅'}</span>
-                    <span class="wp-pill-text">${escapeToolText(cleanTitle)} <span class="wp-pill-who">(${whoName})</span></span>
+                    <span class="wp-pill-text">${escapeToolText(cleanTitle)} ${fpWhoTagHtml(ev.who)}</span>
                 </div>
             `;
         });
@@ -5032,7 +5047,7 @@ const cookName = fpDisplayAssignee(mObj?.cook);
             eventsRemindersHtml += `
                 <div class="wp-item-pill" onclick="jumpToTaskDetails()">
                     <span class="wp-pill-icon">☑️</span>
-                    <span class="wp-pill-text">${escapeToolText(t.text)} <span class="wp-pill-who">(${whoName})</span></span>
+                    <span class="wp-pill-text">${escapeToolText(t.text)} ${fpWhoTagHtml(t.who)}</span>
                 </div>
             `;
         });
@@ -5050,7 +5065,7 @@ const cookName = fpDisplayAssignee(mObj?.cook);
                 <div class="wp-section-title">Meals 🧑‍🍳</div>
                 <div class="wp-item-pill wp-meal-pill" onclick="showView('shopping', document.getElementById('nav-btn-shopping'))">
                     <span class="wp-pill-icon">🍽️</span>
-                    <span class="wp-pill-text">${meal ? escapeToolText(meal) : 'No meal planned'} ${meal ? `<span class="wp-pill-who">(${escapeToolText(cookName)})</span>` : ''}</span>
+                    <span class="wp-pill-text">${meal ? escapeToolText(meal) : 'No meal planned'} ${meal ? fpWhoTagHtml(mObj?.cook) : ''}</span>
                 </div>
 
                 <div class="wp-section-title" style="margin-top:10px;">Events / Reminders</div>
