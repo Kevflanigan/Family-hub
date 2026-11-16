@@ -1640,7 +1640,7 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
             <button class="auth-secondary" type="button" id="auth-reset" onclick="window.fpResetPassword()">Forgot password?</button>
           </form>
           <div class="auth-message" id="auth-message" role="status" aria-live="polite"></div>
-          <p class="auth-small" id="auth-version-label">Version 1.9 · build 2026-11-16.9</p>
+          <p class="auth-small" id="auth-version-label">Version 2.0 · build 2026-11-16.10</p>
           <p class="auth-small">Each adult or family member has their own account. After signing in, create a household or join one using its household ID.</p>
         </div>
 
@@ -2191,7 +2191,7 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
 
     <!-- Account page -->
     <div id="view-account" class="view">
-        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Your profile, household and data.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 1.9 · build 2026-11-16.9</p></section>
+        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Your profile, household and data.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 2.0 · build 2026-11-16.10</p></section>
         <section class="tool-section" id="profile-name-section">
             <h3>👤 Profile name</h3>
             <p class="tool-note">Changing your name updates it everywhere it appears: tasks, lists, calendar, meal plan and household members.</p>
@@ -2959,8 +2959,16 @@ function fpApplySnapshot(category,snapshot,isInitial){
       return;
     }
   }
-  const merged=remote.filter(item=>!dirty.has(String(item.id)));
-  dirty.forEach((item,id)=>{if(item!==null) merged.push(item);});
+  // Keep every item in its server position. Items with unsent local edits are swapped in
+  // place (not moved to the end), so lists don't jump around while a change is syncing.
+  const merged=[],seen=new Set();
+  remote.forEach(item=>{
+    const id=String(item.id);
+    seen.add(id);
+    if(dirty.has(id)){const local=dirty.get(id);if(local!==null)merged.push(local);}
+    else merged.push(item);
+  });
+  dirty.forEach((item,id)=>{if(item!==null&&!seen.has(id))merged.push(item);});
   fpSetCategoryItems(category,merged);
   fpSharedReady[category]=true;
   fpSharedBaseline[category]=fpMapItems(fpGetCategoryItems(category));
