@@ -17,6 +17,7 @@
     --mom: #c65d87;
     --dad: #159b75;
     --family: #245b67;
+    --unassigned: #8a9a95;
     --shadow-soft: 0 5px 18px rgba(28, 55, 60, .055);
 }
 
@@ -582,6 +583,8 @@ nav.bottom-nav, .bottom-nav {
 .bg-mom { background-color: var(--mom); }
 .bg-dad { background-color: var(--dad); }
 .bg-family { background-color: var(--family); }
+.bg-unassigned { background-color: var(--unassigned); }
+.text-unassigned { color: var(--unassigned); }
 
 /* Compact weekly meal planner rows */
 .meal-card-row {
@@ -598,6 +601,7 @@ nav.bottom-nav, .bottom-nav {
 .meal-card-row.cook-dad { border-left: 3px solid var(--dad); padding-left: 10px; }
 .meal-card-row.cook-mom { border-left: 3px solid var(--mom); padding-left: 10px; }
 .meal-card-row.cook-family { border-left: 3px solid var(--family); padding-left: 10px; }
+.meal-card-row.cook-unassigned { border-left: 3px solid var(--unassigned); padding-left: 10px; }
 .meal-card-inner { display: flex; align-items: center; gap: 12px; width: 100%; min-width: 0; }
 .meal-day-name { flex: 0 0 48px; font-size: .82rem; font-weight: 800; color: var(--accent); text-transform: uppercase; }
 .meal-input-inline {
@@ -609,6 +613,18 @@ nav.bottom-nav, .bottom-nav {
 .meal-input-inline::placeholder { color: var(--muted); font-weight: 400; }
 .meal-input-inline:focus { border-bottom-color: var(--accent); }
 .meal-cook-tag { flex: 0 0 auto; border: 0; }
+/* One person-tag look everywhere: soft tint, coloured dot and name */
+.assign-tag { display:inline-flex; align-items:center; gap:6px; text-transform:none; font-size:.84rem; font-weight:700; padding:6px 11px; border-radius:999px; background:#eef3f1; color:#44544f; border:0; --assign-dot:#8a9a95; }
+.assign-tag::before { content:""; width:9px; height:9px; flex:0 0 9px; border-radius:50%; background:var(--assign-dot); }
+.assign-tag.bg-dad { background:rgba(21,155,117,.12); color:#0e7c5d; --assign-dot:var(--dad); }
+.assign-tag.bg-mom { background:rgba(198,93,135,.13); color:#b0436f; --assign-dot:var(--mom); }
+.assign-tag.bg-family { background:rgba(36,91,103,.10); color:#245b67; --assign-dot:var(--family); }
+.assign-tag.bg-unassigned { background:#eef1f0; color:#6f7f7a; --assign-dot:var(--unassigned); }
+html[data-theme="dark"] .assign-tag.bg-dad { background:rgba(79,209,165,.16); color:#4fd1a5; }
+html[data-theme="dark"] .assign-tag.bg-mom { background:rgba(240,138,176,.16); color:#f08ab0; }
+html[data-theme="dark"] .assign-tag.bg-family { background:rgba(111,194,200,.16); color:#6fc2c8; }
+html[data-theme="dark"] .assign-tag.bg-unassigned { background:#26353a; color:#9db0b0; }
+html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
 .meal-planner-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
 .meal-planner-heading .card-title, .meal-cook-heading {
     margin: 0; color: var(--text); font-size: 1rem; font-weight: 800;
@@ -888,11 +904,13 @@ nav.bottom-nav, .bottom-nav {
     background: linear-gradient(145deg, #347b83, #245b67);
     color: #fff;
     border: 1px solid #245b67;
-    min-height: 38px;
-    padding: 4px 10px;
-    border-radius: 11px;
+    min-height: 48px;
+    min-width: 52px;
+    padding: 4px 14px;
+    border-radius: 12px;
     font-weight: 700;
-    font-size: 0.85rem;
+    font-size: 1.3rem;
+    line-height: 1;
     cursor: pointer;
     white-space: nowrap;
     flex-shrink: 0;
@@ -1079,6 +1097,8 @@ nav.bottom-nav, .bottom-nav {
 .tool-form input,.tool-form select,.tool-form textarea{width:100%;min-width:0;padding:10px;border:1px solid #dce6e1;border-radius:12px;background:#fbfdfb;font-size:.9rem;color:var(--text)}
 .tool-form textarea{grid-column:1/-1;min-height:64px;resize:vertical}
 .tool-form .wide{grid-column:1/-1}
+.field-stack { display:flex; flex-direction:column; gap:4px; min-width:0; font-size:.74rem; font-weight:700; color:var(--muted); }
+.field-stack input { font-weight:400; }
 .tool-btn{border:1px solid #245b67;border-radius:11px;background:linear-gradient(145deg, #347b83, #245b67);color:#fff;padding:9px 12px;font-weight:750;cursor:pointer;box-shadow:0 3px 9px rgba(36,91,103,.13)}
 .tool-btn.secondary{background:#edf5f1;color:#2e665d;border:1px solid #d8e8df;box-shadow:none}
 .tool-list{display:flex;flex-direction:column;gap:7px;margin-top:9px}
@@ -1195,7 +1215,7 @@ nav.bottom-nav, .bottom-nav {
 }
 
 .finance-tab { padding: 9px 4px; font-size: .78rem; min-width: 0; }
-.finance-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.finance-tab { white-space:nowrap; }
 .finance-pane[hidden] { display: none !important; }
 
 .budget-horizontal-table {
@@ -1512,6 +1532,7 @@ html[data-theme="dark"] .brand-logo-img { mix-blend-mode:normal; border-radius:1
 .wp-day-card.cook-border-dad { border-left-color: var(--dad); }
 .wp-day-card.cook-border-mom { border-left-color: var(--mom); }
 .wp-day-card.cook-border-family { border-left-color: var(--family); }
+.wp-day-card.cook-border-unassigned { border-left-color: var(--unassigned); }
 
 .wp-day-header {
     font-size: 1.05rem;
@@ -1547,6 +1568,7 @@ html[data-theme="dark"] .brand-logo-img { mix-blend-mode:normal; border-radius:1
 .who-mom { color:#b0436f; }
 .who-dad { color:#0e7c5d; }
 .who-family { color:#245b67; }
+.who-unassigned { color:#6f7f7a; }
 .todo-person-name.who-mom, .todo-person-name.who-dad, .todo-person-name.who-family { font-weight:700; }
 html[data-theme="dark"] .who-mom { color:#f08ab0; }
 html[data-theme="dark"] .who-dad { color:#4fd1a5; }
@@ -1630,7 +1652,7 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
             <button class="auth-secondary" type="button" id="auth-reset" onclick="window.fpResetPassword()">Forgot password?</button>
           </form>
           <div class="auth-message" id="auth-message" role="status" aria-live="polite"></div>
-          <p class="auth-small" id="auth-version-label">Version 2.1 · build 2026-11-16.11</p>
+          <p class="auth-small" id="auth-version-label">Version 2.2 · build 2026-11-16.12</p>
           <p class="auth-small">Each adult or family member has their own account. After signing in, create a household or join one using its household ID.</p>
         </div>
 
@@ -1940,7 +1962,7 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
                 <div class="card-header"><div class="card-title">🛒 Food Shopping List</div></div>
                 <div class="inline-add-group">
                     <input type="text" id="foodshop-quick-input" class="form-input input-full" placeholder="Add food item..." onkeydown="if(event.key==='Enter') addInlineShop('foodshop')">
-                    <button class="inline-add-btn" onclick="addInlineShop('foodshop')" style="width:auto; min-height:48px; background:var(--accent); color:#fff; border:none; border-radius:10px; font-weight:700; padding:0 16px; cursor:pointer;">+ Add</button>
+                    <button class="compact-scoped-add-btn" onclick="addInlineShop('foodshop')" aria-label="Add item">+</button>
                 </div>
                 <div id="foodshop-list-container" class="list-container"></div>
             </section>
@@ -1948,7 +1970,7 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
                 <div class="card-header"><div class="card-title">🛍️ Family Shopping List</div></div>
                 <div class="inline-add-group">
                     <input type="text" id="familyshop-quick-input" class="form-input input-full" placeholder="Add family item..." onkeydown="if(event.key==='Enter') addInlineShop('familyshop')">
-                    <button class="inline-add-btn" onclick="addInlineShop('familyshop')" style="width:auto; min-height:48px; background:var(--accent); color:#fff; border:none; border-radius:10px; font-weight:700; padding:0 16px; cursor:pointer;">+ Add</button>
+                    <button class="compact-scoped-add-btn" onclick="addInlineShop('familyshop')" aria-label="Add item">+</button>
                 </div>
                 <div id="familyshop-list-container" class="list-container"></div>
             </section>
@@ -1993,7 +2015,7 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
     <div id="view-monthlybudget" class="view">
         <div class="calendar-main-tabs" role="tablist" aria-label="Family finances sections" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:12px 0">
             <button type="button" class="cal-main-tab finance-tab active" data-finance-tab="overview" onclick="setFinanceTab('overview',this)">Overview</button>
-            <button type="button" class="cal-main-tab finance-tab" data-finance-tab="bills" onclick="setFinanceTab('bills',this)">Bills & Payments</button>
+            <button type="button" class="cal-main-tab finance-tab" data-finance-tab="bills" onclick="setFinanceTab('bills',this)">Bills</button>
             <button type="button" class="cal-main-tab finance-tab" data-finance-tab="renewals" onclick="setFinanceTab('renewals',this)">Renewals</button>
         </div>
         
@@ -2060,7 +2082,7 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
                     <input id="bill-name" required placeholder="Bill / subscription name">
                     <input id="bill-amount" type="number" min="0" step="0.01" required placeholder="Amount (£)">
                     <select id="bill-frequency"><option value="monthly">Monthly</option><option value="weekly">Weekly</option><option value="quarterly">Quarterly</option><option value="yearly">Yearly</option></select>
-                    <input id="bill-due" type="date" aria-label="Next payment date">
+                    <label class="field-stack"><span>Next payment date</span><input id="bill-due" type="date"></label>
                     <select id="bill-category"><option>Utilities</option><option>Mortgage / Rent</option><option>Insurance</option><option>Vehicle</option><option>Communications</option><option>Subscriptions</option><option>Other</option></select>
                     <button class="tool-btn wide" type="submit">Add bill or payment</button>
                 </form>
@@ -2075,7 +2097,7 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
                 <form class="tool-form" onsubmit="addRenewal(event)">
                     <input id="renewal-name" required placeholder="Service / renewal">
                     <input id="renewal-cost" type="number" min="0" step="0.01" placeholder="Cost (£)">
-                    <input id="renewal-date" type="date" required aria-label="Renewal date">
+                    <label class="field-stack"><span>Renewal date</span><input id="renewal-date" type="date" required></label>
                     <select id="renewal-frequency"><option>Yearly</option><option>Monthly</option><option>Other</option></select>
                     <button class="tool-btn wide" type="submit">Add renewal</button>
                 </form>
@@ -2120,7 +2142,7 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
             <div class="todo-scoped-title">🎁 Gift Wishlist</div>
             <div class="compact-scoped-add-group">
                 <input type="text" id="wishlist-quick-input" class="wishlist-scoped-input" placeholder="Add item..." onkeydown="if(event.key==='Enter') addWishlistItem()">
-                <button class="wishlist-scoped-add-btn" onclick="addWishlistItem()">+ Add</button>
+                <button class="compact-scoped-add-btn" onclick="addWishlistItem()" aria-label="Add item">+</button>
             </div>
             <div id="wishlist-list-container" style="display:flex; flex-direction:column;"></div>
         </section>
@@ -2177,7 +2199,7 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
 
     <!-- Account page -->
     <div id="view-account" class="view">
-        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Your profile, household and data.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 2.1 · build 2026-11-16.11</p></section>
+        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Your profile, household and data.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 2.2 · build 2026-11-16.12</p></section>
         <section class="tool-section" id="profile-name-section">
             <h3>👤 Profile name</h3>
             <p class="tool-note">Changing your name updates it everywhere it appears: tasks, lists, calendar, meal plan and household members.</p>
@@ -2194,6 +2216,13 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
                 <button type="button" class="cal-main-tab" data-theme-choice="light" onclick="fpSetTheme('light')">☀️ Light</button>
                 <button type="button" class="cal-main-tab" data-theme-choice="dark" onclick="fpSetTheme('dark')">🌙 Dark</button>
                 <button type="button" class="cal-main-tab" data-theme-choice="auto" onclick="fpSetTheme('auto')">Auto</button>
+            </div>
+        </section>
+        <section class="tool-section" id="reassign-section">
+            <h3>🧹 Tidy up unassigned items</h3>
+            <p class="tool-note">Items that belong to someone no longer in the household show as "Unassigned". Move them all to one person in a single step.</p>
+            <div class="account-actions">
+                <button type="button" class="tool-btn secondary" onclick="fpReassignUnassigned()">Reassign unassigned items</button>
             </div>
         </section>
         <section class="tool-section" id="household-management-section">
@@ -3221,6 +3250,39 @@ window.fpSaveProfileName = fpSaveProfileName;
 
 // Rewrites old "dad"/"mom" assignments to the member who holds that key, so data
 // only refers to real accounts. Runs for owners/parents once everything has loaded.
+function fpCollectUnassignedRefs() {
+    const refs = [];
+    const scan = item => {
+        if (!item || typeof item !== 'object') return;
+        FP_NAME_REFERENCE_FIELDS.forEach(field => {
+            const value = item[field];
+            if (typeof value === 'string' && value && value !== 'family' && fpAssigneeStyle(value) === 'unassigned') refs.push({ item, field });
+        });
+    };
+    FP_SHARED_CATEGORIES.forEach(category => {
+        if (category === 'calendar' || category === 'financeSettings') return;
+        const items = fpGetCategoryItems(category);
+        if (Array.isArray(items)) items.forEach(scan);
+    });
+    Object.values(calendarEvents || {}).forEach(list => { if (Array.isArray(list)) list.forEach(scan); });
+    return refs;
+}
+
+async function fpReassignUnassigned() {
+    if (!fpIsOwnerOrParent()) { showToast('Only the household owner or a parent can do this'); return; }
+    const refs = fpCollectUnassignedRefs();
+    if (!refs.length) { showToast('Nothing is unassigned'); return; }
+    const choices = fpHouseholdMembers.map(m => ({ value: m.uid, label: fpMemberDisplayName(m), style: fpAssigneeStyle(m.uid) }));
+    choices.unshift({ value: 'family', label: 'Family (everyone)', style: 'family' });
+    const target = await fpDialog.choose(`Move ${refs.length} unassigned item${refs.length === 1 ? '' : 's'} to…`, choices, null);
+    if (!target) return;
+    refs.forEach(({ item, field }) => { item[field] = target; });
+    saveData();
+    renderAllViews();
+    showToast(`Reassigned ${refs.length} item${refs.length === 1 ? '' : 's'}`);
+}
+window.fpReassignUnassigned = fpReassignUnassigned;
+
 function fpMigrateLegacyAssignments() {
     try {
         if (window.fpLegacyMigrated || !firebaseUser || !fpHouseholdId || !fpMemberData) return;
@@ -3284,7 +3346,7 @@ function fpDisplayAssignee(who) {
         m.uid === who || String(m.email || '').toLowerCase() === String(who).toLowerCase()
     );
 
-    return fpMemberDisplayName(member);
+    return member ? fpMemberDisplayName(member) : 'Unassigned';
 }
 
 function fpWhoTagHtml(who, cls = 'wp-pill-who') {
@@ -3293,10 +3355,13 @@ function fpWhoTagHtml(who, cls = 'wp-pill-who') {
 }
 
 function fpAssigneeStyle(who) {
-    if (who === 'family') return 'family';
-    if (who === 'dad' || who === 'mom') return who;
+    if (!who || who === 'family') return 'family';
+    if (who === 'dad' || who === 'mom') return fpMemberForLegacyKey(who) ? who : 'unassigned';
 
-    const member = fpHouseholdMembers.find(m => m.uid === who);
+    const member = fpHouseholdMembers.find(m =>
+        m.uid === who || String(m.email || '').toLowerCase() === String(who).toLowerCase()
+    );
+    if (!member) return 'unassigned';
     return fpLegacyKeyForMember(member) || 'family';
 }
 
@@ -4033,10 +4098,10 @@ function renderDashboard() {
     } else {
         const cookName = fpDisplayAssignee(todayMeal.cook);
         dinnerCont.innerHTML = `
-            <div class="dashboard-item" style="border-left: 4px solid var(--${todayMeal.cook || 'family'});">
+            <div class="dashboard-item" style="border-left: 4px solid var(--${fpAssigneeStyle(todayMeal.cook)});">
                 <div>
-                    <strong>${todayMeal.meal}</strong>
-                    <div class="sub-text">Planned for ${todayDay} • Cook: <span class="assign-tag bg-${todayMeal.cook || 'family'}" style="padding: 2px 6px; font-size: 0.65rem;">${escapeToolText(cookName)}</span></div>
+                    <strong>${escapeToolText(todayMeal.meal)}</strong>
+                    <div class="sub-text">Planned for ${todayDay} • Cook: <span class="assign-tag bg-${fpAssigneeStyle(todayMeal.cook)}" style="padding: 2px 8px; font-size: 0.75rem;">${escapeToolText(cookName)}</span></div>
                 </div>
                 <span>🥘</span>
             </div>
@@ -4069,14 +4134,24 @@ function renderDashboard() {
     }
 
     const datesCont = document.getElementById('dash-dates');
-    let upcomingDates = [];
+    const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0);
+    const upcomingDates = [];
     Object.keys(calendarEvents).forEach(dateStr => {
-        calendarEvents[dateStr].forEach(ev => {
-            if (ev.title.includes('Birthday') || ev.title.includes('🎂') || ev.title.includes('Term') || ev.title.includes('School')) {
-                upcomingDates.push({ date: dateStr, title: ev.title });
+        (calendarEvents[dateStr] || []).forEach(ev => {
+            const rawTitle = String(ev.title || '');
+            if (!/birthday|🎂|term|school/i.test(rawTitle)) return;
+            const recurring = /\[(yearly|birthday)\]/i.test(rawTitle);
+            let when = new Date(dateStr + 'T00:00:00');
+            if (isNaN(when)) return;
+            if (recurring) {
+                when = new Date(todayStart.getFullYear(), when.getMonth(), when.getDate());
+                if (when < todayStart) when.setFullYear(todayStart.getFullYear() + 1);
             }
+            if (when < todayStart) return;
+            upcomingDates.push({ when, title: rawTitle.replace(/\s*\[(yearly|birthday)\]/ig, '').trim() });
         });
     });
+    upcomingDates.sort((x, y) => x.when - y.when);
 
     if (upcomingDates.length === 0) {
         datesCont.innerHTML = `<div class="list-empty">No upcoming birthdays or term dates.</div>`;
@@ -4084,8 +4159,8 @@ function renderDashboard() {
         datesCont.innerHTML = upcomingDates.slice(0, 4).map(d => `
             <div class="dashboard-item">
                 <div>
-                    <strong>${d.title}</strong>
-                    <div class="sub-text">${d.date}</div>
+                    <strong>${escapeToolText(d.title)}</strong>
+                    <div class="sub-text">${escapeToolText(d.when.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }))}</div>
                 </div>
                 <span>🎂</span>
             </div>
@@ -4853,6 +4928,15 @@ function addKidChore(kidIndex) {
     showToast('Chore added');
 }
 
+function toggleKidChore(kidIndex, choreIndex) {
+    const chore = choresData[kidIndex]?.chores?.[choreIndex];
+    if (chore === undefined) return;
+    if (typeof chore === 'string') choresData[kidIndex].chores[choreIndex] = { text: chore, done: true };
+    else chore.done = !chore.done;
+    saveData();
+    renderChores();
+}
+
 function deleteKidChore(kidIndex, choreIndex) {
     choresData[kidIndex].chores.splice(choreIndex, 1);
     saveData();
@@ -4885,7 +4969,7 @@ function renderChores() {
                     return `
                         <div class="compact-scoped-item">
                             <div class="compact-scoped-left">
-                                <input type="checkbox" class="compact-scoped-checkbox">
+                                <input type="checkbox" class="compact-scoped-checkbox" ${typeof c === 'object' && c.done ? 'checked' : ''} onchange="toggleKidChore(${kIdx}, ${cIdx})" aria-label="Mark chore done">
                                 <span class="todo-item-label">${escapeToolText(choreText)}</span>
                             </div>
                             <button class="action-btn delete-btn" onclick="deleteKidChore(${kIdx}, ${cIdx})" style="padding:2px 6px;">✕</button>
@@ -5059,7 +5143,7 @@ const cookName = fpDisplayAssignee(mObj?.cook);
            const whoName = fpDisplayAssignee(t.who);
             eventsRemindersHtml += `
                 <div class="wp-item-pill" onclick="jumpToTaskDetails()">
-                    <span class="wp-pill-icon">☑️</span>
+                    <span class="wp-pill-icon">⬜</span>
                     <span class="wp-pill-text">${escapeToolText(t.text)} ${fpWhoTagHtml(t.who)}</span>
                 </div>
             `;
