@@ -1231,16 +1231,17 @@ nav.bottom-nav, .bottom-nav {
 /* To-do list: clean divider-based list with a compact, integrated add field */
 .todo-scoped-title { display:flex; align-items:center; gap:8px; color:var(--text); font-weight:800; font-size:1.08rem; margin-bottom:12px; }
 .todo-scoped-title .todo-heading-icon { color:var(--accent); font-size:1.05rem; }
-.todo-inline-add { display:flex; align-items:center; width:100%; min-height:50px; gap:0; padding:4px 5px 4px 13px; margin:0 0 8px; background:#fff; border:1px solid #dce8e2; border-radius:14px; box-sizing:border-box; box-shadow:0 1px 3px rgba(20,60,50,.035); }
-.todo-inline-add #todo-quick-input { flex:1 1 auto; width:100%; min-width:0; height:40px; padding:0 5px 0 0; border:0; outline:0; box-shadow:none; background:transparent; color:var(--text); font:inherit; font-size:.92rem; }
+.todo-inline-add { display:flex; flex-wrap:nowrap; align-items:center; width:calc(100% + 1.5rem); max-width:none; min-height:58px; gap:0; padding:6px 8px 6px 16px; margin:0 -0.75rem 10px; background:#fff; border:solid #dce8e2; border-width:1px 0; border-radius:0; box-sizing:border-box; box-shadow:0 1px 3px rgba(20,60,50,.035); }
+.todo-inline-add #todo-quick-input { flex:1 1 0; width:auto; min-width:0; height:46px; padding:0 8px 0 0; border:0; outline:0; box-shadow:none; background:transparent; color:var(--text); font:inherit; font-size:1.05rem; text-overflow:ellipsis; }
 .todo-inline-add #todo-quick-input:focus { outline:0; box-shadow:none; }
-.todo-inline-actions { display:flex; flex:0 0 auto; align-items:center; gap:2px; }
-.todo-inline-icon-btn { display:inline-flex; align-items:center; justify-content:center; gap:4px; min-width:34px; height:36px; padding:0 7px; border:0; border-radius:9px; background:transparent; color:var(--accent); font-size:.82rem; font-weight:650; cursor:pointer; white-space:nowrap; }
+.todo-inline-actions { display:flex; flex:0 0 auto; flex-wrap:nowrap; align-items:center; gap:4px; min-width:0; }
+.todo-inline-icon-btn { display:inline-flex; flex:0 0 auto; align-items:center; justify-content:center; gap:5px; min-width:42px; height:44px; padding:0 9px; border:0; border-radius:11px; background:transparent; color:var(--accent); font-size:.9rem; font-weight:650; cursor:pointer; white-space:nowrap; }
 .todo-inline-icon-btn:active { background:#edf5f1; }
-.todo-inline-icon-btn.todo-assign-btn { padding:0 8px; }
-.todo-inline-icon-btn.todo-add-submit { min-width:34px; background:var(--accent); color:#fff; font-size:1.15rem; margin-left:2px; }
+.todo-inline-icon-btn.todo-assign-btn { flex:0 1 auto; min-width:0; padding:0 9px; background:#edf5f1; border-radius:999px; }
+.todo-inline-icon-btn.todo-assign-btn #todo-assign-label { display:block; max-width:clamp(64px,30vw,150px); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.todo-inline-icon-btn.todo-add-submit { min-width:44px; background:var(--accent); color:#fff; font-size:1.4rem; line-height:1; margin-left:2px; }
 .todo-date-input-hidden { position:absolute !important; width:1px !important; height:1px !important; opacity:0 !important; pointer-events:none !important; }
-.todo-selected-date { min-height:17px; margin:-2px 0 8px 13px; color:var(--muted); font-size:.72rem; }
+.todo-selected-date { min-height:17px; margin:-2px 0 8px 4px; color:var(--muted); font-size:.72rem; }
 .todo-list-clean { display:flex; flex-direction:column; width:100%; }
 .todo-divider-item { display:flex; align-items:flex-start; gap:11px; width:100%; padding:13px 2px; border-bottom:1px solid #e6eeea; box-sizing:border-box; }
 .todo-divider-item:last-child { border-bottom:0; }
@@ -1253,9 +1254,12 @@ nav.bottom-nav, .bottom-nav {
 .todo-divider-item.completed .todo-divider-title { text-decoration:line-through; color:#91a09a; }
 .todo-divider-item.completed .todo-divider-meta { opacity:.65; }
 @media (max-width:420px) {
-  .todo-inline-add { padding-left:11px; }
-  .todo-inline-icon-btn { min-width:31px; padding:0 6px; }
-  .todo-inline-icon-btn.todo-assign-btn { font-size:.75rem; }
+  .todo-inline-add { padding-left:13px; padding-right:6px; }
+  .todo-inline-actions { gap:2px; }
+  .todo-inline-icon-btn { min-width:38px; padding:0 6px; }
+  .todo-inline-icon-btn.todo-assign-btn { font-size:.8rem; padding:0 8px; }
+  .todo-inline-icon-btn.todo-assign-btn #todo-assign-label { max-width:clamp(56px,26vw,110px); }
+  .todo-inline-icon-btn.todo-add-submit { min-width:42px; }
   .todo-divider-item { padding:12px 1px; }
 }
 
@@ -2119,6 +2123,16 @@ nav.bottom-nav, .bottom-nav {
     <!-- Account page -->
     <div id="view-account" class="view">
         <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Manage your Family Plan backup files here.</p></section>
+        <section class="tool-section" id="profile-name-section">
+            <h3>👤 Profile name</h3>
+            <p class="tool-note">Changing your name updates it everywhere it appears: tasks, lists, calendar, meal plan and household members.</p>
+            <label class="auth-field" for="profile-name-input">Your name</label>
+            <input type="text" id="profile-name-input" class="form-input input-full" maxlength="60" autocomplete="name" placeholder="Your name" onkeypress="if(event.key==='Enter') fpSaveProfileName()">
+            <div class="account-actions">
+                <button type="button" class="tool-btn" id="profile-name-save" onclick="fpSaveProfileName()">Save name</button>
+            </div>
+            <p class="tool-note" id="profile-name-status" aria-live="polite"></p>
+        </section>
         <section class="tool-section" id="household-management-section">
             <h3>🏡 Shared household</h3>
             <p class="tool-note" id="household-sync-status">Sign in and connect to a household to synchronise family information across devices.</p>
@@ -2894,6 +2908,8 @@ function fpUpdateHouseholdPanel(){
   const householdLabel = String(fpHouseholdName || 'Your household').trim();
   const myViewLabel = document.getElementById('opt-my-view-label');
   if(myViewLabel)myViewLabel.textContent=signedInName;
+  const profileNameInput = document.getElementById('profile-name-input');
+  if(profileNameInput && document.activeElement!==profileNameInput && signedInName!=='My account') profileNameInput.value=signedInName;
   const familyViewLabel = document.getElementById('opt-family-label');
   if(familyViewLabel)familyViewLabel.textContent=householdLabel;
 
@@ -2918,6 +2934,100 @@ function fpUpdateHouseholdPanel(){
   const requestsList=document.getElementById('household-requests-list');
   if(requestsList)requestsList.hidden=!isOwner;
 }
+
+// ---------------------------------------------------------------------------
+// PROFILE NAME EDITING + ACCOUNT-WIDE NAME SYNCHRONISATION
+// Assignments are stored against the member's uid, so a renamed member shows up
+// everywhere through the live member record. Older records may still hold the
+// previous name, email or the legacy "dad"/"mom" key; those are migrated to the
+// uid below, and the legacy key is saved on the member record so the colour
+// styling and "My View" filtering keep working after the rename.
+// ---------------------------------------------------------------------------
+const FP_NAME_REFERENCE_FIELDS = ['who','cook','assignee','assignedTo','assignedBy','owner','paidBy','addedBy','createdBy'];
+
+function fpSyncNameReferences(uid, legacyKey, oldNames, email) {
+    const wanted = new Set(oldNames.map(n => String(n || '').trim().toLowerCase()).filter(Boolean));
+    // Never rewrite a value that is also another member's current name.
+    fpHouseholdMembers.filter(m => m.uid !== uid).forEach(m => {
+        [m.name, m.displayName].forEach(n => wanted.delete(String(n || '').trim().toLowerCase()));
+    });
+    if (legacyKey) wanted.add(legacyKey);
+    if (email) wanted.add(String(email).trim().toLowerCase());
+    let changed = 0;
+    const fix = item => {
+        if (!item || typeof item !== 'object') return;
+        FP_NAME_REFERENCE_FIELDS.forEach(field => {
+            const value = item[field];
+            if (typeof value !== 'string') return;
+            const key = value.trim().toLowerCase();
+            if (key && key !== String(uid).toLowerCase() && wanted.has(key)) { item[field] = uid; changed++; }
+        });
+    };
+    FP_SHARED_CATEGORIES.forEach(category => {
+        if (category === 'calendar' || category === 'financeSettings') return;
+        const items = fpGetCategoryItems(category);
+        if (Array.isArray(items)) items.forEach(fix);
+    });
+    Object.values(calendarEvents || {}).forEach(list => { if (Array.isArray(list)) list.forEach(fix); });
+    return changed;
+}
+
+async function fpSaveProfileName() {
+    const input = document.getElementById('profile-name-input');
+    const status = document.getElementById('profile-name-status');
+    const button = document.getElementById('profile-name-save');
+    const setStatus = msg => { if (status) status.textContent = msg; };
+    if (!firebaseUser || !fpHouseholdId || !firebaseDb) { setStatus('Sign in and connect to a household first.'); return; }
+    const newName = String(input?.value || '').replace(/\s+/g, ' ').trim();
+    if (!newName) { setStatus('Please enter a name.'); return; }
+    if (newName.includes('@')) { setStatus('Please use a name rather than an email address.'); return; }
+    if (newName.length > 60) { setStatus('Names can be up to 60 characters.'); return; }
+
+    const uid = firebaseUser.uid;
+    const me = fpHouseholdMembers.find(m => m.uid === uid) || fpMemberData || { uid };
+    const currentName = fpMemberDisplayName({ ...me, uid });
+    if (newName === currentName) { setStatus('That is already your name.'); return; }
+
+    const legacyKey = fpLegacyKeyForMember(me);   // work out before the name changes
+    const email = firebaseUser.email || me.email || '';
+    const oldNames = [currentName, me.name, me.displayName, firebaseUser.displayName];
+
+    if (button) button.disabled = true;
+    setStatus('Saving…');
+    try {
+        const stamp = firebase.firestore.FieldValue.serverTimestamp();
+        const memberUpdate = { name: newName, displayName: newName, updatedAt: stamp };
+        if (legacyKey) memberUpdate.legacyKey = legacyKey;
+        await firebaseDb.collection('households').doc(fpHouseholdId).collection('members').doc(uid).update(memberUpdate);
+        await firebaseDb.collection('users').doc(uid).set({ displayName: newName, updatedAt: stamp }, { merge: true }).catch(e => console.warn('Profile doc not updated:', e));
+        await firebaseUser.updateProfile({ displayName: newName }).catch(e => console.warn('Auth profile not updated:', e));
+
+        // Local state, so every screen updates immediately.
+        fpMemberData = { ...(fpMemberData || {}), ...memberUpdate, uid };
+        fpHouseholdMembers = fpHouseholdMembers.map(m => m.uid === uid ? { ...m, name: newName, displayName: newName, ...(legacyKey ? { legacyKey } : {}) } : m);
+        currentUserName = newName;
+        localStorage.setItem('fam_user_name', newName);
+
+        // Rewrite any stored references to the old name / email / legacy key.
+        const migrated = fpSyncNameReferences(uid, legacyKey, oldNames, email);
+        if (migrated) saveData(); else fpPersistLocalOnly();
+
+        fpRenderPlanMemberOptions();
+        fpUpdateHouseholdPanel();
+        renderAllViews();
+        setStatus(migrated
+            ? `Name updated to “${newName}” and ${migrated} stored reference${migrated === 1 ? '' : 's'} refreshed.`
+            : `Name updated to “${newName}” across the app.`);
+        showToast('Name updated everywhere');
+    } catch (error) {
+        console.error('Could not update profile name:', error);
+        setStatus('Could not save your name. Check your connection and household permissions, then try again.');
+    } finally {
+        if (button) button.disabled = false;
+    }
+}
+window.fpSaveProfileName = fpSaveProfileName;
+
 function fpLegacyKeyForMember(member) {
     if (!member) return null;
     if (member.legacyKey === 'dad' || member.legacyKey === 'mom') return member.legacyKey;
