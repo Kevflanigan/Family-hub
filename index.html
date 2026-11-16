@@ -16,8 +16,6 @@
     --accent: #245b67;
     --mom: #c65d87;
     --dad: #159b75;
-    --leo: #3c927b;
-    --mia: #c18b45;
     --family: #245b67;
     --shadow-soft: 0 5px 18px rgba(28, 55, 60, .055);
 }
@@ -116,8 +114,6 @@ body {
 
 .text-mom { color: var(--mom); }
 .text-dad { color: var(--dad); }
-.text-leo { color: var(--leo); }
-.text-mia { color: var(--mia); }
 .text-family { color: var(--family); }
 
 .user-dropdown-menu {
@@ -585,8 +581,6 @@ nav.bottom-nav, .bottom-nav {
 
 .bg-mom { background-color: var(--mom); }
 .bg-dad { background-color: var(--dad); }
-.bg-leo { background-color: var(--leo); }
-.bg-mia { background-color: var(--mia); }
 .bg-family { background-color: var(--family); }
 
 /* Compact weekly meal planner rows */
@@ -1552,14 +1546,10 @@ html[data-theme="dark"] .brand-logo-img { mix-blend-mode:normal; border-radius:1
 .wp-pill-who { display:inline-flex; align-items:center; gap:5px; font-weight: 700; color: #607377; font-size: 0.86rem; white-space:nowrap; vertical-align:baseline; }
 .who-mom { color:#b0436f; }
 .who-dad { color:#0e7c5d; }
-.who-leo { color:#2f7a65; }
-.who-mia { color:#9a6a2b; }
 .who-family { color:#245b67; }
-.todo-person-name.who-mom, .todo-person-name.who-dad, .todo-person-name.who-leo, .todo-person-name.who-mia, .todo-person-name.who-family { font-weight:700; }
+.todo-person-name.who-mom, .todo-person-name.who-dad, .todo-person-name.who-family { font-weight:700; }
 html[data-theme="dark"] .who-mom { color:#f08ab0; }
 html[data-theme="dark"] .who-dad { color:#4fd1a5; }
-html[data-theme="dark"] .who-leo { color:#6fcfae; }
-html[data-theme="dark"] .who-mia { color:#e3b36b; }
 html[data-theme="dark"] .who-family { color:#6fc2c8; }
 .wp-empty-note { font-size: 0.82rem; color: var(--muted); font-style: italic; padding: 4px 2px 8px 2px; }
 
@@ -1640,7 +1630,7 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
             <button class="auth-secondary" type="button" id="auth-reset" onclick="window.fpResetPassword()">Forgot password?</button>
           </form>
           <div class="auth-message" id="auth-message" role="status" aria-live="polite"></div>
-          <p class="auth-small" id="auth-version-label">Version 2.0 · build 2026-11-16.10</p>
+          <p class="auth-small" id="auth-version-label">Version 2.1 · build 2026-11-16.11</p>
           <p class="auth-small">Each adult or family member has their own account. After signing in, create a household or join one using its household ID.</p>
         </div>
 
@@ -1744,8 +1734,6 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
         <label style="display:block;margin-top:8px;">Assign to</label>
         <select id="voice-review-assignee" class="form-select input-full">
             <option value="family">Family (Everyone)</option>
-            <option value="mom">Harriet</option>
-            <option value="dad">Kevin</option>
         </select>
     </div>
 
@@ -1773,8 +1761,6 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
                     </select>
                     <select id="add-assignee" class="form-select input-half">
                         <option value="family">Family (Everyone)</option>
-                        <option value="mom">Harriet</option>
-                        <option value="dad">Kevin</option>
                     </select>
                 </div>
                
@@ -2191,7 +2177,7 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
 
     <!-- Account page -->
     <div id="view-account" class="view">
-        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Your profile, household and data.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 2.0 · build 2026-11-16.10</p></section>
+        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Your profile, household and data.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 2.1 · build 2026-11-16.11</p></section>
         <section class="tool-section" id="profile-name-section">
             <h3>👤 Profile name</h3>
             <p class="tool-note">Changing your name updates it everywhere it appears: tasks, lists, calendar, meal plan and household members.</p>
@@ -2560,14 +2546,14 @@ fpApplyTheme();
 if (window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', fpApplyTheme);
 
 function fpSafeParse(raw) { try { return JSON.parse(raw); } catch (e) { console.warn('Ignoring unreadable saved data:', e); return null; } }
-let currentUser = localStorage.getItem('fam_user') || 'dad';
-let currentUserName = localStorage.getItem('fam_user_name') || 'Kevin';
+let currentUser = localStorage.getItem('fam_user') || '';
+let currentUserName = localStorage.getItem('fam_user_name') || 'Me';
 let viewMode = 'individual'; // My View is the safe default on every load.
 
 let mealsData = fpSafeParse(localStorage.getItem('fam_meals')) || [
-    { day: "Mon", meal: "", cook: "dad" }, { day: "Tue", meal: "", cook: "mom" }, 
-    { day: "Wed", meal: "", cook: "dad" }, { day: "Thu", meal: "", cook: "mom" }, 
-    { day: "Fri", meal: "", cook: "family" }, { day: "Sat", meal: "", cook: "dad" }, 
+    { day: "Mon", meal: "", cook: "family" }, { day: "Tue", meal: "", cook: "family" }, 
+    { day: "Wed", meal: "", cook: "family" }, { day: "Thu", meal: "", cook: "family" }, 
+    { day: "Fri", meal: "", cook: "family" }, { day: "Sat", meal: "", cook: "family" }, 
     { day: "Sun", meal: "", cook: "family" }
 ];
 let foodShopData = fpSafeParse(localStorage.getItem('fam_foodshop')) || [];
@@ -2578,7 +2564,7 @@ let destinationsData = fpSafeParse(localStorage.getItem('fam_destinations')) || 
     cinema: [], home: [] 
 };
 destinationsData.places = Array.isArray(destinationsData.places) ? destinationsData.places : [];
-let choresData = fpSafeParse(localStorage.getItem('fam_chores')) || [{ kid: "Leo", chores: [] }, { kid: "Mia", chores: [] }];
+let choresData = fpSafeParse(localStorage.getItem('fam_chores')) || [];
 let wishlistData = fpSafeParse(localStorage.getItem('fam_wishlist')) || [];
 let todosData = fpSafeParse(localStorage.getItem('fam_todos')) || [];
 let calendarEvents = fpSafeParse(localStorage.getItem('fam_calendar')) || {};
@@ -2856,7 +2842,7 @@ function fpSetCategoryItems(category,items){
   if(category==='meals') mealsData=items;
   else if(category==='foodshop') foodShopData=items;
   else if(category==='familyshop') familyShopData=items;
-  else if(category==='chores'){const defaults=[{kid:'Leo',chores:[],id:'leo'},{kid:'Mia',chores:[],id:'mia'}];const byKid=new Map(items.map(x=>[String(x.kid||'').toLowerCase(),x]));choresData=defaults.map(x=>({...x,...(byKid.get(x.kid.toLowerCase())||{})}));items.filter(x=>!defaults.some(d=>String(d.kid).toLowerCase()===String(x.kid||'').toLowerCase())).forEach(x=>choresData.push(x));}
+  else if(category==='chores'){choresData=items.slice();}
   else if(category==='wishlist') wishlistData=items;
   else if(category==='todos') todosData=items;
   else if(category==='calendar'){
@@ -2973,8 +2959,14 @@ function fpApplySnapshot(category,snapshot,isInitial){
   fpSharedReady[category]=true;
   fpSharedBaseline[category]=fpMapItems(fpGetCategoryItems(category));
   fpPersistLocalOnly();
+  if(category==='chores' && !localStorage.getItem('fam_removed_default_kids_v1') && fpCanWriteCategory('chores')){
+    const keep=choresData.filter(k=>!['leo','mia'].includes(String(k.kid||'').trim().toLowerCase()));
+    localStorage.setItem('fam_removed_default_kids_v1','1');
+    if(keep.length!==choresData.length){fpSetCategoryItems('chores',keep);saveData();}
+  }
   renderAllViews();
   if(dirty.size) fpScheduleSharedFlush(category);
+  fpMigrateLegacyAssignments();
 }
 function fpRefreshCategoryAccess(){
   FP_SHARED_CATEGORIES.forEach(category=>{
@@ -3020,7 +3012,7 @@ function fpAttachSharedListeners(){
     }));
 
     fpRenderPlanMemberOptions();
-    fpPersistOwnLegacyKey();
+    fpMigrateLegacyAssignments();
 
     if(fpIsOwnerOrParent()){
       fpRenderMembers(s);
@@ -3227,27 +3219,26 @@ async function fpSaveProfileName() {
 }
 window.fpSaveProfileName = fpSaveProfileName;
 
-// One-off migration: remember the old dad/mom key on the member record so styling and
-// My View no longer depend on the name. Name matching stays only as a fallback.
-async function fpPersistOwnLegacyKey() {
+// Rewrites old "dad"/"mom" assignments to the member who holds that key, so data
+// only refers to real accounts. Runs for owners/parents once everything has loaded.
+function fpMigrateLegacyAssignments() {
     try {
-        if (!firebaseUser || !fpHouseholdId || window.fpLegacyKeyTried) return;
-        const me = fpHouseholdMembers.find(m => m.uid === firebaseUser.uid);
-        if (!me || me.legacyKey) return;
-        const key = fpLegacyKeyForMember(me);
-        window.fpLegacyKeyTried = true;
-        if (!key) return;
-        await firebaseDb.collection('households').doc(fpHouseholdId).collection('members').doc(firebaseUser.uid).update({ legacyKey: key });
-    } catch (e) { console.warn('Could not save legacy key (will keep using name matching):', e); }
+        if (window.fpLegacyMigrated || !firebaseUser || !fpHouseholdId || !fpMemberData) return;
+        if (!fpIsOwnerOrParent() || !fpHouseholdMembers.length) return;
+        if (!FP_SHARED_CATEGORIES.every(category => fpSharedReady[category])) return;
+        window.fpLegacyMigrated = true;
+        let changed = 0;
+        ['dad', 'mom'].forEach(key => {
+            const holder = fpMemberForLegacyKey(key);
+            if (holder) changed += fpSyncNameReferences(holder.uid, key, [], '');
+        });
+        if (changed) saveData();
+    } catch (e) { console.warn('Legacy assignment migration skipped:', e); }
 }
 
 function fpLegacyKeyForMember(member) {
     if (!member) return null;
     if (member.legacyKey === 'dad' || member.legacyKey === 'mom') return member.legacyKey;
-
-    const name = String(member.name || '').trim().toLowerCase();
-    if (name.includes('kevin')) return 'dad';
-    if (name.includes('harriet')) return 'mom';
 
     return null;
 }
@@ -3284,10 +3275,10 @@ function fpMemberDisplayName(member) {
 
 function fpDisplayAssignee(who) {
     if (!who || who === 'family') return 'Family';
-    if (who === 'dad') return fpMemberDisplayName(fpMemberForLegacyKey('dad')) === 'Member'
-        ? 'Kevin' : fpMemberDisplayName(fpMemberForLegacyKey('dad'));
-    if (who === 'mom') return fpMemberDisplayName(fpMemberForLegacyKey('mom')) === 'Member'
-        ? 'Harriet' : fpMemberDisplayName(fpMemberForLegacyKey('mom'));
+    if (who === 'dad' || who === 'mom') {
+        const holder = fpMemberForLegacyKey(who);
+        return holder ? fpMemberDisplayName(holder) : 'Unassigned';
+    }
 
     const member = fpHouseholdMembers.find(m =>
         m.uid === who || String(m.email || '').toLowerCase() === String(who).toLowerCase()
@@ -3312,8 +3303,9 @@ function fpAssigneeStyle(who) {
 function fpRenderPlanMemberOptions() {
     const container = document.getElementById('plan-member-options');
     if (container) container.innerHTML = '';
-    const select = document.getElementById('add-assignee');
-    if (select) {
+    ['add-assignee', 'voice-review-assignee'].forEach(selectId => {
+        const select = document.getElementById(selectId);
+        if (!select) return;
         const previous = select.value;
         select.innerHTML = '';
         const familyOption = document.createElement('option');
@@ -3327,7 +3319,7 @@ function fpRenderPlanMemberOptions() {
             select.appendChild(option);
         });
         select.value = Array.from(select.options).some(o => o.value === previous) ? previous : 'family';
-    }
+    });
     if (firebaseUser) {
         currentUser = firebaseUser.uid;
         const member = fpHouseholdMembers.find(m => m.uid === firebaseUser.uid);
@@ -4041,10 +4033,10 @@ function renderDashboard() {
     } else {
         const cookName = fpDisplayAssignee(todayMeal.cook);
         dinnerCont.innerHTML = `
-            <div class="dashboard-item" style="border-left: 4px solid var(--${todayMeal.cook || 'dad'});">
+            <div class="dashboard-item" style="border-left: 4px solid var(--${todayMeal.cook || 'family'});">
                 <div>
                     <strong>${todayMeal.meal}</strong>
-                    <div class="sub-text">Planned for ${todayDay} • Cook: <span class="assign-tag bg-${todayMeal.cook || 'dad'}" style="padding: 2px 6px; font-size: 0.65rem;">${escapeToolText(cookName)}</span></div>
+                    <div class="sub-text">Planned for ${todayDay} • Cook: <span class="assign-tag bg-${todayMeal.cook || 'family'}" style="padding: 2px 6px; font-size: 0.65rem;">${escapeToolText(cookName)}</span></div>
                 </div>
                 <span>🥘</span>
             </div>
@@ -4175,7 +4167,7 @@ function cycleCook(idx) {
     const options = fpAssignmentOptions().filter(who => who !== 'family');
     options.push('family');
 
-    const currentCook = mealsData[idx].cook || 'dad';
+    const currentCook = mealsData[idx].cook || 'family';
     const member = fpMemberForLegacyKey(currentCook);
     const resolvedCook = member?.uid || currentCook;
     const indexNow = options.indexOf(resolvedCook);
@@ -4867,10 +4859,22 @@ function deleteKidChore(kidIndex, choreIndex) {
     renderChores();
 }
 
+function addKid() {
+    const input = document.getElementById('kid-name-input');
+    const name = String(input?.value || '').replace(/\s+/g, ' ').trim();
+    if (!name) return;
+    if (choresData.some(k => String(k.kid).toLowerCase() === name.toLowerCase())) { showToast('That child is already listed'); return; }
+    choresData.push({ kid: name, chores: [] });
+    input.value = '';
+    saveData();
+    renderChores();
+}
+
 function renderChores() {
-    document.getElementById('chores-list-container').innerHTML = choresData.map((k, kIdx) => `
+    const addKidHtml = `<div class="compact-scoped-add-group" style="margin:4px 0 8px;"><input type="text" id="kid-name-input" class="compact-scoped-input" placeholder="Add a child's name..." onkeydown="if(event.key==='Enter') addKid()"><button class="compact-scoped-add-btn" onclick="addKid()" aria-label="Add child">+</button></div>`;
+    document.getElementById('chores-list-container').innerHTML = addKidHtml + choresData.map((k, kIdx) => `
         <div style="background:#f8fafc; border:1px solid #eae7e1; border-radius:8px; padding:8px 10px; margin-bottom:6px;">
-            <div style="font-weight:800; font-size:0.88rem; margin-bottom:6px;">${k.kid}</div>
+            <div style="font-weight:800; font-size:0.88rem; margin-bottom:6px;">${escapeToolText(k.kid)}</div>
             <div class="compact-scoped-add-group" style="margin-bottom:6px;">
                 <input type="text" id="chore-input-${kIdx}" class="compact-scoped-input" placeholder="Add chore..." onkeydown="if(event.key==='Enter') addKidChore(${kIdx})">
                 <button class="compact-scoped-add-btn" onclick="addKidChore(${kIdx})">+</button>
@@ -4882,7 +4886,7 @@ function renderChores() {
                         <div class="compact-scoped-item">
                             <div class="compact-scoped-left">
                                 <input type="checkbox" class="compact-scoped-checkbox">
-                                <span class="todo-item-label">${choreText}</span>
+                                <span class="todo-item-label">${escapeToolText(choreText)}</span>
                             </div>
                             <button class="action-btn delete-btn" onclick="deleteKidChore(${kIdx}, ${cIdx})" style="padding:2px 6px;">✕</button>
                         </div>
@@ -4968,6 +4972,7 @@ function handleQuickAdd(e) {
     else if (category === 'wishlist') wishlistData.push({ title: finalTitle, who: assignee });
     else if (category === 'chores') {
         const target = choresData.find(c => c.kid.toLowerCase() === assignee.toLowerCase()) || choresData[0];
+        if (!target) { showToast('Add a child on the Chores page first'); return; }
         target.chores.push({ text: finalTitle, done: false });
     }
 
