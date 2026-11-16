@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FamilyPlan — Plan together. Make memories.</title>
     <!-- Leaflet CSS for Map -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -1228,10 +1228,47 @@ nav.bottom-nav, .bottom-nav {
 }
 
 
+
+
+/* Appearance: Light (default), Dark or Auto. Chosen on the Account page. */
+html[data-theme="dark"] { color-scheme:dark; --bg:#121a1d; --card:#1b272b; --border:#2d3f45; --text:#e8f0ee; --muted:#9db0b0; --accent:#6fc2c8; --family:#6fc2c8; --shadow-soft:0 5px 18px rgba(0,0,0,.35); }
+html[data-theme="dark"] body { background:#0f1719; }
+html[data-theme="dark"] .card, html[data-theme="dark"] .tool-section, html[data-theme="dark"] .compact-scoped-card, html[data-theme="dark"] .card-calendar-wrapper, html[data-theme="dark"] .todo-inline-add, html[data-theme="dark"] .household-member-card, html[data-theme="dark"] .fp-dialog { background:var(--card); border-color:var(--border); color:var(--text); }
+html[data-theme="dark"] .tool-section.danger-zone { background:#2a1c1c; border-color:#5a2d2a; }
+html[data-theme="dark"] .form-input, html[data-theme="dark"] .form-select, html[data-theme="dark"] .compact-scoped-input, html[data-theme="dark"] input, html[data-theme="dark"] select, html[data-theme="dark"] textarea { background:#223137; color:var(--text); border-color:var(--border); }
+html[data-theme="dark"] .todo-inline-add #todo-quick-input { background:transparent; }
+html[data-theme="dark"] .calendar-main-tabs, html[data-theme="dark"] .calendar-main-tabs.todo-scope-tabs { background:#162126; border-color:var(--border); }
+html[data-theme="dark"] .cal-main-tab { color:var(--muted); }
+html[data-theme="dark"] .cal-main-tab.active { background:#2a3d44; color:var(--text); }
+html[data-theme="dark"] .tool-btn.secondary, html[data-theme="dark"] .todo-inline-icon-btn.todo-assign-btn { background:#27393f; color:var(--text); border-color:var(--border); }
+html[data-theme="dark"] .todo-inline-icon-btn.todo-add-submit { background:var(--accent); color:#0f1719; }
+html[data-theme="dark"] .todo-divider-item { border-bottom-color:var(--border); }
+html[data-theme="dark"] .todo-divider-meta, html[data-theme="dark"] .todo-person-name { color:var(--muted); }
+html[data-theme="dark"] .todo-divider-item > input[type=checkbox] { background:#223137; border-color:#4a6068; }
+html[data-theme="dark"] .todo-divider-item > input[type=checkbox]:checked { background:var(--accent); border-color:var(--accent); }
+html[data-theme="dark"] .todo-divider-item > input[type=checkbox]:checked::after { color:#0f1719; }
+html[data-theme="dark"] .bottom-nav, html[data-theme="dark"] .top-header-container { background:#162126; border-color:var(--border); }
+html[data-theme="dark"] .fp-choice { background:#223137; }
+html[data-theme="dark"] .brand-logo-img { mix-blend-mode:normal; border-radius:10px; }
+
+/* In-app dialogs (replace alert/confirm/prompt) */
+.fp-dialog-backdrop { position:fixed; inset:0; z-index:10000; display:flex; align-items:flex-end; justify-content:center; background:rgba(15,30,32,.45); padding:0; }
+.fp-dialog { width:100%; max-width:480px; background:var(--card); color:var(--text); border-radius:20px 20px 0 0; padding:20px 18px calc(18px + env(safe-area-inset-bottom,0px)); box-shadow:0 -10px 40px rgba(0,0,0,.25); }
+@media (min-width:600px) { .fp-dialog-backdrop { align-items:center; } .fp-dialog { border-radius:20px; } }
+.fp-dialog h4 { font-size:1.05rem; margin:0 0 6px; }
+.fp-dialog p { font-size:.92rem; color:var(--muted); margin:0 0 14px; line-height:1.4; }
+.fp-dialog input[type=text], .fp-dialog input[type=password] { width:100%; height:46px; padding:0 12px; margin:0 0 14px; font-size:1rem; border:1px solid var(--border); border-radius:12px; background:var(--card); color:var(--text); }
+.fp-dialog-actions { display:flex; gap:10px; justify-content:flex-end; }
+.fp-dialog-actions .tool-btn { flex:1; min-height:44px; }
+.fp-dialog-actions .tool-btn.danger { background:#b3392d; border-color:#b3392d; }
+.fp-choice-list { display:flex; flex-direction:column; gap:6px; margin:0 0 12px; max-height:50vh; overflow:auto; }
+.fp-choice { display:flex; align-items:center; gap:10px; width:100%; min-height:48px; padding:0 14px; border:1px solid var(--border); border-radius:12px; background:var(--card); color:var(--text); font-size:1rem; text-align:left; cursor:pointer; }
+.fp-choice.selected { border-color:var(--accent); background:rgba(36,91,103,.08); font-weight:700; }
+
 /* To-do list: clean divider-based list with a compact, integrated add field */
 .todo-scoped-title { display:flex; align-items:center; gap:8px; color:var(--text); font-weight:800; font-size:1.08rem; margin-bottom:12px; }
 .todo-scoped-title .todo-heading-icon { color:var(--accent); font-size:1.05rem; }
-.todo-inline-add { display:flex; flex-wrap:nowrap; align-items:center; width:calc(100% + 1.5rem); max-width:none; min-height:58px; gap:0; padding:6px 8px 6px 16px; margin:0 -0.75rem 10px; background:#fff; border:solid #dce8e2; border-width:1px 0; border-radius:0; box-sizing:border-box; box-shadow:0 1px 3px rgba(20,60,50,.035); }
+.todo-inline-add { display:flex; flex-wrap:nowrap; align-items:center; width:calc(100% + 1.5rem); max-width:none; min-height:58px; gap:0; padding:6px 10px 6px 16px; margin:0 -0.75rem 10px; background:#fff; border:solid #dce8e2; border-width:1px 0; border-radius:0; box-sizing:border-box; box-shadow:0 1px 3px rgba(20,60,50,.035); }
 .todo-inline-add #todo-quick-input { flex:1 1 0; width:auto; min-width:56px; height:46px; padding:0 8px 0 0; border:0; outline:0; box-shadow:none; background:transparent; color:var(--text); font:inherit; font-size:1.05rem; text-overflow:clip; }
 .todo-inline-add #todo-quick-input:focus { outline:0; box-shadow:none; }
 .todo-inline-actions { display:flex; flex:0 0 auto; flex-wrap:nowrap; align-items:center; gap:4px; min-width:0; }
@@ -1241,14 +1278,33 @@ nav.bottom-nav, .bottom-nav {
 .todo-inline-icon-btn.todo-assign-btn #todo-assign-label { display:block; max-width:none; overflow:visible; text-overflow:ellipsis; white-space:nowrap; }
 .todo-inline-icon-btn.todo-add-submit { min-width:44px; background:var(--accent); color:#fff; font-size:1.4rem; line-height:1; margin-left:2px; }
 .todo-date-input-hidden { position:absolute !important; width:1px !important; height:1px !important; opacity:0 !important; pointer-events:none !important; }
-.todo-selected-date { min-height:17px; margin:-2px 0 8px 4px; color:var(--muted); font-size:.72rem; }
+.todo-selected-date { min-height:0; margin:-4px 0 6px 4px; color:var(--muted); font-size:.78rem; }
+.todo-selected-date:empty { display:none; }
+.todo-list-clean .list-empty { padding:1rem 0; }
+.todo-list-clean { gap:0; }
+.todo-divider-item:first-child { padding-top:6px; }
+.person-dot { display:inline-block; flex:0 0 auto; width:9px; height:9px; border-radius:50%; margin-right:1px; }
+.todo-due { display:inline-flex; align-items:center; gap:4px; }
+.todo-due.is-today { color:#b26a00; font-weight:700; }
+.todo-due.is-overdue { color:#c0392b; font-weight:700; }
+.todo-person-name { color:#44544f; font-weight:600; }
 .todo-list-clean { display:flex; flex-direction:column; width:100%; }
 .todo-divider-item { display:flex; align-items:flex-start; gap:11px; width:100%; padding:13px 2px; border-bottom:1px solid #e6eeea; box-sizing:border-box; }
 .todo-divider-item:last-child { border-bottom:0; }
-.todo-divider-item > input[type=checkbox] { width:19px; height:19px; flex:0 0 19px; margin:2px 0 0; accent-color:var(--accent); }
+.todo-divider-item > input[type=checkbox] { -webkit-appearance:none; appearance:none; display:grid; place-content:center; width:26px; height:26px; flex:0 0 26px; margin:0; border:2px solid #b7c8c1; border-radius:50%; background:#fff; cursor:pointer; transition:background .15s,border-color .15s,transform .1s; }
+.todo-divider-item > input[type=checkbox]:active { transform:scale(.92); }
+.todo-divider-item > input[type=checkbox]:checked { background:var(--accent); border-color:var(--accent); }
+.todo-divider-item > input[type=checkbox]:checked::after { content:"✓"; color:#fff; font-size:15px; font-weight:800; line-height:1; }
+.todo-divider-item.completed { opacity:.75; }
+.todo-inline-add:focus-within { box-shadow:0 0 0 3px rgba(52,123,131,.16); border-color:#a9cbc4; }
+.calendar-main-tabs.todo-scope-tabs { background:#f1f5f3; border-color:#e6eeea; box-shadow:none; }
+.calendar-main-tabs.todo-scope-tabs .cal-main-tab { padding:7px 5px; font-size:.74rem; }
+.brand-logo-img { mix-blend-mode:multiply; }
+.tool-section.danger-zone { border-color:#efc9c4; background:#fff8f7; }
+.tool-section.danger-zone h3 { color:#b3392d; }
 .todo-divider-content { flex:1 1 auto; min-width:0; }
 .todo-divider-title { display:block; color:var(--text); font-size:.94rem; line-height:1.35; font-weight:650; overflow-wrap:anywhere; }
-.todo-divider-meta { display:flex; align-items:center; flex-wrap:wrap; gap:4px; margin-top:5px; color:#788985; font-size:.72rem; line-height:1.3; }
+.todo-divider-meta { display:flex; align-items:center; flex-wrap:wrap; gap:6px; margin-top:5px; color:#5b6b66; font-size:.8rem; line-height:1.3; }
 .todo-divider-meta .meta-icon { color:var(--accent); font-size:.75rem; }
 .todo-divider-meta .meta-dot { padding:0 2px; color:#a2b0aa; }
 .todo-divider-item.completed .todo-divider-title { text-decoration:line-through; color:#91a09a; }
@@ -1573,6 +1629,7 @@ nav.bottom-nav, .bottom-nav {
             <button class="auth-secondary" type="button" id="auth-reset" onclick="window.fpResetPassword()">Forgot password?</button>
           </form>
           <div class="auth-message" id="auth-message" role="status" aria-live="polite"></div>
+          <p class="auth-small" id="auth-version-label">Version 1.7 · build 2026-11-16.7</p>
           <p class="auth-small">Each adult or family member has their own account. After signing in, create a household or join one using its household ID.</p>
         </div>
 
@@ -1598,7 +1655,7 @@ nav.bottom-nav, .bottom-nav {
     </div>
 
     <!-- Toast Banner Container -->
-    <div id="toast-banner" class="toast-notification">
+    <div id="toast-banner" class="toast-notification" role="status" aria-live="polite">
         <span class="toast-icon">✓</span>
         <span id="toast-message">Item added successfully!</span>
     </div>
@@ -1885,7 +1942,7 @@ nav.bottom-nav, .bottom-nav {
             <section class="card" style="margin-bottom:0.8rem;">
                 <div class="card-header"><div class="card-title">🛒 Food Shopping List</div></div>
                 <div class="inline-add-group">
-                    <input type="text" id="foodshop-quick-input" class="form-input input-full" placeholder="Add food item..." onkeypress="if(event.key==='Enter') addInlineShop('foodshop')">
+                    <input type="text" id="foodshop-quick-input" class="form-input input-full" placeholder="Add food item..." onkeydown="if(event.key==='Enter') addInlineShop('foodshop')">
                     <button class="inline-add-btn" onclick="addInlineShop('foodshop')" style="width:auto; min-height:48px; background:var(--accent); color:#fff; border:none; border-radius:10px; font-weight:700; padding:0 16px; cursor:pointer;">+ Add</button>
                 </div>
                 <div id="foodshop-list-container" class="list-container"></div>
@@ -1893,7 +1950,7 @@ nav.bottom-nav, .bottom-nav {
             <section class="card">
                 <div class="card-header"><div class="card-title">🛍️ Family Shopping List</div></div>
                 <div class="inline-add-group">
-                    <input type="text" id="familyshop-quick-input" class="form-input input-full" placeholder="Add family item..." onkeypress="if(event.key==='Enter') addInlineShop('familyshop')">
+                    <input type="text" id="familyshop-quick-input" class="form-input input-full" placeholder="Add family item..." onkeydown="if(event.key==='Enter') addInlineShop('familyshop')">
                     <button class="inline-add-btn" onclick="addInlineShop('familyshop')" style="width:auto; min-height:48px; background:var(--accent); color:#fff; border:none; border-radius:10px; font-weight:700; padding:0 16px; cursor:pointer;">+ Add</button>
                 </div>
                 <div id="familyshop-list-container" class="list-container"></div>
@@ -1919,7 +1976,7 @@ nav.bottom-nav, .bottom-nav {
         <section class="compact-scoped-card">
             <div class="watchlist-scoped-title">🎬 Cinema Watchlist</div>
             <div class="compact-scoped-add-group">
-                <input type="text" id="cinema-quick-input" class="compact-scoped-input" placeholder="Add movie..." onkeypress="if(event.key==='Enter') addWatchlistItem('cinema')">
+                <input type="text" id="cinema-quick-input" class="compact-scoped-input" placeholder="Add movie..." onkeydown="if(event.key==='Enter') addWatchlistItem('cinema')">
                 <button class="compact-scoped-add-btn" onclick="addWatchlistItem('cinema')">+</button>
             </div>
             <div id="cinema-list-container" style="display:flex; flex-direction:column;"></div>
@@ -1928,7 +1985,7 @@ nav.bottom-nav, .bottom-nav {
         <section class="compact-scoped-card">
             <div class="watchlist-scoped-title">📺 Home Watchlist</div>
             <div class="compact-scoped-add-group">
-                <input type="text" id="home-quick-input" class="compact-scoped-input" placeholder="Add TV show..." onkeypress="if(event.key==='Enter') addWatchlistItem('home')">
+                <input type="text" id="home-quick-input" class="compact-scoped-input" placeholder="Add TV show..." onkeydown="if(event.key==='Enter') addWatchlistItem('home')">
                 <button class="compact-scoped-add-btn" onclick="addWatchlistItem('home')">+</button>
             </div>
             <div id="home-list-container" style="display:flex; flex-direction:column;"></div>
@@ -2039,13 +2096,13 @@ nav.bottom-nav, .bottom-nav {
         <div id="family-tasks-panel">
         <section class="compact-scoped-card">
             <div class="todo-scoped-title"><span class="todo-heading-icon" aria-hidden="true">📝</span><span>To-Do List</span></div>
-            <div class="calendar-main-tabs" role="group" aria-label="Family or private to-do list" style="margin:0 0 12px;padding:4px;">
+            <div class="calendar-main-tabs todo-scope-tabs" role="group" aria-label="Family or private to-do list" style="margin:0 0 12px;padding:4px;">
                 <button type="button" id="todo-scope-family" class="cal-main-tab active" onclick="setTodoScope('family')" aria-pressed="true" style="flex:1;">Family</button>
                 <button type="button" id="todo-scope-private" class="cal-main-tab" onclick="setTodoScope('private')" aria-pressed="false" style="flex:1;">Private</button>
             </div>
             <p id="todo-scope-note" class="tool-note" style="display:none;">Household tasks assigned to you or everyone.</p>
             <div class="todo-inline-add" role="group" aria-label="Add a to-do item">
-                <input type="text" id="todo-quick-input" placeholder="Add task…" aria-label="New task" onkeypress="if(event.key==='Enter') addTodoItem()">
+                <input type="text" id="todo-quick-input" placeholder="Add task…" aria-label="New task" onkeydown="if(event.key==='Enter') addTodoItem()">
                 <div class="todo-inline-actions">
                     <button type="button" id="todo-assign-button" class="todo-inline-icon-btn todo-assign-btn" onclick="cycleNewTodoAssignee()" aria-label="Change assignee" title="Change task assignee"><span aria-hidden="true">👤</span><span id="todo-assign-label">Assign</span></button>
                     <button type="button" id="todo-date-button" class="todo-inline-icon-btn" onclick="openTodoDatePicker()" aria-label="Choose task date" title="Choose task date">📅</button>
@@ -2065,7 +2122,7 @@ nav.bottom-nav, .bottom-nav {
         <section class="compact-scoped-card">
             <div class="todo-scoped-title">🎁 Gift Wishlist</div>
             <div class="compact-scoped-add-group">
-                <input type="text" id="wishlist-quick-input" class="wishlist-scoped-input" placeholder="Add item..." onkeypress="if(event.key==='Enter') addWishlistItem()">
+                <input type="text" id="wishlist-quick-input" class="wishlist-scoped-input" placeholder="Add item..." onkeydown="if(event.key==='Enter') addWishlistItem()">
                 <button class="wishlist-scoped-add-btn" onclick="addWishlistItem()">+ Add</button>
             </div>
             <div id="wishlist-list-container" style="display:flex; flex-direction:column;"></div>
@@ -2123,16 +2180,24 @@ nav.bottom-nav, .bottom-nav {
 
     <!-- Account page -->
     <div id="view-account" class="view">
-        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Manage your Family Plan backup files here.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 1.4 · build 2026-11-16.4</p></section>
+        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Your profile, household and data.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 1.7 · build 2026-11-16.7</p></section>
         <section class="tool-section" id="profile-name-section">
             <h3>👤 Profile name</h3>
             <p class="tool-note">Changing your name updates it everywhere it appears: tasks, lists, calendar, meal plan and household members.</p>
             <label class="auth-field" for="profile-name-input">Your name</label>
-            <input type="text" id="profile-name-input" class="form-input input-full" maxlength="60" autocomplete="name" placeholder="Your name" onkeypress="if(event.key==='Enter') fpSaveProfileName()">
+            <input type="text" id="profile-name-input" class="form-input input-full" maxlength="60" autocomplete="name" placeholder="Your name" onkeydown="if(event.key==='Enter') fpSaveProfileName()">
             <div class="account-actions">
                 <button type="button" class="tool-btn" id="profile-name-save" onclick="fpSaveProfileName()">Save name</button>
             </div>
             <p class="tool-note" id="profile-name-status" aria-live="polite"></p>
+        </section>
+        <section class="tool-section" id="appearance-section">
+            <h3>🎨 Appearance</h3>
+            <div class="calendar-main-tabs" role="group" aria-label="Theme">
+                <button type="button" class="cal-main-tab" data-theme-choice="light" onclick="fpSetTheme('light')">☀️ Light</button>
+                <button type="button" class="cal-main-tab" data-theme-choice="dark" onclick="fpSetTheme('dark')">🌙 Dark</button>
+                <button type="button" class="cal-main-tab" data-theme-choice="auto" onclick="fpSetTheme('auto')">Auto</button>
+            </div>
         </section>
         <section class="tool-section" id="household-management-section">
             <h3>🏡 Shared household</h3>
@@ -2162,8 +2227,16 @@ nav.bottom-nav, .bottom-nav {
             </div>
             <p class="tool-note" id="backup-status" aria-live="polite"></p>
         </section>
-<section class="tool-section" id="account-deletion-section">
-    <h3>Delete account and household</h3>
+
+<section class="tool-section">
+    <h3>🔒 Privacy & policies</h3>
+    <div class="account-actions">
+        <a class="tool-btn secondary" href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>
+        <a class="tool-btn secondary" href="/account-deletion.html" target="_blank" rel="noopener">Account Deletion Policy</a>
+    </div>
+</section>
+<section class="tool-section danger-zone" id="account-deletion-section">
+    <h3>⚠️ Danger zone</h3>
     <p class="tool-note">
         Permanently delete your account and associated household data.
         This cannot be undone.
@@ -2173,14 +2246,6 @@ nav.bottom-nav, .bottom-nav {
         Delete my account and household
     </button>
     <p class="tool-note" id="account-deletion-status" aria-live="polite"></p>
-</section>
-
-<section class="tool-section">
-    <h3>🔒 Privacy & policies</h3>
-    <div class="account-actions">
-        <a class="tool-btn secondary" href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>
-        <a class="tool-btn secondary" href="/account-deletion.html" target="_blank" rel="noopener">Account Deletion Policy</a>
-    </div>
 </section>
 </div>
     <!-- FIXED Bottom Navigation Bar -->
@@ -2294,8 +2359,8 @@ window.fpSignOut = fpSignOut;
 
 function fpCreateHousehold() {
     const name = document.getElementById('household-name').value.trim();
-    if (!name) { alert('Please enter a household name'); return; }
-    if (!firebaseUser) { alert('Please sign in before creating a household.'); return; }
+    if (!name) { showToast('Please enter a household name'); return; }
+    if (!firebaseUser) { showToast('Please sign in before creating a household.'); return; }
     // Household creation remains local-only at this stage; Firestore household sync is a separate next step.
     localStorage.setItem('fam_household_name', name);
     localStorage.setItem('fam_logged_in', 'true');
@@ -2306,8 +2371,8 @@ window.fpCreateHousehold = fpCreateHousehold;
 
 function fpJoinHousehold() {
     const id = document.getElementById('household-id').value.trim();
-    if (!id) { alert('Please enter a household ID'); return; }
-    if (!firebaseUser) { alert('Please sign in before joining a household.'); return; }
+    if (!id) { showToast('Please enter a household ID'); return; }
+    if (!firebaseUser) { showToast('Please sign in before joining a household.'); return; }
     // Household joining remains local-only at this stage; Firestore membership is a separate next step.
     localStorage.setItem('fam_household_id', id);
     localStorage.setItem('fam_logged_in', 'true');
@@ -2395,36 +2460,125 @@ function fpAssignmentOptions() {
     return ['family', ...new Set([...memberUids, ...(signedInUid ? [signedInUid] : [])])];
 }
 
+
+// ---------------------------------------------------------------------------
+// In-app dialogs: promise-based replacements for alert/confirm/prompt
+// ---------------------------------------------------------------------------
+const fpDialog = (() => {
+    function open(build) {
+        return new Promise(resolve => {
+            const backdrop = document.createElement('div');
+            backdrop.className = 'fp-dialog-backdrop';
+            const box = document.createElement('div');
+            box.className = 'fp-dialog';
+            box.setAttribute('role', 'dialog');
+            box.setAttribute('aria-modal', 'true');
+            backdrop.appendChild(box);
+            const close = value => { backdrop.remove(); document.removeEventListener('keydown', onKey, true); resolve(value); };
+            const onKey = e => { if (e.key === 'Escape') { e.stopPropagation(); close(null); } };
+            document.addEventListener('keydown', onKey, true);
+            backdrop.addEventListener('click', e => { if (e.target === backdrop) close(null); });
+            build(box, close);
+            document.body.appendChild(backdrop);
+            const focusTarget = box.querySelector('input,button.primary');
+            if (focusTarget) focusTarget.focus();
+        });
+    }
+    function el(tag, props = {}, text = '') {
+        const node = document.createElement(tag);
+        Object.assign(node, props);
+        if (text) node.textContent = text;
+        return node;
+    }
+    function actions(box, close, okLabel, danger, getValue) {
+        const row = el('div', { className: 'fp-dialog-actions' });
+        const cancel = el('button', { type: 'button', className: 'tool-btn secondary' }, 'Cancel');
+        const ok = el('button', { type: 'button', className: 'tool-btn primary' + (danger ? ' danger' : '') }, okLabel);
+        cancel.onclick = () => close(null);
+        ok.onclick = () => close(getValue());
+        row.append(cancel, ok);
+        box.appendChild(row);
+    }
+    return {
+        confirm(message, { title = 'Are you sure?', okLabel = 'Confirm', danger = false } = {}) {
+            return open((box, close) => {
+                box.append(el('h4', {}, title), el('p', {}, message));
+                actions(box, close, okLabel, danger, () => true);
+            }).then(v => v === true);
+        },
+        prompt(message, { value = '', password = false, okLabel = 'Save', title = '' } = {}) {
+            return open((box, close) => {
+                if (title) box.appendChild(el('h4', {}, title));
+                box.appendChild(el('p', {}, message));
+                const input = el('input', { type: password ? 'password' : 'text', value, autocomplete: password ? 'current-password' : 'off' });
+                input.addEventListener('keydown', e => { if (e.key === 'Enter') close(input.value); });
+                box.appendChild(input);
+                actions(box, close, okLabel, false, () => input.value);
+            });
+        },
+        choose(title, options, selected) {
+            return open((box, close) => {
+                box.appendChild(el('h4', {}, title));
+                const list = el('div', { className: 'fp-choice-list' });
+                options.forEach(opt => {
+                    const b = el('button', { type: 'button', className: 'fp-choice' + (opt.value === selected ? ' selected' : '') });
+                    b.appendChild(el('span', { className: 'person-dot bg-' + (opt.style || 'family') }));
+                    b.appendChild(el('span', {}, opt.label));
+                    b.onclick = () => close(opt.value);
+                    list.appendChild(b);
+                });
+                box.appendChild(list);
+                const cancel = el('button', { type: 'button', className: 'tool-btn secondary', style: 'width:100%;min-height:44px;' }, 'Cancel');
+                cancel.onclick = () => close(null);
+                box.appendChild(cancel);
+            });
+        }
+    };
+})();
+window.fpDialog = fpDialog;
+
+function fpApplyTheme() {
+    const choice = localStorage.getItem('fam_theme') || 'light';
+    const dark = choice === 'dark' || (choice === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    document.querySelectorAll('[data-theme-choice]').forEach(b => b.classList.toggle('active', b.dataset.themeChoice === choice));
+}
+function fpSetTheme(choice) { localStorage.setItem('fam_theme', choice); fpApplyTheme(); }
+window.fpSetTheme = fpSetTheme;
+fpApplyTheme();
+if (window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', fpApplyTheme);
+
+function fpSafeParse(raw) { try { return JSON.parse(raw); } catch (e) { console.warn('Ignoring unreadable saved data:', e); return null; } }
 let currentUser = localStorage.getItem('fam_user') || 'dad';
 let currentUserName = localStorage.getItem('fam_user_name') || 'Kevin';
 let viewMode = 'individual'; // My View is the safe default on every load.
 
-let mealsData = JSON.parse(localStorage.getItem('fam_meals')) || [
+let mealsData = fpSafeParse(localStorage.getItem('fam_meals')) || [
     { day: "Mon", meal: "", cook: "dad" }, { day: "Tue", meal: "", cook: "mom" }, 
     { day: "Wed", meal: "", cook: "dad" }, { day: "Thu", meal: "", cook: "mom" }, 
     { day: "Fri", meal: "", cook: "family" }, { day: "Sat", meal: "", cook: "dad" }, 
     { day: "Sun", meal: "", cook: "family" }
 ];
-let foodShopData = JSON.parse(localStorage.getItem('fam_foodshop')) || [];
-let familyShopData = JSON.parse(localStorage.getItem('fam_familyshop')) || [];
-let destinationsData = JSON.parse(localStorage.getItem('fam_destinations')) || { 
+let foodShopData = fpSafeParse(localStorage.getItem('fam_foodshop')) || [];
+let familyShopData = fpSafeParse(localStorage.getItem('fam_familyshop')) || [];
+let destinationsData = fpSafeParse(localStorage.getItem('fam_destinations')) || { 
     places: [], 
     restaurants: [], 
     cinema: [], home: [] 
 };
 destinationsData.places = Array.isArray(destinationsData.places) ? destinationsData.places : [];
-let choresData = JSON.parse(localStorage.getItem('fam_chores')) || [{ kid: "Leo", chores: [] }, { kid: "Mia", chores: [] }];
-let wishlistData = JSON.parse(localStorage.getItem('fam_wishlist')) || [];
-let todosData = JSON.parse(localStorage.getItem('fam_todos')) || [];
-let calendarEvents = JSON.parse(localStorage.getItem('fam_calendar')) || {};
-let householdBillsData = JSON.parse(localStorage.getItem('fam_bills')) || [];
-let monthlyBudgetsData = JSON.parse(localStorage.getItem('fam_monthly_budgets')) || [];
-let renewalsData = JSON.parse(localStorage.getItem('fam_renewals')) || [];
-let familyIdeasData = JSON.parse(localStorage.getItem('fam_ideas')) || [];
-let handoverData = JSON.parse(localStorage.getItem('fam_handover')) || [];
-let occasionsData = JSON.parse(localStorage.getItem('fam_occasions')) || [];
-let addressBookData = JSON.parse(localStorage.getItem('fam_address_book')) || [];
-let unplannedSpendingData = JSON.parse(localStorage.getItem('fam_unplanned_spending')) || [];
+let choresData = fpSafeParse(localStorage.getItem('fam_chores')) || [{ kid: "Leo", chores: [] }, { kid: "Mia", chores: [] }];
+let wishlistData = fpSafeParse(localStorage.getItem('fam_wishlist')) || [];
+let todosData = fpSafeParse(localStorage.getItem('fam_todos')) || [];
+let calendarEvents = fpSafeParse(localStorage.getItem('fam_calendar')) || {};
+let householdBillsData = fpSafeParse(localStorage.getItem('fam_bills')) || [];
+let monthlyBudgetsData = fpSafeParse(localStorage.getItem('fam_monthly_budgets')) || [];
+let renewalsData = fpSafeParse(localStorage.getItem('fam_renewals')) || [];
+let familyIdeasData = fpSafeParse(localStorage.getItem('fam_ideas')) || [];
+let handoverData = fpSafeParse(localStorage.getItem('fam_handover')) || [];
+let occasionsData = fpSafeParse(localStorage.getItem('fam_occasions')) || [];
+let addressBookData = fpSafeParse(localStorage.getItem('fam_address_book')) || [];
+let unplannedSpendingData = fpSafeParse(localStorage.getItem('fam_unplanned_spending')) || [];
 
 let toastTimer = null;
 function showToast(msg) {
@@ -2847,6 +3001,7 @@ function fpAttachSharedListeners(){
     }));
 
     fpRenderPlanMemberOptions();
+    fpPersistOwnLegacyKey();
 
     if(fpIsOwnerOrParent()){
       fpRenderMembers(s);
@@ -3046,10 +3201,27 @@ async function fpSaveProfileName() {
             ? 'Your household security rules do not allow members to edit their own name record' + code + '.'
             : 'Could not save your name' + code + '. Check your connection and try again.');
     } finally {
-        if (button) button.disabled = false;
+        if (button) {
+            button.disabled = false;
+            if (status && /^Name (updated|changed)/.test(status.textContent)) { button.textContent = 'Saved ✓'; setTimeout(() => { button.textContent = 'Save name'; }, 2500); }
+        }
     }
 }
 window.fpSaveProfileName = fpSaveProfileName;
+
+// One-off migration: remember the old dad/mom key on the member record so styling and
+// My View no longer depend on the name. Name matching stays only as a fallback.
+async function fpPersistOwnLegacyKey() {
+    try {
+        if (!firebaseUser || !fpHouseholdId || window.fpLegacyKeyTried) return;
+        const me = fpHouseholdMembers.find(m => m.uid === firebaseUser.uid);
+        if (!me || me.legacyKey) return;
+        const key = fpLegacyKeyForMember(me);
+        window.fpLegacyKeyTried = true;
+        if (!key) return;
+        await firebaseDb.collection('households').doc(fpHouseholdId).collection('members').doc(firebaseUser.uid).update({ legacyKey: key });
+    } catch (e) { console.warn('Could not save legacy key (will keep using name matching):', e); }
+}
 
 function fpLegacyKeyForMember(member) {
     if (!member) return null;
@@ -3180,7 +3352,7 @@ async function fpActivateHousehold(user,householdId){
     // Preserve this device's pre-cloud data as part of the normal exportable backup.
     const backupKey=`fam_precloud_backup_${user.uid}`;
     if(!localStorage.getItem(backupKey)){
-      const backup={}; Object.keys(localStorage).filter(k=>k.startsWith('fam_')&&!k.startsWith('fam_precloud_backup_')).forEach(k=>{try{backup[k]=JSON.parse(localStorage.getItem(k));}catch{backup[k]=localStorage.getItem(k);}});
+      const backup={}; Object.keys(localStorage).filter(k=>k.startsWith('fam_')&&!k.startsWith('fam_precloud_backup_')).forEach(k=>{try{backup[k]=fpSafeParse(localStorage.getItem(k));}catch{backup[k]=localStorage.getItem(k);}});
       localStorage.setItem(backupKey,JSON.stringify({savedAt:new Date().toISOString(),data:backup}));
     }
     // Do not briefly expose another household's browser-local data to a joining member.
@@ -3427,7 +3599,7 @@ async function fpSetMemberRole(uid,role){
 }
 window.fpSetMemberRole=fpSetMemberRole;
 async function fpRemoveMember(uid){
-  if(!fpMemberData || fpMemberData.role!=='owner' || !confirm('Remove this person from the household? Their private list will not be affected.'))return;
+  if(!fpMemberData || fpMemberData.role!=='owner' || !(await fpDialog.confirm('Remove this person from the household? Their private list will not be affected.',{title:'Remove member',okLabel:'Remove',danger:true})))return;
   try{
     const householdRef=firebaseDb.collection('households').doc(fpHouseholdId);
     const memberRef=householdRef.collection('members').doc(uid);
@@ -3458,10 +3630,10 @@ async function fpDeleteHouseholdAndAccount() {
         return;
     }
 
-    if (!confirm('Permanently delete your account and all associated household data? This cannot be undone.')) return;
+    if (!(await fpDialog.confirm('Permanently delete your account and all associated household data? This cannot be undone.', { title: 'Delete account', okLabel: 'Continue', danger: true }))) return;
 
     // Confirm the user's identity before making any changes.
-    const password = prompt('Enter your account password to confirm deletion:');
+    const password = await fpDialog.prompt('Enter your account password to confirm deletion.', { password: true, okLabel: 'Delete', title: 'Confirm password' });
     if (password === null) return;
     if (!password) {
         setStatus('Password is required.');
@@ -3791,8 +3963,8 @@ function renderCalendarMonth() {
         let eventsHtml = '';
         if (calendarEvents[dateKey]) {
             calendarEvents[dateKey].filter(ev => filterItem(ev.who)).forEach(ev => {
-       const assigneeLabel = ` (${fpDisplayAssignee(ev.who)})`;
-        eventsHtml += `<div class="event-pill bg-${fpAssigneeStyle(ev.who)} ${ev.quickAdded ? 'quick-added' : ''}" title="${ev.title}${assigneeLabel}">${ev.title}${assigneeLabel}</div>`;
+       const assigneeLabel = ` (${escapeToolText(fpDisplayAssignee(ev.who))})`;
+        eventsHtml += `<div class="event-pill bg-${fpAssigneeStyle(ev.who)} ${ev.quickAdded ? 'quick-added' : ''}" title="${escapeToolText(ev.title)}${escapeToolText(assigneeLabel)}">${escapeToolText(ev.title)}${escapeToolText(assigneeLabel)}</div>`;
             });
         }
         html += `
@@ -3828,8 +4000,8 @@ function renderDashboard() {
         schedCont.innerHTML = todayEvents.map(ev => `
             <div class="dashboard-item">
                 <div>
-                    <strong>${ev.title}</strong>
-              <div class="sub-text">Assigned to: ${fpDisplayAssignee(ev.who)}</div>
+                    <strong>${escapeToolText(ev.title)}</strong>
+              <div class="sub-text">Assigned to: ${escapeToolText(fpDisplayAssignee(ev.who))}</div>
                 </div>
                 <span>📅</span>
             </div>
@@ -3849,7 +4021,7 @@ function renderDashboard() {
             <div class="dashboard-item" style="border-left: 4px solid var(--${todayMeal.cook || 'dad'});">
                 <div>
                     <strong>${todayMeal.meal}</strong>
-                    <div class="sub-text">Planned for ${todayDay} • Cook: <span class="assign-tag bg-${todayMeal.cook || 'dad'}" style="padding: 2px 6px; font-size: 0.65rem;">${cookName}</span></div>
+                    <div class="sub-text">Planned for ${todayDay} • Cook: <span class="assign-tag bg-${todayMeal.cook || 'dad'}" style="padding: 2px 6px; font-size: 0.65rem;">${escapeToolText(cookName)}</span></div>
                 </div>
                 <span>🥘</span>
             </div>
@@ -3872,7 +4044,7 @@ function renderDashboard() {
                 <label class="dashboard-task-left">
                     <input class="dashboard-task-checkbox" type="checkbox" onchange="toggleDashboardTask('${item.type}', ${item.index})">
                     <span>
-                        <strong>${item.text}</strong>
+                        <strong>${escapeToolText(item.text)}</strong>
                         <span class="sub-text">${item.sub}</span>
                     </span>
                 </label>
@@ -3921,9 +4093,9 @@ function openDayPopover(dateKey, dayNum) {
     } else {
         listCont.innerHTML = events.map((ev, idx) => `
             <div class="bubble-event-item" style="border-left-color: var(--${ev.who});">
-                <div class="bubble-event-title">${ev.title}</div>
+                <div class="bubble-event-title">${escapeToolText(ev.title)}</div>
                 <div style="display:flex; align-items:center; gap:6px;">
-              <span class="compact-scoped-tag bg-${fpAssigneeStyle(ev.who)}">${fpDisplayAssignee(ev.who)}</span>
+              <span class="compact-scoped-tag bg-${fpAssigneeStyle(ev.who)}">${escapeToolText(fpDisplayAssignee(ev.who))}</span>
                     <button class="action-btn delete-btn" onclick="deleteCalEvent('${dateKey}', ${idx}, '${ev.eventId || ''}'); openDayPopover('${dateKey}', ${dayNum});">✕</button>
                 </div>
             </div>
@@ -4007,7 +4179,7 @@ const cookName = fpDisplayAssignee(m.cook);
             <div class="meal-card-inner">
                 <div class="meal-day-name">${dayLabel}</div>
                 <input type="text" class="meal-input-inline" placeholder="Add a meal..." aria-label="${dayLabel} meal" value="${mealValue}" onchange="mealsData[${idx}].meal = this.value; saveData(); renderDashboard(); renderWeeklyPlanner();">
-                <button type="button" class="assign-tag meal-cook-tag bg-${cookKey}" onclick="cycleCook(${idx})" title="Change who is cooking" aria-label="${cookName} is cooking; tap to change">${cookName}</button>
+                <button type="button" class="assign-tag meal-cook-tag bg-${cookKey}" onclick="cycleCook(${idx})" title="Change who is cooking" aria-label="${escapeToolText(cookName)} is cooking; tap to change">${escapeToolText(cookName)}</button>
             </div>
         </div>`;
     }).join('');
@@ -4102,12 +4274,12 @@ function renderShopping() {
                 <div class="shop-left">
                     <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleShopCheck('foodshop', ${idx})">
                     ${item.isEditing ? 
-                        `<input type="text" class="edit-inline-input" value="${item.text}" onkeypress="if(event.key==='Enter') saveShopEdit('foodshop', ${idx}, this.value)" onblur="saveShopEdit('foodshop', ${idx}, this.value)" autofocus>` : 
-                        `<span class="item-text-label">${item.text}</span>`
+                        `<input type="text" class="edit-inline-input" value="${escapeToolText(item.text)}" onkeydown="if(event.key==='Enter') saveShopEdit('foodshop', ${idx}, this.value)" onblur="saveShopEdit('foodshop', ${idx}, this.value)" autofocus>` : 
+                        `<span class="item-text-label">${escapeToolText(item.text)}</span>`
                     }
                 </div>
                 <button class="action-btn" onclick="enableShopEdit('foodshop', ${idx})">✏️</button>
-           <span class="assign-tag bg-${fpAssigneeStyle(item.who)}" onclick="cycleAssignee('foodshop', ${idx})">${displayWho}</span>
+           <span class="assign-tag bg-${fpAssigneeStyle(item.who)}" onclick="cycleAssignee('foodshop', ${idx})">${escapeToolText(displayWho)}</span>
                 <button class="action-btn delete-btn" onclick="foodShopData.splice(${idx},1); saveData(); renderShopping(); renderDashboard();">✕</button>
             </div>
         `;
@@ -4122,12 +4294,12 @@ function renderShopping() {
                 <div class="shop-left">
                     <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleShopCheck('familyshop', ${idx})">
                     ${item.isEditing ? 
-                        `<input type="text" class="edit-inline-input" value="${item.text}" onkeypress="if(event.key==='Enter') saveShopEdit('familyshop', ${idx}, this.value)" onblur="saveShopEdit('familyshop', ${idx}, this.value)" autofocus>` : 
-                        `<span class="item-text-label">${item.text}</span>`
+                        `<input type="text" class="edit-inline-input" value="${escapeToolText(item.text)}" onkeydown="if(event.key==='Enter') saveShopEdit('familyshop', ${idx}, this.value)" onblur="saveShopEdit('familyshop', ${idx}, this.value)" autofocus>` : 
+                        `<span class="item-text-label">${escapeToolText(item.text)}</span>`
                     }
                 </div>
                 <button class="action-btn" onclick="enableShopEdit('familyshop', ${idx})">✏️</button>
-         <span class="assign-tag bg-${fpAssigneeStyle(item.who)}" onclick="cycleAssignee('familyshop', ${idx})">${displayWho}</span>
+         <span class="assign-tag bg-${fpAssigneeStyle(item.who)}" onclick="cycleAssignee('familyshop', ${idx})">${escapeToolText(displayWho)}</span>
                 <button class="action-btn delete-btn" onclick="familyShopData.splice(${idx},1); saveData(); renderShopping(); renderDashboard();">✕</button>
             </div>
         `;
@@ -4187,11 +4359,11 @@ function renderPlacesView() {
         return `
             <div class="places-scoped-item">
                 <div>
-                    <span style="font-weight:700;">📍 ${item.title}</span>
+                    <span style="font-weight:700;">📍 ${escapeToolText(item.title)}</span>
                     ${item.postcode ? `<span style="font-size:0.75rem; color:var(--muted); margin-left:6px;">(${item.postcode})</span>` : ''}
                 </div>
                 <div style="display:flex; align-items:center; gap:6px;">
-          <span class="compact-scoped-tag bg-${fpAssigneeStyle(item.who)}">${displayWho}</span>
+          <span class="compact-scoped-tag bg-${fpAssigneeStyle(item.who)}">${escapeToolText(displayWho)}</span>
                     <button class="action-btn delete-btn" onclick="destinationsData.places.splice(${idx},1); saveData(); renderPlacesView();">✕</button>
                 </div>
             </div>
@@ -4306,13 +4478,13 @@ function renderRestaurantsView() {
         const displayWho = fpDisplayAssignee(item.who);
         return `
             <div class="restaurant-card-item">
-                <img src="${img}" alt="${item.title}" class="restaurant-thumb">
+                <img src="${img}" alt="${escapeToolText(item.title)}" class="restaurant-thumb">
                 <div style="flex:1; min-width:0; padding-left:4px;">
-                    <div style="font-weight:700; font-size:0.92rem; color:var(--text);">${item.title}</div>
+                    <div style="font-weight:700; font-size:0.92rem; color:var(--text);">${escapeToolText(item.title)}</div>
                     ${item.postcode ? `<div style="font-size:0.75rem; color:var(--muted);">Postcode: ${item.postcode}</div>` : ''}
                 </div>
                 <div style="display:flex; align-items:center; gap:6px;">
-           <span class="compact-scoped-tag bg-${fpAssigneeStyle(item.who)}">${displayWho}</span>
+           <span class="compact-scoped-tag bg-${fpAssigneeStyle(item.who)}">${escapeToolText(displayWho)}</span>
                     <button class="action-btn delete-btn" onclick="destinationsData.restaurants.splice(${idx},1); saveData(); renderRestaurantsView();">✕</button>
                 </div>
             </div>
@@ -4407,7 +4579,7 @@ async function editPrivateTodo(id) {
     const item = privateTodosData.find(todo => todo.id === id);
     const collection = privateTodosCollection();
     if (!item || !collection) return;
-    const updatedText = prompt('Edit private item', item.text || '');
+    const updatedText = await fpDialog.prompt('Edit private item', { value: item.text || '' });
     if (updatedText === null || !updatedText.trim()) return;
     try {
         await collection.doc(id).update({ text: updatedText.trim(), updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
@@ -4419,7 +4591,7 @@ async function editPrivateTodo(id) {
 
 async function deletePrivateTodo(id) {
     const collection = privateTodosCollection();
-    if (!collection || !confirm('Delete this private item?')) return;
+    if (!collection || !(await fpDialog.confirm('Delete this private item?', { title: 'Delete item', okLabel: 'Delete', danger: true }))) return;
     try {
         await collection.doc(id).delete();
     } catch (error) {
@@ -4446,10 +4618,23 @@ function renderPrivateTodos(container) {
             <input type="checkbox" ${item.done ? 'checked' : ''} onchange="togglePrivateTodo('${item.id}', this.checked)" aria-label="Mark private item complete">
             <div class="todo-divider-content">
                 <span class="todo-divider-title">${escapeToolText(item.text || '')}</span>
-                <div class="todo-divider-meta"><span class="meta-icon" aria-hidden="true">📅</span><span>${formatTodoMetaDate(item.date)}</span><span class="meta-dot">•</span><span>Private</span></div>
+                <div class="todo-divider-meta">${todoDueHtml(item.date)}<span class="person-dot bg-family" aria-hidden="true"></span><span>Private</span></div>
             </div>
         </div>
     `).join('');
+}
+
+function todoDueHtml(value) {
+    if (!value) return '';
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const due = new Date(String(value) + 'T00:00:00');
+    let cls = '', note = '';
+    if (!isNaN(due)) {
+        const days = Math.round((due - today) / 86400000);
+        if (days < 0) { cls = ' is-overdue'; note = ' · overdue'; }
+        else if (days === 0) { cls = ' is-today'; note = ' · today'; }
+    }
+    return `<span class="todo-due${cls}"><span class="meta-icon" aria-hidden="true">📅</span>${escapeToolText(formatTodoMetaDate(value))}${note}</span><span class="meta-dot" aria-hidden="true">•</span>`;
 }
 
 function formatTodoMetaDate(value) {
@@ -4473,16 +4658,20 @@ function syncNewTodoAssignee() {
     }
 }
 
-function cycleNewTodoAssignee() {
-    const options = fpAssignmentOptions();
+async function cycleNewTodoAssignee() {
     syncNewTodoAssignee();
+    const options = fpAssignmentOptions();
     if (options.length <= 1) {
         showToast('No other household members are available to assign this task to yet');
         return;
     }
-    const current = options.indexOf(newTodoAssignee);
-    newTodoAssignee = options[(current + 1 + options.length) % options.length];
-    syncNewTodoAssignee();
+    const choices = options.map(value => ({
+        value,
+        label: value === 'family' ? 'Family (everyone)' : fpDisplayAssignee(value),
+        style: value === 'family' ? 'family' : fpAssigneeStyle(value)
+    }));
+    const picked = await fpDialog.choose('Assign to', choices, newTodoAssignee);
+    if (picked) { newTodoAssignee = picked; syncNewTodoAssignee(); }
 }
 
 function openTodoDatePicker() {
@@ -4574,9 +4763,9 @@ function renderTodos() {
         renderPrivateTodos(container);
         return;
     }
-    const shared = todosData.map((task, idx) => ({ task, idx })).filter(({ task }) => filterItem(task.who));
+    const shared = todosData.map((task, idx) => ({ task, idx })).filter(({ task }) => filterItem(task.who)).sort((a, b) => Number(!!a.task.done) - Number(!!b.task.done));
     container.innerHTML = shared.length === 0
-        ? '<div class="list-empty" style="font-size:0.85rem;padding:0.8rem 0;">No family tasks yet.</div>'
+        ? '<div class="list-empty" style="font-size:0.85rem;padding:0.8rem 0;">Nothing to do. Add the first task above.</div>'
         : shared.map(({task:t, idx}) => {
             const displayWho = fpDisplayAssignee(t.who) || 'Family';
             return `
@@ -4584,9 +4773,9 @@ function renderTodos() {
                     <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodoCheck(${idx})" aria-label="Mark task complete">
                     <div class="todo-divider-content">
                         ${t.isEditing
-                            ? `<input type="text" class="edit-inline-input" value="${escapeToolText(t.text || '')}" onkeypress="if(event.key==='Enter') saveTodoEdit(${idx}, this.value)" onblur="saveTodoEdit(${idx}, this.value)" autofocus>`
+                            ? `<input type="text" class="edit-inline-input" value="${escapeToolText(t.text || '')}" onkeydown="if(event.key==='Enter') saveTodoEdit(${idx}, this.value)" onblur="saveTodoEdit(${idx}, this.value)" autofocus>`
                             : `<span class="todo-divider-title">${escapeToolText(t.text || '')}</span>`}
-                        <div class="todo-divider-meta"><span class="meta-icon" aria-hidden="true">📅</span><span>${formatTodoMetaDate(t.date)}</span><span class="meta-dot">•</span><span class="meta-icon" aria-hidden="true">👤</span><span>${escapeToolText(displayWho)}</span></div>
+                        <div class="todo-divider-meta">${todoDueHtml(t.date)}<span class="person-dot bg-${fpAssigneeStyle(t.who)}" aria-hidden="true"></span><span class="todo-person-name">${escapeToolText(displayWho)}</span></div>
                     </div>
                 </div>`;
         }).join('');
@@ -4615,9 +4804,9 @@ function renderWatchlist() {
        const displayWho = fpDisplayAssignee(item.who);
         return `
             <div class="compact-scoped-item">
-                <span class="compact-scoped-label">🎬 ${item.title}</span>
+                <span class="compact-scoped-label">🎬 ${escapeToolText(item.title)}</span>
                 <div style="display:flex; align-items:center; gap:6px;">
-           <span class="compact-scoped-tag bg-${fpAssigneeStyle(item.who)}" onclick="cycleAssignee('cinema', ${idx})">${displayWho}</span>
+           <span class="compact-scoped-tag bg-${fpAssigneeStyle(item.who)}" onclick="cycleAssignee('cinema', ${idx})">${escapeToolText(displayWho)}</span>
                     <button class="action-btn delete-btn" onclick="destinationsData.cinema.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
                 </div>
             </div>
@@ -4629,9 +4818,9 @@ function renderWatchlist() {
         const displayWho = fpDisplayAssignee(item.who);
         return `
             <div class="compact-scoped-item">
-                <span class="compact-scoped-label">📺 ${item.title}</span>
+                <span class="compact-scoped-label">📺 ${escapeToolText(item.title)}</span>
                 <div style="display:flex; align-items:center; gap:6px;">
-         <span class="compact-scoped-tag bg-${fpAssigneeStyle(item.who)}" onclick="cycleAssignee('home', ${idx})">${displayWho}</span>
+         <span class="compact-scoped-tag bg-${fpAssigneeStyle(item.who)}" onclick="cycleAssignee('home', ${idx})">${escapeToolText(displayWho)}</span>
                     <button class="action-btn delete-btn" onclick="destinationsData.home.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
                 </div>
             </div>
@@ -4660,7 +4849,7 @@ function renderChores() {
         <div style="background:#f8fafc; border:1px solid #eae7e1; border-radius:8px; padding:8px 10px; margin-bottom:6px;">
             <div style="font-weight:800; font-size:0.88rem; margin-bottom:6px;">${k.kid}</div>
             <div class="compact-scoped-add-group" style="margin-bottom:6px;">
-                <input type="text" id="chore-input-${kIdx}" class="compact-scoped-input" placeholder="Add chore..." onkeypress="if(event.key==='Enter') addKidChore(${kIdx})">
+                <input type="text" id="chore-input-${kIdx}" class="compact-scoped-input" placeholder="Add chore..." onkeydown="if(event.key==='Enter') addKidChore(${kIdx})">
                 <button class="compact-scoped-add-btn" onclick="addKidChore(${kIdx})">+</button>
             </div>
             <div style="display:flex; flex-direction:column;">
@@ -4698,9 +4887,9 @@ function renderWishlist() {
        const displayWho = fpDisplayAssignee(w.who);
         return `
             <div class="wishlist-scoped-item">
-                <span class="todo-item-label">🎁 ${w.title}</span>
+                <span class="todo-item-label">🎁 ${escapeToolText(w.title)}</span>
                 <div style="display:flex; align-items:center; gap:6px;">
-    <span class="compact-scoped-tag bg-${fpAssigneeStyle(w.who)}" onclick="cycleAssignee('wishlist', ${idx})">${displayWho}</span>
+    <span class="compact-scoped-tag bg-${fpAssigneeStyle(w.who)}" onclick="cycleAssignee('wishlist', ${idx})">${escapeToolText(displayWho)}</span>
                     <button class="action-btn delete-btn" onclick="wishlistData.splice(${idx},1); saveData(); renderWishlist();">✕</button>
                 </div>
             </div>
@@ -4861,7 +5050,7 @@ const cookName = fpDisplayAssignee(mObj?.cook);
                 <div class="wp-section-title">Meals 🧑‍🍳</div>
                 <div class="wp-item-pill wp-meal-pill" onclick="showView('shopping', document.getElementById('nav-btn-shopping'))">
                     <span class="wp-pill-icon">🍽️</span>
-                    <span class="wp-pill-text">${meal ? escapeToolText(meal) : 'No meal planned'} ${meal ? `<span class="wp-pill-who">(${cookName})</span>` : ''}</span>
+                    <span class="wp-pill-text">${meal ? escapeToolText(meal) : 'No meal planned'} ${meal ? `<span class="wp-pill-who">(${escapeToolText(cookName)})</span>` : ''}</span>
                 </div>
 
                 <div class="wp-section-title" style="margin-top:10px;">Events / Reminders</div>
@@ -4913,12 +5102,12 @@ function saveHouseholdBudget(e){
     showToast('Monthly budget saved');
 }
 
-function resetMonthlySpending() {
+async function resetMonthlySpending() {
     if (unplannedSpendingData.length === 0) {
         showToast('Spending is already cleared');
         return;
     }
-    if (confirm('Are you sure you want to reset monthly spending and clear all manual entries?')) {
+    if (await fpDialog.confirm('Reset monthly spending and clear all manual entries?', { title: 'Reset spending', okLabel: 'Reset', danger: true })) {
         unplannedSpendingData = [];
         saveData();
         renderUnplannedSpending();
@@ -5019,17 +5208,17 @@ function addRenewal(e){e.preventDefault();renewalsData.push({id:crypto.randomUUI
 function addFamilyIdea(e){e.preventDefault();familyIdeasData.push({id:crypto.randomUUID(),name:document.getElementById('idea-name').value.trim(),category:document.getElementById('idea-category').value,notes:document.getElementById('idea-notes').value.trim(),createdAt:new Date().toISOString()});saveData();e.target.reset();renderEnhancementLists();showToast('Idea saved');}
 function saveHandover(e){e.preventDefault();handoverData.push({id:crypto.randomUUID(),date:document.getElementById('handover-date').value,person:document.getElementById('handover-person').value.trim(),notes:document.getElementById('handover-notes').value.trim()});saveData();e.target.reset();document.getElementById('handover-date').value=new Date().toISOString().slice(0,10);renderEnhancementLists();showToast('Handover note added');}
 function addFamilyOccasion(e){e.preventDefault();occasionsData.push({id:crypto.randomUUID(),name:document.getElementById('occasion-name').value.trim(),date:document.getElementById('occasion-date').value,notes:document.getElementById('occasion-notes').value.trim()});saveData();e.target.reset();renderEnhancementLists();showToast('Occasion added');}
-function deleteToolItem(type,i){const map={bills:householdBillsData,renewals:renewalsData,ideas:familyIdeasData,handover:handoverData,occasions:occasionsData};if(!map[type]||!confirm('Delete this entry?'))return;map[type].splice(i,1);saveData();renderBills();renderEnhancementLists();}
+async function deleteToolItem(type,i){const map={bills:householdBillsData,renewals:renewalsData,ideas:familyIdeasData,handover:handoverData,occasions:occasionsData};if(!map[type]||!(await fpDialog.confirm('Delete this entry?',{title:'Delete entry',okLabel:'Delete',danger:true})))return;map[type].splice(i,1);saveData();renderBills();renderEnhancementLists();}
 function renderSimpleToolList(id,items,formatter,type,empty){const el=document.getElementById(id);if(!el)return;el.innerHTML=items.length?items.map((item,i)=>`<div class="tool-row"><div>${formatter(item)}</div><button onclick="deleteToolItem('${type}',${i})">✕</button></div>`).join(''):`<p class="tool-note">${empty}</p>`;}
 function addAddressBookEntry(e){e.preventDefault();const name=document.getElementById('address-book-name').value.trim(),address=document.getElementById('address-book-address').value.trim(),postcode=document.getElementById('address-book-postcode').value.trim();if(!name||!address||!postcode)return;addressBookData.push({id:crypto.randomUUID(),name,address,postcode});saveData();e.target.reset();renderAddressBook();showToast('Address saved');}
-function editAddressBookEntry(i){const entry=addressBookData[i];if(!entry)return;const name=prompt('Name',entry.name);if(name===null)return;const address=prompt('Address',entry.address);if(address===null)return;const postcode=prompt('Postcode',entry.postcode);if(postcode===null)return;if(!name.trim()||!address.trim()||!postcode.trim()){showToast('Please complete all address fields');return;}entry.name=name.trim();entry.address=address.trim();entry.postcode=postcode.trim();saveData();renderAddressBook();}
-function deleteAddressBookEntry(i){if(!Number.isInteger(i)||i<0||i>=addressBookData.length||!confirm('Delete this saved address?'))return;addressBookData.splice(i,1);saveData();renderAddressBook();}
+async function editAddressBookEntry(i){const entry=addressBookData[i];if(!entry)return;const name=await fpDialog.prompt('Name',{value:entry.name});if(name===null)return;const address=await fpDialog.prompt('Address',{value:entry.address});if(address===null)return;const postcode=await fpDialog.prompt('Postcode',{value:entry.postcode});if(postcode===null)return;if(!name.trim()||!address.trim()||!postcode.trim()){showToast('Please complete all address fields');return;}entry.name=name.trim();entry.address=address.trim();entry.postcode=postcode.trim();saveData();renderAddressBook();}
+async function deleteAddressBookEntry(i){if(!Number.isInteger(i)||i<0||i>=addressBookData.length||!(await fpDialog.confirm('Delete this saved address?',{title:'Delete address',okLabel:'Delete',danger:true})))return;addressBookData.splice(i,1);saveData();renderAddressBook();}
 function renderAddressBook(){const list=document.getElementById('address-book-list');if(!list)return;list.innerHTML=addressBookData.length?addressBookData.map((entry,i)=>`<div class="tool-row"><div><strong>${escapeToolText(entry.name)}</strong><small>${escapeToolText(entry.address)}<br>${escapeToolText(entry.postcode)}</small></div><div style="display:flex;gap:6px;flex-shrink:0"><button type="button" onclick="editAddressBookEntry(${i})">Edit</button><button type="button" onclick="deleteAddressBookEntry(${i})">✕</button></div></div>`).join(''):'<p class="tool-note">No saved addresses yet. Add your first key address above.</p>'; }
 function renderEnhancementLists(){renderSimpleToolList('renewals-list',renewalsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${moneyGBP(x.cost)} · ${escapeToolText(x.frequency)} · Renewal: ${dateLabel(x.date)}</small>`,'renewals','No renewals tracked yet.');renderSimpleToolList('family-ideas-list',familyIdeasData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${escapeToolText(x.category)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'ideas','Your saved family ideas will appear here.');renderSimpleToolList('handover-list',handoverData,x=>`<strong>${dateLabel(x.date)}${x.person?' · '+escapeToolText(x.person):''}</strong><small>${escapeToolText(x.notes)}</small>`,'handover','No handover notes yet.');renderSimpleToolList('family-occasions-list',occasionsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${dateLabel(x.date)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'occasions','No occasions added yet.');renderAddressBook();renderFinanceOverview();}
 function renderFamilyTools(){renderWeeklyPlanner();renderBills();renderEnhancementLists();}
 
 function exportFamilyPlanData(){const keys=Object.keys(localStorage).filter(k=>k.startsWith('fam_')).sort();const payload={app:'Family Plan',formatVersion:2,exportedAt:new Date().toISOString(),data:{}};keys.forEach(k=>{const raw=localStorage.getItem(k);if(raw!==null){try{payload.data[k]=JSON.parse(raw)}catch{payload.data[k]=raw}}});const addressCount=Array.isArray(payload.data.fam_address_book)?payload.data.fam_address_book.length:0;const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.getElementById('a');a.href=url;a.download=`family-plan-backup-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);document.getElementById('backup-status').textContent=`Backup exported: ${keys.length} data/settings items, including ${addressCount} saved address(es). Keep this file somewhere safe.`}
-async function importFamilyPlanData(e){const file=e.target.files?.[0];if(!file)return;try{const payload=JSON.parse(await file.text());if(payload.app!=='Family Plan'||!payload.data||typeof payload.data!=='object')throw new Error('This does not look like a Family Plan backup.');if(!confirm('Importing will update matching Family Plan data in this browser. Existing data keys not included in the backup will be kept. Export a backup first. Continue?'))return;Object.entries(payload.data).forEach(([key,value])=>{if(/^fam_[a-z0-9_]+$/i.test(key))localStorage.setItem(key,typeof value==='string'?value:JSON.stringify(value));});mealsData=JSON.parse(localStorage.getItem('fam_meals'))||mealsData;foodShopData=JSON.parse(localStorage.getItem('fam_foodshop'))||[];familyShopData=JSON.parse(localStorage.getItem('fam_familyshop'))||[];destinationsData=JSON.parse(localStorage.getItem('fam_destinations'))||destinationsData;choresData=JSON.parse(localStorage.getItem('fam_chores'))||[];wishlistData=JSON.parse(localStorage.getItem('fam_wishlist'))||[];todosData=JSON.parse(localStorage.getItem('fam_todos'))||[];calendarEvents=JSON.parse(localStorage.getItem('fam_calendar'))||{};householdBillsData=JSON.parse(localStorage.getItem('fam_bills'))||[];monthlyBudgetsData=JSON.parse(localStorage.getItem('fam_monthly_budgets'))||[];renewalsData=JSON.parse(localStorage.getItem('fam_renewals'))||[];familyIdeasData=JSON.parse(localStorage.getItem('fam_ideas'))||[];handoverData=JSON.parse(localStorage.getItem('fam_handover'))||[];occasionsData=JSON.parse(localStorage.getItem('fam_occasions'))||[];addressBookData=JSON.parse(localStorage.getItem('fam_address_book'))||[];unplannedSpendingData=JSON.parse(localStorage.getItem('fam_unplanned_spending'))||[];householdMonthlyBudget=Number(localStorage.getItem('fam_household_monthly_budget'))||1500;saveData();renderAllViews();renderFamilyTools();document.getElementById('backup-status').textContent='Backup imported. Matching data keys were updated; data keys not included in the backup were kept.';showToast('Family Plan backup restored');}catch(err){document.getElementById('backup-status').textContent='Import failed: '+(err&&err.message?err.message:'Unknown error');}finally{e.target.value='';}}
+async function importFamilyPlanData(e){const file=e.target.files?.[0];if(!file)return;try{const payload=JSON.parse(await file.text());if(payload.app!=='Family Plan'||!payload.data||typeof payload.data!=='object')throw new Error('This does not look like a Family Plan backup.');if(!confirm('Importing will update matching Family Plan data in this browser. Existing data keys not included in the backup will be kept. Export a backup first. Continue?'))return;Object.entries(payload.data).forEach(([key,value])=>{if(/^fam_[a-z0-9_]+$/i.test(key))localStorage.setItem(key,typeof value==='string'?value:JSON.stringify(value));});mealsData=fpSafeParse(localStorage.getItem('fam_meals'))||mealsData;foodShopData=fpSafeParse(localStorage.getItem('fam_foodshop'))||[];familyShopData=fpSafeParse(localStorage.getItem('fam_familyshop'))||[];destinationsData=fpSafeParse(localStorage.getItem('fam_destinations'))||destinationsData;choresData=fpSafeParse(localStorage.getItem('fam_chores'))||[];wishlistData=fpSafeParse(localStorage.getItem('fam_wishlist'))||[];todosData=fpSafeParse(localStorage.getItem('fam_todos'))||[];calendarEvents=fpSafeParse(localStorage.getItem('fam_calendar'))||{};householdBillsData=fpSafeParse(localStorage.getItem('fam_bills'))||[];monthlyBudgetsData=fpSafeParse(localStorage.getItem('fam_monthly_budgets'))||[];renewalsData=fpSafeParse(localStorage.getItem('fam_renewals'))||[];familyIdeasData=fpSafeParse(localStorage.getItem('fam_ideas'))||[];handoverData=fpSafeParse(localStorage.getItem('fam_handover'))||[];occasionsData=fpSafeParse(localStorage.getItem('fam_occasions'))||[];addressBookData=fpSafeParse(localStorage.getItem('fam_address_book'))||[];unplannedSpendingData=fpSafeParse(localStorage.getItem('fam_unplanned_spending'))||[];householdMonthlyBudget=Number(localStorage.getItem('fam_household_monthly_budget'))||1500;saveData();renderAllViews();renderFamilyTools();document.getElementById('backup-status').textContent='Backup imported. Matching data keys were updated; data keys not included in the backup were kept.';showToast('Family Plan backup restored');}catch(err){document.getElementById('backup-status').textContent='Import failed: '+(err&&err.message?err.message:'Unknown error');}finally{e.target.value='';}}
 
 function renderAllViews() {
     setCalendarPage(calendarPageMode);
