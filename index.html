@@ -764,7 +764,7 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
     text-align: left;
     display: block;
 }
-.event-pill.quick-added { background: var(--accent) !important; color: #fff !important; }
+.event-pill.quick-added { color: #fff; }
 
 .day-popover-backdrop {
     display: none;
@@ -1109,7 +1109,7 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
 #address-book-list:empty{margin-top:0}
 .tool-row{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:11px 12px;background:#f7faf8;border:1px solid #e7eeea;border-radius:12px;font-size:.88rem}
 .tool-row small{display:block;color:var(--muted);font-size:.75rem}
-.tool-row button{border:0;background:transparent;color:#b42318;font-weight:800;padding:4px 6px;cursor:pointer}
+.tool-row button{border:0;background:transparent;color:var(--muted);font-weight:800;padding:4px 6px;cursor:pointer}
 
 /* Weekly planner: clear day cards with a two-column activity grid inside each day. */
 .week-grid {
@@ -1616,6 +1616,24 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
 #household-owner-controls h4{font-size:.88rem;margin:14px 0 6px;color:#344b50}
 @media(max-width:360px){.household-permission-grid{grid-template-columns:1fr}}
 
+
+/* Consistent delete buttons and checkboxes */
+.action-btn.delete-btn, .tool-row button { display:inline-flex; align-items:center; justify-content:center; min-width:40px; min-height:40px; padding:0; font-size:1rem; line-height:1; color:var(--muted); background:transparent; border:0; border-radius:10px; }
+.action-btn.delete-btn:hover, .tool-row button:hover, .action-btn.delete-btn:active, .tool-row button:active { color:#b42318; background:#fef2f2; }
+.shopping-item input[type="checkbox"], .compact-scoped-checkbox, .dashboard-task-checkbox { -webkit-appearance:none; appearance:none; display:grid; place-content:center; width:26px; height:26px; flex:0 0 26px; margin:0; border:2px solid #b7c8c1; border-radius:50%; background:#fff; cursor:pointer; transition:background .15s,border-color .15s,transform .1s; }
+.shopping-item input[type="checkbox"]:active, .compact-scoped-checkbox:active, .dashboard-task-checkbox:active { transform:scale(.92); }
+.shopping-item input[type="checkbox"]:checked, .compact-scoped-checkbox:checked, .dashboard-task-checkbox:checked { background:var(--accent); border-color:var(--accent); }
+.shopping-item input[type="checkbox"]:checked::after, .compact-scoped-checkbox:checked::after, .dashboard-task-checkbox:checked::after { content:"✓"; color:#fff; font-size:15px; font-weight:800; line-height:1; }
+html[data-theme="dark"] .shopping-item input[type="checkbox"], html[data-theme="dark"] .compact-scoped-checkbox, html[data-theme="dark"] .dashboard-task-checkbox { background:#223137; border-color:#4a6068; }
+html[data-theme="dark"] .shopping-item input[type="checkbox"]:checked, html[data-theme="dark"] .compact-scoped-checkbox:checked, html[data-theme="dark"] .dashboard-task-checkbox:checked { background:var(--accent); border-color:var(--accent); }
+html[data-theme="dark"] .shopping-item input[type="checkbox"]:checked::after, html[data-theme="dark"] .compact-scoped-checkbox:checked::after, html[data-theme="dark"] .dashboard-task-checkbox:checked::after { color:#0f1719; }
+/* Textareas: no stray resize handle; budget field gets a £ prefix */
+.tool-form textarea { resize:none; }
+.money-field { position:relative; }
+.money-field::before { content:"£"; position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--muted); font-weight:700; pointer-events:none; }
+.money-field input { padding-left:26px !important; }
+/* Monthly calendar pills follow the person's colour */
+.event-pill.bg-unassigned { background:var(--unassigned); }
 </style>
 </head>
 <body>
@@ -1652,7 +1670,7 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
             <button class="auth-secondary" type="button" id="auth-reset" onclick="window.fpResetPassword()">Forgot password?</button>
           </form>
           <div class="auth-message" id="auth-message" role="status" aria-live="polite"></div>
-          <p class="auth-small" id="auth-version-label">Version 2.2 · build 2026-11-16.12</p>
+          <p class="auth-small" id="auth-version-label">Version 2.3 · build 2026-11-16.13</p>
           <p class="auth-small">Each adult or family member has their own account. After signing in, create a household or join one using its household ID.</p>
         </div>
 
@@ -1911,7 +1929,7 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
                 <p class="tool-note">A simple shared note for pickups, activities, dinner and things the next person needs to know.</p>
                 <form class="tool-form" onsubmit="saveHandover(event)">
                     <input id="handover-date" type="date" required>
-                    <input id="handover-person" placeholder="Who's taking over?">
+                    <select id="handover-person" aria-label="Who's taking over?"></select>
                     <textarea id="handover-notes" class="wide" required placeholder="Pickups, times, what to take, dinner or reminders..."></textarea>
                     <button class="tool-btn" type="submit">Add handover note</button>
                 </form>
@@ -2021,10 +2039,10 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
         
         <div id="finance-pane-overview" class="finance-pane">
             <section class="tool-section">
-                <h3>Monthly household budget</h3>
+                <h3>💷 Monthly household budget</h3>
                 <p class="tool-note">Set one figure for the household each month.</p>
                 <form class="tool-form" onsubmit="saveHouseholdBudget(event)">
-                    <input id="household-monthly-budget" type="number" min="0" step="0.01" required placeholder="Monthly budget (£)">
+                    <div class="money-field wide"><input id="household-monthly-budget" type="number" min="0" step="0.01" required placeholder="Monthly budget"></div>
                     <button class="tool-btn wide" type="submit">Save monthly budget</button>
                 </form>
                 
@@ -2079,7 +2097,7 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
                 <p class="tool-note">Keep household bills and subscriptions together.</p>
                 <div class="tool-total" id="bills-monthly-total">£0.00 <span style="font-size:.75rem;font-weight:600">monthly equivalent</span></div>
                 <form class="tool-form" onsubmit="addHouseholdBill(event)">
-                    <input id="bill-name" required placeholder="Bill / subscription name">
+                    <input id="bill-name" required placeholder="Bill name">
                     <input id="bill-amount" type="number" min="0" step="0.01" required placeholder="Amount (£)">
                     <select id="bill-frequency"><option value="monthly">Monthly</option><option value="weekly">Weekly</option><option value="quarterly">Quarterly</option><option value="yearly">Yearly</option></select>
                     <label class="field-stack"><span>Next payment date</span><input id="bill-due" type="date"></label>
@@ -2095,7 +2113,7 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
                 <h3>🔁 Renewals</h3>
                 <p class="tool-note">Track annual renewals, memberships, insurance, MOT and cancellation dates.</p>
                 <form class="tool-form" onsubmit="addRenewal(event)">
-                    <input id="renewal-name" required placeholder="Service / renewal">
+                    <input id="renewal-name" required placeholder="Renewal name">
                     <input id="renewal-cost" type="number" min="0" step="0.01" placeholder="Cost (£)">
                     <label class="field-stack"><span>Renewal date</span><input id="renewal-date" type="date" required></label>
                     <select id="renewal-frequency"><option>Yearly</option><option>Monthly</option><option>Other</option></select>
@@ -2150,9 +2168,9 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
         <div id="family-ideas-panel" style="display:none;">
             <section class="card"><div class="card-title">💡 Family Ideas</div><p class="tool-note">Save ideas before deciding: days out, restaurants, films, holidays or gifts.</p></section>
             <section class="tool-section">
-                <h3>Ideas inbox</h3>
+                <h3>💡 Ideas inbox</h3>
                 <form class="tool-form" onsubmit="addFamilyIdea(event)">
-                    <input id="idea-name" required placeholder="What should we remember?">
+                    <input id="idea-name" required placeholder="Idea">
                     <select id="idea-category"><option>Day out</option><option>Restaurant</option><option>Holiday</option><option>Film / TV</option><option>Gift</option><option>Buy</option><option>Other</option></select>
                     <input id="idea-notes" class="wide" placeholder="Notes (optional)">
                     <button class="tool-btn" type="submit">Save idea</button>
@@ -2199,7 +2217,7 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
 
     <!-- Account page -->
     <div id="view-account" class="view">
-        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Your profile, household and data.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 2.2 · build 2026-11-16.12</p></section>
+        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Your profile, household and data.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 2.3 · build 2026-11-16.13</p></section>
         <section class="tool-section" id="profile-name-section">
             <h3>👤 Profile name</h3>
             <p class="tool-note">Changing your name updates it everywhere it appears: tasks, lists, calendar, meal plan and household members.</p>
@@ -3368,7 +3386,7 @@ function fpAssigneeStyle(who) {
 function fpRenderPlanMemberOptions() {
     const container = document.getElementById('plan-member-options');
     if (container) container.innerHTML = '';
-    ['add-assignee', 'voice-review-assignee'].forEach(selectId => {
+    ['add-assignee', 'voice-review-assignee', 'handover-person'].forEach(selectId => {
         const select = document.getElementById(selectId);
         if (!select) return;
         const previous = select.value;
@@ -4044,7 +4062,7 @@ function renderCalendarMonth() {
         if (calendarEvents[dateKey]) {
             calendarEvents[dateKey].filter(ev => filterItem(ev.who)).forEach(ev => {
        const assigneeLabel = ` (${escapeToolText(fpDisplayAssignee(ev.who))})`;
-        eventsHtml += `<div class="event-pill bg-${fpAssigneeStyle(ev.who)} ${ev.quickAdded ? 'quick-added' : ''}" title="${escapeToolText(ev.title)}${escapeToolText(assigneeLabel)}">${escapeToolText(ev.title)}${escapeToolText(assigneeLabel)}</div>`;
+        eventsHtml += `<div class="event-pill bg-${fpAssigneeStyle(ev.who)} ${ev.quickAdded ? 'quick-added' : ''}" title="${escapeToolText(ev.title)}${escapeToolText(assigneeLabel)}">${escapeToolText(ev.title)}</div>`;
             });
         }
         html += `
@@ -5326,11 +5344,11 @@ function addAddressBookEntry(e){e.preventDefault();const name=document.getElemen
 async function editAddressBookEntry(i){const entry=addressBookData[i];if(!entry)return;const name=await fpDialog.prompt('Name',{value:entry.name});if(name===null)return;const address=await fpDialog.prompt('Address',{value:entry.address});if(address===null)return;const postcode=await fpDialog.prompt('Postcode',{value:entry.postcode});if(postcode===null)return;if(!name.trim()||!address.trim()||!postcode.trim()){showToast('Please complete all address fields');return;}entry.name=name.trim();entry.address=address.trim();entry.postcode=postcode.trim();saveData();renderAddressBook();}
 async function deleteAddressBookEntry(i){if(!Number.isInteger(i)||i<0||i>=addressBookData.length||!(await fpDialog.confirm('Delete this saved address?',{title:'Delete address',okLabel:'Delete',danger:true})))return;addressBookData.splice(i,1);saveData();renderAddressBook();}
 function renderAddressBook(){const list=document.getElementById('address-book-list');if(!list)return;list.innerHTML=addressBookData.length?addressBookData.map((entry,i)=>`<div class="tool-row"><div><strong>${escapeToolText(entry.name)}</strong><small>${escapeToolText(entry.address)}<br>${escapeToolText(entry.postcode)}</small></div><div style="display:flex;gap:6px;flex-shrink:0"><button type="button" onclick="editAddressBookEntry(${i})">Edit</button><button type="button" onclick="deleteAddressBookEntry(${i})">✕</button></div></div>`).join(''):'<p class="tool-note">No saved addresses yet. Add your first key address above.</p>'; }
-function renderEnhancementLists(){renderSimpleToolList('renewals-list',renewalsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${moneyGBP(x.cost)} · ${escapeToolText(x.frequency)} · Renewal: ${dateLabel(x.date)}</small>`,'renewals','No renewals tracked yet.');renderSimpleToolList('family-ideas-list',familyIdeasData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${escapeToolText(x.category)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'ideas','Your saved family ideas will appear here.');renderSimpleToolList('handover-list',handoverData,x=>`<strong>${dateLabel(x.date)}${x.person?' · '+escapeToolText(x.person):''}</strong><small>${escapeToolText(x.notes)}</small>`,'handover','No handover notes yet.');renderSimpleToolList('family-occasions-list',occasionsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${dateLabel(x.date)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'occasions','No occasions added yet.');renderAddressBook();renderFinanceOverview();}
+function renderEnhancementLists(){renderSimpleToolList('renewals-list',renewalsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${moneyGBP(x.cost)} · ${escapeToolText(x.frequency)} · Renewal: ${dateLabel(x.date)}</small>`,'renewals','No renewals tracked yet.');renderSimpleToolList('family-ideas-list',familyIdeasData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${escapeToolText(x.category)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'ideas','Your saved family ideas will appear here.');renderSimpleToolList('handover-list',handoverData,x=>`<strong>${dateLabel(x.date)}${x.person&&x.person!=='family'?' · '+escapeToolText(fpDisplayAssignee(x.person)==='Unassigned'?x.person:fpDisplayAssignee(x.person)):''}</strong><small>${escapeToolText(x.notes)}</small>`,'handover','No handover notes yet.');renderSimpleToolList('family-occasions-list',occasionsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${dateLabel(x.date)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'occasions','No occasions added yet.');renderAddressBook();renderFinanceOverview();}
 function renderFamilyTools(){renderWeeklyPlanner();renderBills();renderEnhancementLists();}
 
 function exportFamilyPlanData(){const keys=Object.keys(localStorage).filter(k=>k.startsWith('fam_')).sort();const payload={app:'Family Plan',formatVersion:2,exportedAt:new Date().toISOString(),data:{}};keys.forEach(k=>{const raw=localStorage.getItem(k);if(raw!==null){try{payload.data[k]=JSON.parse(raw)}catch{payload.data[k]=raw}}});const addressCount=Array.isArray(payload.data.fam_address_book)?payload.data.fam_address_book.length:0;const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.getElementById('a');a.href=url;a.download=`family-plan-backup-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);document.getElementById('backup-status').textContent=`Backup exported: ${keys.length} data/settings items, including ${addressCount} saved address(es). Keep this file somewhere safe.`}
-async function importFamilyPlanData(e){const file=e.target.files?.[0];if(!file)return;try{const payload=JSON.parse(await file.text());if(payload.app!=='Family Plan'||!payload.data||typeof payload.data!=='object')throw new Error('This does not look like a Family Plan backup.');if(!confirm('Importing will update matching Family Plan data in this browser. Existing data keys not included in the backup will be kept. Export a backup first. Continue?'))return;Object.entries(payload.data).forEach(([key,value])=>{if(/^fam_[a-z0-9_]+$/i.test(key))localStorage.setItem(key,typeof value==='string'?value:JSON.stringify(value));});mealsData=fpSafeParse(localStorage.getItem('fam_meals'))||mealsData;foodShopData=fpSafeParse(localStorage.getItem('fam_foodshop'))||[];familyShopData=fpSafeParse(localStorage.getItem('fam_familyshop'))||[];destinationsData=fpSafeParse(localStorage.getItem('fam_destinations'))||destinationsData;choresData=fpSafeParse(localStorage.getItem('fam_chores'))||[];wishlistData=fpSafeParse(localStorage.getItem('fam_wishlist'))||[];todosData=fpSafeParse(localStorage.getItem('fam_todos'))||[];calendarEvents=fpSafeParse(localStorage.getItem('fam_calendar'))||{};householdBillsData=fpSafeParse(localStorage.getItem('fam_bills'))||[];monthlyBudgetsData=fpSafeParse(localStorage.getItem('fam_monthly_budgets'))||[];renewalsData=fpSafeParse(localStorage.getItem('fam_renewals'))||[];familyIdeasData=fpSafeParse(localStorage.getItem('fam_ideas'))||[];handoverData=fpSafeParse(localStorage.getItem('fam_handover'))||[];occasionsData=fpSafeParse(localStorage.getItem('fam_occasions'))||[];addressBookData=fpSafeParse(localStorage.getItem('fam_address_book'))||[];unplannedSpendingData=fpSafeParse(localStorage.getItem('fam_unplanned_spending'))||[];householdMonthlyBudget=Number(localStorage.getItem('fam_household_monthly_budget'))||1500;saveData();renderAllViews();renderFamilyTools();document.getElementById('backup-status').textContent='Backup imported. Matching data keys were updated; data keys not included in the backup were kept.';showToast('Family Plan backup restored');}catch(err){document.getElementById('backup-status').textContent='Import failed: '+(err&&err.message?err.message:'Unknown error');}finally{e.target.value='';}}
+async function importFamilyPlanData(e){const file=e.target.files?.[0];if(!file)return;try{const payload=JSON.parse(await file.text());if(payload.app!=='Family Plan'||!payload.data||typeof payload.data!=='object')throw new Error('This does not look like a Family Plan backup.');if(!(await fpDialog.confirm('Importing will update matching Family Plan data in this browser. Existing data keys not included in the backup will be kept. Export a backup first.',{title:'Import backup',okLabel:'Import'})))return;Object.entries(payload.data).forEach(([key,value])=>{if(/^fam_[a-z0-9_]+$/i.test(key))localStorage.setItem(key,typeof value==='string'?value:JSON.stringify(value));});mealsData=fpSafeParse(localStorage.getItem('fam_meals'))||mealsData;foodShopData=fpSafeParse(localStorage.getItem('fam_foodshop'))||[];familyShopData=fpSafeParse(localStorage.getItem('fam_familyshop'))||[];destinationsData=fpSafeParse(localStorage.getItem('fam_destinations'))||destinationsData;choresData=fpSafeParse(localStorage.getItem('fam_chores'))||[];wishlistData=fpSafeParse(localStorage.getItem('fam_wishlist'))||[];todosData=fpSafeParse(localStorage.getItem('fam_todos'))||[];calendarEvents=fpSafeParse(localStorage.getItem('fam_calendar'))||{};householdBillsData=fpSafeParse(localStorage.getItem('fam_bills'))||[];monthlyBudgetsData=fpSafeParse(localStorage.getItem('fam_monthly_budgets'))||[];renewalsData=fpSafeParse(localStorage.getItem('fam_renewals'))||[];familyIdeasData=fpSafeParse(localStorage.getItem('fam_ideas'))||[];handoverData=fpSafeParse(localStorage.getItem('fam_handover'))||[];occasionsData=fpSafeParse(localStorage.getItem('fam_occasions'))||[];addressBookData=fpSafeParse(localStorage.getItem('fam_address_book'))||[];unplannedSpendingData=fpSafeParse(localStorage.getItem('fam_unplanned_spending'))||[];householdMonthlyBudget=Number(localStorage.getItem('fam_household_monthly_budget'))||1500;saveData();renderAllViews();renderFamilyTools();document.getElementById('backup-status').textContent='Backup imported. Matching data keys were updated; data keys not included in the backup were kept.';showToast('Family Plan backup restored');}catch(err){document.getElementById('backup-status').textContent='Import failed: '+(err&&err.message?err.message:'Unknown error');}finally{e.target.value='';}}
 
 function renderAllViews() {
     setCalendarPage(calendarPageMode);
