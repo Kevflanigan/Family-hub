@@ -2123,7 +2123,7 @@ nav.bottom-nav, .bottom-nav {
 
     <!-- Account page -->
     <div id="view-account" class="view">
-        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Manage your Family Plan backup files here.</p></section>
+        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Manage your Family Plan backup files here.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 1.4 · build 2026-11-16.4</p></section>
         <section class="tool-section" id="profile-name-section">
             <h3>👤 Profile name</h3>
             <p class="tool-note">Changing your name updates it everywhere it appears: tasks, lists, calendar, meal plan and household members.</p>
@@ -3007,7 +3007,13 @@ async function fpSaveProfileName() {
             try { await memberRef.update(fields); saved = true; break; }
             catch (e) { lastError = e; if (e && e.code !== 'permission-denied') break; }
         }
-        if (!saved) throw lastError;
+        let deviceOnly = false;
+        if (!saved) {
+            if (lastError && lastError.code === 'permission-denied') deviceOnly = true;
+            else throw lastError;
+        }
+        if (deviceOnly) localStorage.setItem('fam_name_override_' + uid, newName);
+        else localStorage.removeItem('fam_name_override_' + uid);
         await firebaseDb.collection('users').doc(uid).set({ displayName: newName, updatedAt: stamp }, { merge: true }).catch(e => console.warn('Profile doc not updated:', e));
         await firebaseUser.updateProfile({ displayName: newName }).catch(e => console.warn('Auth profile not updated:', e));
 
@@ -3024,10 +3030,15 @@ async function fpSaveProfileName() {
         fpRenderPlanMemberOptions();
         fpUpdateHouseholdPanel();
         renderAllViews();
-        setStatus(migrated
-            ? `Name updated to “${newName}” and ${migrated} stored reference${migrated === 1 ? '' : 's'} refreshed.`
-            : `Name updated to “${newName}” across the app.`);
-        showToast('Name updated everywhere');
+        if (deviceOnly) {
+            setStatus(`Name changed to “${newName}” on this device only. Your household security rules block members from editing their own member record, so other devices will still show the old name until the rules allow it.`);
+            showToast('Name updated on this device');
+        } else {
+            setStatus(migrated
+                ? `Name updated to “${newName}” and ${migrated} stored reference${migrated === 1 ? '' : 's'} refreshed.`
+                : `Name updated to “${newName}” across the app.`);
+            showToast('Name updated everywhere');
+        }
     } catch (error) {
         console.error('Could not update profile name:', error);
         const code = error && (error.code || error.message) ? ` (${error.code || error.message})` : '';
@@ -3057,6 +3068,10 @@ function fpMemberForLegacyKey(key) {
 
 function fpMemberDisplayName(member) {
     if (!member) return 'Member';
+    if (member.uid && member.uid === firebaseUser?.uid) {
+        const override = localStorage.getItem('fam_name_override_' + member.uid);
+        if (override) return override;
+    }
 
     const email = String(member.email || '').trim().toLowerCase();
 
@@ -4450,7 +4465,7 @@ function syncNewTodoAssignee() {
     const defaultAssignee = viewMode === 'family' ? 'family' : (firebaseUser?.uid || currentUser || 'family');
     if (!newTodoAssignee || !options.includes(newTodoAssignee)) newTodoAssignee = defaultAssignee;
     const selectedName = newTodoAssignee === 'family' ? 'Family' : (fpDisplayAssignee(newTodoAssignee) || 'Member');
-    if (label) label.textContent = selectedName;
+    if (label) label.textContent = newTodoAssignee === 'family' ? 'Family' : (String(selectedName).trim().split(/\s+/)[0] || selectedName);
     if (button) {
         button.style.display = activeTodoScope === 'private' ? 'none' : 'inline-flex';
         button.title = `Assigned to ${selectedName}. Tap to choose the next household member`;
