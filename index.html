@@ -1218,25 +1218,35 @@ nav.bottom-nav, .bottom-nav {
 }
 
 
-/* To-do list: vertical cards, following the shopping list's single-column rhythm */
-.todo-inline-add { display:flex; flex-direction:column; align-items:stretch; gap:8px; }
-.todo-inline-add #todo-quick-input { width:100%; flex:1 1 auto; }
-.todo-add-options { display:flex; align-items:center; gap:8px; width:100%; }
-.todo-inline-add .todo-date-input { flex:1 1 auto; width:auto; min-width:0; padding:10px 12px; }
-.todo-inline-add .inline-add-btn { flex:0 0 auto; width:auto; min-height:48px; padding:0 18px; background:var(--accent); color:#fff; border:0; border-radius:10px; font-weight:700; cursor:pointer; white-space:nowrap; }
-.todo-column-item { background:#f7faf8; border:1px solid #e7eeea; border-radius:12px; padding:11px 12px; display:flex; flex-direction:column; align-items:stretch; gap:9px; margin-bottom:6px; width:100%; box-sizing:border-box; }
-.todo-column-main { display:flex; align-items:flex-start; gap:10px; min-width:0; }
-.todo-column-main input[type=checkbox] { width:20px; height:20px; flex:0 0 20px; margin:1px 0 0; accent-color:var(--accent); }
-.todo-column-main .item-text-label { padding:0; min-width:0; overflow-wrap:anywhere; line-height:1.4; }
-.todo-column-controls { display:flex; align-items:center; justify-content:flex-start; flex-wrap:wrap; gap:7px; padding-left:30px; }
-.todo-column-controls .todo-row-date { width:132px; max-width:100%; min-height:32px; border:1px solid #dce6e1; border-radius:8px; background:#fff; padding:4px 7px; font-size:.76rem; }
-.todo-column-controls .assign-tag { margin:0; }
-.todo-column-item.completed .item-text-label { text-decoration:line-through; color:var(--muted); opacity:.7; }
+/* To-do list: clean divider-based list with a compact, integrated add field */
+.todo-scoped-title { display:flex; align-items:center; gap:8px; color:var(--text); font-weight:800; font-size:1.08rem; margin-bottom:12px; }
+.todo-scoped-title .todo-heading-icon { color:var(--accent); font-size:1.05rem; }
+.todo-inline-add { display:flex; align-items:center; width:100%; min-height:50px; gap:0; padding:4px 5px 4px 13px; margin:0 0 8px; background:#fff; border:1px solid #dce8e2; border-radius:14px; box-sizing:border-box; box-shadow:0 1px 3px rgba(20,60,50,.035); }
+.todo-inline-add #todo-quick-input { flex:1 1 auto; width:100%; min-width:0; height:40px; padding:0 5px 0 0; border:0; outline:0; box-shadow:none; background:transparent; color:var(--text); font:inherit; font-size:.92rem; }
+.todo-inline-add #todo-quick-input:focus { outline:0; box-shadow:none; }
+.todo-inline-actions { display:flex; flex:0 0 auto; align-items:center; gap:2px; }
+.todo-inline-icon-btn { display:inline-flex; align-items:center; justify-content:center; gap:4px; min-width:34px; height:36px; padding:0 7px; border:0; border-radius:9px; background:transparent; color:var(--accent); font-size:.82rem; font-weight:650; cursor:pointer; white-space:nowrap; }
+.todo-inline-icon-btn:active { background:#edf5f1; }
+.todo-inline-icon-btn.todo-assign-btn { padding:0 8px; }
+.todo-inline-icon-btn.todo-add-submit { min-width:34px; background:var(--accent); color:#fff; font-size:1.15rem; margin-left:2px; }
+.todo-date-input-hidden { position:absolute !important; width:1px !important; height:1px !important; opacity:0 !important; pointer-events:none !important; }
+.todo-selected-date { min-height:17px; margin:-2px 0 8px 13px; color:var(--muted); font-size:.72rem; }
+.todo-list-clean { display:flex; flex-direction:column; width:100%; }
+.todo-divider-item { display:flex; align-items:flex-start; gap:11px; width:100%; padding:13px 2px; border-bottom:1px solid #e6eeea; box-sizing:border-box; }
+.todo-divider-item:last-child { border-bottom:0; }
+.todo-divider-item > input[type=checkbox] { width:19px; height:19px; flex:0 0 19px; margin:2px 0 0; accent-color:var(--accent); }
+.todo-divider-content { flex:1 1 auto; min-width:0; }
+.todo-divider-title { display:block; color:var(--text); font-size:.94rem; line-height:1.35; font-weight:650; overflow-wrap:anywhere; }
+.todo-divider-meta { display:flex; align-items:center; flex-wrap:wrap; gap:4px; margin-top:5px; color:#788985; font-size:.72rem; line-height:1.3; }
+.todo-divider-meta .meta-icon { color:var(--accent); font-size:.75rem; }
+.todo-divider-meta .meta-dot { padding:0 2px; color:#a2b0aa; }
+.todo-divider-item.completed .todo-divider-title { text-decoration:line-through; color:#91a09a; }
+.todo-divider-item.completed .todo-divider-meta { opacity:.65; }
 @media (max-width:420px) {
-  .todo-add-options { gap:7px; }
-  .todo-column-item { padding:10px; }
-  .todo-column-controls { padding-left:30px; gap:6px; }
-  .todo-column-controls .todo-row-date { width:124px; font-size:.72rem; }
+  .todo-inline-add { padding-left:11px; }
+  .todo-inline-icon-btn { min-width:31px; padding:0 6px; }
+  .todo-inline-icon-btn.todo-assign-btn { font-size:.75rem; }
+  .todo-divider-item { padding:12px 1px; }
 }
 
 /* Family Plan usability refinements */
@@ -2013,20 +2023,23 @@ nav.bottom-nav, .bottom-nav {
         </div>
         <div id="family-tasks-panel">
         <section class="compact-scoped-card">
-            <div class="todo-scoped-title">📝 To-Do List</div>
-            <div class="calendar-main-tabs" role="group" aria-label="Family or private to-do list" style="margin:0 0 10px;padding:4px;">
-                <button type="button" id="todo-scope-family" class="cal-main-tab active" onclick="setTodoScope('family')" aria-pressed="true" style="flex:1;">👨‍👩‍👧‍👦 Family</button>
-                <button type="button" id="todo-scope-private" class="cal-main-tab" onclick="setTodoScope('private')" aria-pressed="false" style="flex:1;">🔒 Private</button>
+            <div class="todo-scoped-title"><span class="todo-heading-icon" aria-hidden="true">📝</span><span>To-Do List</span></div>
+            <div class="calendar-main-tabs" role="group" aria-label="Family or private to-do list" style="margin:0 0 12px;padding:4px;">
+                <button type="button" id="todo-scope-family" class="cal-main-tab active" onclick="setTodoScope('family')" aria-pressed="true" style="flex:1;">Family</button>
+                <button type="button" id="todo-scope-private" class="cal-main-tab" onclick="setTodoScope('private')" aria-pressed="false" style="flex:1;">Private</button>
             </div>
-            <p id="todo-scope-note" class="tool-note" style="margin:0 0 8px;">Household tasks assigned to you or everyone.</p>
-            <div class="inline-add-group todo-inline-add">
-                <input type="text" id="todo-quick-input" class="form-input input-full" placeholder="Add a family task..." onkeypress="if(event.key==='Enter') addTodoItem()">
-                <div class="todo-add-options">
-                    <input type="date" id="todo-date-input" class="form-input todo-date-input" aria-label="Task date" title="Optional task date">
-                    <button type="button" class="inline-add-btn" onclick="addTodoItem()">+ Add</button>
+            <p id="todo-scope-note" class="tool-note" style="display:none;">Household tasks assigned to you or everyone.</p>
+            <div class="todo-inline-add" role="group" aria-label="Add a to-do item">
+                <input type="text" id="todo-quick-input" placeholder="Add family task..." aria-label="New task" onkeypress="if(event.key==='Enter') addTodoItem()">
+                <div class="todo-inline-actions">
+                    <button type="button" id="todo-assign-button" class="todo-inline-icon-btn todo-assign-btn" onclick="cycleNewTodoAssignee()" aria-label="Change assignee" title="Change task assignee"><span aria-hidden="true">👤</span><span id="todo-assign-label">Assign</span></button>
+                    <button type="button" id="todo-date-button" class="todo-inline-icon-btn" onclick="openTodoDatePicker()" aria-label="Choose task date" title="Choose task date">📅</button>
+                    <button type="button" class="todo-inline-icon-btn todo-add-submit" onclick="addTodoItem()" aria-label="Add task" title="Add task">+</button>
                 </div>
+                <input type="date" id="todo-date-input" class="todo-date-input-hidden" aria-label="Task date" tabindex="-1" onchange="syncTodoDateLabel()">
             </div>
-            <div id="todo-list-container" class="list-container"></div>
+            <div id="todo-selected-date" class="todo-selected-date" aria-live="polite"></div>
+            <div id="todo-list-container" class="list-container todo-list-clean"></div>
         </section>
 
         <section class="compact-scoped-card">
@@ -2181,6 +2194,7 @@ let privateTodosData = [];
 let privateTodosUnsubscribe = null;
 let privateTodosLoaded = false;
 let activeTodoScope = 'family';
+let newTodoAssignee = null;
 let fpAuthMode = 'signin';
 
 try {
@@ -4275,18 +4289,57 @@ function renderPrivateTodos(container) {
         return;
     }
     container.innerHTML = privateTodosData.map(item => `
-        <div class="todo-column-item ${item.done ? 'completed' : ''}">
-            <div class="todo-column-main">
-                <input type="checkbox" ${item.done ? 'checked' : ''} onchange="togglePrivateTodo('${item.id}', this.checked)" aria-label="Mark private item complete">
-                <span class="item-text-label">${escapeToolText(item.text || '')}</span>
-            </div>
-            <div class="todo-column-controls">
-                ${item.date ? `<span class="date-tag" title="Due date">${escapeToolText(item.date)}</span>` : ''}
-                <button class="action-btn" onclick="editPrivateTodo('${item.id}')" aria-label="Edit private item">✏️</button>
-                <button class="action-btn delete-btn" onclick="deletePrivateTodo('${item.id}')" aria-label="Delete private item">✕</button>
+        <div class="todo-divider-item ${item.done ? 'completed' : ''}">
+            <input type="checkbox" ${item.done ? 'checked' : ''} onchange="togglePrivateTodo('${item.id}', this.checked)" aria-label="Mark private item complete">
+            <div class="todo-divider-content">
+                <span class="todo-divider-title">${escapeToolText(item.text || '')}</span>
+                <div class="todo-divider-meta"><span class="meta-icon" aria-hidden="true">📅</span><span>${formatTodoMetaDate(item.date)}</span><span class="meta-dot">•</span><span>Private</span></div>
             </div>
         </div>
     `).join('');
+}
+
+function formatTodoMetaDate(value) {
+    if (!value) return 'No date';
+    const parts = String(value).split('-');
+    return parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : String(value);
+}
+
+function syncNewTodoAssignee() {
+    const button = document.getElementById('todo-assign-button');
+    const label = document.getElementById('todo-assign-label');
+    const options = fpAssignmentOptions();
+    const defaultAssignee = viewMode === 'family' ? 'family' : (firebaseUser?.uid || currentUser || 'family');
+    if (!newTodoAssignee || !options.includes(newTodoAssignee)) newTodoAssignee = defaultAssignee;
+    if (label) label.textContent = 'Assign';
+    if (button) {
+        button.style.display = activeTodoScope === 'private' ? 'none' : 'inline-flex';
+        button.title = `Assign new task to ${newTodoAssignee === 'family' ? 'Family' : (fpDisplayAssignee(newTodoAssignee) || 'member')}`;
+        button.setAttribute('aria-label', button.title);
+    }
+}
+
+function cycleNewTodoAssignee() {
+    const options = fpAssignmentOptions();
+    syncNewTodoAssignee();
+    const current = options.indexOf(newTodoAssignee);
+    newTodoAssignee = options[(current + 1) % options.length] || 'family';
+    syncNewTodoAssignee();
+}
+
+function openTodoDatePicker() {
+    const picker = document.getElementById('todo-date-input');
+    if (!picker) return;
+    if (typeof picker.showPicker === 'function') picker.showPicker();
+    else picker.click();
+}
+
+function syncTodoDateLabel() {
+    const picker = document.getElementById('todo-date-input');
+    const label = document.getElementById('todo-selected-date');
+    const button = document.getElementById('todo-date-button');
+    if (label) label.textContent = picker?.value ? `Due ${formatTodoMetaDate(picker.value)}` : '';
+    if (button) button.title = picker?.value ? `Due ${formatTodoMetaDate(picker.value)} — change date` : 'Choose task date';
 }
 
 function addTodoItem() {
@@ -4297,17 +4350,19 @@ function addTodoItem() {
     const text = input.value.trim();
     input.value = '';
     if (dateInput) dateInput.value = '';
+    syncTodoDateLabel();
     if (activeTodoScope === 'private') {
         addPrivateTodo(text, chosenDate);
         return;
     }
-    const assignedTo = viewMode === 'family' ? 'family' : (firebaseUser?.uid || currentUser);
+    syncNewTodoAssignee();
+    const assignedTo = newTodoAssignee || (viewMode === 'family' ? 'family' : (firebaseUser?.uid || currentUser));
     todosData.push({ text, who: assignedTo, date: chosenDate, done: false, isEditing: false, quickAdded: true });
     saveData();
     renderTodos();
     renderDashboard();
     renderWeeklyPlanner();
-    showToast('Household task added');
+    showToast('Task added');
 }
 function toggleTodoCheck(idx) {
     todosData[idx].done = !todosData[idx].done;
@@ -4334,6 +4389,7 @@ function saveTodoEdit(idx, newText) {
 function renderTodos() {
     const container = document.getElementById('todo-list-container');
     if (!container) return;
+    if (viewMode === 'family' && activeTodoScope === 'private') activeTodoScope = 'family';
     const familyButton = document.getElementById('todo-scope-family');
     const privateButton = document.getElementById('todo-scope-private');
     if (familyButton) {
@@ -4346,35 +4402,33 @@ function renderTodos() {
         privateButton.disabled = viewMode === 'family';
         privateButton.title = viewMode === 'family' ? 'Private reminders are available in My View only' : '';
     }
-    if (viewMode === 'family' && activeTodoScope === 'private') activeTodoScope = 'family';
     const note = document.getElementById('todo-scope-note');
     if (note) note.textContent = activeTodoScope === 'private'
         ? 'Your personal reminders are stored under your signed-in account and are not shared with the household.'
         : (viewMode === 'family' ? 'All shared household tasks.' : 'Household tasks assigned to you or everyone.');
     const input = document.getElementById('todo-quick-input');
-    if (input) input.placeholder = activeTodoScope === 'private' ? 'Add a private reminder…' : 'Add a family task…';
+    if (input) input.placeholder = activeTodoScope === 'private' ? 'Add private reminder...' : 'Add family task...';
+    const dateButton = document.getElementById('todo-date-button');
+    if (dateButton) dateButton.style.display = 'inline-flex';
+    syncNewTodoAssignee();
+    syncTodoDateLabel();
     if (activeTodoScope === 'private') {
         renderPrivateTodos(container);
         return;
     }
     const shared = todosData.map((task, idx) => ({ task, idx })).filter(({ task }) => filterItem(task.who));
     container.innerHTML = shared.length === 0
-        ? '<div class="list-empty" style="font-size:0.85rem;padding:0.8rem;">No household tasks yet.</div>'
+        ? '<div class="list-empty" style="font-size:0.85rem;padding:0.8rem 0;">No family tasks yet.</div>'
         : shared.map(({task:t, idx}) => {
-            const displayWho = fpDisplayAssignee(t.who);
+            const displayWho = fpDisplayAssignee(t.who) || 'Family';
             return `
-                <div class="todo-column-item ${t.done ? 'completed' : ''}">
-                    <div class="todo-column-main">
-                        <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodoCheck(${idx})" aria-label="Mark task complete">
-                        ${t.isEditing ?
-                            `<input type="text" class="edit-inline-input" value="${escapeToolText(t.text || '')}" onkeypress="if(event.key==='Enter') saveTodoEdit(${idx}, this.value)" onblur="saveTodoEdit(${idx}, this.value)" autofocus>` :
-                            `<span class="item-text-label">${escapeToolText(t.text || '')}</span>`}
-                    </div>
-                    <div class="todo-column-controls">
-                        <input type="date" class="date-tag todo-row-date" value="${t.date || ''}" onchange="updateTodoDate(${idx}, this.value)" title="Change task date" aria-label="Task date">
-                        <span class="assign-tag bg-${fpAssigneeStyle(t.who)}" onclick="cycleAssignee('todo', ${idx})">${displayWho}</span>
-                        <button class="action-btn" onclick="enableTodoEdit(${idx})" aria-label="Edit task">✏️</button>
-                        <button class="action-btn delete-btn" onclick="todosData.splice(${idx},1); saveData(); renderTodos(); renderDashboard(); renderWeeklyPlanner();" aria-label="Delete task">✕</button>
+                <div class="todo-divider-item ${t.done ? 'completed' : ''}">
+                    <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodoCheck(${idx})" aria-label="Mark task complete">
+                    <div class="todo-divider-content">
+                        ${t.isEditing
+                            ? `<input type="text" class="edit-inline-input" value="${escapeToolText(t.text || '')}" onkeypress="if(event.key==='Enter') saveTodoEdit(${idx}, this.value)" onblur="saveTodoEdit(${idx}, this.value)" autofocus>`
+                            : `<span class="todo-divider-title">${escapeToolText(t.text || '')}</span>`}
+                        <div class="todo-divider-meta"><span class="meta-icon" aria-hidden="true">📅</span><span>${formatTodoMetaDate(t.date)}</span><span class="meta-dot">•</span><span class="meta-icon" aria-hidden="true">👤</span><span>${escapeToolText(displayWho)}</span></div>
                     </div>
                 </div>`;
         }).join('');
@@ -4839,7 +4893,7 @@ if(document.getElementById('handover-date')) document.getElementById('handover-d
 if(document.getElementById('unplanned-date')) document.getElementById('unplanned-date').value = new Date().toISOString().slice(0,10);
 
 updateHeaderDisplay();
-setTodoScope('combined');
+setTodoScope('family');
 renderFinanceOverview();
 renderAllViews();
 
