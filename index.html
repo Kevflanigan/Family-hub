@@ -346,7 +346,7 @@ nav.bottom-nav, .bottom-nav {
 
 .toast-icon {
     background: #10b981;
-    color: #fff;
+    color: #05281d;
     width: 18px;
     height: 18px;
     border-radius: 50%;
@@ -1958,7 +1958,7 @@ html[data-theme="dark"] .event-pill.quick-added{color:#0f1719!important}
                     <input type="date" id="add-end-date" class="form-input input-half" placeholder="End Date (Optional)">
                 </div>
                 <div class="form-row" id="time-row" style="gap:8px;align-items:center;">
-                    <label class="tool-note" for="add-time" style="flex:1;margin:0;">Time (optional)</label>
+                    <label class="tool-note" for="add-time" style="flex:1 1 100%;margin:0;text-align:left;">Time (optional)</label>
                     <input type="time" id="add-time" class="form-input input-half" style="flex:1;">
                 </div>
                 <div class="form-row" id="recurring-row" style="gap:8px;">
@@ -4432,6 +4432,8 @@ function handleCategoryChange(val) {
     document.getElementById('time-row').style.display = (val === 'calendar' || val === 'events') ? 'flex' : 'none';
     if (val === 'birthday') {
         document.getElementById('add-recurring').value = 'birthday';
+    } else if (document.getElementById('add-recurring').value === 'birthday') {
+        document.getElementById('add-recurring').value = 'none'; // don't carry "Annual Birthday" over to other entry types
     }
     document.getElementById('postcode-row').style.display = (val === 'places' || val === 'restaurants') ? 'flex' : 'none';
 }
