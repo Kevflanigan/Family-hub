@@ -3390,7 +3390,11 @@ const FP_MEMBER_NAME_COLOURS = [
 ];
 function fpMemberNameColour(who) {
     if (!who || who === 'family' || who === 'unassigned') return '';
-    const member = fpHouseholdMembers.find(m => m.uid === who || String(m.email || '').toLowerCase() === String(who).toLowerCase());
+    // Resolve both current member UIDs/emails and older dad/mom assignment keys.
+    const legacyMember = (who === 'dad' || who === 'mom') ? fpMemberForLegacyKey(who) : null;
+    const member = legacyMember || fpHouseholdMembers.find(m =>
+        m.uid === who || String(m.email || '').toLowerCase() === String(who).toLowerCase()
+    );
     return member && FP_MEMBER_NAME_COLOURS.some(c => c.value === member.nameColour) ? member.nameColour : '';
 }
 function fpNameColourStyle(who, dot=false) {
@@ -4793,7 +4797,7 @@ const cookName = fpDisplayAssignee(m.cook);
             <div class="meal-card-inner">
                 <div class="meal-day-name">${dayLabel}</div>
                 <input type="text" class="meal-input-inline" placeholder="Add a meal..." aria-label="${dayLabel} meal" value="${mealValue}" onchange="mealsData[${idx}].meal = this.value; saveData(); renderDashboard(); renderWeeklyPlanner();">
-                <button type="button" class="assign-tag meal-cook-tag bg-${cookKey}" onclick="cycleCook(${idx})" title="Change who is cooking" aria-label="${escapeToolText(cookName)} is cooking; tap to change">${escapeToolText(cookName)}</button>
+                <button type="button" class="assign-tag meal-cook-tag bg-${cookKey}"${fpNameColourStyle(m.cook)} onclick="cycleCook(${idx})" title="Change who is cooking" aria-label="${escapeToolText(cookName)} is cooking; tap to change">${escapeToolText(cookName)}</button>
             </div>
         </div>`;
     }).join('');
