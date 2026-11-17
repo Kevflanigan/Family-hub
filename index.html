@@ -3823,6 +3823,7 @@ window.fpJoinHousehold=fpJoinHousehold;
 
 // ---- Owner: invitations -------------------------------------------------
 const FP_FUNCTIONS_REGION='europe-west2'; // must match the region in functions/index.js
+const FP_EMAIL_FUNCTION_ENABLED=false; // leave false: automatic invite emails need Cloud Functions (paid Blaze plan). Invites work without it.
 function fpB64Url(bytes){return btoa(String.fromCharCode(...bytes)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
 async function fpCreateInvite(){
   if(!fpMemberData || fpMemberData.role!=='owner' || !fpHouseholdId)return;
@@ -3850,17 +3851,20 @@ async function fpCreateInvite(){
     const copy=document.createElement('button');copy.type='button';copy.className='tool-btn';copy.textContent='Copy link';
     copy.onclick=()=>navigator.clipboard?.writeText(link).then(()=>showToast('Invitation link copied')).catch(()=>box.select());
     row.appendChild(copy);
+    const mail=document.createElement('a');mail.className='tool-btn secondary';mail.textContent='Email it';mail.style.cssText='text-decoration:none;text-align:center;display:inline-block;';
+    mail.href='mailto:'+email+'?subject='+encodeURIComponent('Join our household on FamilyPlan')+'&body='+encodeURIComponent("Hi,\n\nI've invited you to our household on FamilyPlan.\n\n1. Open this link: "+link+"\n2. Create an account with this email address ("+email+") and verify it.\n3. Request to join and I'll approve you.\n\nThe link works once and expires in 7 days.");
+    row.appendChild(mail);
     if(navigator.share){const sh=document.createElement('button');sh.type='button';sh.className='tool-btn secondary';sh.textContent='Share';sh.onclick=()=>navigator.share({title:'Join our household on FamilyPlan',text:'Join our household on FamilyPlan:',url:link}).catch(()=>{});row.appendChild(sh);}
     out.append(note,box,row);
     const linkNote=' You can also copy the link below. It is shown only once.';
     try{
-      if(!firebase.functions)throw {code:'functions/not-found'};
+      if(!FP_EMAIL_FUNCTION_ENABLED||!firebase.functions)throw {code:'functions/not-found'};
       await firebase.app().functions(FP_FUNCTIONS_REGION).httpsCallable('sendInviteEmail')({householdId:fpHouseholdId,token});
       note.textContent='Invitation emailed to '+email+'.'+linkNote;
     }catch(err){
       console.warn('Invite email not sent:',err);
       note.textContent=(err&&err.code==='functions/not-found')
-        ?'Invitation created for '+email+'. Email sending is not set up yet, so copy this link and send it yourself. It is shown only once.'
+        ?'Invitation created for '+email+'. Tap "Email it" to send it from your own email app, or copy the link. It is shown only once.'
         :'Invitation created for '+email+', but the email could not be sent ('+((err&&err.message)||'unknown error')+'). Copy the link and send it yourself. It is shown only once.';
     }
   }catch(e){console.error(e);showToast('Could not create the invitation. Check your Firestore rules.');}
