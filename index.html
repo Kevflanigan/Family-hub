@@ -2331,10 +2331,6 @@ html[data-theme="dark"] .event-pill.quick-added{color:#0f1719!important}
                 </div>
                 <div id="todo-selected-date" class="todo-selected-date" aria-live="polite"></div>
                 <div id="todo-list-container" class="list-container todo-list-clean"></div>
-                <section id="todo-chores-panel" class="compact-scoped-card" style="margin-top:14px;">
-                    <div class="todo-scoped-title">⭐ Kids' Chores</div>
-                    <div id="chores-list-container" class="chores-grid"></div>
-                </section>
             </div>
             <div id="todo-gift-panel" style="display:none;">
                 <div class="todo-scoped-title" style="margin:4px 0 8px;">🎁 Gift Wishlist</div>
@@ -2344,6 +2340,10 @@ html[data-theme="dark"] .event-pill.quick-added{color:#0f1719!important}
                 </div>
                 <div id="wishlist-list-container" style="display:flex; flex-direction:column;"></div>
             </div>
+        </section>
+        <section id="todo-chores-panel" class="compact-scoped-card" style="margin-top:14px;">
+            <div class="todo-scoped-title">⭐ Kids' Chores</div>
+            <div id="chores-list-container" class="chores-grid"></div>
         </section>
 
         </div>
@@ -5508,8 +5508,10 @@ function renderTodos() {
         const todoPanel = document.getElementById('todo-content-panel');
         const giftPanel = document.getElementById('todo-gift-panel');
         const clearButton = document.getElementById('todo-clear-completed');
+        const choresPanel = document.getElementById('todo-chores-panel');
         if (todoPanel) todoPanel.style.display = 'none';
         if (giftPanel) giftPanel.style.display = 'block';
+        if (choresPanel) choresPanel.style.display = 'none';
         if (clearButton) clearButton.style.display = 'none';
         renderWishlist();
         return;
