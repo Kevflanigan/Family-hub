@@ -1282,6 +1282,8 @@ html[data-theme="dark"] .brand-logo-img { mix-blend-mode:normal; border-radius:1
 /* To-do list: clean divider-based list with a compact, integrated add field */
 .todo-scoped-title { display:flex; align-items:center; gap:8px; color:var(--text); font-weight:800; font-size:1.08rem; margin-bottom:12px; }
 .todo-scoped-title .todo-heading-icon { color:var(--accent); font-size:1.05rem; }
+.todo-heading-clear { margin-left:auto; padding:6px 10px; min-height:32px; font-size:.78rem; line-height:1.1; white-space:nowrap; }
+.todo-heading-clear:disabled { opacity:.45; cursor:default; }
 .todo-inline-add { display:flex; flex-wrap:nowrap; align-items:center; width:calc(100% + 1.5rem); max-width:none; min-height:58px; gap:0; padding:6px 10px 6px 16px; margin:0 -0.75rem 10px; background:#fff; border:solid #dce8e2; border-width:1px 0; border-radius:0; box-sizing:border-box; box-shadow:0 1px 3px rgba(20,60,50,.035); }
 .todo-inline-add #todo-quick-input { flex:1 1 0; width:auto; min-width:56px; height:46px; padding:0 8px 0 0; border:0; outline:0; box-shadow:none; background:transparent; color:var(--text); font:inherit; font-size:1.05rem; text-overflow:clip; }
 .todo-inline-add #todo-quick-input:focus { outline:0; box-shadow:none; }
@@ -1302,6 +1304,14 @@ html[data-theme="dark"] .brand-logo-img { mix-blend-mode:normal; border-radius:1
 .todo-due.is-today { color:#b26a00; font-weight:700; }
 .todo-due.is-overdue { color:#c0392b; font-weight:700; }
 .todo-person-name { color:#44544f; font-weight:600; }
+.member-name-colour { color:var(--member-name-colour)!important; }
+.member-dot-colour { background:var(--member-name-colour)!important; }
+.profile-colour-options { display:flex; flex-wrap:wrap; gap:10px; margin:10px 0 4px; }
+.profile-colour-swatch { width:34px; height:34px; border-radius:50%; border:3px solid transparent; cursor:pointer; box-shadow:0 0 0 1px var(--border); }
+.profile-colour-swatch[aria-pressed="true"] { border-color:var(--text); box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--accent); }
+.profile-colour-swatch:disabled { opacity:.25; cursor:not-allowed; }
+.profile-colour-preview { display:flex; align-items:center; gap:8px; margin-top:8px; font-weight:750; }
+.profile-colour-preview-dot { width:10px; height:10px; border-radius:50%; display:inline-block; }
 .todo-list-clean { display:flex; flex-direction:column; width:100%; }
 .todo-divider-item { display:flex; align-items:flex-start; gap:11px; width:100%; padding:13px 2px; border-bottom:1px solid #e6eeea; box-sizing:border-box; }
 .todo-divider-item:last-child { border-bottom:0; }
@@ -2285,7 +2295,7 @@ html[data-theme="dark"] .event-pill.quick-added{color:#0f1719!important}
         </div>
         <div id="family-tasks-panel">
         <section class="compact-scoped-card">
-            <div class="todo-scoped-title"><span class="todo-heading-icon" aria-hidden="true">📝</span><span>To-Do List</span></div>
+            <div class="todo-scoped-title"><span class="todo-heading-icon" aria-hidden="true">📝</span><span>To-Do List</span><button type="button" id="todo-clear-completed" class="tool-btn secondary todo-heading-clear" onclick="clearCompletedTodos()" disabled>Clear completed</button></div>
             <div class="calendar-main-tabs todo-scope-tabs" role="group" aria-label="Family or private to-do list" style="margin:0 0 12px;padding:4px;">
                 <button type="button" id="todo-scope-family" class="cal-main-tab active" onclick="setTodoScope('family')" aria-pressed="true" style="flex:1;">Family</button>
                 <button type="button" id="todo-scope-private" class="cal-main-tab" onclick="setTodoScope('private')" aria-pressed="false" style="flex:1;">Private</button>
@@ -2380,6 +2390,13 @@ html[data-theme="dark"] .event-pill.quick-added{color:#0f1719!important}
                 <button type="button" class="tool-btn" id="profile-name-save" onclick="fpSaveProfileName()">Save name</button>
             </div>
             <p class="tool-note" id="profile-name-status" aria-live="polite"></p>
+            <div style="margin-top:14px;">
+                <label class="auth-field">Your name colour</label>
+                <p class="tool-note">Choose the colour used for your name and the dot beside it throughout the household. Each household member must use a different colour.</p>
+                <div id="profile-colour-options" class="profile-colour-options" role="group" aria-label="Choose your name colour"></div>
+                <div class="profile-colour-preview"><span id="profile-colour-preview-dot" class="profile-colour-preview-dot"></span><span id="profile-colour-preview-name">Your name</span></div>
+                <p class="tool-note" id="profile-colour-status" aria-live="polite"></p>
+            </div>
         </section>
         <section class="tool-section" id="appearance-section">
             <h3>🎨 Appearance</h3>
@@ -3297,6 +3314,7 @@ function fpUpdateHouseholdPanel(){
   if(myViewLabel)myViewLabel.textContent=signedInName;
   const profileNameInput = document.getElementById('profile-name-input');
   if(profileNameInput && document.activeElement!==profileNameInput && signedInName!=='My account') profileNameInput.value=signedInName;
+  fpRenderProfileColourPicker();
   const familyViewLabel = document.getElementById('opt-family-label');
   if(familyViewLabel)familyViewLabel.textContent=householdLabel;
 
@@ -3359,6 +3377,70 @@ function fpSyncNameReferences(uid, legacyKey, oldNames, email) {
     return changed;
 }
 
+const FP_MEMBER_NAME_COLOURS = [
+    { value:'#D65A78', label:'Rose' },
+    { value:'#168A68', label:'Green' },
+    { value:'#3478C8', label:'Blue' },
+    { value:'#A05BC4', label:'Purple' },
+    { value:'#D17A24', label:'Amber' },
+    { value:'#008C95', label:'Teal' },
+    { value:'#A34E35', label:'Terracotta' },
+    { value:'#6574A8', label:'Slate' },
+    { value:'#8A6D3B', label:'Bronze' }
+];
+function fpMemberNameColour(who) {
+    if (!who || who === 'family' || who === 'unassigned') return '';
+    const member = fpHouseholdMembers.find(m => m.uid === who || String(m.email || '').toLowerCase() === String(who).toLowerCase());
+    return member && FP_MEMBER_NAME_COLOURS.some(c => c.value === member.nameColour) ? member.nameColour : '';
+}
+function fpNameColourStyle(who, dot=false) {
+    const colour = fpMemberNameColour(who);
+    if (!colour) return '';
+    return dot ? ` style="background:${colour}!important"` : ` style="color:${colour}!important;--assign-dot:${colour}"`;
+}
+function fpRenderProfileColourPicker() {
+    const el = document.getElementById('profile-colour-options');
+    if (!el || !firebaseUser) return;
+    const me = fpHouseholdMembers.find(m => m.uid === firebaseUser.uid) || fpMemberData || {};
+    const selected = me.nameColour || '';
+    const taken = new Set(fpHouseholdMembers.filter(m => m.uid !== firebaseUser.uid).map(m => m.nameColour).filter(Boolean));
+    el.innerHTML = FP_MEMBER_NAME_COLOURS.map(c => {
+        const unavailable = taken.has(c.value);
+        return `<button type="button" class="profile-colour-swatch" style="background:${c.value}" title="${c.label}${unavailable ? ' — used by another member' : ''}" aria-label="${c.label}" aria-pressed="${selected === c.value}" ${unavailable ? 'disabled' : ''} onclick="fpSaveProfileColour('${c.value}')"></button>`;
+    }).join('');
+    const name = fpMemberDisplayName({ ...me, uid: firebaseUser.uid });
+    const previewName = document.getElementById('profile-colour-preview-name');
+    const previewDot = document.getElementById('profile-colour-preview-dot');
+    if (previewName) { previewName.textContent = name; previewName.style.color = selected || 'var(--text)'; }
+    if (previewDot) previewDot.style.background = selected || 'var(--muted)';
+}
+async function fpSaveProfileColour(colour) {
+    const status = document.getElementById('profile-colour-status');
+    const setStatus = message => { if (status) status.textContent = message; };
+    if (!firebaseUser || !fpHouseholdId || !firebaseDb) { setStatus('Sign in and connect to a household first.'); return; }
+    if (!FP_MEMBER_NAME_COLOURS.some(c => c.value === colour)) return;
+    const taken = fpHouseholdMembers.find(m => m.uid !== firebaseUser.uid && m.nameColour === colour);
+    if (taken) { setStatus('That colour is already being used by another household member.'); return; }
+    setStatus('Saving…');
+    try {
+        const ref = firebaseDb.collection('households').doc(fpHouseholdId).collection('members').doc(firebaseUser.uid);
+        await ref.update({ nameColour: colour, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+        fpMemberData = { ...(fpMemberData || {}), nameColour: colour };
+        fpHouseholdMembers = fpHouseholdMembers.map(m => m.uid === firebaseUser.uid ? { ...m, nameColour: colour } : m);
+        fpRenderProfileColourPicker();
+        renderAllViews();
+        updateHeaderDisplay();
+        setStatus('Name colour updated across the household.');
+        showToast('Name colour updated');
+    } catch (error) {
+        console.error('Could not update name colour:', error);
+        setStatus(error.code === 'permission-denied'
+            ? 'Firestore rules currently block updating your member colour. Allow each signed-in member to update only their own nameColour field.'
+            : 'Could not save your colour. Check your connection and try again.');
+    }
+}
+window.fpSaveProfileColour = fpSaveProfileColour;
+
 async function fpSaveProfileName() {
     const input = document.getElementById('profile-name-input');
     const status = document.getElementById('profile-name-status');
@@ -3407,6 +3489,7 @@ async function fpSaveProfileName() {
         fpHouseholdMembers = fpHouseholdMembers.map(m => m.uid === uid ? { ...m, name: newName, displayName: newName, ...(legacyKey ? { legacyKey } : {}) } : m);
         currentUserName = newName;
         localStorage.setItem('fam_user_name', newName);
+        fpRenderProfileColourPicker();
 
         // Rewrite any stored references to the old name / email / legacy key.
         const migrated = fpSyncNameReferences(uid, legacyKey, oldNames, email);
@@ -3543,7 +3626,7 @@ function fpDisplayAssignee(who) {
 
 function fpWhoTagHtml(who, cls = 'wp-pill-who') {
     const style = fpAssigneeStyle(who);
-    return `<span class="${cls} who-${style}"><span class="person-dot bg-${style}" aria-hidden="true"></span>${escapeToolText(fpDisplayAssignee(who))}</span>`;
+    return `<span class="${cls} who-${style}"${fpNameColourStyle(who)}><span class="person-dot bg-${style}"${fpNameColourStyle(who,true)} aria-hidden="true"></span>${escapeToolText(fpDisplayAssignee(who))}</span>`;
 }
 
 function fpAssigneeStyle(who) {
@@ -4079,7 +4162,7 @@ function fpRenderMembers(snapshot) {
             }).join('')}</div>`;
         }
 
-        return `<div class="household-member-card"><div class="household-member-top"><strong>${escapeToolText(memberName)}${uid === firebaseUser.uid ? ' (you)' : ''}</strong><span class="badge">${roleLabel}</span></div>${role !== 'owner' ? `<label class="auth-field">Role<select class="household-role-select" ${fpMemberData.role === 'owner' ? '' : 'disabled'} onchange="fpSetMemberRole('${uid}',this.value)"><option value="member" ${role === 'member' ? 'selected' : ''}>Member</option><option value="parent" ${role === 'parent' ? 'selected' : ''}>Parent</option></select></label>${permissionHtml}${fpMemberData.role === 'owner' ? `<button class="tool-btn secondary" type="button" onclick="fpRemoveMember('${uid}')">Remove member</button>` : ''}` : ''}</div>`;
+        return `<div class="household-member-card"><div class="household-member-top"><strong${fpNameColourStyle(uid)}>${escapeToolText(memberName)}${uid === firebaseUser.uid ? ' (you)' : ''}</strong><span class="badge">${roleLabel}</span></div>${role !== 'owner' ? `<label class="auth-field">Role<select class="household-role-select" ${fpMemberData.role === 'owner' ? '' : 'disabled'} onchange="fpSetMemberRole('${uid}',this.value)"><option value="member" ${role === 'member' ? 'selected' : ''}>Member</option><option value="parent" ${role === 'parent' ? 'selected' : ''}>Parent</option></select></label>${permissionHtml}${fpMemberData.role === 'owner' ? `<button class="tool-btn secondary" type="button" onclick="fpRemoveMember('${uid}')">Remove member</button>` : ''}` : ''}</div>`;
     }).join('') || '<p class="tool-note">No members found.</p>';
 }
 async function fpSetMemberPermission(uid,group,value){
@@ -4366,8 +4449,8 @@ function updateHeaderDisplay() {
     optFamily?.classList.toggle('active-mode', viewMode === 'family');
     optMy?.classList.toggle('active-mode', viewMode !== 'family');
     const styleKey = viewMode === 'family' ? 'family' : fpAssigneeStyle(currentUser);
-    if (indicatorEl) indicatorEl.setAttribute('class', `user-silhouette-icon text-${styleKey}`);
-    if (badgeDotEl) badgeDotEl.className = `account-avatar-dot bg-${styleKey}`;
+    if (indicatorEl) { indicatorEl.setAttribute('class', `user-silhouette-icon text-${styleKey}`); indicatorEl.style.color = viewMode === 'family' ? '' : (fpMemberNameColour(currentUser) || ''); }
+    if (badgeDotEl) { badgeDotEl.className = `account-avatar-dot bg-${styleKey}`; badgeDotEl.style.backgroundColor = viewMode === 'family' ? '' : (fpMemberNameColour(currentUser) || ''); }
     if (badgeTextEl) badgeTextEl.textContent = viewMode === 'family' ? 'Household' : 'My View';
 }
 
@@ -4542,7 +4625,7 @@ function renderDashboard() {
             <div class="dashboard-item" style="border-left: 4px solid var(--${fpAssigneeStyle(todayMeal.cook)});">
                 <div>
                     <strong>${escapeToolText(todayMeal.meal)}</strong>
-                    <div class="sub-text">Planned for ${todayDay} • Cook: <span class="assign-tag bg-${fpAssigneeStyle(todayMeal.cook)}" style="padding: 2px 8px; font-size: 0.75rem;">${escapeToolText(cookName)}</span></div>
+                    <div class="sub-text">Planned for ${todayDay} • Cook: <span class="assign-tag bg-${fpAssigneeStyle(todayMeal.cook)}"${fpNameColourStyle(todayMeal.cook)} style="padding: 2px 8px; font-size: 0.75rem;">${escapeToolText(cookName)}</span></div>
                 </div>
                 <span>🥘</span>
             </div>
@@ -4810,7 +4893,7 @@ function renderShopping() {
                     }
                 </div>
                 <button class="action-btn" onclick="enableShopEdit('foodshop', ${idx})">✏️</button>
-           <span class="assign-tag bg-${fpAssigneeStyle(item.who)}" onclick="cycleAssignee('foodshop', ${idx})">${escapeToolText(displayWho)}</span>
+           <span class="assign-tag bg-${fpAssigneeStyle(item.who)}"${fpNameColourStyle(item.who)} onclick="cycleAssignee('foodshop', ${idx})">${escapeToolText(displayWho)}</span>
                 <button class="action-btn delete-btn" onclick="foodShopData.splice(${idx},1); saveData(); renderShopping(); renderDashboard();">✕</button>
             </div>
         `;
@@ -4830,7 +4913,7 @@ function renderShopping() {
                     }
                 </div>
                 <button class="action-btn" onclick="enableShopEdit('familyshop', ${idx})">✏️</button>
-         <span class="assign-tag bg-${fpAssigneeStyle(item.who)}" onclick="cycleAssignee('familyshop', ${idx})">${escapeToolText(displayWho)}</span>
+         <span class="assign-tag bg-${fpAssigneeStyle(item.who)}"${fpNameColourStyle(item.who)} onclick="cycleAssignee('familyshop', ${idx})">${escapeToolText(displayWho)}</span>
                 <button class="action-btn delete-btn" onclick="familyShopData.splice(${idx},1); saveData(); renderShopping(); renderDashboard();">✕</button>
             </div>
         `;
@@ -5036,6 +5119,14 @@ function setTodoScope(scope) {
         privateButton.setAttribute('aria-pressed', String(activeTodoScope === 'private'));
         privateButton.disabled = viewMode === 'family';
         privateButton.title = viewMode === 'family' ? 'Private reminders are available in My View only' : '';
+    }
+    const clearButton = document.getElementById('todo-clear-completed');
+    if (clearButton) {
+        const completedCount = activeTodoScope === 'private'
+            ? privateTodosData.filter(task => task.done).length
+            : todosData.filter(task => task.done && filterItem(task.who)).length;
+        clearButton.disabled = completedCount === 0;
+        clearButton.textContent = completedCount ? `Clear completed (${completedCount})` : 'Clear completed';
     }
     const note = document.getElementById('todo-scope-note');
     const input = document.getElementById('todo-quick-input');
@@ -5264,6 +5355,36 @@ function saveTodoEdit(idx, newText) {
     renderWeeklyPlanner();
 }
 
+async function clearCompletedTodos() {
+    if (activeTodoScope === 'private') {
+        const completed = privateTodosData.filter(item => item.done);
+        if (!completed.length) return;
+        if (!(await fpDialog.confirm(`Clear ${completed.length} completed private item${completed.length === 1 ? '' : 's'}?`, { title: 'Clear completed items', okLabel: 'Clear', danger: true }))) return;
+        const collection = privateTodosCollection();
+        if (!collection) return;
+        try {
+            const batch = firebaseDb.batch();
+            completed.forEach(item => batch.delete(collection.doc(item.id)));
+            await batch.commit();
+            showToast(`${completed.length} completed item${completed.length === 1 ? '' : 's'} cleared`);
+        } catch (error) {
+            console.error('Could not clear completed private todos:', error);
+            showToast('Could not clear completed items');
+        }
+        return;
+    }
+
+    const completed = todosData.filter(task => task.done && filterItem(task.who));
+    if (!completed.length) return;
+    if (!(await fpDialog.confirm(`Clear ${completed.length} completed to-do item${completed.length === 1 ? '' : 's'}?`, { title: 'Clear completed items', okLabel: 'Clear', danger: true }))) return;
+    todosData = todosData.filter(task => !(task.done && filterItem(task.who)));
+    saveData();
+    renderTodos();
+    renderDashboard();
+    renderWeeklyPlanner();
+    showToast(`${completed.length} completed item${completed.length === 1 ? '' : 's'} cleared`);
+}
+
 function renderTodos() {
     const container = document.getElementById('todo-list-container');
     if (!container) return;
@@ -5306,7 +5427,7 @@ function renderTodos() {
                         ${t.isEditing
                             ? `<input type="text" class="edit-inline-input" value="${escapeToolText(t.text || '')}" onkeydown="if(event.key==='Enter') saveTodoEdit(${idx}, this.value)" onblur="saveTodoEdit(${idx}, this.value)" autofocus>`
                             : `<span class="todo-divider-title">${escapeToolText(t.text || '')}</span>`}
-                        <div class="todo-divider-meta">${todoDueHtml(t.date)}<span class="person-dot bg-${fpAssigneeStyle(t.who)}" aria-hidden="true"></span><span class="todo-person-name who-${fpAssigneeStyle(t.who)}">${escapeToolText(displayWho)}</span></div>
+                        <div class="todo-divider-meta">${todoDueHtml(t.date)}<span class="person-dot bg-${fpAssigneeStyle(t.who)}"${fpNameColourStyle(t.who,true)} aria-hidden="true"></span><span class="todo-person-name who-${fpAssigneeStyle(t.who)}"${fpNameColourStyle(t.who)}>${escapeToolText(displayWho)}</span></div>
                     </div>
                 </div>`;
         }).join('');
