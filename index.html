@@ -5430,18 +5430,35 @@ function toggleTodoCheck(idx) {
     renderWeeklyPlanner();
 }
 
-function enableTodoEdit(idx) {
-    todosData[idx].isEditing = true;
-    renderTodos();
-}
+async function editTodoItem(idx) {
+    const task = todosData[idx];
+    if (!task) return;
 
-function saveTodoEdit(idx, newText) {
-    if (newText.trim()) todosData[idx].text = newText.trim();
-    todosData[idx].isEditing = false;
+    const updatedText = await fpDialog.prompt('Edit task', { value: task.text || '' });
+    if (updatedText === null) return;
+    if (!updatedText.trim()) {
+        showToast('Task cannot be empty');
+        return;
+    }
+
+    const options = fpAssignmentOptions();
+    const choices = options.map(value => ({
+        value,
+        label: value === 'family' ? 'Family (everyone)' : fpDisplayAssignee(value),
+        style: value === 'family' ? 'family' : fpAssigneeStyle(value)
+    }));
+    const currentAssignee = options.includes(task.who) ? task.who : 'family';
+    const updatedAssignee = await fpDialog.choose('Assign task to', choices, currentAssignee);
+    if (!updatedAssignee) return;
+
+    task.text = updatedText.trim();
+    task.who = updatedAssignee;
+    task.isEditing = false;
     saveData();
     renderTodos();
     renderDashboard();
     renderWeeklyPlanner();
+    showToast('Task updated');
 }
 
 async function clearCompletedTodos() {
@@ -5518,7 +5535,7 @@ function renderTodos() {
                             : `<span class="todo-divider-title">${escapeToolText(t.text || '')}</span>`}
                         <div class="todo-divider-meta">${todoDueHtml(t.date)}<span class="person-dot bg-${fpAssigneeStyle(t.who)}"${fpNameColourStyle(t.who,true)} aria-hidden="true"></span><span class="todo-person-name who-${fpAssigneeStyle(t.who)}"${fpNameColourStyle(t.who)}>${escapeToolText(displayWho)}</span></div>
                     </div>
-                    ${t.isEditing ? '' : `<button type="button" class="todo-edit-btn" onclick="enableTodoEdit(${idx})" aria-label="Edit ${escapeToolText(t.text || 'task')}" title="Edit task">✏️</button>`}
+                    ${t.isEditing ? '' : `<button type="button" class="todo-edit-btn" onclick="editTodoItem(${idx})" aria-label="Edit task and assignee: ${escapeToolText(t.text || 'task')}" title="Edit task and assignee">✏️</button>`}
                 </div>`;
         }).join('');
 }
