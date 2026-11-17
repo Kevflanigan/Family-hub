@@ -1634,6 +1634,140 @@ html[data-theme="dark"] .shopping-item input[type="checkbox"]:checked::after, ht
 .money-field input { padding-left:26px !important; }
 /* Monthly calendar pills follow the person's colour */
 .event-pill.bg-unassigned { background:var(--unassigned); }
+
+/* ===== Dark mode: complete surface and text layer =====
+   The base styles hard-code light surfaces and dark text. In dark mode the text turned light while many
+   surfaces stayed white, and headings stayed dark teal. These rules apply only when data-theme="dark". */
+.household-settings-box{margin:10px 0;padding:12px;background:#f7faf8;border:1px solid #e5eee9;border-radius:12px}
+html[data-theme="dark"]{--surface-2:#223137;--surface-3:#2a3d44;--nav-bg:#162126;--muted:#a9bcbc;--danger-text:#ff9a8f;--ok-text:#7fd8a8}
+/* surfaces: panels */
+html[data-theme="dark"] .user-dropdown-menu,
+html[data-theme="dark"] .modal-card,
+html[data-theme="dark"] .day-detail-bubble,
+html[data-theme="dark"] .week-day,
+html[data-theme="dark"] .wp-day-card,
+html[data-theme="dark"] .places-scoped-card,
+html[data-theme="dark"] .restaurants-scoped-card,
+html[data-theme="dark"] .card-calendar-wrap,
+html[data-theme="dark"] .day-cell{background:var(--card)!important;color:var(--text);border-color:var(--border)}
+html[data-theme="dark"] #view-dashboard > .card:first-child{background:linear-gradient(125deg,#203239,#1b272b)!important;border-color:var(--border)}
+/* surfaces: rows and inner items */
+html[data-theme="dark"] .dashboard-item,
+html[data-theme="dark"] .shopping-item,
+html[data-theme="dark"] .meal-card-row,
+html[data-theme="dark"] .list-card,
+html[data-theme="dark"] .list-empty,
+html[data-theme="dark"] .compact-scoped-item,
+html[data-theme="dark"] .wishlist-scoped-item,
+html[data-theme="dark"] .places-scoped-item,
+html[data-theme="dark"] .restaurant-card-item,
+html[data-theme="dark"] .tool-row,
+html[data-theme="dark"] .week-day-row,
+html[data-theme="dark"] .budget-row-item,
+html[data-theme="dark"] .todo-task-item,
+html[data-theme="dark"] .household-management-meta,
+html[data-theme="dark"] .household-settings-box,
+html[data-theme="dark"] .household-request-card,
+html[data-theme="dark"] .bubble-event-item,
+html[data-theme="dark"] .day-header,
+html[data-theme="dark"] .wp-item-pill,
+html[data-theme="dark"] .wp-meal-pill,
+html[data-theme="dark"] #places-map{background:var(--surface-2)!important;color:var(--text);border-color:var(--border)}
+html[data-theme="dark"] .day-cell.empty-cell{background:var(--nav-bg)!important}
+html[data-theme="dark"] .day-cell:hover,
+html[data-theme="dark"] .week-day-row:hover,
+html[data-theme="dark"] .wp-item-pill:hover,
+html[data-theme="dark"] .wp-add-item-btn:hover,
+html[data-theme="dark"] .user-dropdown-item:hover,
+html[data-theme="dark"] .action-btn:hover,
+html[data-theme="dark"] .todo-inline-icon-btn:active{background:var(--surface-3)!important}
+html[data-theme="dark"] .day-cell.today{background:rgba(111,194,200,.18)!important}
+html[data-theme="dark"] .calendar-grid{background:var(--border)!important}
+html[data-theme="dark"] .user-dropdown-item{color:var(--text)}
+html[data-theme="dark"] .user-dropdown-item.active-mode{background:var(--surface-3)!important}
+/* surfaces: controls */
+html[data-theme="dark"] .top-home-btn,
+html[data-theme="dark"] .account-icon-btn,
+html[data-theme="dark"] .current-user-badge,
+html[data-theme="dark"] .cal-nav-btn,
+html[data-theme="dark"] .wp-add-item-btn,
+html[data-theme="dark"] .bubble-close-btn,
+html[data-theme="dark"] .restaurant-thumb,
+html[data-theme="dark"] .todo-task-controls .date-tag,
+html[data-theme="dark"] .date-tag,
+html[data-theme="dark"] .auth-secondary,
+html[data-theme="dark"] .household-permission-grid select,
+html[data-theme="dark"] .household-role-select{background:var(--surface-2)!important;color:var(--text)!important;border-color:var(--border)}
+html[data-theme="dark"] .top-home-btn.active,
+html[data-theme="dark"] .nav-item.active,
+html[data-theme="dark"] .cal-main-tab.active,
+html[data-theme="dark"] .auth-tabs button.active{background:var(--surface-3)!important;color:var(--text)!important}
+html[data-theme="dark"] .nav-item.active{color:var(--accent)!important}
+html[data-theme="dark"] .calendar-main-tabs,
+html[data-theme="dark"] .calendar-main-tabs.todo-scope-tabs,
+html[data-theme="dark"] .auth-tabs{background:var(--nav-bg)!important;border-color:var(--border)}
+html[data-theme="dark"] .cal-main-tab{color:var(--muted)!important}
+html[data-theme="dark"] nav.bottom-nav,
+html[data-theme="dark"] .bottom-nav,
+html[data-theme="dark"] .top-header-container{background:var(--nav-bg)!important;border-color:var(--border)}
+html[data-theme="dark"] .nav-item{color:var(--muted)}
+html[data-theme="dark"] .badge{background:rgba(111,194,200,.16)!important;color:#9fdadd!important}
+html[data-theme="dark"] .assign-tag{background:var(--surface-3)!important;color:var(--text)!important}
+html[data-theme="dark"] .assign-tag.bg-dad{background:rgba(79,209,165,.16)!important;color:#5fdcb2!important}
+html[data-theme="dark"] .assign-tag.bg-mom{background:rgba(240,138,176,.16)!important;color:#f59abd!important}
+html[data-theme="dark"] .assign-tag.bg-family{background:rgba(111,194,200,.16)!important;color:#8fd3d8!important}
+html[data-theme="dark"] .who-dad{color:#5fdcb2}
+html[data-theme="dark"] .who-mom{color:#f59abd}
+html[data-theme="dark"] .who-family{color:#8fd3d8}
+html[data-theme="dark"] .shopping-item input[type="checkbox"],
+html[data-theme="dark"] .compact-scoped-checkbox,
+html[data-theme="dark"] .dashboard-task-checkbox{background:var(--surface-2)!important;border-color:#4a6068}
+/* text: headings, labels, secondary text */
+html[data-theme="dark"] .card-title,
+html[data-theme="dark"] .meal-cook-heading,
+html[data-theme="dark"] .meal-planner-heading .card-title,
+html[data-theme="dark"] .meal-planner-heading .meal-cook-heading,
+html[data-theme="dark"] .wp-day-header,
+html[data-theme="dark"] .wp-section-title,
+html[data-theme="dark"] #view-monthlybudget .finance-page-title,
+html[data-theme="dark"] .household-settings-box h4,
+html[data-theme="dark"] #household-owner-controls h4{color:var(--text)!important}
+html[data-theme="dark"] .tool-note,
+html[data-theme="dark"] #family-week-summary,
+html[data-theme="dark"] .list-empty,
+html[data-theme="dark"] .wp-empty-note,
+html[data-theme="dark"] .wp-pill-who,
+html[data-theme="dark"] .todo-person-name,
+html[data-theme="dark"] .todo-divider-meta{color:var(--muted)!important}
+html[data-theme="dark"] .wp-add-item-btn{color:#9fdadd!important}
+html[data-theme="dark"] .tool-btn.secondary{color:var(--text)!important}
+html[data-theme="dark"] .budget-row-item span{color:var(--text)}
+html[data-theme="dark"] .todo-due.is-overdue,
+html[data-theme="dark"] .tool-section.danger-zone h3,
+html[data-theme="dark"] .auth-message,
+html[data-theme="dark"] .action-btn.delete-btn:hover,
+html[data-theme="dark"] .tool-row button:hover{color:var(--danger-text)!important}
+html[data-theme="dark"] .auth-message.ok{color:var(--ok-text)!important}
+/* sign-in / verification screen */
+html[data-theme="dark"] #auth-gate{background:#0f1719!important}
+html[data-theme="dark"] .auth-card{background:var(--card)!important;color:var(--text);border-color:var(--border)}
+html[data-theme="dark"] .auth-input{background:var(--surface-2)!important;color:var(--text)!important;border-color:var(--border)}
+html[data-theme="dark"] .auth-small{color:var(--muted)}
+
+.kid-chore-card{background:#f8fafc;border:1px solid #eae7e1;border-radius:8px;padding:8px 10px;margin-bottom:6px}
+html[data-theme="dark"] .kid-chore-card{background:var(--surface-2)!important;border-color:var(--border);color:var(--text)}
+html[data-theme="dark"] .compact-scoped-tag{background:var(--surface-3)!important;color:var(--text)!important}
+html[data-theme="dark"] .compact-scoped-tag.bg-family{background:rgba(111,194,200,.18)!important;color:#8fd3d8!important}
+html[data-theme="dark"] .compact-scoped-tag.bg-dad{background:rgba(79,209,165,.18)!important;color:#5fdcb2!important}
+html[data-theme="dark"] .compact-scoped-tag.bg-mom{background:rgba(240,138,176,.18)!important;color:#f59abd!important}
+html[data-theme="dark"] .sub-text{color:var(--muted)!important}
+html[data-theme="dark"] .todo-due.is-today{color:#f0b45a!important}
+html[data-theme="dark"] .day-cell.today .day-num{color:#0f1719!important}
+html[data-theme="dark"]{--mom:#f08ab0;--dad:#4fd1a5;--unassigned:#9db0b0}
+html[data-theme="dark"] .event-pill,
+html[data-theme="dark"] .event-pill.quick-added{color:#0f1719!important}
+
+.ev-time{font-weight:800;color:var(--accent)}
 </style>
 </head>
 <body>
@@ -1666,18 +1800,32 @@ html[data-theme="dark"] .shopping-item input[type="checkbox"]:checked::after, ht
                     </svg>
                 </button>
             </div>
+            <div id="auth-postcode-wrap" hidden>
+                <label class="auth-field" for="auth-postcode">Home or example postcode (optional)</label>
+                <input class="auth-input" id="auth-postcode" type="text" autocomplete="postal-code" maxlength="9" placeholder="e.g. YO25 5YR">
+                <p class="auth-small">Only used to add an example pin to Places to visit, so you can see how the map works. You can delete it at any time.</p>
+            </div>
             <button class="auth-primary" id="auth-submit" type="submit">Sign in</button>
             <button class="auth-secondary" type="button" id="auth-reset" onclick="window.fpResetPassword()">Forgot password?</button>
           </form>
           <div class="auth-message" id="auth-message" role="status" aria-live="polite"></div>
           <p class="auth-small" id="auth-version-label">Version 2.3 · build 2026-11-16.13</p>
-          <p class="auth-small">Each adult or family member has their own account. After signing in, create a household or join one using its household ID.</p>
+          <p class="auth-small">Each adult or family member has their own account. After signing in and verifying your email, create a household or join one with an invitation link.</p>
+        </div>
+
+        <div id="verify-panel" class="household-panel">
+          <div class="auth-user-line"><span id="verify-email"></span><button type="button" onclick="window.fpSignOut()">Sign out</button></div>
+          <h2 style="font-size:1.2rem;margin-top:18px;">Verify your email</h2>
+          <p class="auth-small">We sent a verification link to your email address. Open it, then come back and continue.</p>
+          <button class="auth-primary" type="button" onclick="window.fpCheckVerified()">I've verified my email</button>
+          <button class="auth-secondary" type="button" onclick="window.fpResendVerification()">Resend verification email</button>
+          <div class="auth-message" id="verify-message" role="status" aria-live="polite"></div>
         </div>
 
         <div id="household-panel" class="household-panel">
           <div class="auth-user-line"><span id="auth-signed-in-email"></span><button type="button" onclick="window.fpSignOut()">Sign out</button></div>
           <h2 style="font-size:1.2rem;margin-top:18px;">Set up your household</h2>
-          <p class="auth-small">A household connects separate accounts to the same family space. Keep the household ID private and share it only with people you want to join.</p>
+          <p class="auth-small">A household connects adult accounts to the same family space. Children don't need an account; you add them as profiles later.</p>
           <div class="household-choice">
             <strong>Create a new household</strong>
             <label class="auth-field" for="household-name">Household name</label>
@@ -1686,9 +1834,10 @@ html[data-theme="dark"] .shopping-item input[type="checkbox"]:checked::after, ht
           </div>
           <div class="household-choice">
             <strong>Join an existing household</strong>
-            <label class="auth-field" for="household-id">Household ID</label>
-            <input class="auth-input" id="household-id" autocomplete="off" placeholder="Paste the household ID">
-            <button class="auth-secondary" type="button" onclick="window.fpJoinHousehold()">Join household</button>
+            <p class="auth-small">Paste the invitation link the household owner sent to your email address.</p>
+            <label class="auth-field" for="household-invite">Invitation link</label>
+            <input class="auth-input" id="household-invite" autocomplete="off" placeholder="Paste your invitation link">
+            <button class="auth-secondary" type="button" onclick="window.fpJoinHousehold()">Request to join</button>
           </div>
           <div class="auth-message" id="household-message" role="status" aria-live="polite"></div>
         </div>
@@ -1807,6 +1956,10 @@ html[data-theme="dark"] .shopping-item input[type="checkbox"]:checked::after, ht
                 <div class="form-row" id="date-row" style="gap:8px;">
                     <input type="date" id="add-date" class="form-input input-half" placeholder="Start Date">
                     <input type="date" id="add-end-date" class="form-input input-half" placeholder="End Date (Optional)">
+                </div>
+                <div class="form-row" id="time-row" style="gap:8px;align-items:center;">
+                    <label class="tool-note" for="add-time" style="flex:1;margin:0;">Time (optional)</label>
+                    <input type="time" id="add-time" class="form-input input-half" style="flex:1;">
                 </div>
                 <div class="form-row" id="recurring-row" style="gap:8px;">
                     <select id="add-recurring" class="form-select input-full">
@@ -2246,16 +2399,38 @@ html[data-theme="dark"] .shopping-item input[type="checkbox"]:checked::after, ht
         <section class="tool-section" id="household-management-section">
             <h3>🏡 Shared household</h3>
             <p class="tool-note" id="household-sync-status">Sign in and connect to a household to synchronise family information across devices.</p>
-            <div style="margin:10px 0;padding:12px;background:#f7faf8;border:1px solid #e5eee9;border-radius:12px;">
-                <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:12px;">
-                    <span style="font-size:0.78rem;color:var(--muted);font-weight:700;white-space:nowrap;">HOUSEHOLD ID</span>
-                    <code id="household-id-display" style="flex:1;min-width:0;font-size:0.78rem;overflow-wrap:anywhere;">Not connected</code>
-                </div>
+            <div class="household-settings-box">
+                <code id="household-id-display" hidden>Not connected</code>
                 <div style="display:flex;gap:8px;">
-                    <button type="button" class="tool-btn secondary" style="flex:1;" onclick="fpCopyHouseholdId()">Copy ID</button>
                     <button type="button" class="tool-btn secondary" style="flex:1;" onclick="fpSignOut()">Sign out</button>
                 </div>
+                <div id="household-invite-box" style="display:none;">
+                    <h4>Invite an adult</h4>
+                    <p class="tool-note">Each invitation works once, only for the email address you enter, and expires after 7 days. The person still needs your approval to join.</p>
+                    <div style="display:flex;gap:8px;"><input class="auth-input" id="invite-email" type="email" autocomplete="off" placeholder="their@email.com" style="flex:1;min-width:0;"><button type="button" class="tool-btn" onclick="fpCreateInvite()">Create invite</button></div>
+                    <div id="invite-result" class="tool-note" style="margin-top:8px;"></div>
+                    <div id="household-invites-list" class="household-management-list"></div>
+                </div>
                 <h4 id="household-requests-heading">Join requests</h4><div id="household-requests-list" class="household-management-list"><p class="tool-note">No pending requests.</p></div>
+                <div id="household-children-box" style="display:none;">
+                    <h4>Children</h4>
+                    <p class="tool-note">Children don't need an email or password. You manage their profiles here, and they can be chosen when assigning tasks and chores.</p>
+                    <div id="household-children-list" class="household-management-list"></div>
+                    <div style="display:grid;gap:8px;margin-top:8px;">
+                        <input class="auth-input" id="child-name" maxlength="40" autocomplete="off" placeholder="Child's name">
+                        <div style="display:flex;gap:8px;">
+                            <select class="auth-input" id="child-avatar" aria-label="Avatar" style="flex:1;min-width:0;"><option>🧒</option><option>👧</option><option>👦</option><option>👶</option><option>🦁</option><option>🐼</option><option>🦄</option><option>🚀</option><option>⚽</option><option>🎨</option></select>
+                            <select class="auth-input" id="child-type" aria-label="Profile type" onchange="fpChildApplyDefaults()" style="flex:2;min-width:0;"><option value="toddler">Toddler (under 5)</option><option value="child" selected>Child (5–11)</option><option value="teen">Teen (12+)</option></select>
+                        </div>
+                        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                            <label class="tool-note" style="flex:1;min-width:120px;">Chores<select class="auth-input" id="child-perm-chores"></select></label>
+                            <label class="tool-note" style="flex:1;min-width:120px;">Calendar<select class="auth-input" id="child-perm-calendar"></select></label>
+                            <label class="tool-note" style="flex:1;min-width:120px;">Wishlist<select class="auth-input" id="child-perm-wishlist"></select></label>
+                            <label class="tool-note" style="flex:1;min-width:120px;">Meals<select class="auth-input" id="child-perm-meals"></select></label>
+                        </div>
+                        <div style="display:flex;gap:8px;"><button type="button" class="tool-btn" id="child-save-btn" style="flex:1;" onclick="fpSaveChild()">Add child</button><button type="button" class="tool-btn secondary" id="child-cancel-btn" style="display:none;" onclick="fpResetChildForm()">Cancel</button></div>
+                    </div>
+                </div>
                 <h4>Members & permissions</h4><div id="household-members-list" class="household-management-list"><p class="tool-note">Loading members…</p></div>
             </div>
             <p class="tool-note" id="household-member-note">Your private to-do list remains private to your account.</p>
@@ -2308,6 +2483,7 @@ html[data-theme="dark"] .shopping-item input[type="checkbox"]:checked::after, ht
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-functions-compat.js"></script>
 <script>
 // Firebase initialisation. The web API key identifies the project; access is controlled by Firebase Auth and Firestore Rules.
 const firebaseConfig = {
@@ -2364,6 +2540,8 @@ function fpSetAuthMode(mode) {
         else nameEl.setAttribute('required', 'required');
     }
     document.getElementById('auth-submit').textContent = isSignin ? 'Sign in' : 'Create account';
+    const pcWrap = document.getElementById('auth-postcode-wrap');
+    if (pcWrap) pcWrap.hidden = isSignin || !!sessionStorage.getItem('fp_invite'); // invited people join an existing household
     const password = document.getElementById('auth-password');
     if (password) password.autocomplete = isSignin ? 'current-password' : 'new-password';
     setAuthMessage('');
@@ -2401,29 +2579,7 @@ async function fpSignOut() {
 }
 window.fpSignOut = fpSignOut;
 
-function fpCreateHousehold() {
-    const name = document.getElementById('household-name').value.trim();
-    if (!name) { showToast('Please enter a household name'); return; }
-    if (!firebaseUser) { showToast('Please sign in before creating a household.'); return; }
-    // Household creation remains local-only at this stage; Firestore household sync is a separate next step.
-    localStorage.setItem('fam_household_name', name);
-    localStorage.setItem('fam_logged_in', 'true');
-    document.getElementById('auth-gate').style.display = 'none';
-    showToast('Household saved on this device');
-}
-window.fpCreateHousehold = fpCreateHousehold;
 
-function fpJoinHousehold() {
-    const id = document.getElementById('household-id').value.trim();
-    if (!id) { showToast('Please enter a household ID'); return; }
-    if (!firebaseUser) { showToast('Please sign in before joining a household.'); return; }
-    // Household joining remains local-only at this stage; Firestore membership is a separate next step.
-    localStorage.setItem('fam_household_id', id);
-    localStorage.setItem('fam_logged_in', 'true');
-    document.getElementById('auth-gate').style.display = 'none';
-    showToast('Household ID saved on this device');
-}
-window.fpJoinHousehold = fpJoinHousehold;
 
 
 document.getElementById('firebase-auth-form').addEventListener('submit', async function(e) {
@@ -2447,8 +2603,15 @@ document.getElementById('firebase-auth-form').addEventListener('submit', async f
     try {
         if (fpAuthMode === 'signup') {
             if (!name) throw new Error('Please enter your name.');
+            let examplePostcode = (document.getElementById('auth-postcode')?.value || '').replace(/\s+/g, '').toUpperCase();
+            if (examplePostcode) {
+                if (!/^[A-Z]{1,2}\d[A-Z\d]?\d[A-Z]{2}$/.test(examplePostcode)) throw new Error('That postcode does not look right. Check it, or leave it blank.');
+                examplePostcode = examplePostcode.slice(0, -3) + ' ' + examplePostcode.slice(-3);
+            }
             const credential = await firebaseAuth.createUserWithEmailAndPassword(email, password);
             await credential.user.updateProfile({ displayName: name });
+            if (examplePostcode) { try { localStorage.setItem('fam_example_postcode', examplePostcode); } catch (e) {} }
+            try { await credential.user.sendEmailVerification(); } catch (e) { console.warn('Verification email not sent:', e); }
         } else {
             await firebaseAuth.signInWithEmailAndPassword(email, password);
         }
@@ -3031,6 +3194,10 @@ function fpStopSharedListeners(){
   Object.values(fpSharedFlushTimers).forEach(clearTimeout); fpSharedFlushTimers={};
   if(fpMembersUnsub){fpMembersUnsub();fpMembersUnsub=null;}
   if(fpRequestsUnsub){fpRequestsUnsub();fpRequestsUnsub=null;}
+  if(window.fpInvitesUnsub){window.fpInvitesUnsub();window.fpInvitesUnsub=null;}
+  if(window.fpChildrenUnsub){window.fpChildrenUnsub();window.fpChildrenUnsub=null;}
+  fpHouseholdChildren=[];
+  const ib=document.getElementById('household-invite-box');if(ib)ib.style.display='none';
   if(fpMemberUnsub){fpMemberUnsub();fpMemberUnsub=null;}
 }
 function fpAttachSharedListeners(){
@@ -3052,6 +3219,10 @@ function fpAttachSharedListeners(){
   });
   const householdRef=firebaseDb.collection('households').doc(fpHouseholdId);
 
+  window.fpChildrenUnsub=householdRef.collection('children').onSnapshot(cs=>{
+    fpHouseholdChildren=cs.docs.map(d=>({id:d.id,...d.data()}));
+    fpRenderChildren(); fpRenderPlanMemberOptions();
+  },e=>console.warn('Could not load child profiles:',e));
   fpMembersUnsub=householdRef.collection('members').onSnapshot(s=>{
     fpHouseholdMembers=s.docs.map(doc=>({
       uid:doc.id,
@@ -3072,6 +3243,8 @@ function fpAttachSharedListeners(){
     fpRequestsUnsub=householdRef.collection('joinRequests')
       .where('status','==','pending')
       .onSnapshot(s=>fpRenderJoinRequests(s));
+    const box=document.getElementById('household-invite-box');if(box)box.style.display='block';
+    window.fpInvitesUnsub=householdRef.collection('invites').onSnapshot(fpRenderInvites,e=>console.warn('Could not load invitations:',e));
   }
 
   const membershipRef=householdRef.collection('members').doc(firebaseUser.uid);
@@ -3355,6 +3528,7 @@ function fpMemberDisplayName(member) {
 
 function fpDisplayAssignee(who) {
     if (!who || who === 'family') return 'Family';
+    if (String(who).startsWith('child_')) { const c = fpHouseholdChildren.find(x => x.id === who); return c ? c.name : 'Unassigned'; }
     if (who === 'dad' || who === 'mom') {
         const holder = fpMemberForLegacyKey(who);
         return holder ? fpMemberDisplayName(holder) : 'Unassigned';
@@ -3374,6 +3548,7 @@ function fpWhoTagHtml(who, cls = 'wp-pill-who') {
 
 function fpAssigneeStyle(who) {
     if (!who || who === 'family') return 'family';
+    if (String(who).startsWith('child_')) return fpHouseholdChildren.some(x => x.id === who) ? 'family' : 'unassigned';
     if (who === 'dad' || who === 'mom') return fpMemberForLegacyKey(who) ? who : 'unassigned';
 
     const member = fpHouseholdMembers.find(m =>
@@ -3401,6 +3576,12 @@ function fpRenderPlanMemberOptions() {
             option.textContent = fpMemberDisplayName(member);
             select.appendChild(option);
         });
+        fpHouseholdChildren.forEach(child => {
+            const option = document.createElement('option');
+            option.value = child.id;
+            option.textContent = (child.avatar || '🧒') + ' ' + child.name;
+            select.appendChild(option);
+        });
         select.value = Array.from(select.options).some(o => o.value === previous) ? previous : 'family';
     });
     if (firebaseUser) {
@@ -3416,9 +3597,47 @@ window.fpCopyHouseholdId=fpCopyHouseholdId;
 function fpShowHouseholdGate(message){
   const gate=document.getElementById('auth-gate'); if(gate)gate.style.display='flex';
   const account=document.getElementById('auth-account-panel'); if(account)account.style.display='none';
+  const vp=document.getElementById('verify-panel'); if(vp)vp.classList.remove('visible');
   const panel=document.getElementById('household-panel'); if(panel)panel.classList.add('visible');
   const msg=document.getElementById('household-message'); if(msg)msg.textContent=message||'';
+  const pending=sessionStorage.getItem('fp_invite'); const inp=document.getElementById('household-invite');
+  if(pending&&inp&&!inp.value)inp.value=pending;
+  const signed=document.getElementById('auth-signed-in-email');if(signed&&firebaseUser)signed.textContent=firebaseUser.email||'';
 }
+function fpShowVerifyGate(message){
+  const gate=document.getElementById('auth-gate'); if(gate)gate.style.display='flex';
+  const account=document.getElementById('auth-account-panel'); if(account)account.style.display='none';
+  const hp=document.getElementById('household-panel'); if(hp)hp.classList.remove('visible');
+  const vp=document.getElementById('verify-panel'); if(vp)vp.classList.add('visible');
+  const em=document.getElementById('verify-email'); if(em)em.textContent=firebaseUser?.email||'';
+  const msg=document.getElementById('verify-message'); if(msg)msg.textContent=message||'';
+}
+async function fpResendVerification(){
+  const msg=document.getElementById('verify-message');
+  try{await firebaseUser.sendEmailVerification();if(msg)msg.textContent='Verification email sent. Check your inbox and spam folder.';}
+  catch(e){if(msg)msg.textContent=e.code==='auth/too-many-requests'?'Please wait a few minutes before requesting another email.':'Could not send the email. Please try again.';}
+}
+window.fpResendVerification=fpResendVerification;
+async function fpCheckVerified(){
+  const msg=document.getElementById('verify-message');
+  try{
+    await firebaseUser.reload(); firebaseUser=firebaseAuth.currentUser;
+    if(!firebaseUser.emailVerified){if(msg)msg.textContent="We can't see the verification yet. Open the link in the email, then try again.";return;}
+    await firebaseUser.getIdToken(true); // refresh the email_verified claim used by Firestore rules
+    const found=await fpFindExistingHousehold(firebaseUser);
+    if(found){showView('dashboard',document.getElementById('nav-btn-home'));updateHeaderDisplay();renderAllViews();}
+    else fpShowHouseholdGate('Create a household, or join one with an invitation link.');
+  }catch(e){console.error(e);if(msg)msg.textContent='Could not check verification. Please try again.';}
+}
+window.fpCheckVerified=fpCheckVerified;
+// Invitation links arrive as #invite=<householdId>.<token>. Keep the token out of the address bar and history.
+(function(){
+  const m=location.hash.match(/invite=([A-Za-z0-9_.-]+)/);
+  if(!m)return;
+  sessionStorage.setItem('fp_invite',m[1]);
+  history.replaceState(null,'',location.pathname+location.search);
+  try{fpSetAuthMode('signup');setAuthMessage('You have been invited to a household. Create your account, or sign in, using the email address the invitation was sent to.',true);}catch(e){}
+})();
 async function fpEnsureUserProfile(user){
   const ref=firebaseDb.collection('users').doc(user.uid);
   const snap=await ref.get();
@@ -3513,6 +3732,23 @@ async function fpFindExistingHousehold(user) {
     return false;
 }
 
+// Adds the postcode given at registration as one example entry in Places to visit (shown on the map).
+// It is not saved anywhere else, and is removed from this device once used.
+function fpAddExamplePlace(){
+  let pc='';
+  try{pc=(localStorage.getItem('fam_example_postcode')||'').trim().toUpperCase();localStorage.removeItem('fam_example_postcode');}catch(e){}
+  if(!pc)return;
+  let tries=0;
+  const norm=x=>String(x||'').replace(/\s/g,'').toUpperCase();
+  const add=()=>{
+    if(!fpSharedReady.places && tries++<20){setTimeout(add,300);return;}
+    if(!destinationsData.places.some(p=>norm(p.postcode)===norm(pc))){
+      destinationsData.places.push({title:'Home (example place)',who:'family',postcode:pc});
+      saveData();renderAllViews();
+    }
+  };
+  add();
+}
 async function fpCreateHousehold(){
   if(!firebaseUser || !firebaseDb)return showToast('Please sign in first');
   const name=document.getElementById('household-name').value.trim();
@@ -3528,32 +3764,48 @@ async function fpCreateHousehold(){
       transaction.update(profileRef,{householdId:householdRef.id,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
     });
     await fpActivateHousehold(firebaseUser,householdRef.id);
+    fpAddExamplePlace();
     showToast('Household created');
   }catch(error){console.error('Household creation failed:',error);const el=document.getElementById('household-message');if(el)el.textContent=error.message||'Could not create household. Check Firestore rules.';}
 }
 window.fpCreateHousehold=fpCreateHousehold;
+function fpParseInvite(text){
+  const t=String(text||'').trim();
+  const m=t.match(/invite=([A-Za-z0-9]{20})\.([A-Za-z0-9_-]{43})/)||t.match(/^([A-Za-z0-9]{20})\.([A-Za-z0-9_-]{43})$/);
+  return m?{householdId:m[1],token:m[2]}:null;
+}
+async function fpSha256Hex(text){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
 async function fpJoinHousehold(){
+  const say=t=>{const el=document.getElementById('household-message');if(el)el.textContent=t;};
   if(!firebaseUser || !firebaseDb)return showToast('Please sign in first');
-  const id=document.getElementById('household-id').value.trim();
-  if(!id)return showToast('Enter the household ID');
+  if(!firebaseUser.emailVerified){fpShowVerifyGate('Verify your email before joining a household.');return;}
+  const invite=fpParseInvite(document.getElementById('household-invite').value);
+  if(!invite)return say('Paste the full invitation link you were sent.');
   try{
     await fpEnsureUserProfile(firebaseUser);
+    const id=invite.householdId, hash=await fpSha256Hex(invite.token);
     const householdRef=firebaseDb.collection('households').doc(id);
-    const household=await householdRef.get();
-    if(!household.exists)throw new Error('That household ID was not found. Check the ID and try again.');
+    const inviteRef=householdRef.collection('invites').doc(hash);
+    const requestRef=householdRef.collection('joinRequests').doc(firebaseUser.uid);
     const member=await householdRef.collection('members').doc(firebaseUser.uid).get();
     if(member.exists){await fpActivateHousehold(firebaseUser,id);return;}
-    const requestRef=householdRef.collection('joinRequests').doc(firebaseUser.uid);
-    const priorRequest=await requestRef.get();
-    let requestNeedsCreate=!priorRequest.exists;
-    if(priorRequest.exists && priorRequest.data().status==='approved'){
-      const approvedMember=await householdRef.collection('members').doc(firebaseUser.uid).get();
-      if(approvedMember.exists){await fpActivateHousehold(firebaseUser,id);return;}
-      await requestRef.delete();requestNeedsCreate=true;
+    const prior=await requestRef.get();
+    if(prior.exists && prior.data().status!=='pending')await requestRef.delete();
+    if(!prior.exists || prior.data().status!=='pending'){
+      let d=null;
+      try{const snap=await inviteRef.get();d=snap.exists?snap.data():null;}catch(e){d=null;}
+      if(!d)throw new Error('This invitation is invalid, expired, already used, or was sent to a different email address.');
+      const ts=firebase.firestore.FieldValue.serverTimestamp();
+      const batch=firebaseDb.batch();
+      batch.set(requestRef,{uid:firebaseUser.uid,name:firebaseUser.displayName||firebaseUser.email||'New member',email:firebaseUser.email||'',status:'pending',inviteHash:hash,requestedAt:ts});
+      batch.update(inviteRef,{status:'requested',requestedBy:firebaseUser.uid,requestedAt:ts});
+      await batch.commit();
     }
-    if(priorRequest.exists && priorRequest.data().status==='denied'){await requestRef.delete();requestNeedsCreate=true;}
-    if(requestNeedsCreate) await requestRef.set({uid:firebaseUser.uid,name:firebaseUser.displayName||firebaseUser.email||'New member',email:firebaseUser.email||'',status:'pending',requestedAt:firebase.firestore.FieldValue.serverTimestamp()});
-    fpCurrentJoinRequest={householdId:id};
+    sessionStorage.removeItem('fp_invite');
+    try{localStorage.removeItem('fam_example_postcode');}catch(e){}
     if(fpJoinRequestUnsub)fpJoinRequestUnsub();
     fpJoinRequestUnsub=requestRef.onSnapshot(async snap=>{
       if(!snap.exists)return;
@@ -3561,15 +3813,74 @@ async function fpJoinHousehold(){
       if(request.status==='approved'){
         if(fpJoinRequestUnsub){fpJoinRequestUnsub();fpJoinRequestUnsub=null;}
         try{await fpActivateHousehold(firebaseUser,id);showToast('You have joined the household');}
-        catch(err){console.error(err);const el=document.getElementById('household-message');if(el)el.textContent='Approved, but your membership could not be loaded. Please sign out and back in.';}
-      }else if(request.status==='denied'){
-        const el=document.getElementById('household-message');if(el)el.textContent='The household owner declined this request.';
-      }
+        catch(err){console.error(err);say('Approved, but your membership could not be loaded. Please sign out and back in.');}
+      }else if(request.status==='denied'){say('The household owner declined this request.');}
     });
-    const el=document.getElementById('household-message');if(el)el.textContent='Request sent. You can use the household once the owner approves it.';
-  }catch(error){console.error('Join request failed:',error);const el=document.getElementById('household-message');if(el)el.textContent=error.message||'Could not request to join this household.';}
+    say('Request sent. You can use the household once the owner approves it.');
+  }catch(error){console.error('Join request failed:',error);say(error.message||'Could not request to join this household.');}
 }
 window.fpJoinHousehold=fpJoinHousehold;
+
+// ---- Owner: invitations -------------------------------------------------
+const FP_FUNCTIONS_REGION='europe-west2'; // must match the region in functions/index.js
+function fpB64Url(bytes){return btoa(String.fromCharCode(...bytes)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
+async function fpCreateInvite(){
+  if(!fpMemberData || fpMemberData.role!=='owner' || !fpHouseholdId)return;
+  if(!firebaseUser.emailVerified){try{await firebaseUser.reload();firebaseUser=firebaseAuth.currentUser;if(firebaseUser.emailVerified)await firebaseUser.getIdToken(true);}catch(e){}
+    if(!firebaseUser.emailVerified){try{await firebaseUser.sendEmailVerification();}catch(e){}return showToast('Verify your own email first. We have just sent you a verification link.');}}
+  const out=document.getElementById('invite-result');
+  const email=document.getElementById('invite-email').value.trim().toLowerCase();
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))return showToast('Enter a valid email address');
+  if(fpHouseholdMembers.some(m=>String(m.email||'').toLowerCase()===email))return showToast('That person is already a member');
+  try{
+    const token=fpB64Url(crypto.getRandomValues(new Uint8Array(32)));
+    const hash=await fpSha256Hex(token);
+    await firebaseDb.collection('households').doc(fpHouseholdId).collection('invites').doc(hash).set({
+      email,status:'pending',createdBy:firebaseUser.uid,
+      createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+      expiresAt:firebase.firestore.Timestamp.fromMillis(Date.now()+7*24*60*60*1000)
+    });
+    const link=location.origin+location.pathname+'#invite='+fpHouseholdId+'.'+token;
+    document.getElementById('invite-email').value='';
+    out.innerHTML='';
+    const note=document.createElement('p');note.className='tool-note';
+    note.textContent='Invitation created for '+email+'. Sending the email…';
+    const box=document.createElement('input');box.className='auth-input';box.readOnly=true;box.value=link;box.onfocus=()=>box.select();
+    const row=document.createElement('div');row.style.cssText='display:flex;gap:8px;margin-top:6px;';
+    const copy=document.createElement('button');copy.type='button';copy.className='tool-btn';copy.textContent='Copy link';
+    copy.onclick=()=>navigator.clipboard?.writeText(link).then(()=>showToast('Invitation link copied')).catch(()=>box.select());
+    row.appendChild(copy);
+    if(navigator.share){const sh=document.createElement('button');sh.type='button';sh.className='tool-btn secondary';sh.textContent='Share';sh.onclick=()=>navigator.share({title:'Join our household on FamilyPlan',text:'Join our household on FamilyPlan:',url:link}).catch(()=>{});row.appendChild(sh);}
+    out.append(note,box,row);
+    const linkNote=' You can also copy the link below. It is shown only once.';
+    try{
+      if(!firebase.functions)throw {code:'functions/not-found'};
+      await firebase.app().functions(FP_FUNCTIONS_REGION).httpsCallable('sendInviteEmail')({householdId:fpHouseholdId,token});
+      note.textContent='Invitation emailed to '+email+'.'+linkNote;
+    }catch(err){
+      console.warn('Invite email not sent:',err);
+      note.textContent=(err&&err.code==='functions/not-found')
+        ?'Invitation created for '+email+'. Email sending is not set up yet, so copy this link and send it yourself. It is shown only once.'
+        :'Invitation created for '+email+', but the email could not be sent ('+((err&&err.message)||'unknown error')+'). Copy the link and send it yourself. It is shown only once.';
+    }
+  }catch(e){console.error(e);showToast('Could not create the invitation. Check your Firestore rules.');}
+}
+window.fpCreateInvite=fpCreateInvite;
+function fpRenderInvites(snapshot){
+  const el=document.getElementById('household-invites-list');if(!el)return;
+  const docs=snapshot.docs.filter(d=>['pending','requested'].includes(d.data().status));
+  el.innerHTML=docs.length?docs.map(d=>{
+    const i=d.data();const exp=i.expiresAt?.toDate?i.expiresAt.toDate():null;
+    const label=i.status==='requested'?'Waiting for your approval':(exp&&exp<new Date()?'Expired':'Sent, not used yet');
+    return `<div class="household-request-card"><strong>${escapeToolText(i.email||'')}</strong><small>${label}${exp?' · expires '+exp.toLocaleDateString('en-GB',{dateStyle:'medium'}):''}</small><div class="household-request-actions"><button class="tool-btn secondary" type="button" onclick="fpRevokeInvite('${d.id}')">Revoke</button></div></div>`;
+  }).join(''):'<p class="tool-note">No open invitations.</p>';
+}
+async function fpRevokeInvite(hash){
+  if(!fpMemberData || fpMemberData.role!=='owner')return;
+  try{await firebaseDb.collection('households').doc(fpHouseholdId).collection('invites').doc(hash).update({status:'revoked',revokedAt:firebase.firestore.FieldValue.serverTimestamp()});showToast('Invitation revoked');}
+  catch(e){console.error(e);showToast('Could not revoke the invitation');}
+}
+window.fpRevokeInvite=fpRevokeInvite;
 async function fpEnsureHouseholdMemberCount(householdRef){
   const household=await householdRef.get();
   if(!household.exists)throw new Error('Household no longer exists.');
@@ -3597,12 +3908,18 @@ async function fpApproveJoinRequest(uid,approve){
         const count=Number(household.data().memberCount)||1;
         if(count>=9)throw new Error('This household has reached its maximum of 9 members.');
         const data=request.data();
+        if(!data.inviteHash)throw new Error('This request did not come from an invitation, so it cannot be approved.');
         transaction.set(memberRef,{uid,role:'member',name:data.name||data.email||'Member',email:data.email||'',permissions:fpDefaultPermissions(),joinedAt:firebase.firestore.FieldValue.serverTimestamp()});
         transaction.update(profileRef,{householdId:fpHouseholdId,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
         transaction.update(requestRef,{status:'approved',reviewedAt:firebase.firestore.FieldValue.serverTimestamp(),reviewedBy:firebaseUser.uid});
         transaction.update(householdRef,{memberCount:count+1});
+        transaction.update(householdRef.collection('invites').doc(data.inviteHash),{status:'used',usedAt:firebase.firestore.FieldValue.serverTimestamp()});
       });
-    }else await requestRef.update({status:'denied',reviewedAt:firebase.firestore.FieldValue.serverTimestamp(),reviewedBy:firebaseUser.uid});
+    }else{
+      const req=await requestRef.get();
+      await requestRef.update({status:'denied',reviewedAt:firebase.firestore.FieldValue.serverTimestamp(),reviewedBy:firebaseUser.uid});
+      if(req.exists&&req.data().inviteHash)await householdRef.collection('invites').doc(req.data().inviteHash).update({status:'declined'}).catch(()=>{});
+    }
     showToast(approve?'Member approved':'Request declined');
   }catch(error){console.error(error);showToast(error.message||'Could not update join request');}
 }
@@ -3656,6 +3973,84 @@ function fpCloseJoinRequestModal(){
   if(modal) modal.classList.remove('active');
 }
 window.fpCloseJoinRequestModal=fpCloseJoinRequestModal;
+
+let fpHouseholdChildren = [];
+let fpEditingChildId = null;
+const FP_CHILD_LEVELS = ['No access','View only','Contribute'];
+const FP_CHILD_CATS = ['chores','calendar','wishlist','meals'];
+const FP_CHILD_DEFAULTS = {
+  toddler:{chores:'View only',calendar:'No access',wishlist:'No access',meals:'No access'},
+  child:{chores:'Contribute',calendar:'View only',wishlist:'Contribute',meals:'View only'},
+  teen:{chores:'Contribute',calendar:'View only',wishlist:'Contribute',meals:'Contribute'}
+};
+function fpChildFormInit(){
+  FP_CHILD_CATS.forEach(c=>{const el=document.getElementById('child-perm-'+c);if(el&&!el.options.length)el.innerHTML=FP_CHILD_LEVELS.map(l=>`<option>${l}</option>`).join('');});
+}
+function fpChildApplyDefaults(){
+  fpChildFormInit();
+  const d=FP_CHILD_DEFAULTS[document.getElementById('child-type').value]||FP_CHILD_DEFAULTS.child;
+  FP_CHILD_CATS.forEach(c=>{document.getElementById('child-perm-'+c).value=d[c];});
+}
+function fpResetChildForm(){
+  fpEditingChildId=null;
+  document.getElementById('child-name').value='';
+  document.getElementById('child-avatar').selectedIndex=0;
+  document.getElementById('child-type').value='child';
+  fpChildApplyDefaults();
+  document.getElementById('child-save-btn').textContent='Add child';
+  document.getElementById('child-cancel-btn').style.display='none';
+}
+function fpRenderChildren(){
+  const box=document.getElementById('household-children-box');
+  if(box)box.style.display=fpIsOwnerOrParent()?'block':'none';
+  const el=document.getElementById('household-children-list'); if(!el)return;
+  fpChildFormInit();
+  if(!document.getElementById('child-perm-chores').value)fpChildApplyDefaults();
+  el.innerHTML=fpHouseholdChildren.length?fpHouseholdChildren.slice().sort((a,b)=>String(a.name).localeCompare(String(b.name))).map(c=>{
+    const type={toddler:'Toddler',child:'Child',teen:'Teen'}[c.type]||'Child';
+    return `<div class="household-member-card"><strong>${escapeToolText((c.avatar||'🧒')+' '+c.name)}</strong><small>${type} profile · managed by parents</small><div class="household-request-actions"><button class="tool-btn secondary" type="button" onclick="fpEditChild('${c.id}')">Edit</button><button class="tool-btn secondary" type="button" onclick="fpRemoveChild('${c.id}')">Remove</button></div></div>`;
+  }).join(''):'<p class="tool-note">No child profiles yet.</p>';
+}
+function fpEditChild(id){
+  const c=fpHouseholdChildren.find(x=>x.id===id); if(!c)return;
+  fpChildFormInit(); fpEditingChildId=id;
+  document.getElementById('child-name').value=c.name;
+  document.getElementById('child-avatar').value=c.avatar||'🧒';
+  document.getElementById('child-type').value=c.type||'child';
+  FP_CHILD_CATS.forEach(k=>{document.getElementById('child-perm-'+k).value=(c.permissions&&c.permissions[k])||'No access';});
+  document.getElementById('child-save-btn').textContent='Save changes';
+  document.getElementById('child-cancel-btn').style.display='block';
+  document.getElementById('child-name').focus();
+}
+async function fpSaveChild(){
+  if(!fpIsOwnerOrParent()||!fpHouseholdId)return;
+  const name=document.getElementById('child-name').value.trim();
+  if(!name)return showToast("Enter the child's name");
+  const permissions={}; FP_CHILD_CATS.forEach(k=>{permissions[k]=document.getElementById('child-perm-'+k).value;});
+  const data={name,avatar:document.getElementById('child-avatar').value,type:document.getElementById('child-type').value,permissions};
+  const ts=firebase.firestore.FieldValue.serverTimestamp();
+  const col=firebaseDb.collection('households').doc(fpHouseholdId).collection('children');
+  try{
+    if(fpEditingChildId){
+      const old=fpHouseholdChildren.find(x=>x.id===fpEditingChildId);
+      await col.doc(fpEditingChildId).set({...data,createdBy:old?.createdBy||firebaseUser.uid,createdAt:old?.createdAt||ts,updatedAt:ts});
+      showToast('Child profile updated');
+    }else{
+      const id='child_'+Array.from(crypto.getRandomValues(new Uint8Array(9))).map(b=>'abcdefghijklmnopqrstuvwxyz0123456789'[b%36]).join('').padEnd(12,'x').slice(0,12);
+      await col.doc(id).set({...data,createdBy:firebaseUser.uid,createdAt:ts,updatedAt:ts});
+      showToast('Child profile added');
+    }
+    fpResetChildForm();
+  }catch(e){console.error(e);showToast('Could not save the child profile. Check your Firestore rules.');}
+}
+async function fpRemoveChild(id){
+  if(!fpIsOwnerOrParent())return;
+  const c=fpHouseholdChildren.find(x=>x.id===id); if(!c)return;
+  if(!(await fpDialog.confirm(`Remove ${c.name}'s profile? Anything assigned to them will show as Unassigned.`,{title:'Remove child profile',okLabel:'Remove',danger:true})))return;
+  try{await firebaseDb.collection('households').doc(fpHouseholdId).collection('children').doc(id).delete();showToast('Child profile removed');}
+  catch(e){console.error(e);showToast('Could not remove the profile');}
+}
+Object.assign(window,{fpSaveChild,fpEditChild,fpRemoveChild,fpResetChildForm,fpChildApplyDefaults});
 
 function fpRenderMembers(snapshot) {
     const el = document.getElementById('household-members-list');
@@ -3896,6 +4291,7 @@ if(firebaseReady && firebaseAuth){
       const gate=document.getElementById('auth-gate');if(gate)gate.style.display='flex';
       const account=document.getElementById('auth-account-panel');if(account)account.style.display='block';
       const panel=document.getElementById('household-panel');if(panel)panel.classList.remove('visible');
+      const vp=document.getElementById('verify-panel');if(vp)vp.classList.remove('visible');
       fpUpdateHouseholdPanel();renderTodos();return;
     }
     try{
@@ -3912,9 +4308,11 @@ localStorage.setItem('fam_view_mode', viewMode);
 const found=await fpFindExistingHousehold(user);
 await loadPrivateTodos(user.uid);
 if(!found){
-  fpShowHouseholdGate('Create a household or request to join an existing one.');
+  if(!user.emailVerified){fpShowVerifyGate();return;}
+  fpShowHouseholdGate('Create a household, or join one with an invitation link.');
   fpUpdateHouseholdPanel();
 } else {
+  if(!user.emailVerified && !window.fpVerifyNudged){window.fpVerifyNudged=true;showToast('Please verify your email address. Check your inbox.');}
   showView('dashboard', document.getElementById('nav-btn-home'));
   updateHeaderDisplay();
   renderAllViews();
@@ -4009,10 +4407,29 @@ function showView(viewId, navBtn) {
     }
 }
 
+// ---- Calendar entry times (optional "HH:MM" stored as ev.time) ----
+function fpFormatTime(t) {
+    const m = /^(\d{1,2}):(\d{2})$/.exec(String(t || ''));
+    if (!m) return '';
+    let h = parseInt(m[1], 10); const min = m[2];
+    const suffix = h >= 12 ? 'pm' : 'am';
+    h = h % 12 || 12;
+    return min === '00' ? `${h}${suffix}` : `${h}:${min}${suffix}`;
+}
+function fpEvLabel(ev) {
+    const t = fpFormatTime(ev && ev.time);
+    return (t ? t + ' ' : '') + String((ev && ev.title) || '');
+}
+// All-day entries first, then by time. Sorts in place and returns the array.
+function fpSortEvents(list) {
+    return list.sort((a, b) => String(a.time || '').localeCompare(String(b.time || '')));
+}
+
 function handleCategoryChange(val) {
     const isCal = (val === 'calendar' || val === 'birthday' || val === 'events');
     document.getElementById('date-row').style.display = isCal ? 'flex' : 'none';
     document.getElementById('recurring-row').style.display = isCal ? 'flex' : 'none';
+    document.getElementById('time-row').style.display = (val === 'calendar' || val === 'events') ? 'flex' : 'none';
     if (val === 'birthday') {
         document.getElementById('add-recurring').value = 'birthday';
     }
@@ -4060,9 +4477,9 @@ function renderCalendarMonth() {
         const dateKey = `${currentYear}-${mStr}-${dStr}`;
         let eventsHtml = '';
         if (calendarEvents[dateKey]) {
-            calendarEvents[dateKey].filter(ev => filterItem(ev.who)).forEach(ev => {
+            fpSortEvents(calendarEvents[dateKey].filter(ev => filterItem(ev.who))).forEach(ev => {
        const assigneeLabel = ` (${escapeToolText(fpDisplayAssignee(ev.who))})`;
-        eventsHtml += `<div class="event-pill bg-${fpAssigneeStyle(ev.who)} ${ev.quickAdded ? 'quick-added' : ''}" title="${escapeToolText(ev.title)}${escapeToolText(assigneeLabel)}">${escapeToolText(ev.title)}</div>`;
+        eventsHtml += `<div class="event-pill bg-${fpAssigneeStyle(ev.who)} ${ev.quickAdded ? 'quick-added' : ''}" title="${escapeToolText(fpEvLabel(ev))}${escapeToolText(assigneeLabel)}">${escapeToolText(fpEvLabel(ev))}</div>`;
             });
         }
         html += `
@@ -4091,14 +4508,14 @@ function toggleDashboardTask(type, index) {
 function renderDashboard() {
     const todayStr = new Date().toISOString().split('T')[0];
     const schedCont = document.getElementById('dash-schedule');
-    const todayEvents = (calendarEvents[todayStr] || []).filter(ev => filterItem(ev.who));
+    const todayEvents = fpSortEvents((calendarEvents[todayStr] || []).filter(ev => filterItem(ev.who)));
     if (todayEvents.length === 0) {
         schedCont.innerHTML = `<div class="list-empty">No events scheduled for today.</div>`;
     } else {
         schedCont.innerHTML = todayEvents.map(ev => `
             <div class="dashboard-item">
                 <div>
-                    <strong>${escapeToolText(ev.title)}</strong>
+                    <strong>${escapeToolText(fpEvLabel(ev))}</strong>
               <div class="sub-text">Assigned to: ${escapeToolText(fpDisplayAssignee(ev.who))}</div>
                 </div>
                 <span>📅</span>
@@ -4193,7 +4610,7 @@ function openDayPopover(dateKey, dayNum) {
     const formattedDate = `${d} ${monthNames[parseInt(m, 10) - 1]} ${y}`;
     
     document.getElementById('bubble-date-title').textContent = formattedDate;
-    const events = (calendarEvents[dateKey] || []).filter(ev => filterItem(ev.who));
+    const events = fpSortEvents((calendarEvents[dateKey] || []).map((ev, i) => ({ ...ev, _i: i })).filter(ev => filterItem(ev.who)));
     const listCont = document.getElementById('bubble-events-list');
 
     if (events.length === 0) {
@@ -4201,10 +4618,10 @@ function openDayPopover(dateKey, dayNum) {
     } else {
         listCont.innerHTML = events.map((ev, idx) => `
             <div class="bubble-event-item" style="border-left-color: var(--${ev.who});">
-                <div class="bubble-event-title">${escapeToolText(ev.title)}</div>
+                <div class="bubble-event-title">${ev.time ? `<span class="ev-time">${escapeToolText(fpFormatTime(ev.time))}</span> ` : ''}${escapeToolText(ev.title)}</div>
                 <div style="display:flex; align-items:center; gap:6px;">
               <span class="compact-scoped-tag bg-${fpAssigneeStyle(ev.who)}">${escapeToolText(fpDisplayAssignee(ev.who))}</span>
-                    <button class="action-btn delete-btn" onclick="deleteCalEvent('${dateKey}', ${idx}, '${ev.eventId || ''}'); openDayPopover('${dateKey}', ${dayNum});">✕</button>
+                    <button class="action-btn delete-btn" onclick="deleteCalEvent('${dateKey}', ${ev._i}, '${ev.eventId || ''}'); openDayPopover('${dateKey}', ${dayNum});">✕</button>
                 </div>
             </div>
         `).join('');
@@ -4975,7 +5392,7 @@ function addKid() {
 function renderChores() {
     const addKidHtml = `<div class="compact-scoped-add-group" style="margin:4px 0 8px;"><input type="text" id="kid-name-input" class="compact-scoped-input" placeholder="Add a child's name..." onkeydown="if(event.key==='Enter') addKid()"><button class="compact-scoped-add-btn" onclick="addKid()" aria-label="Add child">+</button></div>`;
     document.getElementById('chores-list-container').innerHTML = addKidHtml + choresData.map((k, kIdx) => `
-        <div style="background:#f8fafc; border:1px solid #eae7e1; border-radius:8px; padding:8px 10px; margin-bottom:6px;">
+        <div class="kid-chore-card">
             <div style="font-weight:800; font-size:0.88rem; margin-bottom:6px;">${escapeToolText(k.kid)}</div>
             <div class="compact-scoped-add-group" style="margin-bottom:6px;">
                 <input type="text" id="chore-input-${kIdx}" class="compact-scoped-input" placeholder="Add chore..." onkeydown="if(event.key==='Enter') addKidChore(${kIdx})">
@@ -5035,6 +5452,7 @@ function handleQuickAdd(e) {
     const endDateVal = document.getElementById('add-end-date').value;
     const recurring = document.getElementById('add-recurring').value;
     const postcode = document.getElementById('add-postcode').value.trim();
+    const timeVal = (category === 'calendar' || category === 'events') ? document.getElementById('add-time').value : '';
 
     let title = rawTitle;
     if (category === 'birthday' && !title.includes('🎂')) {
@@ -5055,12 +5473,12 @@ function handleQuickAdd(e) {
                 const dd = String(curDate.getDate()).padStart(2, '0');
                 const key = `${yyyy}-${mm}-${dd}`;
                 if (!calendarEvents[key]) calendarEvents[key] = [];
-                calendarEvents[key].push({ eventId, title: finalTitle, who: assignee, quickAdded: true });
+                calendarEvents[key].push({ eventId, title: finalTitle, who: assignee, quickAdded: true, ...(timeVal ? { time: timeVal } : {}) });
                 curDate.setDate(curDate.getDate() + 1);
             }
         } else if (dateVal) {
             if (!calendarEvents[dateVal]) calendarEvents[dateVal] = [];
-            calendarEvents[dateVal].push({ eventId, title: finalTitle, who: assignee, quickAdded: true });
+            calendarEvents[dateVal].push({ eventId, title: finalTitle, who: assignee, quickAdded: true, ...(timeVal ? { time: timeVal } : {}) });
         }
     } else if (category === 'foodshop') foodShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
     else if (category === 'familyshop') familyShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
@@ -5081,6 +5499,7 @@ function handleQuickAdd(e) {
     saveData();
     document.getElementById('add-title').value = '';
     document.getElementById('add-postcode').value = '';
+    document.getElementById('add-time').value = '';
     toggleQuickAddModal();
     renderAllViews();
     showToast('Item added successfully!');
@@ -5146,13 +5565,13 @@ const cookName = fpDisplayAssignee(mObj?.cook);
 
         // Build Events / Reminders rows
         let eventsRemindersHtml = '';
-        dayEvents.forEach(ev => {
+        fpSortEvents(dayEvents).forEach(ev => {
           const whoName = fpDisplayAssignee(ev.who);
             const cleanTitle = (ev.title || 'Calendar event').replace(/\s*\[(yearly|birthday)\]/ig, '');
             eventsRemindersHtml += `
                 <div class="wp-item-pill" onclick="openDayPopover('${key}', ${d.getDate()})">
                     <span class="wp-pill-icon">${ev.birthday ? '🎂' : '📅'}</span>
-                    <span class="wp-pill-text">${escapeToolText(cleanTitle)} ${fpWhoTagHtml(ev.who)}</span>
+                    <span class="wp-pill-text">${ev.time ? `<span class="ev-time">${escapeToolText(fpFormatTime(ev.time))}</span> ` : ''}${escapeToolText(cleanTitle)} ${fpWhoTagHtml(ev.who)}</span>
                 </div>
             `;
         });
