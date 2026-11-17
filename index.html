@@ -1249,6 +1249,21 @@ html[data-theme="dark"] { color-scheme:dark; --bg:#121a1d; --card:#1b272b; --bor
 html[data-theme="dark"] body { background:#0f1719; }
 html[data-theme="dark"] .card, html[data-theme="dark"] .tool-section, html[data-theme="dark"] .compact-scoped-card, html[data-theme="dark"] .card-calendar-wrapper, html[data-theme="dark"] .todo-inline-add, html[data-theme="dark"] .household-member-card, html[data-theme="dark"] .fp-dialog { background:var(--card); border-color:var(--border); color:var(--text); }
 html[data-theme="dark"] .tool-section.danger-zone { background:#2a1c1c; border-color:#5a2d2a; }
+/* Address Book: keep entered text and field surfaces legible in dark mode. */
+html[data-theme="dark"] #address-book-section #address-book-name,
+html[data-theme="dark"] #address-book-section #address-book-address,
+html[data-theme="dark"] #address-book-section #address-book-postcode {
+    background:#223137 !important;
+    color:#e8f0ee !important;
+    border-color:#52666d !important;
+    caret-color:#e8f0ee;
+}
+html[data-theme="dark"] #address-book-section #address-book-name::placeholder,
+html[data-theme="dark"] #address-book-section #address-book-address::placeholder,
+html[data-theme="dark"] #address-book-section #address-book-postcode::placeholder {
+    color:#aabbbd !important;
+    opacity:1;
+}
 html[data-theme="dark"] .form-input, html[data-theme="dark"] .form-select, html[data-theme="dark"] .compact-scoped-input, html[data-theme="dark"] input, html[data-theme="dark"] select, html[data-theme="dark"] textarea { background:#223137; color:var(--text); border-color:var(--border); }
 html[data-theme="dark"] .todo-inline-add #todo-quick-input { background:transparent; }
 html[data-theme="dark"] .calendar-main-tabs, html[data-theme="dark"] .calendar-main-tabs.todo-scope-tabs { background:#162126; border-color:var(--border); }
