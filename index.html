@@ -1819,8 +1819,23 @@ html[data-theme="dark"] .event-pill.quick-added{color:#0f1719!important}
             <button class="auth-secondary" type="button" id="auth-reset" onclick="window.fpResetPassword()">Forgot password?</button>
           </form>
           <div class="auth-message" id="auth-message" role="status" aria-live="polite"></div>
+          <button class="auth-secondary" type="button" onclick="window.fpShowChildGate()">Child joining a family?</button>
           <p class="auth-small" id="auth-version-label">Version 2.3 · build 2026-11-16.13</p>
           <p class="auth-small">Each adult or family member has their own account. After signing in and verifying your email, create a household or join one with an invitation link.</p>
+        </div>
+
+        <div id="child-join-panel" class="household-panel">
+          <div class="auth-user-line"><span>Child access</span><button type="button" onclick="document.getElementById('child-join-panel').classList.remove('visible');document.getElementById('auth-account-panel').style.display='block'">Back</button></div>
+          <h2 style="font-size:1.2rem;margin-top:18px;">Join your family</h2>
+          <p class="auth-small">Enter your name and the household code shared by your parent. A parent must approve this device before you can see family information.</p>
+          <label class="auth-field" for="child-join-name">Your name</label>
+          <input class="auth-input" id="child-join-name" maxlength="40" autocomplete="name" placeholder="Your name">
+          <label class="auth-field" for="child-join-code">Household code</label>
+          <input class="auth-input" id="child-join-code" maxlength="40" autocomplete="off" autocapitalize="none" placeholder="Paste household code">
+          <label class="auth-field" for="child-join-type">Age group</label>
+          <select class="auth-input" id="child-join-type"><option value="toddler">Under 5</option><option value="child" selected>5–11</option><option value="teen">12+</option></select>
+          <button class="auth-primary" id="child-join-submit" type="button" onclick="window.fpSubmitChildJoin()">Request access</button>
+          <div class="auth-message" id="child-join-message" role="status" aria-live="polite"></div>
         </div>
 
         <div id="verify-panel" class="household-panel">
@@ -2429,25 +2444,6 @@ html[data-theme="dark"] .event-pill.quick-added{color:#0f1719!important}
                     <div id="household-invites-list" class="household-management-list"></div>
                 </div>
                 <h4 id="household-requests-heading">Join requests</h4><div id="household-requests-list" class="household-management-list"><p class="tool-note">No pending requests.</p></div>
-                <div id="household-children-box" style="display:none;">
-                    <h4>Children</h4>
-                    <p class="tool-note">Children don't need an email or password. You manage their profiles here, and they can be chosen when assigning tasks and chores.</p>
-                    <div id="household-children-list" class="household-management-list"></div>
-                    <div style="display:grid;gap:8px;margin-top:8px;">
-                        <input class="auth-input" id="child-name" maxlength="40" autocomplete="off" placeholder="Child's name">
-                        <div style="display:flex;gap:8px;">
-                            <select class="auth-input" id="child-avatar" aria-label="Avatar" style="flex:1;min-width:0;"><option>🧒</option><option>👧</option><option>👦</option><option>👶</option><option>🦁</option><option>🐼</option><option>🦄</option><option>🚀</option><option>⚽</option><option>🎨</option></select>
-                            <select class="auth-input" id="child-type" aria-label="Profile type" onchange="fpChildApplyDefaults()" style="flex:2;min-width:0;"><option value="toddler">Toddler (under 5)</option><option value="child" selected>Child (5–11)</option><option value="teen">Teen (12+)</option></select>
-                        </div>
-                        <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                            <label class="tool-note" style="flex:1;min-width:120px;">Chores<select class="auth-input" id="child-perm-chores"></select></label>
-                            <label class="tool-note" style="flex:1;min-width:120px;">Calendar<select class="auth-input" id="child-perm-calendar"></select></label>
-                            <label class="tool-note" style="flex:1;min-width:120px;">Wishlist<select class="auth-input" id="child-perm-wishlist"></select></label>
-                            <label class="tool-note" style="flex:1;min-width:120px;">Meals<select class="auth-input" id="child-perm-meals"></select></label>
-                        </div>
-                        <div style="display:flex;gap:8px;"><button type="button" class="tool-btn" id="child-save-btn" style="flex:1;" onclick="fpSaveChild()">Add child</button><button type="button" class="tool-btn secondary" id="child-cancel-btn" style="display:none;" onclick="fpResetChildForm()">Cancel</button></div>
-                    </div>
-                </div>
                 <h4>Members & permissions</h4><div id="household-members-list" class="household-management-list"><p class="tool-note">Loading members…</p></div>
             </div>
             <p class="tool-note" id="household-member-note">Your private to-do list remains private to your account.</p>
@@ -3238,7 +3234,7 @@ function fpAttachSharedListeners(){
 
   window.fpChildrenUnsub=householdRef.collection('children').onSnapshot(cs=>{
     fpHouseholdChildren=cs.docs.map(d=>({id:d.id,...d.data()}));
-    fpRenderChildren(); fpRenderPlanMemberOptions();
+    fpRenderPlanMemberOptions();
   },e=>console.warn('Could not load child profiles:',e));
   fpMembersUnsub=householdRef.collection('members').onSnapshot(s=>{
     fpHouseholdMembers=s.docs.map(doc=>({
@@ -3256,10 +3252,10 @@ function fpAttachSharedListeners(){
     console.error('Could not load household members:',error);
   });
 
-  if(String(fpMemberData.role||'').toLowerCase()==='owner'){
-    fpRequestsUnsub=householdRef.collection('joinRequests')
-      .where('status','==','pending')
-      .onSnapshot(s=>fpRenderJoinRequests(s));
+  if(fpIsOwnerOrParent()){
+    let requestQuery=householdRef.collection('joinRequests').where('status','==','pending');
+    if(String(fpMemberData.role||'').toLowerCase()==='parent')requestQuery=requestQuery.where('kind','==','child');
+    fpRequestsUnsub=requestQuery.onSnapshot(s=>fpRenderJoinRequests(s));
     const box=document.getElementById('household-invite-box');if(box)box.style.display='block';
     window.fpInvitesUnsub=householdRef.collection('invites').onSnapshot(fpRenderInvites,e=>console.warn('Could not load invitations:',e));
   }
@@ -3334,10 +3330,10 @@ function fpUpdateHouseholdPanel(){
   const isOwner=String(fpMemberData?.role||'').toLowerCase()==='owner';
 
   const requestsHeading=document.getElementById('household-requests-heading');
-  if(requestsHeading)requestsHeading.hidden=!isOwner;
+  if(requestsHeading)requestsHeading.hidden=!fpIsOwnerOrParent();
 
   const requestsList=document.getElementById('household-requests-list');
-  if(requestsList)requestsList.hidden=!isOwner;
+  if(requestsList)requestsList.hidden=!fpIsOwnerOrParent();
 }
 
 // ---------------------------------------------------------------------------
@@ -3681,10 +3677,77 @@ function fpRenderPlanMemberOptions() {
 let fpHouseholdName='';
 function fpCopyHouseholdId(){if(!fpHouseholdId)return showToast('No household is connected');if(navigator.clipboard?.writeText)navigator.clipboard.writeText(fpHouseholdId).then(()=>showToast('Household ID copied')).catch(()=>showToast('Could not copy household ID'));else showToast('Household ID: '+fpHouseholdId);}
 window.fpCopyHouseholdId=fpCopyHouseholdId;
+function fpShowChildGate(message){
+  const gate=document.getElementById('auth-gate');if(gate)gate.style.display='flex';
+  ['household-panel','verify-panel'].forEach(id=>{const e=document.getElementById(id);if(e)e.classList.remove('visible');});
+  const account=document.getElementById('auth-account-panel');if(account)account.style.display='none';
+  const panel=document.getElementById('child-join-panel');if(panel)panel.classList.add('visible');
+  const msg=document.getElementById('child-join-message');if(msg)msg.textContent=message||'';
+  const code=document.getElementById('child-join-code');if(code&&localStorage.getItem('fp_child_household'))code.value=localStorage.getItem('fp_child_household');
+}
+window.fpShowChildGate=fpShowChildGate;
+function fpListenChildRequest(householdId,uid){
+  if(fpJoinRequestUnsub)fpJoinRequestUnsub();
+  const ref=firebaseDb.collection('households').doc(householdId).collection('joinRequests').doc(uid);
+  fpJoinRequestUnsub=ref.onSnapshot(async snap=>{
+    const msg=document.getElementById('child-join-message');
+    if(!snap.exists){if(msg)msg.textContent='Request not found. Please submit it again.';return;}
+    const data=snap.data();
+    if(data.status==='pending'){if(msg)msg.textContent='Request sent. Ask your parent to approve this device.';return;}
+    if(data.status==='denied'){if(msg)msg.textContent='Your request was declined. Ask your parent to check the household code and try again.';return;}
+    if(data.status==='approved'){
+      if(fpJoinRequestUnsub){fpJoinRequestUnsub();fpJoinRequestUnsub=null;}
+      localStorage.removeItem('fp_child_household');
+      try{await fpActivateHousehold(firebaseUser,householdId);showView('dashboard',document.getElementById('nav-btn-home'));updateHeaderDisplay();renderAllViews();showToast('You have joined your family');}
+      catch(e){console.error(e);if(msg)msg.textContent='Approved, but this device could not connect. Please close and reopen the app.';}
+    }
+  },e=>{console.error('Child request listener failed:',e);const msg=document.getElementById('child-join-message');if(msg)msg.textContent='Could not check approval. Please try again.';});
+}
+async function fpSubmitChildJoin(){
+  const msg=document.getElementById('child-join-message'),button=document.getElementById('child-join-submit');
+  const name=(document.getElementById('child-join-name')?.value||'').trim();
+  const householdId=(document.getElementById('child-join-code')?.value||'').trim();
+  const type=document.getElementById('child-join-type')?.value||'child';
+  if(!name){if(msg)msg.textContent='Enter your name.';return;}
+  if(!/^[A-Za-z0-9]{12,32}$/.test(householdId)){if(msg)msg.textContent='Enter the household code exactly as your parent shared it.';return;}
+  if(button){button.disabled=true;button.textContent='Sending request…';}
+  try{
+    if(!firebaseUser){const credential=await firebaseAuth.signInAnonymously();firebaseUser=credential.user;}
+    if(!firebaseUser.isAnonymous)throw new Error('Sign out of the adult account before using child access.');
+    await fpEnsureUserProfile(firebaseUser);
+    const householdRef=firebaseDb.collection('households').doc(householdId);
+    const household=await householdRef.get();
+    if(!household.exists)throw new Error('That household code was not found. Check the code with your parent.');
+    const profile=await firebaseDb.collection('users').doc(firebaseUser.uid).get();
+    if(profile.exists&&profile.data().householdId)throw new Error('This device is already linked to a household.');
+    const existing=await householdRef.collection('members').doc(firebaseUser.uid).get();
+    if(existing.exists){await fpActivateHousehold(firebaseUser,householdId);return;}
+    const permissions=type==='toddler'?{chores:'View only',calendar:'No access',wishlist:'No access',meals:'No access'}:type==='teen'?{chores:'Contribute',calendar:'View only',wishlist:'Contribute',meals:'Contribute'}:{chores:'Contribute',calendar:'View only',wishlist:'Contribute',meals:'View only'};
+    const requestRef=householdRef.collection('joinRequests').doc(firebaseUser.uid);
+    const priorRequest=await requestRef.get();
+    if(priorRequest.exists&&priorRequest.data().status==='pending'){
+      localStorage.setItem('fp_child_household',householdId);
+      if(msg)msg.textContent='A request is already waiting for your parent to approve.';
+      fpListenChildRequest(householdId,firebaseUser.uid);return;
+    }
+    if(priorRequest.exists&&priorRequest.data().status==='approved'){
+      await fpActivateHousehold(firebaseUser,householdId);return;
+    }
+    if(priorRequest.exists)await requestRef.delete();
+    await requestRef.set({uid:firebaseUser.uid,name,email:'',kind:'child',role:'child',type,permissions,status:'pending',requestedAt:firebase.firestore.FieldValue.serverTimestamp()});
+    localStorage.setItem('fp_child_household',householdId);
+    if(msg)msg.textContent='Request sent. Ask your parent to approve this device.';
+    fpListenChildRequest(householdId,firebaseUser.uid);
+  }catch(e){console.error('Child join failed:',e);if(msg)msg.textContent=e.message||'Could not send your request. Check the household code and try again.';}
+  finally{if(button){button.disabled=false;button.textContent='Request access';}}
+}
+window.fpSubmitChildJoin=fpSubmitChildJoin;
+
 function fpShowHouseholdGate(message){
   const gate=document.getElementById('auth-gate'); if(gate)gate.style.display='flex';
   const account=document.getElementById('auth-account-panel'); if(account)account.style.display='none';
   const vp=document.getElementById('verify-panel'); if(vp)vp.classList.remove('visible');
+  const cp=document.getElementById('child-join-panel');if(cp)cp.classList.remove('visible');
   const panel=document.getElementById('household-panel'); if(panel)panel.classList.add('visible');
   const msg=document.getElementById('household-message'); if(msg)msg.textContent=message||'';
   const pending=sessionStorage.getItem('fp_invite'); const inp=document.getElementById('household-invite');
@@ -3982,11 +4045,16 @@ async function fpEnsureHouseholdMemberCount(householdRef){
   return members.size;
 }
 async function fpApproveJoinRequest(uid,approve){
-  if(!fpMemberData || String(fpMemberData.role||'').toLowerCase()!=='owner' || !fpHouseholdId)return;
+  if(!fpIsOwnerOrParent() || !fpHouseholdId)return;
   try{
     const householdRef=firebaseDb.collection('households').doc(fpHouseholdId);
     const requestRef=householdRef.collection('joinRequests').doc(uid);
     const memberRef=householdRef.collection('members').doc(uid);
+    const requestSnap=await requestRef.get();
+    if(!requestSnap.exists)throw new Error('Join request no longer exists.');
+    const requestData=requestSnap.data();
+    const isChild=requestData.kind==='child';
+    if(!isChild && String(fpMemberData.role).toLowerCase()!=='owner')throw new Error('Only the household owner can approve adult invitations.');
     if(approve){
       await fpEnsureHouseholdMemberCount(householdRef);
       await firebaseDb.runTransaction(async transaction=>{
@@ -3994,24 +4062,35 @@ async function fpApproveJoinRequest(uid,approve){
         const request=await transaction.get(requestRef);
         const existingMember=await transaction.get(memberRef);
         const profileRef=firebaseDb.collection('users').doc(uid);
-        if(!request.exists)throw new Error('Join request no longer exists.');
+        const profile=await transaction.get(profileRef);
+        if(!request.exists || !profile.exists)throw new Error('Join request or user profile no longer exists.');
         if(existingMember.exists)throw new Error('This person is already a household member.');
         const count=Number(household.data().memberCount)||1;
         if(count>=9)throw new Error('This household has reached its maximum of 9 members.');
         const data=request.data();
-        if(!data.inviteHash)throw new Error('This request did not come from an invitation, so it cannot be approved.');
-        transaction.set(memberRef,{uid,role:'member',name:data.name||data.email||'Member',email:data.email||'',permissions:fpDefaultPermissions(),joinedAt:firebase.firestore.FieldValue.serverTimestamp()});
-        transaction.update(profileRef,{householdId:fpHouseholdId,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
-        transaction.update(requestRef,{status:'approved',reviewedAt:firebase.firestore.FieldValue.serverTimestamp(),reviewedBy:firebaseUser.uid});
-        transaction.update(householdRef,{memberCount:count+1});
-        transaction.update(householdRef.collection('invites').doc(data.inviteHash),{status:'used',usedAt:firebase.firestore.FieldValue.serverTimestamp()});
+        if(isChild){
+          if(data.status!=='pending' || data.uid!==uid || !['toddler','child','teen'].includes(data.type))throw new Error('This child request is invalid.');
+          const allowed=['chores','calendar','wishlist','meals'];
+          const permissions={};
+          allowed.forEach(k=>{permissions[k]=['No access','View only','Contribute'].includes(data.permissions?.[k])?data.permissions[k]:'No access';});
+          transaction.set(memberRef,{uid,role:'child',name:data.name||'Child',email:'',type:data.type,permissions,joinedAt:firebase.firestore.FieldValue.serverTimestamp()});
+          transaction.update(profileRef,{householdId:fpHouseholdId,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+          transaction.update(requestRef,{status:'approved',reviewedAt:firebase.firestore.FieldValue.serverTimestamp(),reviewedBy:firebaseUser.uid});
+          transaction.update(householdRef,{memberCount:count+1,...(String(fpMemberData.role).toLowerCase()==='parent'?{lastChildJoinUid:uid}:{})});
+        }else{
+          if(!data.inviteHash)throw new Error('This adult request did not come from an invitation.');
+          transaction.set(memberRef,{uid,role:'member',name:data.name||data.email||'Member',email:data.email||'',permissions:fpDefaultPermissions(),joinedAt:firebase.firestore.FieldValue.serverTimestamp()});
+          transaction.update(profileRef,{householdId:fpHouseholdId,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+          transaction.update(requestRef,{status:'approved',reviewedAt:firebase.firestore.FieldValue.serverTimestamp(),reviewedBy:firebaseUser.uid});
+          transaction.update(householdRef,{memberCount:count+1});
+          transaction.update(householdRef.collection('invites').doc(data.inviteHash),{status:'used',usedAt:firebase.firestore.FieldValue.serverTimestamp()});
+        }
       });
     }else{
-      const req=await requestRef.get();
       await requestRef.update({status:'denied',reviewedAt:firebase.firestore.FieldValue.serverTimestamp(),reviewedBy:firebaseUser.uid});
-      if(req.exists&&req.data().inviteHash)await householdRef.collection('invites').doc(req.data().inviteHash).update({status:'declined'}).catch(()=>{});
+      if(requestData.inviteHash)await householdRef.collection('invites').doc(requestData.inviteHash).update({status:'declined'}).catch(()=>{});
     }
-    showToast(approve?'Member approved':'Request declined');
+    showToast(approve?(isChild?'Child device approved':'Member approved'):'Request declined');
   }catch(error){console.error(error);showToast(error.message||'Could not update join request');}
 }
 window.fpApproveJoinRequest=fpApproveJoinRequest;
@@ -4027,7 +4106,7 @@ function fpRenderJoinRequests(snapshot){
 
     return `<div class="household-request-card">
       <strong>${escapeToolText(r.name||r.email||'New member')}</strong>
-      <small>${escapeToolText(r.email||'')}</small>
+      <small>${r.kind==='child'?'Child device · '+escapeToolText(({toddler:'Under 5',child:'Age 5–11',teen:'Age 12+'})[r.type]||'Child'):(escapeToolText(r.email||'Adult account'))}</small>
       <small>Requested: ${dateTime}</small>
       <div class="household-request-actions">
         <button class="tool-btn" type="button" onclick="fpApproveJoinRequest('${doc.id}',true)">Approve</button>
@@ -4065,140 +4144,62 @@ function fpCloseJoinRequestModal(){
 }
 window.fpCloseJoinRequestModal=fpCloseJoinRequestModal;
 
+// Legacy child-profile records are retained for historical assignment labels only.
+// New child devices are represented by ordinary household member records.
 let fpHouseholdChildren = [];
-let fpEditingChildId = null;
-const FP_CHILD_LEVELS = ['No access','View only','Contribute'];
-const FP_CHILD_CATS = ['chores','calendar','wishlist','meals'];
-const FP_CHILD_DEFAULTS = {
-  toddler:{chores:'View only',calendar:'No access',wishlist:'No access',meals:'No access'},
-  child:{chores:'Contribute',calendar:'View only',wishlist:'Contribute',meals:'View only'},
-  teen:{chores:'Contribute',calendar:'View only',wishlist:'Contribute',meals:'Contribute'}
-};
-function fpChildFormInit(){
-  FP_CHILD_CATS.forEach(c=>{const el=document.getElementById('child-perm-'+c);if(el&&!el.options.length)el.innerHTML=FP_CHILD_LEVELS.map(l=>`<option>${l}</option>`).join('');});
-}
-function fpChildApplyDefaults(){
-  fpChildFormInit();
-  const d=FP_CHILD_DEFAULTS[document.getElementById('child-type').value]||FP_CHILD_DEFAULTS.child;
-  FP_CHILD_CATS.forEach(c=>{document.getElementById('child-perm-'+c).value=d[c];});
-}
-function fpResetChildForm(){
-  fpEditingChildId=null;
-  document.getElementById('child-name').value='';
-  document.getElementById('child-avatar').selectedIndex=0;
-  document.getElementById('child-type').value='child';
-  fpChildApplyDefaults();
-  document.getElementById('child-save-btn').textContent='Add child';
-  document.getElementById('child-cancel-btn').style.display='none';
-}
-function fpRenderChildren(){
-  const box=document.getElementById('household-children-box');
-  if(box)box.style.display=fpIsOwnerOrParent()?'block':'none';
-  const el=document.getElementById('household-children-list'); if(!el)return;
-  fpChildFormInit();
-  if(!document.getElementById('child-perm-chores').value)fpChildApplyDefaults();
-  el.innerHTML=fpHouseholdChildren.length?fpHouseholdChildren.slice().sort((a,b)=>String(a.name).localeCompare(String(b.name))).map(c=>{
-    const type={toddler:'Toddler',child:'Child',teen:'Teen'}[c.type]||'Child';
-    return `<div class="household-member-card"><strong>${escapeToolText((c.avatar||'🧒')+' '+c.name)}</strong><small>${type} profile · managed by parents</small><div class="household-request-actions"><button class="tool-btn secondary" type="button" onclick="fpEditChild('${c.id}')">Edit</button><button class="tool-btn secondary" type="button" onclick="fpRemoveChild('${c.id}')">Remove</button></div></div>`;
-  }).join(''):'<p class="tool-note">No child profiles yet.</p>';
-}
-function fpEditChild(id){
-  const c=fpHouseholdChildren.find(x=>x.id===id); if(!c)return;
-  fpChildFormInit(); fpEditingChildId=id;
-  document.getElementById('child-name').value=c.name;
-  document.getElementById('child-avatar').value=c.avatar||'🧒';
-  document.getElementById('child-type').value=c.type||'child';
-  FP_CHILD_CATS.forEach(k=>{document.getElementById('child-perm-'+k).value=(c.permissions&&c.permissions[k])||'No access';});
-  document.getElementById('child-save-btn').textContent='Save changes';
-  document.getElementById('child-cancel-btn').style.display='block';
-  document.getElementById('child-name').focus();
-}
-async function fpSaveChild(){
-  if(!fpIsOwnerOrParent()||!fpHouseholdId)return;
-  const name=document.getElementById('child-name').value.trim();
-  if(!name)return showToast("Enter the child's name");
-  const permissions={}; FP_CHILD_CATS.forEach(k=>{permissions[k]=document.getElementById('child-perm-'+k).value;});
-  const data={name,avatar:document.getElementById('child-avatar').value,type:document.getElementById('child-type').value,permissions};
-  const ts=firebase.firestore.FieldValue.serverTimestamp();
-  const col=firebaseDb.collection('households').doc(fpHouseholdId).collection('children');
-  try{
-    if(fpEditingChildId){
-      const old=fpHouseholdChildren.find(x=>x.id===fpEditingChildId);
-      await col.doc(fpEditingChildId).set({...data,createdBy:old?.createdBy||firebaseUser.uid,createdAt:old?.createdAt||ts,updatedAt:ts});
-      showToast('Child profile updated');
-    }else{
-      const id='child_'+Array.from(crypto.getRandomValues(new Uint8Array(9))).map(b=>'abcdefghijklmnopqrstuvwxyz0123456789'[b%36]).join('').padEnd(12,'x').slice(0,12);
-      await col.doc(id).set({...data,createdBy:firebaseUser.uid,createdAt:ts,updatedAt:ts});
-      showToast('Child profile added');
-    }
-    fpResetChildForm();
-  }catch(e){console.error(e);showToast('Could not save the child profile. Check your Firestore rules.');}
-}
-async function fpRemoveChild(id){
-  if(!fpIsOwnerOrParent())return;
-  const c=fpHouseholdChildren.find(x=>x.id===id); if(!c)return;
-  if(!(await fpDialog.confirm(`Remove ${c.name}'s profile? Anything assigned to them will show as Unassigned.`,{title:'Remove child profile',okLabel:'Remove',danger:true})))return;
-  try{await firebaseDb.collection('households').doc(fpHouseholdId).collection('children').doc(id).delete();showToast('Child profile removed');}
-  catch(e){console.error(e);showToast('Could not remove the profile');}
-}
-Object.assign(window,{fpSaveChild,fpEditChild,fpRemoveChild,fpResetChildForm,fpChildApplyDefaults});
 
 function fpRenderMembers(snapshot) {
-    const el = document.getElementById('household-members-list');
-    if (!el) return;
-
-    const docs = snapshot.docs;
-
-    el.innerHTML = docs.map(doc => {
-        const m = doc.data();
-        const uid = doc.id;
-        const role = String(m.role || 'member').toLowerCase();
-        const roleLabel = role === 'owner' ? 'Owner' : role === 'parent' ? 'Parent' : 'Member';
-        const memberName = fpMemberDisplayName({ ...m, uid });
-
-        let permissionHtml = '';
-
-        if (role !== 'owner') {
-            permissionHtml = `<div class="household-permission-grid">${Object.entries(FP_SHARED_GROUPS).map(([group, categories]) => {
-                const values = categories.map(c => (m.permissions || {})[c] || 'No access');
-                const value = values.every(v => v === values[0]) ? values[0] : 'Mixed';
-                return `<label>${FP_GROUP_LABELS[group]}<select onchange="fpSetMemberPermission('${uid}','${group}',this.value)" ${fpIsOwnerOrParent() && fpMemberData.role === 'owner' ? '' : 'disabled'}><option ${value === 'No access' ? 'selected' : ''}>No access</option><option ${value === 'View only' ? 'selected' : ''}>View only</option><option ${value === 'Contribute' ? 'selected' : ''}>Contribute</option>${value === 'Mixed' ? '<option selected disabled>Mixed</option>' : ''}</select></label>`;
-            }).join('')}</div>`;
-        }
-
-        return `<div class="household-member-card"><div class="household-member-top"><strong${fpNameColourStyle(uid)}>${escapeToolText(memberName)}${uid === firebaseUser.uid ? ' (you)' : ''}</strong><span class="badge">${roleLabel}</span></div>${role !== 'owner' ? `<label class="auth-field">Role<select class="household-role-select" ${fpMemberData.role === 'owner' ? '' : 'disabled'} onchange="fpSetMemberRole('${uid}',this.value)"><option value="member" ${role === 'member' ? 'selected' : ''}>Member</option><option value="parent" ${role === 'parent' ? 'selected' : ''}>Parent</option></select></label>${permissionHtml}${fpMemberData.role === 'owner' ? `<button class="tool-btn secondary" type="button" onclick="fpRemoveMember('${uid}')">Remove member</button>` : ''}` : ''}</div>`;
-    }).join('') || '<p class="tool-note">No members found.</p>';
+  const el=document.getElementById('household-members-list');if(!el)return;
+  el.innerHTML=snapshot.docs.map(doc=>{
+    const m=doc.data(),uid=doc.id,role=String(m.role||'member').toLowerCase();
+    const roleLabel=role==='owner'?'Owner':role==='parent'?'Parent':role==='child'?'Child':'Member';
+    const name=fpMemberDisplayName({...m,uid});
+    let permissionHtml='';
+    if(role==='child'){
+      const allowed=['chores','calendar','wishlist','meals'];
+      permissionHtml='<div class="household-permission-grid">'+allowed.map(c=>{
+        const v=(m.permissions||{})[c]||'No access';
+        const label={chores:'Chores',calendar:'Calendar',wishlist:'Wishlist',meals:'Meals'}[c];
+        return `<label>${label}<select onchange="fpSetChildPermission('${uid}','${c}',this.value)" ${fpIsOwnerOrParent()?'':'disabled'}><option ${v==='No access'?'selected':''}>No access</option><option ${v==='View only'?'selected':''}>View only</option><option ${v==='Contribute'?'selected':''}>Contribute</option></select></label>`;
+      }).join('')+'</div>';
+    }else if(role!=='owner'){
+      permissionHtml='<div class="household-permission-grid">'+Object.entries(FP_SHARED_GROUPS).map(([group,categories])=>{
+        const values=categories.map(c=>(m.permissions||{})[c]||'No access');
+        const value=values.every(v=>v===values[0])?values[0]:'Mixed';
+        return `<label>${FP_GROUP_LABELS[group]}<select onchange="fpSetMemberPermission('${uid}','${group}',this.value)" ${fpMemberData?.role==='owner'?'':'disabled'}><option ${value==='No access'?'selected':''}>No access</option><option ${value==='View only'?'selected':''}>View only</option><option ${value==='Contribute'?'selected':''}>Contribute</option>${value==='Mixed'?'<option selected disabled>Mixed</option>':''}</select></label>`;
+      }).join('')+'</div>';
+    }
+    const roleControl=(role!=='owner'&&role!=='child')?`<label class="auth-field">Role<select class="household-role-select" ${fpMemberData?.role==='owner'?'':'disabled'} onchange="fpSetMemberRole('${uid}',this.value)"><option value="member" ${role==='member'?'selected':''}>Member</option><option value="parent" ${role==='parent'?'selected':''}>Parent</option></select></label>`:'';
+    const remove=(uid!==firebaseUser?.uid&&fpMemberData?.role==='owner')?`<button class="tool-btn secondary" type="button" onclick="fpRemoveMember('${uid}')">Remove member</button>`:'';
+    return `<div class="household-member-card"><div class="household-member-top"><strong${fpNameColourStyle(uid)}>${escapeToolText(name)}${uid===firebaseUser?.uid?' (you)':''}</strong><span class="badge">${roleLabel}</span></div>${roleControl}${permissionHtml}${remove}</div>`;
+  }).join('')||'<p class="tool-note">No members found.</p>';
 }
+async function fpSetChildPermission(uid,category,value){
+  if(!fpIsOwnerOrParent()||!['chores','calendar','wishlist','meals'].includes(category)||!['No access','View only','Contribute'].includes(value))return;
+  try{await firebaseDb.collection('households').doc(fpHouseholdId).collection('members').doc(uid).update({['permissions.'+category]:value});showToast('Child permission updated');}
+  catch(e){console.error(e);showToast('Could not update child permission');}
+}
+window.fpSetChildPermission=fpSetChildPermission;
 async function fpSetMemberPermission(uid,group,value){
-  if(!fpMemberData || fpMemberData.role!=='owner')return;
+  if(!fpMemberData||fpMemberData.role!=='owner')return;
   const categories=FP_SHARED_GROUPS[group];if(!categories)return;
   try{const ref=firebaseDb.collection('households').doc(fpHouseholdId).collection('members').doc(uid);const snap=await ref.get();if(!snap.exists)return;const permissions={...(snap.data().permissions||{})};categories.forEach(category=>permissions[category]=value);await ref.update({permissions});showToast('Permissions updated');}
   catch(error){console.error(error);showToast('Could not update permissions');}
 }
 window.fpSetMemberPermission=fpSetMemberPermission;
 async function fpSetMemberRole(uid,role){
-  if(!fpMemberData || fpMemberData.role!=='owner' || !['member','parent'].includes(role))return;
+  if(!fpMemberData||fpMemberData.role!=='owner'||!['member','parent'].includes(role))return;
   try{await firebaseDb.collection('households').doc(fpHouseholdId).collection('members').doc(uid).update({role});showToast('Member role updated');}
   catch(error){console.error(error);showToast('Could not update member role');}
 }
 window.fpSetMemberRole=fpSetMemberRole;
 async function fpRemoveMember(uid){
-  if(!fpMemberData || fpMemberData.role!=='owner' || !(await fpDialog.confirm('Remove this person from the household? Their private list will not be affected.',{title:'Remove member',okLabel:'Remove',danger:true})))return;
+  if(!fpMemberData||fpMemberData.role!=='owner'||!(await fpDialog.confirm('Remove this person from the household? Their private list will not be affected.',{title:'Remove member',okLabel:'Remove',danger:true})))return;
   try{
-    const householdRef=firebaseDb.collection('households').doc(fpHouseholdId);
-    const memberRef=householdRef.collection('members').doc(uid);
+    const householdRef=firebaseDb.collection('households').doc(fpHouseholdId),memberRef=householdRef.collection('members').doc(uid);
     await fpEnsureHouseholdMemberCount(householdRef);
-    await firebaseDb.runTransaction(async transaction=>{
-      const household=await transaction.get(householdRef);
-      const member=await transaction.get(memberRef);
-      if(!member.exists)return;
-      const count=Number(household.data().memberCount)||1;
-      if(count<=1)throw new Error('The household owner cannot remove the final member.');
-      transaction.delete(memberRef);
-      transaction.update(householdRef,{memberCount:count-1});
-    });
-    await householdRef.collection('joinRequests').doc(uid).delete().catch(()=>{});
-    showToast('Member removed');
+    await firebaseDb.runTransaction(async transaction=>{const household=await transaction.get(householdRef),member=await transaction.get(memberRef);if(!member.exists)return;const count=Number(household.data().memberCount)||1;if(count<=1)throw new Error('The household owner cannot remove the final member.');transaction.delete(memberRef);transaction.update(householdRef,{memberCount:count-1});});
+    await householdRef.collection('joinRequests').doc(uid).delete().catch(()=>{});showToast('Member removed');
   }catch(error){console.error(error);showToast(error.message||'Could not remove member');}
 }
 window.fpRemoveMember=fpRemoveMember;
@@ -4383,6 +4384,7 @@ if(firebaseReady && firebaseAuth){
       const account=document.getElementById('auth-account-panel');if(account)account.style.display='block';
       const panel=document.getElementById('household-panel');if(panel)panel.classList.remove('visible');
       const vp=document.getElementById('verify-panel');if(vp)vp.classList.remove('visible');
+      const cp=document.getElementById('child-join-panel');if(cp)cp.classList.remove('visible');
       fpUpdateHouseholdPanel();renderTodos();return;
     }
     try{
@@ -4396,6 +4398,14 @@ viewMode = 'individual';
 localStorage.setItem('fam_user', currentUser);
 localStorage.setItem('fam_user_name', currentUserName);
 localStorage.setItem('fam_view_mode', viewMode);
+await fpEnsureUserProfile(user);
+if(user.isAnonymous){
+  const profile=await firebaseDb.collection('users').doc(user.uid).get();
+  const linkedHousehold=profile.exists?(profile.data().householdId||null):null;
+  if(linkedHousehold){await fpActivateHousehold(user,linkedHousehold);await loadPrivateTodos(user.uid);showView('dashboard',document.getElementById('nav-btn-home'));updateHeaderDisplay();renderAllViews();}
+  else{fpShowChildGate('Enter your name and the household code your parent shared.');const pendingHousehold=localStorage.getItem('fp_child_household');if(pendingHousehold)fpListenChildRequest(pendingHousehold,user.uid);}
+  return;
+}
 const found=await fpFindExistingHousehold(user);
 await loadPrivateTodos(user.uid);
 if(!found){
