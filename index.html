@@ -2331,6 +2331,10 @@ html[data-theme="dark"] .event-pill.quick-added{color:#0f1719!important}
                 </div>
                 <div id="todo-selected-date" class="todo-selected-date" aria-live="polite"></div>
                 <div id="todo-list-container" class="list-container todo-list-clean"></div>
+                <section id="todo-chores-panel" class="compact-scoped-card" style="margin-top:14px;">
+                    <div class="todo-scoped-title">⭐ Kids' Chores</div>
+                    <div id="chores-list-container" class="chores-grid"></div>
+                </section>
             </div>
             <div id="todo-gift-panel" style="display:none;">
                 <div class="todo-scoped-title" style="margin:4px 0 8px;">🎁 Gift Wishlist</div>
@@ -2342,10 +2346,6 @@ html[data-theme="dark"] .event-pill.quick-added{color:#0f1719!important}
             </div>
         </section>
 
-        <section class="compact-scoped-card">
-            <div class="todo-scoped-title">⭐ Kids' Chores</div>
-            <div id="chores-list-container" class="chores-grid"></div>
-        </section>
         </div>
         <div id="family-ideas-panel" style="display:none;">
             <section class="card"><div class="card-title">💡 Family Ideas</div><p class="tool-note">Save ideas before deciding: days out, restaurants, films, holidays or gifts.</p></section>
@@ -5211,8 +5211,10 @@ function setTodoScope(scope) {
     const isGift = activeTodoScope === 'gift';
     const todoPanel = document.getElementById('todo-content-panel');
     const giftPanel = document.getElementById('todo-gift-panel');
+    const choresPanel = document.getElementById('todo-chores-panel');
     if (todoPanel) todoPanel.style.display = isGift ? 'none' : 'block';
     if (giftPanel) giftPanel.style.display = isGift ? 'block' : 'none';
+    if (choresPanel) choresPanel.style.display = activeTodoScope === 'family' ? 'block' : 'none';
     const clearButton = document.getElementById('todo-clear-completed');
     if (clearButton) {
         const completedCount = isGift ? 0 : (activeTodoScope === 'private'
@@ -5514,9 +5516,11 @@ function renderTodos() {
     }
     const todoPanel = document.getElementById('todo-content-panel');
     const giftPanel = document.getElementById('todo-gift-panel');
+    const choresPanel = document.getElementById('todo-chores-panel');
     const clearButton = document.getElementById('todo-clear-completed');
     if (todoPanel) todoPanel.style.display = 'block';
     if (giftPanel) giftPanel.style.display = 'none';
+    if (choresPanel) choresPanel.style.display = activeTodoScope === 'family' ? 'block' : 'none';
     if (clearButton) clearButton.style.display = '';
     const familyButton = document.getElementById('todo-scope-family');
     const privateButton = document.getElementById('todo-scope-private');
