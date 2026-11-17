@@ -1923,7 +1923,6 @@ html[data-theme="dark"] .event-pill.quick-added{color:#0f1719!important}
             <option value="home">Home Watchlist</option>
             <option value="todo">To-Do Task</option>
             <option value="chores">Kid Chore</option>
-            <option value="wishlist">Gift Wishlist</option>
         </select>
     </div>
 
@@ -1946,7 +1945,6 @@ html[data-theme="dark"] .event-pill.quick-added{color:#0f1719!important}
             <option value="home">Home Watchlist</option>
             <option value="todo">To-Do Task</option>
             <option value="chores">Kid Chore</option>
-            <option value="wishlist">Gift Wishlist</option>
         </select>
         <label style="display:block;margin-top:8px;">Date</label>
         <input id="voice-review-date" type="text" class="form-input input-full" placeholder="Date (optional)">
@@ -1976,8 +1974,7 @@ html[data-theme="dark"] .event-pill.quick-added{color:#0f1719!important}
                         <option value="home">Home Watchlist</option>
                         <option value="todo">To-Do Task</option>
                         <option value="chores">Kid Chore</option>
-                        <option value="wishlist">Gift Wishlist</option>
-                    </select>
+                                </select>
                     <select id="add-assignee" class="form-select input-half">
                         <option value="family">Family (Everyone)</option>
                     </select>
@@ -2316,36 +2313,38 @@ html[data-theme="dark"] .event-pill.quick-added{color:#0f1719!important}
         <div id="family-tasks-panel">
         <section class="compact-scoped-card">
             <div class="todo-scoped-title"><span class="todo-heading-icon" aria-hidden="true">📝</span><span>To-Do List</span><button type="button" id="todo-clear-completed" class="tool-btn secondary todo-heading-clear" onclick="clearCompletedTodos()" disabled>Clear completed</button></div>
-            <div class="calendar-main-tabs todo-scope-tabs" role="group" aria-label="Family or private to-do list" style="margin:0 0 12px;padding:4px;">
-                <button type="button" id="todo-scope-family" class="cal-main-tab active" onclick="setTodoScope('family')" aria-pressed="true" style="flex:1;">Family</button>
+            <div class="calendar-main-tabs todo-scope-tabs" role="group" aria-label="To-do list views" style="margin:0 0 12px;padding:4px;">
+                <button type="button" id="todo-scope-family" class="cal-main-tab active" onclick="setTodoScope('family')" aria-pressed="true" style="flex:1;">To-Do</button>
                 <button type="button" id="todo-scope-private" class="cal-main-tab" onclick="setTodoScope('private')" aria-pressed="false" style="flex:1;">Private</button>
+                <button type="button" id="todo-scope-gift" class="cal-main-tab" onclick="setTodoScope('gift')" aria-pressed="false" style="flex:1;">Gift</button>
             </div>
-            <p id="todo-scope-note" class="tool-note" style="display:none;">Household tasks assigned to you or everyone.</p>
-            <div class="todo-inline-add" role="group" aria-label="Add a to-do item">
-                <input type="text" id="todo-quick-input" placeholder="Add task…" aria-label="New task" onkeydown="if(event.key==='Enter') addTodoItem()">
-                <div class="todo-inline-actions">
-                    <button type="button" id="todo-assign-button" class="todo-inline-icon-btn todo-assign-btn" onclick="cycleNewTodoAssignee()" aria-label="Change assignee" title="Change task assignee"><span aria-hidden="true">👤</span><span id="todo-assign-label">Assign</span></button>
-                    <button type="button" id="todo-date-button" class="todo-inline-icon-btn" onclick="openTodoDatePicker()" aria-label="Choose task date" title="Choose task date">📅</button>
-                    <button type="button" class="todo-inline-icon-btn todo-add-submit" onclick="addTodoItem()" aria-label="Add task" title="Add task">+</button>
+            <div id="todo-content-panel">
+                <p id="todo-scope-note" class="tool-note" style="display:none;">Household tasks assigned to you or everyone.</p>
+                <div class="todo-inline-add" role="group" aria-label="Add a to-do item">
+                    <input type="text" id="todo-quick-input" placeholder="Add task…" aria-label="New task" onkeydown="if(event.key==='Enter') addTodoItem()">
+                    <div class="todo-inline-actions">
+                        <button type="button" id="todo-assign-button" class="todo-inline-icon-btn todo-assign-btn" onclick="cycleNewTodoAssignee()" aria-label="Change assignee" title="Change task assignee"><span aria-hidden="true">👤</span><span id="todo-assign-label">Assign</span></button>
+                        <button type="button" id="todo-date-button" class="todo-inline-icon-btn" onclick="openTodoDatePicker()" aria-label="Choose task date" title="Choose task date">📅</button>
+                        <button type="button" class="todo-inline-icon-btn todo-add-submit" onclick="addTodoItem()" aria-label="Add task" title="Add task">+</button>
+                    </div>
+                    <input type="date" id="todo-date-input" class="todo-date-input-hidden" aria-label="Task date" tabindex="-1" onchange="syncTodoDateLabel()">
                 </div>
-                <input type="date" id="todo-date-input" class="todo-date-input-hidden" aria-label="Task date" tabindex="-1" onchange="syncTodoDateLabel()">
+                <div id="todo-selected-date" class="todo-selected-date" aria-live="polite"></div>
+                <div id="todo-list-container" class="list-container todo-list-clean"></div>
             </div>
-            <div id="todo-selected-date" class="todo-selected-date" aria-live="polite"></div>
-            <div id="todo-list-container" class="list-container todo-list-clean"></div>
+            <div id="todo-gift-panel" style="display:none;">
+                <div class="todo-scoped-title" style="margin:4px 0 8px;">🎁 Gift Wishlist</div>
+                <div class="compact-scoped-add-group">
+                    <input type="text" id="wishlist-quick-input" class="wishlist-scoped-input" placeholder="Add gift idea..." onkeydown="if(event.key==='Enter') addWishlistItem()">
+                    <button class="compact-scoped-add-btn" onclick="addWishlistItem()" aria-label="Add gift">+</button>
+                </div>
+                <div id="wishlist-list-container" style="display:flex; flex-direction:column;"></div>
+            </div>
         </section>
 
         <section class="compact-scoped-card">
             <div class="todo-scoped-title">⭐ Kids' Chores</div>
             <div id="chores-list-container" class="chores-grid"></div>
-        </section>
-
-        <section class="compact-scoped-card">
-            <div class="todo-scoped-title">🎁 Gift Wishlist</div>
-            <div class="compact-scoped-add-group">
-                <input type="text" id="wishlist-quick-input" class="wishlist-scoped-input" placeholder="Add item..." onkeydown="if(event.key==='Enter') addWishlistItem()">
-                <button class="compact-scoped-add-btn" onclick="addWishlistItem()" aria-label="Add item">+</button>
-            </div>
-            <div id="wishlist-list-container" style="display:flex; flex-direction:column;"></div>
         </section>
         </div>
         <div id="family-ideas-panel" style="display:none;">
@@ -5195,24 +5194,31 @@ function renderRestaurantsView() {
 }
 
 function setTodoScope(scope) {
-    activeTodoScope = scope === 'private' ? 'private' : 'family';
+    activeTodoScope = ['private', 'gift'].includes(scope) ? scope : 'family';
+    if (viewMode === 'family' && activeTodoScope === 'private') activeTodoScope = 'family';
     const familyButton = document.getElementById('todo-scope-family');
     const privateButton = document.getElementById('todo-scope-private');
-    if (familyButton) {
-        familyButton.classList.toggle('active', activeTodoScope === 'family');
-        familyButton.setAttribute('aria-pressed', String(activeTodoScope === 'family'));
-    }
+    const giftButton = document.getElementById('todo-scope-gift');
+    [[familyButton, 'family'], [privateButton, 'private'], [giftButton, 'gift']].forEach(([button, value]) => {
+        if (!button) return;
+        button.classList.toggle('active', activeTodoScope === value);
+        button.setAttribute('aria-pressed', String(activeTodoScope === value));
+    });
     if (privateButton) {
-        privateButton.classList.toggle('active', activeTodoScope === 'private');
-        privateButton.setAttribute('aria-pressed', String(activeTodoScope === 'private'));
         privateButton.disabled = viewMode === 'family';
         privateButton.title = viewMode === 'family' ? 'Private reminders are available in My View only' : '';
     }
+    const isGift = activeTodoScope === 'gift';
+    const todoPanel = document.getElementById('todo-content-panel');
+    const giftPanel = document.getElementById('todo-gift-panel');
+    if (todoPanel) todoPanel.style.display = isGift ? 'none' : 'block';
+    if (giftPanel) giftPanel.style.display = isGift ? 'block' : 'none';
     const clearButton = document.getElementById('todo-clear-completed');
     if (clearButton) {
-        const completedCount = activeTodoScope === 'private'
+        const completedCount = isGift ? 0 : (activeTodoScope === 'private'
             ? privateTodosData.filter(task => task.done).length
-            : todosData.filter(task => task.done && filterItem(task.who)).length;
+            : todosData.filter(task => task.done && filterItem(task.who)).length);
+        clearButton.style.display = isGift ? 'none' : '';
         clearButton.disabled = completedCount === 0;
         clearButton.textContent = completedCount ? `Clear completed (${completedCount})` : 'Clear completed';
     }
@@ -5222,7 +5228,8 @@ function setTodoScope(scope) {
         ? 'Your personal reminders are stored under your signed-in account and are not shared with the household.'
         : (viewMode === 'family' ? 'All shared household tasks.' : 'Household tasks assigned to you or everyone.');
     if (input) input.placeholder = activeTodoScope === 'private' ? 'Add reminder…' : 'Add task…';
-    renderTodos();
+    if (isGift) renderWishlist();
+    else renderTodos();
 }
 window.setTodoScope = setTodoScope;
 
@@ -5495,6 +5502,22 @@ function renderTodos() {
     const container = document.getElementById('todo-list-container');
     if (!container) return;
     if (viewMode === 'family' && activeTodoScope === 'private') activeTodoScope = 'family';
+    if (activeTodoScope === 'gift') {
+        const todoPanel = document.getElementById('todo-content-panel');
+        const giftPanel = document.getElementById('todo-gift-panel');
+        const clearButton = document.getElementById('todo-clear-completed');
+        if (todoPanel) todoPanel.style.display = 'none';
+        if (giftPanel) giftPanel.style.display = 'block';
+        if (clearButton) clearButton.style.display = 'none';
+        renderWishlist();
+        return;
+    }
+    const todoPanel = document.getElementById('todo-content-panel');
+    const giftPanel = document.getElementById('todo-gift-panel');
+    const clearButton = document.getElementById('todo-clear-completed');
+    if (todoPanel) todoPanel.style.display = 'block';
+    if (giftPanel) giftPanel.style.display = 'none';
+    if (clearButton) clearButton.style.display = '';
     const familyButton = document.getElementById('todo-scope-family');
     const privateButton = document.getElementById('todo-scope-private');
     if (familyButton) {
