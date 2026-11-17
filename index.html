@@ -1624,6 +1624,8 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
 .household-request-actions{display:flex;gap:8px}
 .household-request-actions button{flex:1}
 #household-owner-controls h4{font-size:.88rem;margin:14px 0 6px;color:#344b50}
+.household-child-code{padding:10px 12px;border:1px dashed var(--border);border-radius:10px;background:var(--card);overflow-wrap:anywhere;font-weight:800;letter-spacing:.06em}
+#managed-children-list{margin-top:8px}
 @media(max-width:360px){.household-permission-grid{grid-template-columns:1fr}}
 
 
@@ -2437,6 +2439,26 @@ html[data-theme="dark"] .event-pill.quick-added{color:#0f1719!important}
                     <button type="button" class="tool-btn secondary" style="flex:1;" onclick="fpSignOut()">Sign out</button>
                 </div>
                 <div id="household-invite-box" style="display:none;">
+                    <h4>Child joining code</h4>
+                    <p class="tool-note">Share this code with a child who has their own phone. They can install FamilyPlan, enter the code and request access. You must approve each device.</p>
+                    <div class="household-child-code"><code id="child-household-code">Connect to your household first</code></div>
+                    <div class="account-actions" style="margin-top:8px;">
+                        <button type="button" class="tool-btn secondary" onclick="fpCopyChildJoinCode()">Copy child code</button>
+                        <button type="button" class="tool-btn secondary" onclick="fpShareChildJoinCode()">Share code</button>
+                        <button type="button" class="tool-btn secondary" onclick="fpShareChildJoinCode('sms')">Text message</button>
+                        <button type="button" class="tool-btn secondary" onclick="fpShareChildJoinCode('whatsapp')">WhatsApp</button>
+                    </div>
+                    <div id="managed-child-box" style="margin-top:16px;">
+                        <h4>Add a child without a phone</h4>
+                        <p class="tool-note">Create a household profile for a younger child. They do not need an email address, password or login. The profile can be assigned chores and planner items.</p>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                            <input class="auth-input" id="managed-child-name" type="text" maxlength="40" placeholder="Child's name" style="flex:1;min-width:130px;">
+                            <select class="auth-input" id="managed-child-type" style="width:auto;min-width:120px;"><option value="toddler">Toddler</option><option value="child" selected>Child</option><option value="teen">Teen</option></select>
+                            <button type="button" class="tool-btn" onclick="fpCreateManagedChild()">Add child</button>
+                        </div>
+                        <div id="managed-child-status" class="tool-note" aria-live="polite"></div>
+                        <div id="managed-children-list" class="household-management-list"></div>
+                    </div>
                     <h4>Invite an adult</h4>
                     <p class="tool-note">Each invitation works once, only for the email address you enter, and expires after 7 days. The person still needs your approval to join.</p>
                     <div style="display:flex;gap:8px;"><input class="auth-input" id="invite-email" type="email" autocomplete="off" placeholder="their@email.com" style="flex:1;min-width:0;"><button type="button" class="tool-btn" onclick="fpCreateInvite()">Create invite</button></div>
@@ -3235,6 +3257,7 @@ function fpAttachSharedListeners(){
   window.fpChildrenUnsub=householdRef.collection('children').onSnapshot(cs=>{
     fpHouseholdChildren=cs.docs.map(d=>({id:d.id,...d.data()}));
     fpRenderPlanMemberOptions();
+    fpRenderManagedChildren();
   },e=>console.warn('Could not load child profiles:',e));
   fpMembersUnsub=householdRef.collection('members').onSnapshot(s=>{
     fpHouseholdMembers=s.docs.map(doc=>({
@@ -3316,6 +3339,8 @@ function fpUpdateHouseholdPanel(){
 
   const id=document.getElementById('household-id-display');
   if(id)id.textContent=fpHouseholdId||'Not connected';
+  const childCode=document.getElementById('child-household-code');
+  if(childCode)childCode.textContent=fpHouseholdId||'Connect to your household first';
 
   const status=document.getElementById('household-sync-status');
   if(status){
@@ -3326,6 +3351,8 @@ function fpUpdateHouseholdPanel(){
 
   const controls=document.getElementById('household-owner-controls');
   if(controls)controls.hidden=!fpIsOwnerOrParent();
+  const managedBox=document.getElementById('managed-child-box');
+  if(managedBox)managedBox.style.display=String(fpMemberData?.role||'').toLowerCase()==='owner'?'block':'none';
 
   const isOwner=String(fpMemberData?.role||'').toLowerCase()==='owner';
 
@@ -3677,6 +3704,50 @@ function fpRenderPlanMemberOptions() {
 let fpHouseholdName='';
 function fpCopyHouseholdId(){if(!fpHouseholdId)return showToast('No household is connected');if(navigator.clipboard?.writeText)navigator.clipboard.writeText(fpHouseholdId).then(()=>showToast('Household ID copied')).catch(()=>showToast('Could not copy household ID'));else showToast('Household ID: '+fpHouseholdId);}
 window.fpCopyHouseholdId=fpCopyHouseholdId;
+function fpChildInviteText(){return `Join our family on FamilyPlan. Install the app, choose “Child joining a family?” and enter this household code: ${fpHouseholdId}. Your parent will approve your device.`;}
+async function fpCopyChildJoinCode(){if(!fpHouseholdId)return showToast('No household is connected');try{await navigator.clipboard.writeText(fpHouseholdId);showToast('Child joining code copied');}catch(e){showToast('Your child joining code is '+fpHouseholdId);}}
+window.fpCopyChildJoinCode=fpCopyChildJoinCode;
+async function fpShareChildJoinCode(method){
+  if(!fpHouseholdId)return showToast('No household is connected');
+  const text=fpChildInviteText();
+  if(method==='whatsapp'){window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank','noopener');return;}
+  if(method==='sms'){window.location.href='sms:?body='+encodeURIComponent(text);return;}
+  if(navigator.share){try{await navigator.share({title:'Join our family on FamilyPlan',text});}catch(e){if(e.name!=='AbortError')showToast('Could not open sharing options');}return;}
+  try{await navigator.clipboard.writeText(text);showToast('Invitation copied. Paste it into a text or WhatsApp message.');}catch(e){showToast('Use this code: '+fpHouseholdId);}
+}
+window.fpShareChildJoinCode=fpShareChildJoinCode;
+async function fpCreateManagedChild(){
+  const name=String(document.getElementById('managed-child-name')?.value||'').replace(/\s+/g,' ').trim();
+  const type=document.getElementById('managed-child-type')?.value||'child';
+  const status=document.getElementById('managed-child-status');
+  if(!fpHouseholdId||String(fpMemberData?.role||'').toLowerCase()!=='owner'){if(status)status.textContent='Only the household owner can add a managed child profile.';return;}
+  if(!name){if(status)status.textContent='Enter the child’s name.';return;}
+  if(!['toddler','child','teen'].includes(type)){if(status)status.textContent='Choose a valid age group.';return;}
+  if(fpHouseholdChildren.some(c=>String(c.name||'').toLowerCase()===name.toLowerCase()&&c.profileType==='managed')){if(status)status.textContent='A managed profile with that name already exists.';return;}
+  try{
+    if(status)status.textContent='Adding child profile…';
+    const id='child_'+Math.random().toString(36).slice(2,12);
+    const record={id,name,type,profileType:'managed',avatar:type==='toddler'?'🧒':type==='teen'?'🧑':'👧',createdBy:firebaseUser.uid,createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+    await firebaseDb.collection('households').doc(fpHouseholdId).collection('children').doc(id).set(record);
+    if(!choresData.some(k=>String(k.kid||'').toLowerCase()===name.toLowerCase())){choresData.push({kid:name,chores:[]});saveData();if(typeof renderChores==='function')renderChores();}
+    const input=document.getElementById('managed-child-name');if(input)input.value='';
+    if(status)status.textContent=`${name} has been added. You can now assign chores and planner items to this profile.`;
+    showToast('Child profile added');
+  }catch(e){console.error('Managed child creation failed:',e);if(status)status.textContent=e.message||'Could not add child profile. Check the Firestore rules have been updated.';}
+}
+window.fpCreateManagedChild=fpCreateManagedChild;
+function fpRenderManagedChildren(){
+  const el=document.getElementById('managed-children-list');if(!el)return;
+  const profiles=fpHouseholdChildren.filter(c=>c.profileType==='managed');
+  if(!profiles.length){el.innerHTML='<p class="tool-note">No managed child profiles yet.</p>';return;}
+  el.innerHTML=profiles.map(c=>`<div class="household-member-card"><div class="household-member-top"><strong>${escapeToolText(c.avatar||'🧒')} ${escapeToolText(c.name||'Child')}</strong><span class="badge">No login</span></div><small class="tool-note">${escapeToolText(({toddler:'Toddler',child:'Child',teen:'Teen'})[c.type]||'Child')} · Can be assigned chores and planner items</small><button class="tool-btn secondary" type="button" onclick="fpDeleteManagedChild('${String(c.id).replace(/[^A-Za-z0-9_-]/g,'')}')">Remove profile</button></div>`).join('');
+}
+async function fpDeleteManagedChild(id){
+  if(String(fpMemberData?.role||'').toLowerCase()!=='owner'||!id||!(await fpDialog.confirm('Remove this managed child profile? Existing assignments will become unassigned.',{title:'Remove child profile',okLabel:'Remove',danger:true})))return;
+  try{await firebaseDb.collection('households').doc(fpHouseholdId).collection('children').doc(id).delete();showToast('Child profile removed');}
+  catch(e){console.error(e);showToast('Could not remove child profile');}
+}
+window.fpDeleteManagedChild=fpDeleteManagedChild;
 function fpShowChildGate(message){
   const gate=document.getElementById('auth-gate');if(gate)gate.style.display='flex';
   ['household-panel','verify-panel'].forEach(id=>{const e=document.getElementById(id);if(e)e.classList.remove('visible');});
