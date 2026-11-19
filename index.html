@@ -40,7 +40,7 @@ body {
     min-height: 100vh;
     line-height: 1.45;
     overflow-x: hidden;
-    font-size: 1rem;
+    font-size:1rem;
 }
 
 /* Top Header Container */
@@ -52,7 +52,7 @@ body {
     z-index: 1000;
     background: rgba(250,252,250,.94);
     border-bottom: 1px solid rgba(218,229,224,.9);
-    box-shadow: 0 3px 18px rgba(31,58,61,.045);
+    box-shadow: var(--shadow-raised);
     backdrop-filter: blur(14px);
     padding: 8px 12px;
     display: grid;
@@ -78,7 +78,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.15rem;
+    font-size:1.1rem;
     cursor: pointer;
     flex-shrink: 0;
 }
@@ -125,7 +125,7 @@ body {
     background: #fff;
     border: 1px solid var(--border);
     border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+    box-shadow: var(--shadow-raised);
     width: 210px;
     overflow: hidden;
     z-index: 1001;
@@ -135,7 +135,7 @@ body {
 
 .user-dropdown-item {
     padding: 11px 14px;
-    font-size: 0.92rem;
+    font-size:0.95rem;
     font-weight: 700;
     display: flex;
     align-items: center;
@@ -154,13 +154,13 @@ body {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    font-size: 1.2rem;
+    font-size:1.25rem;
     font-weight: 800;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 5px 12px rgba(36,91,103,.22);
+    box-shadow: var(--shadow-soft);
     transition: transform 0.15s ease;
     flex-shrink: 0;
 }
@@ -195,7 +195,7 @@ body {
     border: 1px solid #dce9e3;
     padding: 5px 9px;
     border-radius: 18px;
-    font-size: 0.78rem;
+    font-size:0.75rem;
     font-weight: 700;
     color: #49636a;
     display: flex;
@@ -222,10 +222,10 @@ body {
 .modal-card {
     background: #fff;
     border: 1px solid #e0e9e4;
-    border-radius: 20px;
+    border-radius: 18px;
     width: min(100%, 420px);
     padding: 18px;
-    box-shadow: 0 22px 60px rgba(24,48,49,.2);
+    box-shadow: var(--shadow-raised);
     animation: modalPop 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -287,9 +287,9 @@ nav.bottom-nav, .bottom-nav {
     color: #83918f !important;
     padding: 4px 1px !important;
     font-size: clamp(.54rem, 2.2vw, .64rem) !important;
-    font-weight: 650 !important;
+    font-weight: 700 !important;
     cursor: pointer !important;
-    border-radius: 10px !important;
+    border-radius: 12px !important;
     gap: 3px !important;
     white-space: nowrap !important;
     line-height: 1 !important;
@@ -309,7 +309,7 @@ nav.bottom-nav, .bottom-nav {
 }
 
 .nav-icon {
-    font-size: 1.15rem !important;
+    font-size:1.1rem !important;
     line-height: 1 !important;
     display: block !important;
     flex: 0 0 auto !important;
@@ -324,10 +324,10 @@ nav.bottom-nav, .bottom-nav {
     background: #244c50;
     color: #ffffff;
     padding: 10px 18px;
-    border-radius: 14px;
-    font-size: 0.9rem;
+    border-radius: 12px;
+    font-size:0.95rem;
     font-weight: 600;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    box-shadow: var(--shadow-raised);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -352,7 +352,7 @@ nav.bottom-nav, .bottom-nav {
     border-radius: 50%;
     display: grid;
     place-items: center;
-    font-size: 0.7rem;
+    font-size:0.75rem;
     font-weight: 800;
 }
 
@@ -370,7 +370,7 @@ nav.bottom-nav, .bottom-nav {
     background: rgba(255,255,255,.97);
     border: 1px solid #e3ebe7;
     border-radius: 18px;
-    box-shadow: 0 5px 20px rgba(31,61,62,.045);
+    box-shadow: var(--shadow-raised);
     margin-bottom: 0.85rem;
     width: 100%;
 }
@@ -388,7 +388,7 @@ nav.bottom-nav, .bottom-nav {
 }
 
 .card-title {
-    font-size: 1.02rem;
+    font-size:1rem;
     font-weight: 800;
     display: flex;
     align-items: center;
@@ -401,7 +401,7 @@ nav.bottom-nav, .bottom-nav {
     background: #eaf3ef;
     color: #326b60;
     border: 1px solid #d9eae2;
-    font-size: .68rem;
+    font-size:0.75rem;
     font-weight: 700;
     padding: 4px 9px;
     border-radius: 12px;
@@ -417,14 +417,14 @@ nav.bottom-nav, .bottom-nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 0.92rem;
+    font-size:0.95rem;
     min-height: 54px;
 }
 
 .dashboard-item:last-child { margin-bottom: 0; }
 
 .sub-text {
-    font-size: 0.78rem;
+    font-size:0.75rem;
     color: #78878a;
     margin-top: 2px;
 }
@@ -461,7 +461,7 @@ nav.bottom-nav, .bottom-nav {
     color: var(--text);
     padding: 12px 14px;
     min-height: 48px;
-    font-size: 0.95rem;
+    font-size:0.95rem;
     border-radius: 12px;
     outline: none;
     width: 100%;
@@ -496,9 +496,9 @@ nav.bottom-nav, .bottom-nav {
     text-align: center;
     padding: 1.35rem 1rem;
     color: var(--muted);
-    font-size: 0.92rem;
+    font-size:0.95rem;
     border: 1px dashed #dce8e2;
-    border-radius: 13px;
+    border-radius: 12px;
     background: #f8faf9;
     margin-bottom: 0.4rem;
 }
@@ -539,17 +539,17 @@ nav.bottom-nav, .bottom-nav {
 }
 
 .item-text-label {
-    font-size: 0.95rem;
+    font-size:0.95rem;
     font-weight: 500;
     flex: 1;
     word-break: break-word;
 }
 
 .edit-inline-input {
-    font-size: 0.95rem;
+    font-size:0.95rem;
     padding: 6px 8px;
     border: 1px solid var(--accent);
-    border-radius: 6px;
+    border-radius: 8px;
     outline: none;
     width: 100%;
 }
@@ -559,9 +559,9 @@ nav.bottom-nav, .bottom-nav {
     border: none;
     color: var(--muted);
     cursor: pointer;
-    font-size: 0.95rem;
+    font-size:0.95rem;
     padding: 6px;
-    border-radius: 6px;
+    border-radius: 8px;
     flex-shrink: 0;
 }
 
@@ -569,10 +569,10 @@ nav.bottom-nav, .bottom-nav {
 .delete-btn:hover { color: #ef4444; background: #fef2f2; }
 
 .assign-tag {
-    font-size: 0.7rem;
+    font-size:0.75rem;
     font-weight: 700;
     padding: 4px 10px;
-    border-radius: 14px;
+    border-radius: 12px;
     color: #fff;
     text-transform: uppercase;
     cursor: pointer;
@@ -603,18 +603,18 @@ nav.bottom-nav, .bottom-nav {
 .meal-card-row.cook-family { border-left: 3px solid var(--family); padding-left: 10px; }
 .meal-card-row.cook-unassigned { border-left: 3px solid var(--unassigned); padding-left: 10px; }
 .meal-card-inner { display: flex; align-items: center; gap: 12px; width: 100%; min-width: 0; }
-.meal-day-name { flex: 0 0 48px; font-size: .82rem; font-weight: 800; color: var(--accent); text-transform: uppercase; }
+.meal-day-name { flex: 0 0 48px; font-size:0.85rem; font-weight: 800; color: var(--accent); text-transform: uppercase; }
 .meal-input-inline {
     flex: 1 1 auto; min-width: 0; width: 100%; background: transparent;
     border: 0; border-bottom: 1px solid transparent; border-radius: 0;
-    color: var(--text); font: inherit; font-size: .94rem; font-weight: 600;
+    color: var(--text); font: inherit; font-size:0.95rem; font-weight: 600;
     outline: none; padding: 7px 2px;
 }
 .meal-input-inline::placeholder { color: var(--muted); font-weight: 400; }
 .meal-input-inline:focus { border-bottom-color: var(--accent); }
 .meal-cook-tag { flex: 0 0 auto; border: 0; }
 /* One person-tag look everywhere: soft tint, coloured dot and name */
-.assign-tag { display:inline-flex; align-items:center; gap:6px; text-transform:none; font-size:.84rem; font-weight:700; padding:6px 11px; border-radius:999px; background:#eef3f1; color:#44544f; border:0; --assign-dot:#8a9a95; }
+.assign-tag { display:inline-flex; align-items:center; gap:6px; text-transform:none; font-size:0.85rem; font-weight:700; padding:6px 11px; border-radius:999px; background:#eef3f1; color:#44544f; border:0; --assign-dot:#8a9a95; }
 .assign-tag::before { content:""; width:9px; height:9px; flex:0 0 9px; border-radius:50%; background:var(--assign-dot); }
 .assign-tag.bg-dad { background:rgba(21,155,117,.12); color:#0e7c5d; --assign-dot:var(--dad); }
 .assign-tag.bg-mom { background:rgba(198,93,135,.13); color:#b0436f; --assign-dot:var(--mom); }
@@ -627,15 +627,15 @@ html[data-theme="dark"] .assign-tag.bg-unassigned { background:#26353a; color:#9
 html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
 .meal-planner-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
 .meal-planner-heading .card-title, .meal-cook-heading {
-    margin: 0; color: var(--text); font-size: 1rem; font-weight: 800;
+    margin: 0; color: var(--text); font-size:1rem; font-weight: 800;
     line-height: 1.25; letter-spacing: -.015em;
 }
 .meal-cook-heading { margin-left: auto; text-align: right; }
 @media (max-width: 420px) {
     .meal-card-row { gap: 7px; padding-top: 8px; padding-bottom: 8px; }
     .meal-card-inner { gap: 7px; }
-    .meal-day-name { flex-basis: 40px; font-size: .76rem; }
-    .meal-input-inline { font-size: .88rem; }
+    .meal-day-name { flex-basis: 40px; font-size:0.75rem; }
+    .meal-input-inline { font-size:0.85rem; }
     .meal-cook-heading { margin-left: 0; text-align: left; }
 }
 
@@ -655,20 +655,20 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
     z-index: 1;
 }
 
-.calendar-main-tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding:5px;margin:0 0 10px;background:#e9f0ed;border:1px solid #dfe9e4;border-radius:14px;box-shadow:var(--shadow-soft)}
-.cal-main-tab{border:1px solid transparent;background:transparent;color:#64777a;border-radius:10px;padding:10px 5px;font-size:.78rem;font-weight:800;cursor:pointer;min-width:0}
-.cal-main-tab.active{background:#fff;border-color:transparent;color:var(--accent);box-shadow:0 2px 7px rgba(30,65,62,.09)}
-@media(max-width:380px){.cal-main-tab{font-size:.7rem;padding:9px 2px}}
+.calendar-main-tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding:5px;margin:0 0 10px;background:#e9f0ed;border:1px solid #dfe9e4;border-radius:12px;box-shadow:var(--shadow-soft)}
+.cal-main-tab{border:1px solid transparent;background:transparent;color:#64777a;border-radius:12px;padding:10px 5px;font-size:0.75rem;font-weight:800;cursor:pointer;min-width:0}
+.cal-main-tab.active{background:#fff;border-color:transparent;color:var(--accent);box-shadow:var(--shadow-soft)}
+@media(max-width:380px){.cal-main-tab{font-size:0.75rem;padding:9px 2px}}
 .calendar-controls { display: flex; align-items: center; gap: 8px; }
 .calendar-nav { display: flex; align-items: center; gap: 6px; }
-.cal-nav-btn { background: #fff; border: 1px solid #dce7e1; width: 32px; height: 32px; border-radius: 10px; cursor: pointer; font-size: 0.95rem; display: grid; place-items: center; color: var(--accent); }
+.cal-nav-btn { background: #fff; border: 1px solid #dce7e1; width: 32px; height: 32px; border-radius: 12px; cursor: pointer; font-size:0.95rem; display: grid; place-items: center; color: var(--accent); }
 
 .card-calendar-wrapper {
     background: rgba(255,255,255,.97);
     border: 1px solid #e3ebe7;
     border-radius: 18px;
     padding: 1rem 0;
-    box-shadow: 0 5px 20px rgba(31,61,62,.045);
+    box-shadow: var(--shadow-raised);
     margin-bottom: 0.85rem;
     width: 100%;
     overflow: hidden;
@@ -696,7 +696,7 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
 
 .day-header { 
     text-align: center; 
-    font-size: 0.72rem; 
+    font-size:0.75rem; 
     font-weight: 700; 
     color: #6d807d; 
     text-transform: uppercase; 
@@ -731,13 +731,13 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
 .day-cell.empty-cell { background: #f8fafc; cursor: default; }
 
 .day-num { 
-    font-size: 0.85rem; 
+    font-size:0.85rem; 
     font-weight: 700; 
     color: var(--text);
     margin-bottom: 4px;
     padding: 4px 6px;
     line-height: 1;
-    border-radius: 20px;
+    border-radius: 18px;
 }
 
 .events-container {
@@ -753,7 +753,7 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
     width: 100%;
     padding: 2px 3px; 
     border-radius: 4px; 
-    font-size: 0.59rem; 
+    font-size:0.75rem; 
     color: #fff; 
     font-weight: 600; 
     line-height: 1.2;
@@ -785,8 +785,8 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
     transform: translate(-50%, -50%);
     background: #ffffff;
     border: 1px solid #e0e9e4;
-    border-radius: 20px;
-    box-shadow: 0 22px 60px rgba(24,48,49,.2);
+    border-radius: 18px;
+    box-shadow: var(--shadow-raised);
     padding: 16px 18px;
     width: min(90vw, 320px);
     z-index: 3001;
@@ -811,7 +811,7 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
 
 .bubble-title {
     font-weight: 800;
-    font-size: 0.98rem;
+    font-size:1rem;
     color: var(--accent);
 }
 
@@ -821,7 +821,7 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
     border-radius: 50%;
     width: 26px;
     height: 26px;
-    font-size: 0.85rem;
+    font-size:0.85rem;
     font-weight: 700;
     color: var(--muted);
     cursor: pointer;
@@ -832,7 +832,7 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
 .bubble-event-item {
     background: #f8fafc;
     border-left: 4px solid var(--accent);
-    border-radius: 6px;
+    border-radius: 8px;
     padding: 8px 10px;
     margin-bottom: 6px;
     display: flex;
@@ -842,7 +842,7 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
 }
 
 .bubble-event-title {
-    font-size: 0.88rem;
+    font-size:0.85rem;
     font-weight: 600;
     color: var(--text);
     word-break: break-word;
@@ -854,13 +854,13 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
     border: 1px solid #245b67;
     min-height: 44px;
     padding: 10px 18px;
-    border-radius: 11px;
+    border-radius: 12px;
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size:0.95rem;
     cursor: pointer;
     width: 100%;
     margin-top: 4px;
-    box-shadow: 0 3px 9px rgba(36,91,103,.13);
+    box-shadow: var(--shadow-soft);
 }
 .modal-add-btn:hover { background: #1e40af; }
 
@@ -869,13 +869,13 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
     border: 1px solid #e3ebe7;
     border-radius: 18px;
     padding: 0.6rem 0.75rem;
-    box-shadow: 0 5px 20px rgba(31,61,62,.045);
+    box-shadow: var(--shadow-raised);
     margin-bottom: 0.6rem;
     width: 100%;
 }
 
 .watchlist-scoped-title, .todo-scoped-title, .places-scoped-title, .restaurants-scoped-title {
-    font-size: 1.05rem;
+    font-size:1.1rem;
     font-weight: 800;
     margin-bottom: 8px;
 }
@@ -893,7 +893,7 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
     color: var(--text);
     padding: 4px 10px;
     min-height: 38px;
-    font-size: 0.85rem;
+    font-size:0.85rem;
     border-radius: 12px;
     outline: none;
     width: 100%;
@@ -909,13 +909,13 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
     padding: 4px 14px;
     border-radius: 12px;
     font-weight: 700;
-    font-size: 1.3rem;
+    font-size:1.25rem;
     line-height: 1;
     cursor: pointer;
     white-space: nowrap;
     flex-shrink: 0;
     width: auto;
-    box-shadow: 0 3px 9px rgba(36,91,103,.13);
+    box-shadow: var(--shadow-soft);
 }
 
 .compact-scoped-item {
@@ -930,7 +930,7 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
     margin-bottom: 4px;
     width: 100%;
     min-height: 36px;
-    font-size: 0.88rem;
+    font-size:0.85rem;
 }
 
 .compact-scoped-item.completed span {
@@ -948,12 +948,12 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
 }
 
 .compact-scoped-label, .todo-item-label {
-    font-size: 0.88rem;
+    font-size:0.85rem;
     font-weight: 500;
     flex: 1;
     word-break: break-word;
 }
-.todo-item-label { font-size: 0.82rem; }
+.todo-item-label { font-size:0.85rem; }
 
 .compact-scoped-checkbox {
     width: 16px;
@@ -963,10 +963,10 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
 }
 
 .compact-scoped-tag {
-    font-size: 0.65rem;
+    font-size:0.75rem;
     font-weight: 700;
     padding: 2px 7px;
-    border-radius: 10px;
+    border-radius: 12px;
     color: #fff;
     text-transform: uppercase;
     cursor: pointer;
@@ -975,10 +975,10 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
 }
 
 .date-tag {
-    font-size: 0.65rem;
+    font-size:0.75rem;
     font-weight: 700;
     padding: 2px 7px;
-    border-radius: 10px;
+    border-radius: 12px;
     background: #e2e8f0;
     color: #334155;
     cursor: pointer;
@@ -992,7 +992,7 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
     color: var(--text);
     padding: 4px 10px;
     min-height: 38px;
-    font-size: 0.85rem;
+    font-size:0.85rem;
     border-radius: 12px;
     outline: none;
     width: 100%;
@@ -1005,13 +1005,13 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
     border: 1px solid #245b67;
     min-height: 38px;
     padding: 4px 14px;
-    border-radius: 11px;
+    border-radius: 12px;
     font-weight: 700;
-    font-size: 0.85rem;
+    font-size:0.85rem;
     cursor: pointer;
     white-space: nowrap;
     flex-shrink: 0;
-    box-shadow: 0 3px 9px rgba(36,91,103,.13);
+    box-shadow: var(--shadow-soft);
 }
 
 .wishlist-scoped-item, .places-scoped-item {
@@ -1026,7 +1026,7 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
     margin-bottom: 4px;
     width: 100%;
     min-height: 36px;
-    font-size: 0.85rem;
+    font-size:0.85rem;
 }
 
 .places-scoped-card, .restaurants-scoped-card {
@@ -1034,7 +1034,7 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
     border: 1px solid #e3ebe7;
     border-radius: 18px;
     padding: 0.65rem 0.8rem;
-    box-shadow: 0 5px 20px rgba(31,61,62,.045);
+    box-shadow: var(--shadow-raised);
     margin-bottom: 0.6rem;
     width: 100%;
 }
@@ -1065,50 +1065,50 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
 /* Firebase Auth Gate */
 #auth-gate { position:fixed; inset:0; z-index:5000; display:flex; align-items:center; justify-content:center; padding:12px; background:radial-gradient(ellipse at 15% 0%,rgba(30,58,138,.16),transparent 34rem),#f7f5f1; overflow-y:auto; }
 #auth-gate[hidden] { display:none; }
-.auth-card { width:min(100%,440px); background:#fff; border:1px solid #e0e9e4; border-radius:24px; padding:12px 20px 20px 20px; box-shadow:0 24px 70px rgba(29,66,61,.13); }
+.auth-card { width:min(100%,440px); background:#fff; border:1px solid #e0e9e4; border-radius:24px; padding:12px 20px 20px 20px; box-shadow:var(--shadow-raised); }
 .auth-brand { display:flex; align-items:center; justify-content:center; margin-bottom:0px; padding:0; line-height:0; height: 110px; overflow: hidden; }
 .auth-brand-mark { width:220px; height:220px; flex-shrink:0; object-fit:contain; display:block; margin: 0 auto; transform: translateY(-5px); }
-.auth-subtitle { text-align:center;color:var(--muted);margin-bottom:12px;font-size:.92rem; margin-top: 6px; }
+.auth-subtitle { text-align:center;color:var(--muted);margin-bottom:12px;font-size:0.95rem; margin-top: 6px; }
 .auth-tabs { display:flex;gap:6px;background:#edf4f0;padding:4px;border-radius:12px;margin-bottom:12px; }
-.auth-tabs button { flex:1;border:0;border-radius:9px;padding:8px;background:transparent;font-weight:750;color:var(--muted);cursor:pointer; }
-.auth-tabs button.active { background:#fff;color:var(--accent);box-shadow:0 1px 4px #00000010; }
-.auth-field { display:block;font-size:.84rem;font-weight:700;margin:8px 0 4px; }
+.auth-tabs button { flex:1;border:0;border-radius:12px;padding:8px;background:transparent;font-weight:800;color:var(--muted);cursor:pointer; }
+.auth-tabs button.active { background:#fff;color:var(--accent);box-shadow:var(--shadow-soft); }
+.auth-field { display:block;font-size:0.85rem;font-weight:700;margin:8px 0 4px; }
 .auth-input { width:100%;padding:10px 12px;border:1px solid #dce6e1;border-radius:12px;font-size:0.95rem;min-height:42px;background:#fbfdfb; }
 .password-container { position: relative; display: flex; align-items: center; width: 100%; }
 .password-container .auth-input { padding-right: 44px; }
 .password-toggle-btn { position: absolute; right: 12px; background: none; border: none; cursor: pointer; color: var(--muted); display: flex; align-items: center; justify-content: center; padding: 4px; }
 .password-toggle-btn:hover { color: var(--text); }
-.auth-primary { width:100%;border:1px solid #245b67;border-radius:11px;padding:12px;background:linear-gradient(145deg, #347b83, #245b67);color:white;font-weight:800;font-size:0.95rem;cursor:pointer;margin-top:12px;box-shadow:0 3px 9px rgba(36,91,103,.13); }
-.auth-secondary { width:100%;border:1px solid #d8e8df;border-radius:11px;padding:10px;background:#edf5f1;color:#2e665d;font-weight:750;cursor:pointer;margin-top:8px;box-shadow:none; }
-.auth-message { margin-top:8px;font-size:.84rem;line-height:1.35;color:#b42318;white-space:pre-wrap; }
+.auth-primary { width:100%;border:1px solid #245b67;border-radius:12px;padding:12px;background:linear-gradient(145deg, #347b83, #245b67);color:white;font-weight:800;font-size:0.95rem;cursor:pointer;margin-top:12px;box-shadow:var(--shadow-soft); }
+.auth-secondary { width:100%;border:1px solid #d8e8df;border-radius:12px;padding:10px;background:#edf5f1;color:#2e665d;font-weight:800;cursor:pointer;margin-top:8px;box-shadow:none; }
+.auth-message { margin-top:8px;font-size:0.85rem;line-height:1.35;color:#b42318;white-space:pre-wrap; }
 .auth-message.ok { color:#087443; }
 .household-panel { display:none; }
 .household-panel.visible { display:block; }
 .household-choice { border:1px solid var(--border);border-radius:12px;padding:12px;margin-top:10px; }
-.auth-small { color:var(--muted);font-size:.8rem;margin-top:8px;line-height:1.35; }
-.auth-user-line { display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.84rem;color:var(--muted); }
+.auth-small { color:var(--muted);font-size:0.85rem;margin-top:8px;line-height:1.35; }
+.auth-user-line { display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:0.85rem;color:var(--muted); }
 .auth-user-line button { margin-left:auto;border:1px solid var(--border);background:white;border-radius:8px;padding:6px 10px;font-weight:700;cursor:pointer; }
 @media(max-width:420px){ .auth-card{padding:10px 16px 16px 16px} }
 
 /* Family Plan enhancements */
-.tool-section{background:rgba(255,255,255,.97);border:1px solid #e3ebe7;border-radius:18px;padding:14px;margin:12px 0;box-shadow:0 5px 20px rgba(31,61,62,.045)}
+.tool-section{background:rgba(255,255,255,.97);border:1px solid #e3ebe7;border-radius:18px;padding:14px;margin:12px 0;box-shadow:var(--shadow-raised)}
 .tool-section h3{font-size:1rem;margin-bottom:8px;color:var(--accent)}
 .tool-form{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
-.tool-form input,.tool-form select,.tool-form textarea{width:100%;min-width:0;padding:10px;border:1px solid #dce6e1;border-radius:12px;background:#fbfdfb;font-size:.9rem;color:var(--text)}
+.tool-form input,.tool-form select,.tool-form textarea{width:100%;min-width:0;padding:10px;border:1px solid #dce6e1;border-radius:12px;background:#fbfdfb;font-size:0.95rem;color:var(--text)}
 .tool-form textarea{grid-column:1/-1;min-height:64px;resize:vertical}
 .tool-form .wide{grid-column:1/-1}
-.field-stack { display:flex; flex-direction:column; gap:4px; min-width:0; font-size:.74rem; font-weight:700; color:var(--muted); }
+.field-stack { display:flex; flex-direction:column; gap:4px; min-width:0; font-size:0.75rem; font-weight:700; color:var(--muted); }
 .field-stack input { font-weight:400; }
-.tool-btn{border:1px solid #245b67;border-radius:11px;background:linear-gradient(145deg, #347b83, #245b67);color:#fff;padding:9px 12px;font-weight:750;cursor:pointer;box-shadow:0 3px 9px rgba(36,91,103,.13)}
+.tool-btn{border:1px solid #245b67;border-radius:12px;background:linear-gradient(145deg, #347b83, #245b67);color:#fff;padding:9px 12px;font-weight:800;cursor:pointer;box-shadow:var(--shadow-soft)}
 .tool-btn.secondary{background:#edf5f1;color:#2e665d;border:1px solid #d8e8df;box-shadow:none}
 .tool-list{display:flex;flex-direction:column;gap:7px;margin-top:9px}
 #address-book-section .tool-form{grid-template-columns:minmax(0,1fr) minmax(0,1fr);row-gap:10px;margin:4px 0 0}
 #address-book-name,#address-book-address{grid-column:1/-1}
-#address-book-name,#address-book-address,#address-book-postcode{min-height:46px;font-size:.95rem}
+#address-book-name,#address-book-address,#address-book-postcode{min-height:46px;font-size:0.95rem}
 #address-book-list{margin-top:20px}
 #address-book-list:empty{margin-top:0}
-.tool-row{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:11px 12px;background:#f7faf8;border:1px solid #e7eeea;border-radius:12px;font-size:.88rem}
-.tool-row small{display:block;color:var(--muted);font-size:.75rem}
+.tool-row{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:11px 12px;background:#f7faf8;border:1px solid #e7eeea;border-radius:12px;font-size:0.85rem}
+.tool-row small{display:block;color:var(--muted);font-size:0.75rem}
 .tool-row button{border:0;background:transparent;color:var(--muted);font-weight:800;padding:4px 6px;cursor:pointer}
 
 /* Weekly planner: clear day cards with a two-column activity grid inside each day. */
@@ -1121,7 +1121,7 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
 }
 .week-day {
     border: 1px solid var(--border);
-    border-radius: 14px;
+    border-radius: 12px;
     padding: 13px;
     background: #fff;
     width: 100%;
@@ -1130,7 +1130,7 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
     flex-direction: column;
     gap: 10px;
     min-width: 0;
-    box-shadow: 0 2px 8px rgba(31,61,62,.035);
+    box-shadow: var(--shadow-soft);
 }
 .week-day-header {
     display: flex;
@@ -1140,7 +1140,7 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
 }
 .week-day-header strong {
     color: var(--accent);
-    font-size: .98rem;
+    font-size:1rem;
     font-weight: 800;
 }
 .week-day-details {
@@ -1153,13 +1153,13 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
     display: flex;
     align-items: flex-start;
     gap: 8px;
-    font-size: .84rem;
+    font-size:0.85rem;
     line-height: 1.35;
     color: var(--text);
     min-height: 62px;
     background: #f7faf8;
     border: 1px solid #e8efeb;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 9px;
     box-sizing: border-box;
     cursor: pointer;
@@ -1171,7 +1171,7 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
     width: 20px;
     min-width: 20px;
     text-align: center;
-    font-size: 1rem;
+    font-size:1rem;
     flex-shrink: 0;
     display: inline-block;
     padding-top: 1px;
@@ -1182,12 +1182,12 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
     overflow-wrap: anywhere;
     white-space: normal;
 }
-.week-day-content strong { display: block; font-weight: 750; color: var(--text); }
-.week-day-content small { display: block; margin-top: 4px; font-size: .73rem; line-height: 1.2; }
+.week-day-content strong { display: block; font-weight: 800; color: var(--text); }
+.week-day-content small { display: block; margin-top: 4px; font-size:0.75rem; line-height: 1.2; }
 
-.tool-note{font-size:.78rem;color:#78878a;line-height:1.4;margin:6px 0}
+.tool-note{font-size:0.75rem;color:#78878a;line-height:1.4;margin:6px 0}
 .account-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.tool-total{font-size:1.45rem;font-weight:850;color:var(--accent)}
+.tool-total{font-size:1.45rem;font-weight:800;color:var(--accent)}
 
 #view-dashboard > .card:first-child {
     position: relative;
@@ -1195,26 +1195,26 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
     padding: 1.25rem 1.2rem;
     border: 1px solid #d8e7e0;
     background: linear-gradient(125deg, #eaf3ee 0%, #f7faf7 58%, #edf4f3 100%);
-    box-shadow: 0 8px 24px rgba(39,91,78,.07);
+    box-shadow: var(--shadow-raised);
 }
 #family-week-summary { color: #627875; line-height: 1.55; }
-#view-dashboard > .card:first-child .card-title { font-size: 1.12rem; }
+#view-dashboard > .card:first-child .card-title { font-size:1.1rem; }
 #view-dashboard > .card:not(:first-child) .card-title { margin-bottom: 12px; }
 
 @media (max-width: 420px) {
     .view { padding: .55rem .5rem; }
-    .card { padding: .95rem .9rem; border-radius: 16px; }
+    .card { padding: .95rem .9rem; border-radius: 18px; }
     .brand-logo-img { height: 44px; max-width: 150px; }
-    .current-user-badge { padding: 4px 7px; font-size: .7rem; }
+    .current-user-badge { padding: 4px 7px; font-size:0.75rem; }
     .day-cell { min-height: 78px; }
-    .event-pill { font-size: .59rem; }
+    .event-pill { font-size:0.75rem; }
 }
 @media (min-width: 700px) {
     .view { padding: 1rem .8rem; }
     #view-dashboard > .card:first-child { padding: 1.5rem; }
 }
 
-.finance-tab { padding: 9px 4px; font-size: .78rem; min-width: 0; }
+.finance-tab { padding: 9px 4px; font-size:0.75rem; min-width: 0; }
 .finance-tab { white-space:nowrap; }
 .finance-pane[hidden] { display: none !important; }
 
@@ -1232,13 +1232,13 @@ html[data-theme="dark"] .who-unassigned { color:#9db0b0; }
     border: 1px solid #e7eeea;
     border-radius: 12px;
     padding: 11px 12px;
-    font-size: 0.95rem;
+    font-size:0.95rem;
     font-weight: 700;
     color: var(--text);
 }
 .budget-row-item span:last-child {
     color: var(--accent);
-    font-size: 1.05rem;
+    font-size:1.1rem;
 }
 
 
@@ -1278,14 +1278,14 @@ html[data-theme="dark"] .todo-divider-item > input[type=checkbox]:checked { back
 html[data-theme="dark"] .todo-divider-item > input[type=checkbox]:checked::after { color:#0f1719; }
 html[data-theme="dark"] .bottom-nav, html[data-theme="dark"] .top-header-container { background:#162126; border-color:var(--border); }
 html[data-theme="dark"] .fp-choice { background:#223137; }
-html[data-theme="dark"] .brand-logo-img { mix-blend-mode:normal; border-radius:10px; }
+html[data-theme="dark"] .brand-logo-img { mix-blend-mode:normal; border-radius:12px; }
 
 /* In-app dialogs (replace alert/confirm/prompt) */
 .fp-dialog-backdrop { position:fixed; inset:0; z-index:10000; display:flex; align-items:flex-end; justify-content:center; background:rgba(15,30,32,.45); padding:0; }
-.fp-dialog { width:100%; max-width:480px; background:var(--card); color:var(--text); border-radius:20px 20px 0 0; padding:20px 18px calc(18px + env(safe-area-inset-bottom,0px)); box-shadow:0 -10px 40px rgba(0,0,0,.25); }
-@media (min-width:600px) { .fp-dialog-backdrop { align-items:center; } .fp-dialog { border-radius:20px; } }
-.fp-dialog h4 { font-size:1.05rem; margin:0 0 6px; }
-.fp-dialog p { font-size:.92rem; color:var(--muted); margin:0 0 14px; line-height:1.4; }
+.fp-dialog { width:100%; max-width:480px; background:var(--card); color:var(--text); border-radius:18px 18px 0 0; padding:20px 18px calc(18px + env(safe-area-inset-bottom,0px)); box-shadow:0 -10px 40px rgba(0,0,0,.25); }
+@media (min-width:600px) { .fp-dialog-backdrop { align-items:center; } .fp-dialog { border-radius:18px; } }
+.fp-dialog h4 { font-size:1.1rem; margin:0 0 6px; }
+.fp-dialog p { font-size:0.95rem; color:var(--muted); margin:0 0 14px; line-height:1.4; }
 .fp-dialog input[type=text], .fp-dialog input[type=password] { width:100%; height:46px; padding:0 12px; margin:0 0 14px; font-size:1rem; border:1px solid var(--border); border-radius:12px; background:var(--card); color:var(--text); }
 .fp-dialog-actions { display:flex; gap:10px; justify-content:flex-end; }
 .fp-dialog-actions .tool-btn { flex:1; min-height:44px; }
@@ -1295,21 +1295,21 @@ html[data-theme="dark"] .brand-logo-img { mix-blend-mode:normal; border-radius:1
 .fp-choice.selected { border-color:var(--accent); background:rgba(36,91,103,.08); font-weight:700; }
 
 /* To-do list: clean divider-based list with a compact, integrated add field */
-.todo-scoped-title { display:flex; align-items:center; gap:8px; color:var(--text); font-weight:800; font-size:1.08rem; margin-bottom:12px; }
-.todo-scoped-title .todo-heading-icon { color:var(--accent); font-size:1.05rem; }
-.todo-heading-clear { margin-left:auto; padding:6px 10px; min-height:32px; font-size:.78rem; line-height:1.1; white-space:nowrap; }
+.todo-scoped-title { display:flex; align-items:center; gap:8px; color:var(--text); font-weight:800; font-size:1.1rem; margin-bottom:12px; }
+.todo-scoped-title .todo-heading-icon { color:var(--accent); font-size:1.1rem; }
+.todo-heading-clear { margin-left:auto; padding:6px 10px; min-height:32px; font-size:0.75rem; line-height:1.1; white-space:nowrap; }
 .todo-heading-clear:disabled { opacity:.45; cursor:default; }
-.todo-inline-add { display:flex; flex-wrap:nowrap; align-items:center; width:calc(100% + 1.5rem); max-width:none; min-height:58px; gap:0; padding:6px 10px 6px 16px; margin:0 -0.75rem 10px; background:#fff; border:solid #dce8e2; border-width:1px 0; border-radius:0; box-sizing:border-box; box-shadow:0 1px 3px rgba(20,60,50,.035); }
-.todo-inline-add #todo-quick-input { flex:1 1 0; width:auto; min-width:56px; height:46px; padding:0 8px 0 0; border:0; outline:0; box-shadow:none; background:transparent; color:var(--text); font:inherit; font-size:1.05rem; text-overflow:clip; }
+.todo-inline-add { display:flex; flex-wrap:nowrap; align-items:center; width:calc(100% + 1.5rem); max-width:none; min-height:58px; gap:0; padding:6px 10px 6px 16px; margin:0 -0.75rem 10px; background:#fff; border:solid #dce8e2; border-width:1px 0; border-radius:0; box-sizing:border-box; box-shadow:var(--shadow-soft); }
+.todo-inline-add #todo-quick-input { flex:1 1 0; width:auto; min-width:56px; height:46px; padding:0 8px 0 0; border:0; outline:0; box-shadow:none; background:transparent; color:var(--text); font:inherit; font-size:1.1rem; text-overflow:clip; }
 .todo-inline-add #todo-quick-input:focus { outline:0; box-shadow:none; }
 .todo-inline-actions { display:flex; flex:0 0 auto; flex-wrap:nowrap; align-items:center; gap:4px; min-width:0; }
-.todo-inline-icon-btn { display:inline-flex; flex:0 0 auto; align-items:center; justify-content:center; gap:5px; min-width:42px; height:44px; padding:0 9px; border:0; border-radius:11px; background:transparent; color:var(--accent); font-size:.9rem; font-weight:650; cursor:pointer; white-space:nowrap; }
+.todo-inline-icon-btn { display:inline-flex; flex:0 0 auto; align-items:center; justify-content:center; gap:5px; min-width:42px; height:44px; padding:0 9px; border:0; border-radius:12px; background:transparent; color:var(--accent); font-size:0.95rem; font-weight:700; cursor:pointer; white-space:nowrap; }
 .todo-inline-icon-btn:active { background:#edf5f1; }
 .todo-inline-icon-btn.todo-assign-btn { flex:0 0 auto; min-width:0; padding:0 10px; background:#edf5f1; border-radius:999px; }
 .todo-inline-icon-btn.todo-assign-btn #todo-assign-label { display:block; max-width:none; overflow:visible; text-overflow:ellipsis; white-space:nowrap; }
-.todo-inline-icon-btn.todo-add-submit { min-width:44px; background:var(--accent); color:#fff; font-size:1.4rem; line-height:1; margin-left:2px; }
+.todo-inline-icon-btn.todo-add-submit { min-width:44px; background:var(--accent); color:#fff; font-size:1.45rem; line-height:1; margin-left:2px; }
 .todo-date-input-hidden { position:absolute !important; width:1px !important; height:1px !important; opacity:0 !important; pointer-events:none !important; }
-.todo-selected-date { min-height:0; margin:-4px 0 6px 4px; color:var(--muted); font-size:.78rem; }
+.todo-selected-date { min-height:0; margin:-4px 0 6px 4px; color:var(--muted); font-size:0.75rem; }
 .todo-selected-date:empty { display:none; }
 .todo-list-clean .list-empty { padding:1rem 0; }
 .todo-list-clean { gap:0; }
@@ -1325,7 +1325,7 @@ html[data-theme="dark"] .brand-logo-img { mix-blend-mode:normal; border-radius:1
 .profile-colour-swatch { width:34px; height:34px; border-radius:50%; border:3px solid transparent; cursor:pointer; box-shadow:0 0 0 1px var(--border); }
 .profile-colour-swatch[aria-pressed="true"] { border-color:var(--text); box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--accent); }
 .profile-colour-swatch:disabled { opacity:.25; cursor:not-allowed; }
-.profile-colour-preview { display:flex; align-items:center; gap:8px; margin-top:8px; font-weight:750; }
+.profile-colour-preview { display:flex; align-items:center; gap:8px; margin-top:8px; font-weight:800; }
 .profile-colour-preview-dot { width:10px; height:10px; border-radius:50%; display:inline-block; }
 .todo-list-clean { display:flex; flex-direction:column; width:100%; }
 .todo-divider-item { display:flex; align-items:flex-start; gap:11px; width:100%; padding:13px 2px; border-bottom:1px solid #e6eeea; box-sizing:border-box; }
@@ -1337,17 +1337,17 @@ html[data-theme="dark"] .brand-logo-img { mix-blend-mode:normal; border-radius:1
 .todo-divider-item.completed { opacity:.75; }
 .todo-inline-add:focus-within { box-shadow:0 0 0 3px rgba(52,123,131,.16); border-color:#a9cbc4; }
 .calendar-main-tabs.todo-scope-tabs { background:#f1f5f3; border-color:#e6eeea; box-shadow:none; }
-.calendar-main-tabs.todo-scope-tabs .cal-main-tab { padding:7px 5px; font-size:.74rem; }
+.calendar-main-tabs.todo-scope-tabs .cal-main-tab { padding:7px 5px; font-size:0.75rem; }
 .brand-logo-img { mix-blend-mode:multiply; }
 .tool-section.danger-zone { border-color:#efc9c4; background:#fff8f7; }
 .tool-section.danger-zone h3 { color:#b3392d; }
 .todo-divider-content { flex:1 1 auto; min-width:0; }
-.todo-divider-title { display:block; color:var(--text); font-size:.94rem; line-height:1.35; font-weight:650; overflow-wrap:anywhere; }
+.todo-divider-title { display:block; color:var(--text); font-size:0.95rem; line-height:1.35; font-weight:700; overflow-wrap:anywhere; }
 .todo-edit-btn { flex:0 0 34px; width:34px; height:34px; display:grid; place-items:center; border:0; border-radius:0; background:transparent; color:var(--muted); cursor:pointer; font-size:16px; line-height:1; padding:0; }
 .todo-edit-btn:active { transform:scale(.94); }
 .todo-edit-btn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
-.todo-divider-meta { display:flex; align-items:center; flex-wrap:wrap; gap:6px; margin-top:5px; color:#5b6b66; font-size:.8rem; line-height:1.3; }
-.todo-divider-meta .meta-icon { color:var(--accent); font-size:.75rem; }
+.todo-divider-meta { display:flex; align-items:center; flex-wrap:wrap; gap:6px; margin-top:5px; color:#5b6b66; font-size:0.85rem; line-height:1.3; }
+.todo-divider-meta .meta-icon { color:var(--accent); font-size:0.75rem; }
 .todo-divider-meta .meta-dot { padding:0 2px; color:#a2b0aa; }
 .todo-divider-item.completed .todo-divider-title { text-decoration:line-through; color:#91a09a; }
 .todo-divider-item.completed .todo-divider-meta { opacity:.65; }
@@ -1356,7 +1356,7 @@ html[data-theme="dark"] .brand-logo-img { mix-blend-mode:normal; border-radius:1
   .todo-inline-actions { gap:2px; }
   .todo-inline-add { padding-left:12px; padding-right:5px; }
   .todo-inline-icon-btn { min-width:36px; padding:0 4px; }
-  .todo-inline-icon-btn.todo-assign-btn { font-size:.8rem; padding:0 9px; gap:4px; }
+  .todo-inline-icon-btn.todo-assign-btn { font-size:0.85rem; padding:0 9px; gap:4px; }
   .todo-inline-icon-btn.todo-assign-btn #todo-assign-label { max-width:none; }
   .todo-inline-icon-btn.todo-add-submit { min-width:40px; height:40px; }
   .todo-divider-item { padding:12px 1px; }
@@ -1373,7 +1373,7 @@ html[data-theme="dark"] .brand-logo-img { mix-blend-mode:normal; border-radius:1
 .meal-cook-heading {
     margin-left: auto;
     color: #263b42;
-    font-size: 1.02rem;
+    font-size:1rem;
     font-weight: 800;
     letter-spacing: -.025em;
     line-height: 1.25;
@@ -1394,22 +1394,22 @@ html[data-theme="dark"] .brand-logo-img { mix-blend-mode:normal; border-radius:1
 }
 .todo-task-main { display: flex; align-items: flex-start; gap: 10px; min-width: 0; }
 .todo-task-main .compact-scoped-checkbox { flex: 0 0 17px; margin-top: 3px; }
-.todo-task-main .todo-item-label { font-size: .94rem; line-height: 1.4; overflow-wrap: anywhere; }
+.todo-task-main .todo-item-label { font-size:0.95rem; line-height: 1.4; overflow-wrap: anywhere; }
 .todo-task-controls { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
 .todo-task-controls .date-tag {
     width: 138px; max-width: 100%; background: #f1f5f9; border: 1px solid #cbd5e1;
-    border-radius: 8px; padding: 5px 7px; font-size: .78rem; color: #334155; cursor: pointer;
+    border-radius: 8px; padding: 5px 7px; font-size:0.75rem; color: #334155; cursor: pointer;
 }
 .todo-task-item.completed .todo-item-label { text-decoration: line-through; color: var(--muted); opacity: .65; }
 #places-map { position: relative; overflow: hidden; background: #edf3f0; }
-.map-status { min-height: 320px; display: grid; place-items: center; padding: 24px; color: var(--muted); text-align: center; font-size: .9rem; }
+.map-status { min-height: 320px; display: grid; place-items: center; padding: 24px; color: var(--muted); text-align: center; font-size:0.95rem; }
 @media (max-width: 420px) {
     .week-grid { grid-template-columns: 1fr; gap: 10px; }
     .week-day { padding: 11px; }
     .week-day-details { gap: 8px; }
-    .week-day-row { padding: 8px; gap: 7px; min-height: 58px; font-size: .82rem; }
-    .week-day-icon { width: 19px; min-width: 19px; font-size: .95rem; }
-    .week-day-header strong { font-size: .94rem; }
+    .week-day-row { padding: 8px; gap: 7px; min-height: 58px; font-size:0.85rem; }
+    .week-day-icon { width: 19px; min-width: 19px; font-size:0.95rem; }
+    .week-day-header strong { font-size:0.95rem; }
     .todo-task-controls { justify-content: flex-start; }
     .todo-task-controls .date-tag { width: 124px; }
 }
@@ -1427,7 +1427,7 @@ html[data-theme="dark"] .brand-logo-img { mix-blend-mode:normal; border-radius:1
 .meal-planner-heading .meal-cook-heading {
     margin: 0;
     color: #263b42;
-    font-size: 1.12rem;
+    font-size:1.1rem;
     font-weight: 800;
     line-height: 1.25;
     letter-spacing: -.025em;
@@ -1513,17 +1513,17 @@ html[data-theme="dark"] .brand-logo-img { mix-blend-mode:normal; border-radius:1
 @media (max-width: 420px) {
     #calendar-events-panel { padding-left: 0; padding-right: 0; }
     #calendar-grid-container .day-cell { min-height: 76px; }
-    #calendar-grid-container .day-header { font-size: .64rem; padding: 8px 0; }
-    #calendar-grid-container .day-num { font-size: .78rem; padding: 3px 4px; }
-    #calendar-grid-container .event-pill { font-size: .52rem; padding: 2px 2px; }
+    #calendar-grid-container .day-header { font-size:0.75rem; padding: 8px 0; }
+    #calendar-grid-container .day-num { font-size:0.75rem; padding: 3px 4px; }
+    #calendar-grid-container .event-pill { font-size:0.75rem; padding: 2px 2px; }
 }
 
 
 .calendar-view-picker { display:flex; align-items:center; gap:10px; padding:0 10px 12px; }
-.calendar-view-picker label { flex:0 0 auto; color:var(--muted); font-size:.82rem; font-weight:750; }
+.calendar-view-picker label { flex:0 0 auto; color:var(--muted); font-size:0.85rem; font-weight:800; }
 .calendar-view-picker select { flex:1; min-width:0; min-height:42px; padding:8px 12px; }
 #family-ideas-panel .tool-section { margin-top:0; }
-@media(max-width:380px){ .calendar-view-picker { gap:6px; } .calendar-view-picker label { font-size:.75rem; } }
+@media(max-width:380px){ .calendar-view-picker { gap:6px; } .calendar-view-picker label { font-size:0.75rem; } }
 
 
 /* Weekly planner navigation, aligned with the monthly calendar controls. */
@@ -1544,7 +1544,7 @@ html[data-theme="dark"] .brand-logo-img { mix-blend-mode:normal; border-radius:1
     min-width: 132px;
     text-align: center;
     color: var(--text, #34464a);
-    font-size: 0.88rem;
+    font-size:0.85rem;
     font-weight: 700;
 }
 /* Weekly Family Planner styling matching screenshot 2 */
@@ -1555,7 +1555,7 @@ html[data-theme="dark"] .brand-logo-img { mix-blend-mode:normal; border-radius:1
     border-radius: 18px;
     padding: 12px 14px 14px 14px;
     margin-bottom: 12px;
-    box-shadow: 0 3px 12px rgba(31,61,62,.04);
+    box-shadow: var(--shadow-soft);
 }
 .wp-day-card.cook-border-dad { border-left-color: var(--dad); }
 .wp-day-card.cook-border-mom { border-left-color: var(--mom); }
@@ -1563,13 +1563,13 @@ html[data-theme="dark"] .brand-logo-img { mix-blend-mode:normal; border-radius:1
 .wp-day-card.cook-border-unassigned { border-left-color: var(--unassigned); }
 
 .wp-day-header {
-    font-size: 1.05rem;
+    font-size:1.1rem;
     font-weight: 800;
     color: #1a2e35;
     margin-bottom: 8px;
 }
 .wp-section-title {
-    font-size: 0.92rem;
+    font-size:0.95rem;
     font-weight: 700;
     color: #2c3e45;
     margin-bottom: 6px;
@@ -1582,7 +1582,7 @@ html[data-theme="dark"] .brand-logo-img { mix-blend-mode:normal; border-radius:1
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 0.92rem;
+    font-size:0.95rem;
     color: var(--text);
     cursor: pointer;
     margin-bottom: 6px;
@@ -1590,9 +1590,9 @@ html[data-theme="dark"] .brand-logo-img { mix-blend-mode:normal; border-radius:1
 }
 .wp-item-pill:hover { background: #e3f0ea; }
 .wp-meal-pill { background: #eef6f3; }
-.wp-pill-icon { font-size: 1rem; flex-shrink: 0; }
+.wp-pill-icon { font-size:1rem; flex-shrink: 0; }
 .wp-pill-text { font-weight: 600; flex: 1; word-break: break-word; }
-.wp-pill-who { display:inline-flex; align-items:center; gap:5px; font-weight: 700; color: #607377; font-size: 0.86rem; white-space:nowrap; vertical-align:baseline; }
+.wp-pill-who { display:inline-flex; align-items:center; gap:5px; font-weight: 700; color: #607377; font-size:0.85rem; white-space:nowrap; vertical-align:baseline; }
 .who-mom { color:#b0436f; }
 .who-dad { color:#0e7c5d; }
 .who-family { color:#245b67; }
@@ -1601,7 +1601,7 @@ html[data-theme="dark"] .brand-logo-img { mix-blend-mode:normal; border-radius:1
 html[data-theme="dark"] .who-mom { color:#f08ab0; }
 html[data-theme="dark"] .who-dad { color:#4fd1a5; }
 html[data-theme="dark"] .who-family { color:#6fc2c8; }
-.wp-empty-note { font-size: 0.82rem; color: var(--muted); font-style: italic; padding: 4px 2px 8px 2px; }
+.wp-empty-note { font-size:0.85rem; color: var(--muted); font-style: italic; padding: 4px 2px 8px 2px; }
 
 .wp-add-item-btn {
     width: 100%;
@@ -1611,7 +1611,7 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
     padding: 9px;
     text-align: center;
     font-weight: 700;
-    font-size: 0.88rem;
+    font-size:0.85rem;
     color: #2b4c52;
     cursor: pointer;
     margin-top: 8px;
@@ -1622,7 +1622,7 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
 
 /* Family Finances title: align its typography with the other main section headings. */
 #view-monthlybudget .finance-page-title {
-    font-size: 1.05rem;
+    font-size:1.1rem;
     line-height: 1.3;
     font-weight: 800;
     letter-spacing: -.025em;
@@ -1630,25 +1630,25 @@ html[data-theme="dark"] .who-family { color:#6fc2c8; }
 }
 
 .household-management-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 12px;background:#f7faf8;border:1px solid #e5eee9;border-radius:12px;margin:10px 0}
-.household-management-meta span{font-size:.78rem;color:var(--muted);font-weight:700}
-.household-management-meta code{font-size:.76rem;overflow-wrap:anywhere;flex:1;min-width:100px}
+.household-management-meta span{font-size:0.75rem;color:var(--muted);font-weight:700}
+.household-management-meta code{font-size:0.75rem;overflow-wrap:anywhere;flex:1;min-width:100px}
 .household-management-list{display:flex;flex-direction:column;gap:9px;margin:8px 0 16px}
 .household-member-card,.household-request-card{border:1px solid #e3ebe7;background:#fbfdfb;border-radius:12px;padding:11px;display:flex;flex-direction:column;gap:8px}
 .household-member-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
-.household-member-top strong{font-size:.9rem;overflow-wrap:anywhere}
+.household-member-top strong{font-size:0.95rem;overflow-wrap:anywhere}
 .household-permission-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
-.household-permission-grid label{font-size:.72rem;color:var(--muted);font-weight:700;display:flex;flex-direction:column;gap:3px}
-.household-permission-grid select,.household-role-select{min-width:0;width:100%;border:1px solid #dce6e1;background:#fff;border-radius:8px;padding:7px;font-size:.78rem;color:var(--text)}
+.household-permission-grid label{font-size:0.75rem;color:var(--muted);font-weight:700;display:flex;flex-direction:column;gap:3px}
+.household-permission-grid select,.household-role-select{min-width:0;width:100%;border:1px solid #dce6e1;background:#fff;border-radius:8px;padding:7px;font-size:0.75rem;color:var(--text)}
 .household-request-actions{display:flex;gap:8px}
 .household-request-actions button{flex:1}
-#household-owner-controls h4{font-size:.88rem;margin:14px 0 6px;color:#344b50}
-.household-child-code{padding:10px 12px;border:1px dashed var(--border);border-radius:10px;background:var(--card);overflow-wrap:anywhere;font-weight:800;letter-spacing:.06em}
+#household-owner-controls h4{font-size:0.85rem;margin:14px 0 6px;color:#344b50}
+.household-child-code{padding:10px 12px;border:1px dashed var(--border);border-radius:12px;background:var(--card);overflow-wrap:anywhere;font-weight:800;letter-spacing:.06em}
 #managed-children-list{margin-top:8px}
 @media(max-width:360px){.household-permission-grid{grid-template-columns:1fr}}
 
 
 /* Consistent delete buttons and checkboxes */
-.action-btn.delete-btn, .tool-row button { display:inline-flex; align-items:center; justify-content:center; min-width:40px; min-height:40px; padding:0; font-size:1rem; line-height:1; color:var(--muted); background:transparent; border:0; border-radius:10px; }
+.action-btn.delete-btn, .tool-row button { display:inline-flex; align-items:center; justify-content:center; min-width:40px; min-height:40px; padding:0; font-size:1rem; line-height:1; color:var(--muted); background:transparent; border:0; border-radius:12px; }
 .action-btn.delete-btn:hover, .tool-row button:hover, .action-btn.delete-btn:active, .tool-row button:active { color:#b42318; background:#fef2f2; }
 .shopping-item input[type="checkbox"], .compact-scoped-checkbox, .dashboard-task-checkbox { -webkit-appearance:none; appearance:none; display:grid; place-content:center; width:26px; height:26px; flex:0 0 26px; margin:0; border:2px solid #b7c8c1; border-radius:50%; background:#fff; cursor:pointer; transition:background .15s,border-color .15s,transform .1s; }
 .shopping-item input[type="checkbox"]:active, .compact-scoped-checkbox:active, .dashboard-task-checkbox:active { transform:scale(.92); }
@@ -1801,6 +1801,54 @@ html[data-theme="dark"] .event-pill.quick-added{color:#0f1719!important}
 
 [hidden]{display:none!important}
 html[data-theme="dark"] .auth-user-line button{background:var(--surface-2)!important;color:var(--text)!important;border:1px solid var(--border)!important}
+
+/* ===== Design pass: consistent headings, quieter defaults, clearer hierarchy ===== */
+.card-title,.tool-section h3,.tool-section h4,.wp-section-title,.finance-page-title{color:var(--text)}
+.nav-item > span:not(.nav-icon){font-size:.75rem!important;font-weight:700}
+.nav-icon{height:24px;display:flex!important;align-items:center;justify-content:center}
+.nav-icon svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.hero-date{font-size:.75rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.hero-title{font-size:1.25rem;font-weight:800;letter-spacing:-.02em;margin:2px 0 12px;color:var(--text)}
+.hero-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.hero-chip{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;min-height:36px;border-radius:999px;border:1px solid var(--border,#dce8e2);background:rgba(255,255,255,.7);color:var(--text);font:inherit;font-size:.85rem;font-weight:700;cursor:pointer}
+.hero-chip.warn{color:#b3261e;border-color:rgba(179,38,30,.35);background:rgba(179,38,30,.07)}
+html[data-theme="dark"] .hero-chip{background:var(--surface-2)!important;border-color:var(--border)!important;color:var(--text)!important}
+html[data-theme="dark"] .hero-chip.warn{color:var(--danger-text)!important;background:rgba(255,154,143,.1)!important}
+.empty-line{padding:6px 2px;color:var(--muted);font-size:.95rem}
+.link-btn{background:none;border:0;padding:0;font:inherit;font-weight:800;color:var(--accent);text-decoration:underline;cursor:pointer}
+.qa-field{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0;text-align:left;font-size:.75rem;font-weight:800;color:var(--muted)}
+.qa-field .form-input{width:100%;margin:0}
+.meal-cook-tag.bg-family{background:transparent!important;border:1px dashed var(--border,#cddad6)!important;color:var(--muted)!important;font-weight:700}
+.wp-add-item-btn{width:auto!important;display:inline-flex;align-self:flex-start;padding:7px 14px!important;font-size:.85rem!important}
+.budget-row-item:last-child{padding:16px 14px;background:#e3f1ec;border-color:transparent}
+.budget-row-item:last-child span:first-child{font-weight:800}
+.budget-row-item:last-child span:last-child{font-size:1.45rem;font-weight:800}
+html[data-theme="dark"] .budget-row-item:last-child{background:rgba(111,194,200,.16)!important;border-color:transparent!important}
+.form-row .qa-field{width:100%;align-items:stretch}
+html[data-theme="dark"] .meal-cook-tag.bg-family{background:transparent!important;border:1px dashed var(--border)!important;color:var(--muted)!important}
+
+/* ===== Batch 2: badge, account tabs, budget bar, accessibility ===== */
+:root{--shadow-raised:0 10px 28px rgba(39,91,78,.12)}
+html[data-theme="dark"]{--shadow-raised:0 10px 28px rgba(0,0,0,.38)}
+.account-icon-btn{position:relative}
+.req-badge{position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#d9362b;color:#fff;font-size:.75rem;font-weight:800;line-height:18px;text-align:center}
+.req-badge.inline{position:static;display:inline-block;margin-left:4px;vertical-align:1px}
+.req-badge[hidden]{display:none!important}
+#account-tabs{margin-top:10px}
+.budget-progress{height:10px;border-radius:999px;background:rgba(36,91,103,.12);overflow:hidden;margin:6px 0 4px}
+.budget-progress > div{height:100%;width:0;border-radius:999px;background:var(--accent,#245b67);transition:width .3s ease}
+.budget-progress > div.warn{background:#d17a24}
+.budget-progress > div.over{background:#d9362b}
+.cal-main-tab,.todo-scope-tabs button,.user-dropdown-item,.tool-btn{min-height:44px}
+.account-icon-btn,.top-home-btn{width:44px;height:44px}
+*:focus-visible{outline:2px solid var(--accent,#245b67)!important;outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+/* tap targets: at least 44px */
+.top-add-btn,.cal-nav-btn,.todo-edit-btn,.todo-inline-icon-btn,.action-btn{min-width:44px;min-height:44px}
+.hero-chip,.wp-add-item-btn,.meal-input-inline,.meal-cook-tag,.restaurants-scoped-input,.restaurants-scoped-add-btn,.compact-scoped-add-btn{min-height:44px}
+.link-btn{padding:12px 4px;margin:-12px -4px}
+#account-tabs .cal-main-tab{white-space:nowrap;padding-left:4px;padding-right:4px}
+.req-badge.inline{margin-left:3px}
 </style>
 </head>
 <body>
@@ -1995,12 +2043,11 @@ html[data-theme="dark"] .auth-user-line button{background:var(--surface-2)!impor
                 </div>
                
                 <div class="form-row" id="date-row" style="gap:8px;">
-                    <input type="date" id="add-date" class="form-input input-half" placeholder="Start Date">
-                    <input type="date" id="add-end-date" class="form-input input-half" placeholder="End Date (Optional)">
+                    <label class="qa-field"><span>Date</span><input type="date" id="add-date" class="form-input"></label>
+                    <label class="qa-field"><span>End date (optional)</span><input type="date" id="add-end-date" class="form-input"></label>
                 </div>
-                <div class="form-row" id="time-row" style="gap:8px;align-items:center;">
-                    <label class="tool-note" for="add-time" style="flex:1 1 100%;margin:0;text-align:left;">Time (optional)</label>
-                    <input type="time" id="add-time" class="form-input input-half" style="flex:1;">
+                <div class="form-row" id="time-row" style="gap:8px;">
+                    <label class="qa-field"><span>Time (optional)</span><input type="time" id="add-time" class="form-input"></label>
                 </div>
                 <div class="form-row" id="recurring-row" style="gap:8px;">
                     <select id="add-recurring" class="form-select input-full">
@@ -2035,7 +2082,7 @@ html[data-theme="dark"] .auth-user-line button{background:var(--surface-2)!impor
             <svg id="account-indicator" class="user-silhouette-icon text-family" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
             </svg>
-        </button>
+        <span id="requests-badge" class="req-badge" hidden>0</span></button>
         <button class="top-add-btn" onclick="toggleQuickAddModal()" title="Add Event / Item" aria-label="Add">+</button>
     </div>
 
@@ -2044,9 +2091,9 @@ html[data-theme="dark"] .auth-user-line button{background:var(--surface-2)!impor
     </div>
 
     <div class="header-right" style="position:relative;">
-        <div class="current-user-badge" onclick="toggleUserDropdown()" style="cursor:pointer;" title="Switch between My View and Household View">
+        <div class="current-user-badge" onclick="toggleUserDropdown()" style="cursor:pointer;" title="Switch between Just me and Everyone">
             <span id="active-badge-dot" class="account-avatar-dot bg-family" style="width:8px; height:8px;"></span>
-            <span id="active-badge-text">My View</span>
+            <span id="active-badge-text">Just me</span>
             <span style="font-size:0.7rem;">▼</span>
         </div>
         <div id="user-dropdown" class="user-dropdown-menu" style="left:auto; right:0;">
@@ -2054,14 +2101,14 @@ html[data-theme="dark"] .auth-user-line button{background:var(--surface-2)!impor
     <span style="font-size:1.1rem;">👤</span>
     <span style="display:flex;flex-direction:column;line-height:1.35;">
         <strong id="opt-my-view-label">My account</strong>
-        <small style="font-size:.72rem;color:var(--muted);">My View</small>
+        <small style="font-size:.72rem;color:var(--muted);">Just me</small>
     </span>
 </div>
 <div id="opt-family" class="user-dropdown-item" onclick="selectFamilyView()" style="display:flex;align-items:center;gap:10px;">
     <span style="font-size:1.1rem;">👨‍👩‍👧‍👦</span>
     <span style="display:flex;flex-direction:column;line-height:1.35;">
         <strong id="opt-family-label">Your household</strong>
-        <small style="font-size:.72rem;color:var(--muted);">Household View</small>
+        <small style="font-size:.72rem;color:var(--muted);">Everyone</small>
     </span>
 </div>
 <div style="height:1px; background:#eff6ff; margin:5px 0;"></div>
@@ -2076,11 +2123,10 @@ html[data-theme="dark"] .auth-user-line button{background:var(--surface-2)!impor
     <!-- VIEW 0: HOME DASHBOARD -->
     <div id="view-dashboard" class="view active">
         <section class="card" style="margin-bottom:12px;">
-            <div class="card-title" style="display:flex; flex-direction:column; align-items:flex-start; gap:8px;">
-                <span style="white-space:nowrap;">🗓️ This Week in Our Family</span>
-                <button class="tool-btn secondary" onclick="showView('calendar',document.getElementById('nav-btn-calendar'))">Open calendar</button>
-            </div>
-            <div id="family-week-summary" class="tool-note">Your family week at a glance.</div>
+            <div class="hero-date" id="hero-date"></div>
+            <div class="hero-title" id="hero-title">Welcome</div>
+            <div id="family-week-summary" class="hero-chips"></div>
+            <button class="tool-btn secondary" onclick="showView('calendar',document.getElementById('nav-btn-calendar'))">Open calendar</button>
         </section>
         <section class="card">
             <div class="card-title">
@@ -2242,6 +2288,8 @@ html[data-theme="dark"] .auth-user-line button{background:var(--surface-2)!impor
                 
                 <!-- Horizontal Budget Display Table -->
                 <div class="budget-horizontal-table">
+                    <div class="budget-progress" id="budget-progress" role="progressbar" aria-label="Share of monthly budget used" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" hidden><div id="finance-budget-bar"></div></div>
+                    <div id="finance-budget-caption" class="tool-note" hidden></div>
                     <div class="budget-row-item">
                         <span>Budget</span>
                         <span id="finance-overview-budget">£0.00</span>
@@ -2413,47 +2461,18 @@ html[data-theme="dark"] .auth-user-line button{background:var(--surface-2)!impor
 
     <!-- Account page -->
     <div id="view-account" class="view">
-        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Your profile, household and data.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 2.3 · build 2026-11-16.13</p></section>
-        <section class="tool-section" id="profile-name-section">
-            <h3>👤 Profile name</h3>
-            <p class="tool-note">Changing your name updates it everywhere it appears: tasks, lists, calendar, meal plan and household members.</p>
-            <label class="auth-field" for="profile-name-input">Your name</label>
-            <input type="text" id="profile-name-input" class="form-input input-full" maxlength="60" autocomplete="name" placeholder="Your name" onkeydown="if(event.key==='Enter') fpSaveProfileName()">
-            <div class="account-actions">
-                <button type="button" class="tool-btn" id="profile-name-save" onclick="fpSaveProfileName()">Save name</button>
-            </div>
-            <p class="tool-note" id="profile-name-status" aria-live="polite"></p>
-            <div style="margin-top:14px;">
-                <label class="auth-field">Your name colour</label>
-                <p class="tool-note">Choose the colour used for your name and the dot beside it throughout the household. Each household member must use a different colour.</p>
-                <div id="profile-colour-options" class="profile-colour-options" role="group" aria-label="Choose your name colour"></div>
-                <div class="profile-colour-preview"><span id="profile-colour-preview-dot" class="profile-colour-preview-dot"></span><span id="profile-colour-preview-name">Your name</span></div>
-                <p class="tool-note" id="profile-colour-status" aria-live="polite"></p>
-            </div>
-        </section>
-        <section class="tool-section" id="appearance-section">
-            <h3>🎨 Appearance</h3>
-            <div class="calendar-main-tabs" role="group" aria-label="Theme">
-                <button type="button" class="cal-main-tab" data-theme-choice="light" onclick="fpSetTheme('light')">☀️ Light</button>
-                <button type="button" class="cal-main-tab" data-theme-choice="dark" onclick="fpSetTheme('dark')">🌙 Dark</button>
-                <button type="button" class="cal-main-tab" data-theme-choice="auto" onclick="fpSetTheme('auto')">Auto</button>
-            </div>
-        </section>
-        <section class="tool-section" id="reassign-section">
-            <h3>🧹 Tidy up unassigned items</h3>
-            <p class="tool-note">Items that belong to someone no longer in the household show as "Unassigned". Move them all to one person in a single step.</p>
-            <div class="account-actions">
-                <button type="button" class="tool-btn secondary" onclick="fpReassignUnassigned()">Reassign unassigned items</button>
-            </div>
-        </section>
-        <section class="tool-section" id="household-management-section">
+        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Your profile, household and data.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 2.3 · build 2026-11-16.13</p><button type="button" class="tool-btn secondary" style="margin-top:10px;" onclick="fpSignOut()">Sign out</button></section>
+<div class="calendar-main-tabs" role="tablist" aria-label="Account sections" id="account-tabs">
+  <button type="button" class="cal-main-tab" role="tab" data-acct-tab="household" onclick="fpSetAccountTab('household')">🏡 Household <span id="acct-tab-badge" class="req-badge inline" hidden>0</span></button>
+  <button type="button" class="cal-main-tab" role="tab" data-acct-tab="me" onclick="fpSetAccountTab('me')">👤 Me</button>
+  <button type="button" class="cal-main-tab" role="tab" data-acct-tab="data" onclick="fpSetAccountTab('data')">⚙️ App & data</button>
+</div>
+        <section class="tool-section" id="household-management-section" data-acct="household">
             <h3>🏡 Shared household</h3>
             <p class="tool-note" id="household-sync-status">Sign in and connect to a household to synchronise family information across devices.</p>
             <div class="household-settings-box">
                 <code id="household-id-display" hidden>Not connected</code>
-                <div style="display:flex;gap:8px;">
-                    <button type="button" class="tool-btn secondary" style="flex:1;" onclick="fpSignOut()">Sign out</button>
-                </div>
+                
                 <div id="household-invite-box" style="display:none;">
                     <h4>Children</h4>
                     <p class="tool-note">Children never need an email or password. Add a profile for each child. If a child has their own phone, tap “Set up own device” on their profile to make a one-time code.</p>
@@ -2480,7 +2499,40 @@ html[data-theme="dark"] .auth-user-line button{background:var(--surface-2)!impor
             </div>
             <p class="tool-note" id="household-member-note">Your private to-do list remains private to your account.</p>
         </section>
-        <section class="tool-section">
+<section class="tool-section" id="profile-name-section" data-acct="me">
+            <h3>👤 Profile name</h3>
+            <p class="tool-note">Changing your name updates it everywhere it appears: tasks, lists, calendar, meal plan and household members.</p>
+            <label class="auth-field" for="profile-name-input">Your name</label>
+            <input type="text" id="profile-name-input" class="form-input input-full" maxlength="60" autocomplete="name" placeholder="Your name" onkeydown="if(event.key==='Enter') fpSaveProfileName()">
+            <div class="account-actions">
+                <button type="button" class="tool-btn" id="profile-name-save" onclick="fpSaveProfileName()">Save name</button>
+            </div>
+            <p class="tool-note" id="profile-name-status" aria-live="polite"></p>
+            <div style="margin-top:14px;">
+                <label class="auth-field">Your name colour</label>
+                <p class="tool-note">Choose the colour used for your name and the dot beside it throughout the household. Each household member must use a different colour.</p>
+                <div id="profile-colour-options" class="profile-colour-options" role="group" aria-label="Choose your name colour"></div>
+                <div class="profile-colour-preview"><span id="profile-colour-preview-dot" class="profile-colour-preview-dot"></span><span id="profile-colour-preview-name">Your name</span></div>
+                <p class="tool-note" id="profile-colour-status" aria-live="polite"></p>
+            </div>
+        </section>
+        <section class="tool-section" id="appearance-section" data-acct="me">
+            <h3>🎨 Appearance</h3>
+            <div class="calendar-main-tabs" role="group" aria-label="Theme">
+                <button type="button" class="cal-main-tab" data-theme-choice="light" onclick="fpSetTheme('light')">☀️ Light</button>
+                <button type="button" class="cal-main-tab" data-theme-choice="dark" onclick="fpSetTheme('dark')">🌙 Dark</button>
+                <button type="button" class="cal-main-tab" data-theme-choice="auto" onclick="fpSetTheme('auto')">Auto</button>
+            </div>
+        </section>
+        <section class="tool-section" id="reassign-section" data-acct="data">
+            <h3>🧹 Tidy up unassigned items</h3>
+            <p class="tool-note">Items that belong to someone no longer in the household show as "Unassigned". Move them all to one person in a single step.</p>
+            <div class="account-actions">
+                <button type="button" class="tool-btn secondary" onclick="fpReassignUnassigned()">Reassign unassigned items</button>
+            </div>
+        </section>
+        
+        <section class="tool-section" data-acct="data">
             <h3>⚙️ Account & data backup</h3>
             <p class="tool-note">Export a backup of your planner data or restore it from a Family Plan JSON backup. Import replaces the current data on this browser, so export a backup first.</p>
             <div class="account-actions">
@@ -2492,14 +2544,14 @@ html[data-theme="dark"] .auth-user-line button{background:var(--surface-2)!impor
             <p class="tool-note" id="backup-status" aria-live="polite"></p>
         </section>
 
-<section class="tool-section">
+<section class="tool-section" data-acct="data">
     <h3>🔒 Privacy & policies</h3>
     <div class="account-actions">
         <a class="tool-btn secondary" href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>
         <a class="tool-btn secondary" href="/account-deletion.html" target="_blank" rel="noopener">Account Deletion Policy</a>
     </div>
 </section>
-<section class="tool-section danger-zone" id="account-deletion-section">
+<section class="tool-section danger-zone" id="account-deletion-section" data-acct="data">
     <h3>⚠️ Danger zone</h3>
     <p class="tool-note">
         Permanently delete your account and associated household data.
@@ -2514,12 +2566,12 @@ html[data-theme="dark"] .auth-user-line button{background:var(--surface-2)!impor
 </div>
     <!-- FIXED Bottom Navigation Bar -->
     <nav class="bottom-nav" aria-label="Main navigation">
-        <button id="nav-btn-home" class="nav-item" onclick="showView('dashboard', this)"><span class="nav-icon">🏠</span><span>Home</span></button>
-        <button id="nav-btn-addressbook" class="nav-item" onclick="showView('addressbook', this)"><span class="nav-icon">📍</span><span>Places</span></button>
-        <button id="nav-btn-calendar" class="nav-item" onclick="showView('calendar', this)"><span class="nav-icon">📅</span><span>Calendar</span></button>
-        <button id="nav-btn-shopping" class="nav-item" onclick="showView('shopping', this)"><span class="nav-icon">🛒</span><span>Shopping</span></button>
-        <button id="nav-btn-monthlybudget" class="nav-item" onclick="showView('monthlybudget', this)"><span class="nav-icon">📊</span><span>Money</span></button>
-        <button id="nav-btn-todo" class="nav-item" onclick="showView('familyhub', this); setFamilyHubView('tasks')"><span class="nav-icon">📝</span><span>To-Do</span></button>
+        <button id="nav-btn-home" class="nav-item" onclick="showView('dashboard', this)"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg></span><span>Home</span></button>
+        <button id="nav-btn-addressbook" class="nav-item" onclick="showView('addressbook', this)"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span>Places</span></button>
+        <button id="nav-btn-calendar" class="nav-item" onclick="showView('calendar', this)"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></span><span>Calendar</span></button>
+        <button id="nav-btn-shopping" class="nav-item" onclick="showView('shopping', this)"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/><path d="M2.5 3.5h3l2.2 11.2a1.5 1.5 0 0 0 1.5 1.2h7.7a1.5 1.5 0 0 0 1.5-1.1L20.5 7H6.2"/></svg></span><span>Shopping</span></button>
+        <button id="nav-btn-monthlybudget" class="nav-item" onclick="showView('monthlybudget', this)"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 20V11M12 20V4M19 20v-6"/></svg></span><span>Money</span></button>
+        <button id="nav-btn-todo" class="nav-item" onclick="showView('familyhub', this); setFamilyHubView('tasks')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="3.5" width="16" height="17" rx="2.5"/><path d="m8.5 12 2.3 2.3 4.7-4.8"/></svg></span><span>To-Do</span></button>
     </nav>
 
     <!-- Leaflet JS Library for Map -->
@@ -2808,7 +2860,7 @@ if (window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEven
 function fpSafeParse(raw) { try { return JSON.parse(raw); } catch (e) { console.warn('Ignoring unreadable saved data:', e); return null; } }
 let currentUser = localStorage.getItem('fam_user') || '';
 let currentUserName = localStorage.getItem('fam_user_name') || 'Me';
-let viewMode = 'individual'; // My View is the safe default on every load.
+let viewMode = 'individual'; // Just me is the safe default on every load.
 
 let mealsData = fpSafeParse(localStorage.getItem('fam_meals')) || [
     { day: "Mon", meal: "", cook: "family" }, { day: "Tue", meal: "", cook: "family" }, 
@@ -3244,6 +3296,7 @@ function fpStopSharedListeners(){
   Object.values(fpSharedFlushTimers).forEach(clearTimeout); fpSharedFlushTimers={};
   if(fpMembersUnsub){fpMembersUnsub();fpMembersUnsub=null;}
   if(fpRequestsUnsub){fpRequestsUnsub();fpRequestsUnsub=null;}
+  fpUpdateRequestsBadge(null);
   if(window.fpInvitesUnsub){window.fpInvitesUnsub();window.fpInvitesUnsub=null;}
   if(window.fpChildrenUnsub){window.fpChildrenUnsub();window.fpChildrenUnsub=null;}
   fpHouseholdChildren=[];
@@ -3384,7 +3437,7 @@ function fpUpdateHouseholdPanel(){
 // everywhere through the live member record. Older records may still hold the
 // previous name, email or the legacy "dad"/"mom" key; those are migrated to the
 // uid below, and the legacy key is saved on the member record so the colour
-// styling and "My View" filtering keep working after the rename.
+// styling and "Just me" filtering keep working after the rename.
 // ---------------------------------------------------------------------------
 const FP_NAME_REFERENCE_FIELDS = ['who','cook','assignee','assignedTo','assignedBy','owner','paidBy','addedBy','createdBy'];
 
@@ -4204,7 +4257,33 @@ async function fpApproveJoinRequest(uid,approve){
 }
 window.fpApproveJoinRequest=fpApproveJoinRequest;
 
+function fpA11yPass(){
+  document.querySelectorAll('input:not([type=hidden]),textarea,select').forEach(el=>{
+    if(el.getAttribute('aria-label')||el.getAttribute('aria-labelledby')||el.closest('label')||(el.id&&document.querySelector('label[for="'+el.id+'"]')))return;
+    const t=el.getAttribute('placeholder')||el.getAttribute('title'); if(t)el.setAttribute('aria-label',t);});
+  document.querySelectorAll('[onclick]').forEach(el=>{
+    if(/^(BUTTON|A|INPUT|SELECT|SUMMARY|TEXTAREA|LABEL)$/.test(el.tagName))return;
+    if(!el.getAttribute('role'))el.setAttribute('role','button'); if(!el.hasAttribute('tabindex'))el.setAttribute('tabindex','0');});
+}
+document.addEventListener('keydown',e=>{const t=e.target;if((e.key==='Enter'||e.key===' ')&&t&&t.getAttribute&&t.getAttribute('role')==='button'&&t.hasAttribute('onclick')&&!/^(BUTTON|A|INPUT)$/.test(t.tagName)){e.preventDefault();t.click();}});
+(function(){let timer=null;const run=()=>{timer=null;try{fpA11yPass();}catch(e){}};
+  new MutationObserver(()=>{if(!timer)timer=setTimeout(run,250);}).observe(document.body,{childList:true,subtree:true});
+  window.addEventListener('load',()=>{run();let t='household';try{t=sessionStorage.getItem('fp_acct_tab')||'household';}catch(e){}fpSetAccountTab(t);});})();
+function fpSetAccountTab(tab){
+  if(!['household','me','data'].includes(tab))tab='household';
+  document.querySelectorAll('#view-account [data-acct]').forEach(el=>{el.style.display=el.dataset.acct===tab?'':'none';});
+  document.querySelectorAll('#account-tabs [data-acct-tab]').forEach(b=>{const on=b.dataset.acctTab===tab;b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false');});
+  try{sessionStorage.setItem('fp_acct_tab',tab);}catch(e){}
+}
+function fpOpenRequests(){showView('account',null);fpSetAccountTab('household');}
+window.fpSetAccountTab=fpSetAccountTab;window.fpOpenRequests=fpOpenRequests;
+function fpUpdateRequestsBadge(snapshot){
+  const n=snapshot?snapshot.docs.filter(d=>d.data().status==='pending').length:0;
+  ['requests-badge','acct-tab-badge'].forEach(id=>{const el=document.getElementById(id);if(!el)return;el.textContent=n>9?'9+':String(n);el.hidden=n===0;});
+  const btn=document.querySelector('.account-icon-btn');if(btn)btn.setAttribute('aria-label',n?`Account, ${n} request${n>1?'s':''} waiting`:'Account');
+}
 function fpRenderJoinRequests(snapshot){
+  fpUpdateRequestsBadge(snapshot);
   const docs=snapshot.docs;
   const renderCards=(items)=>items.map(doc=>{
     const r=doc.data();
@@ -4546,7 +4625,7 @@ function selectMyView() {
     updateHeaderDisplay();
     saveData();
     renderAllViews();
-    showToast('Showing My View');
+    showToast('Showing Just me');
 }
 
 function selectFamilyView() {
@@ -4556,7 +4635,7 @@ function selectFamilyView() {
     updateHeaderDisplay();
     saveData();
     renderAllViews();
-    showToast('Showing Household View');
+    showToast('Showing Everyone');
 }
 
 // Retained for older saved links, but a user can no longer switch into another member's identity.
@@ -4575,7 +4654,7 @@ function updateHeaderDisplay() {
     const styleKey = viewMode === 'family' ? 'family' : fpAssigneeStyle(currentUser);
     if (indicatorEl) { indicatorEl.setAttribute('class', `user-silhouette-icon text-${styleKey}`); indicatorEl.style.color = viewMode === 'family' ? '' : (fpMemberNameColour(currentUser) || ''); }
     if (badgeDotEl) { badgeDotEl.className = `account-avatar-dot bg-${styleKey}`; badgeDotEl.style.backgroundColor = viewMode === 'family' ? '' : (fpMemberNameColour(currentUser) || ''); }
-    if (badgeTextEl) badgeTextEl.textContent = viewMode === 'family' ? 'Household' : 'My View';
+    if (badgeTextEl) badgeTextEl.textContent = viewMode === 'family' ? 'Household' : 'Just me';
 }
 
 function filterItem(itemWho) {
@@ -4718,12 +4797,45 @@ function toggleDashboardTask(type, index) {
     showToast(type === 'foodshop' ? 'Shopping item completed' : 'Task completed');
 }
 
+// ---- Friendly dates and the Home summary ----
+function fpIsoToday() { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split('T')[0]; }
+function fpFriendlyDate(iso) {
+    if (!iso) return '';
+    const d = new Date(String(iso) + 'T00:00:00'); if (isNaN(d)) return String(iso);
+    const t = new Date(); t.setHours(0, 0, 0, 0);
+    const days = Math.round((d - t) / 86400000);
+    if (days === 0) return 'Today'; if (days === 1) return 'Tomorrow'; if (days === -1) return 'Yesterday';
+    return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', ...(d.getFullYear() !== t.getFullYear() ? { year: 'numeric' } : {}) });
+}
+function fpRenderHero() {
+    const box = document.getElementById('family-week-summary'); if (!box) return;
+    const now = new Date(), hour = now.getHours(), today = fpIsoToday();
+    const first = ((typeof firebaseUser !== 'undefined' && firebaseUser && firebaseUser.displayName) || '').trim().split(/\s+/)[0];
+    document.getElementById('hero-date').textContent = now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+    document.getElementById('hero-title').textContent = (hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening') + (first ? ', ' + first : '');
+    const events = (calendarEvents[today] || []).filter(ev => filterItem(ev.who)).length;
+    const open = todosData.filter(t => !t.done && filterItem(t.who));
+    const overdue = open.filter(t => t.date && t.date < today).length;
+    const dayName = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][now.getDay()], meal = mealsData.find(m => m.day === dayName);
+    const chips = [
+        ['📅', events ? `${events} event${events > 1 ? 's' : ''} today` : 'No events today', "showView('calendar',document.getElementById('nav-btn-calendar'))", ''],
+        ['✅', open.length ? `${open.length} to-do${open.length > 1 ? 's' : ''}` : 'No to-dos', "showView('familyhub',document.getElementById('nav-btn-todo'));setFamilyHubView('tasks')", '']
+    ];
+    if (overdue) chips.push(['⚠️', `${overdue} overdue`, "showView('familyhub',document.getElementById('nav-btn-todo'));setFamilyHubView('tasks')", 'warn']);
+    chips.push(['🍽️', meal && meal.meal ? `Tonight: ${meal.meal}` : 'Dinner not planned', "showView('shopping',document.getElementById('nav-btn-shopping'))", '']);
+    box.textContent = '';
+    chips.forEach(([icon, text, action, cls]) => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'hero-chip ' + cls;
+        b.setAttribute('onclick', action); b.textContent = icon + ' ' + text; box.appendChild(b);
+    });
+}
 function renderDashboard() {
+    fpRenderHero();
     const todayStr = new Date().toISOString().split('T')[0];
     const schedCont = document.getElementById('dash-schedule');
     const todayEvents = fpSortEvents((calendarEvents[todayStr] || []).filter(ev => filterItem(ev.who)));
     if (todayEvents.length === 0) {
-        schedCont.innerHTML = `<div class="list-empty">No events scheduled for today.</div>`;
+        schedCont.innerHTML = `<div class="empty-line">Nothing on today. <button type="button" class="link-btn" onclick="toggleQuickAddModal()">Add an event</button></div>`;
     } else {
         schedCont.innerHTML = todayEvents.map(ev => `
             <div class="dashboard-item">
@@ -4742,7 +4854,7 @@ function renderDashboard() {
     const todayMeal = mealsData.find(m => m.day === todayDay);
 
     if (!todayMeal || !todayMeal.meal) {
-        dinnerCont.innerHTML = `<div class="list-empty">No dinner plan set for tonight.</div>`;
+        dinnerCont.innerHTML = `<div class="empty-line">Dinner isn't planned yet. <button type="button" class="link-btn" onclick="showView('shopping',document.getElementById('nav-btn-shopping'))">Plan dinner</button></div>`;
     } else {
         const cookName = fpDisplayAssignee(todayMeal.cook);
         dinnerCont.innerHTML = `
@@ -4762,10 +4874,10 @@ function renderDashboard() {
 
     let combinedItems = [];
     uncompletedFood.forEach(item => combinedItems.push({ text: item.text, sub: "Food Shopping List", type: "foodshop", index: item.index, icon: "🛒" }));
-    uncompletedTasks.forEach(item => combinedItems.push({ text: item.text, sub: `To-Do Task (${item.date || 'Any Date'})`, type: "todo", index: item.index, icon: "📝" }));
+    uncompletedTasks.forEach(item => combinedItems.push({ text: item.text, sub: `To-do · ${item.date ? fpFriendlyDate(item.date) + (item.date < fpIsoToday() ? ' · overdue' : '') : 'Any day'}`, type: "todo", index: item.index, icon: "📝" }));
 
     if (combinedItems.length === 0) {
-        tasksCont.innerHTML = `<div class="list-empty">No outstanding tasks or shopping items.</div>`;
+        tasksCont.innerHTML = `<div class="empty-line">All clear. Nothing outstanding.</div>`;
     } else {
         tasksCont.innerHTML = combinedItems.slice(0, 5).map(item => `
             <div class="dashboard-item dashboard-task-item">
@@ -5243,7 +5355,7 @@ function setTodoScope(scope) {
     });
     if (privateButton) {
         privateButton.disabled = viewMode === 'family';
-        privateButton.title = viewMode === 'family' ? 'Private reminders are available in My View only' : '';
+        privateButton.title = viewMode === 'family' ? 'Private reminders are available in Just me only' : '';
     }
     const isGift = activeTodoScope === 'gift';
     const todoPanel = document.getElementById('todo-content-panel');
@@ -5389,9 +5501,9 @@ function todoDueHtml(value) {
     if (!isNaN(due)) {
         const days = Math.round((due - today) / 86400000);
         if (days < 0) { cls = ' is-overdue'; note = ' · overdue'; }
-        else if (days === 0) { cls = ' is-today'; note = ' · today'; }
+        else if (days === 0) { cls = ' is-today'; note = ''; }
     }
-    return `<span class="todo-due${cls}"><span class="meta-icon" aria-hidden="true">📅</span>${escapeToolText(formatTodoMetaDate(value))}${note}</span><span class="meta-dot" aria-hidden="true">•</span>`;
+    return `<span class="todo-due${cls}"><span class="meta-icon" aria-hidden="true">📅</span>${escapeToolText(fpFriendlyDate(value))}${note}</span><span class="meta-dot" aria-hidden="true">•</span>`;
 }
 
 function formatTodoMetaDate(value) {
@@ -5571,7 +5683,7 @@ function renderTodos() {
         privateButton.classList.toggle('active', activeTodoScope === 'private');
         privateButton.setAttribute('aria-pressed', String(activeTodoScope === 'private'));
         privateButton.disabled = viewMode === 'family';
-        privateButton.title = viewMode === 'family' ? 'Private reminders are available in My View only' : '';
+        privateButton.title = viewMode === 'family' ? 'Private reminders are available in Just me only' : '';
     }
     const note = document.getElementById('todo-scope-note');
     if (note) note.textContent = activeTodoScope === 'private'
@@ -5916,12 +6028,7 @@ const cookName = fpDisplayAssignee(mObj?.cook);
     const grid = document.getElementById('weekly-planner-grid');
     if (grid) grid.innerHTML = html;
 
-    const summary = document.getElementById('family-week-summary');
-    if (summary) {
-        const events = Object.values(calendarEvents).flat().length;
-        const open = todosData.filter(t => !t.done).length;
-        summary.textContent = `7-day meal plan · ${events} calendar entries saved · ${open} outstanding to-do(s) · ${householdBillsData.length} household bill(s) tracked.`;
-    }
+    fpRenderHero();
 }
 
 function openDayQuickAdd(dateKey) {
@@ -6023,6 +6130,12 @@ function renderFinanceOverview(){
     put('finance-overview-bills',moneyGBP(billsTotal));
     put('finance-overview-spent',moneyGBP(totalSpent));
     put('finance-overview-remaining',moneyGBP(remaining));
+    (function(){const wrap=document.getElementById('budget-progress'),bar=document.getElementById('finance-budget-bar'),cap=document.getElementById('finance-budget-caption');if(!wrap||!bar||!cap)return;
+      const budget=Number(householdMonthlyBudget)||0;if(budget<=0){wrap.hidden=true;cap.hidden=true;return;}
+      const used=Math.max(0,budget-Number(remaining)),pct=Math.min(100,Math.round(used/budget*100));
+      wrap.hidden=false;cap.hidden=false;bar.style.width=pct+'%';wrap.setAttribute('aria-valuenow',String(pct));
+      bar.className=Number(remaining)<0?'over':pct>=75?'warn':'';
+      cap.textContent=Number(remaining)<0?`Over budget by ${moneyGBP(-Number(remaining))}`:`${pct}% of this month's budget used`;})();
 
     const budgetInput = document.getElementById('household-monthly-budget');
     if(budgetInput && document.activeElement !== budgetInput) budgetInput.value = householdMonthlyBudget;
