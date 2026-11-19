@@ -1850,13 +1850,9 @@ html[data-theme="dark"] .auth-user-line button{background:var(--surface-2)!impor
         <div id="child-join-panel" class="household-panel">
           <div class="auth-user-line"><span>Child access</span><button type="button" onclick="document.getElementById('child-join-panel').classList.remove('visible');document.getElementById('auth-account-panel').style.display='block'">Back</button></div>
           <h2 style="font-size:1.2rem;margin-top:18px;">Join your family</h2>
-          <p class="auth-small">Enter your name and the household code shared by your parent. A parent must approve this device before you can see family information.</p>
-          <label class="auth-field" for="child-join-name">Your name</label>
-          <input class="auth-input" id="child-join-name" maxlength="40" autocomplete="name" placeholder="Your name">
-          <label class="auth-field" for="child-join-code">Household code</label>
-          <input class="auth-input" id="child-join-code" maxlength="40" autocomplete="off" autocapitalize="none" placeholder="Paste household code">
-          <label class="auth-field" for="child-join-type">Age group</label>
-          <select class="auth-input" id="child-join-type"><option value="toddler">Under 5</option><option value="child" selected>5–11</option><option value="teen">12+</option></select>
+          <p class="auth-small">Enter the code your parent made for you. It works once. Then your parent has to approve your phone before you can see anything.</p>
+          <label class="auth-field" for="child-join-code">Your code</label>
+          <input class="auth-input" id="child-join-code" maxlength="14" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX-XXXX" style="letter-spacing:.08em;text-transform:uppercase;">
           <button class="auth-primary" id="child-join-submit" type="button" onclick="window.fpSubmitChildJoin()">Request access</button>
           <div class="auth-message" id="child-join-message" role="status" aria-live="polite"></div>
         </div>
@@ -2459,15 +2455,8 @@ html[data-theme="dark"] .auth-user-line button{background:var(--surface-2)!impor
                     <button type="button" class="tool-btn secondary" style="flex:1;" onclick="fpSignOut()">Sign out</button>
                 </div>
                 <div id="household-invite-box" style="display:none;">
-                    <h4>Child joining code</h4>
-                    <p class="tool-note">Share this code with a child who has their own phone. They can install FamilyPlan, enter the code and request access. You must approve each device.</p>
-                    <div class="household-child-code"><code id="child-household-code">Connect to your household first</code></div>
-                    <div class="account-actions" style="margin-top:8px;">
-                        <button type="button" class="tool-btn secondary" onclick="fpCopyChildJoinCode()">Copy child code</button>
-                        <button type="button" class="tool-btn secondary" onclick="fpShareChildJoinCode()">Share code</button>
-                        <button type="button" class="tool-btn secondary" onclick="fpShareChildJoinCode('sms')">Text message</button>
-                        <button type="button" class="tool-btn secondary" onclick="fpShareChildJoinCode('whatsapp')">WhatsApp</button>
-                    </div>
+                    <h4>Children</h4>
+                    <p class="tool-note">Children never need an email or password. Add a profile for each child. If a child has their own phone, tap “Set up own device” on their profile to make a one-time code.</p>
                     <div id="managed-child-box" style="margin-top:16px;">
                         <h4>Add a child without a phone</h4>
                         <p class="tool-note">Create a household profile for a younger child. They do not need an email address, password or login. The profile can be assigned chores and planner items.</p>
@@ -2477,6 +2466,7 @@ html[data-theme="dark"] .auth-user-line button{background:var(--surface-2)!impor
                             <button type="button" class="tool-btn" onclick="fpCreateManagedChild()">Add child</button>
                         </div>
                         <div id="managed-child-status" class="tool-note" aria-live="polite"></div>
+                        <div id="child-invite-result" aria-live="polite"></div>
                         <div id="managed-children-list" class="household-management-list"></div>
                     </div>
                     <h4>Invite an adult</h4>
@@ -2539,6 +2529,7 @@ html[data-theme="dark"] .auth-user-line button{background:var(--surface-2)!impor
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-functions-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-check-compat.js"></script>
 <script>
 // Firebase initialisation. The web API key identifies the project; access is controlled by Firebase Auth and Firestore Rules.
 const firebaseConfig = {
@@ -2564,6 +2555,10 @@ let fpAuthMode = 'signin';
 
 try {
     if (window.firebase && !firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    // App Check stops scripts and fake apps from using your Firebase project. Paste the reCAPTCHA v3 site key from
+    // Firebase Console > App Check here to switch it on. Leave empty to keep it off.
+    const FP_APP_CHECK_SITE_KEY = '';
+    if (FP_APP_CHECK_SITE_KEY && window.firebase && firebase.appCheck) { try { firebase.appCheck().activate(FP_APP_CHECK_SITE_KEY, true); } catch (e) { console.warn('App Check not started:', e); } }
     if (window.firebase) {
         firebaseAuth = firebase.auth();
         firebaseDb = firebase.firestore();
@@ -3724,18 +3719,45 @@ function fpRenderPlanMemberOptions() {
 let fpHouseholdName='';
 function fpCopyHouseholdId(){if(!fpHouseholdId)return showToast('No household is connected');if(navigator.clipboard?.writeText)navigator.clipboard.writeText(fpHouseholdId).then(()=>showToast('Household ID copied')).catch(()=>showToast('Could not copy household ID'));else showToast('Household ID: '+fpHouseholdId);}
 window.fpCopyHouseholdId=fpCopyHouseholdId;
-function fpChildInviteText(){return `Join our family on FamilyPlan. Open ${location.origin+location.pathname} , choose “Child joining a family?” and enter this household code: ${fpHouseholdId}. Your parent will approve your device.`;}
-async function fpCopyChildJoinCode(){if(!fpHouseholdId)return showToast('No household is connected');try{await navigator.clipboard.writeText(fpHouseholdId);showToast('Child joining code copied');}catch(e){showToast('Your child joining code is '+fpHouseholdId);}}
-window.fpCopyChildJoinCode=fpCopyChildJoinCode;
-async function fpShareChildJoinCode(method){
-  if(!fpHouseholdId)return showToast('No household is connected');
-  const text=fpChildInviteText();
+// ---- Child devices: one-time, expiring codes made for one specific child profile ----
+const FP_CODE_ALPHABET='ABCDEFGHJKMNPQRSTUVWXYZ23456789'; // no I, L, O, 0 or 1, so codes are easy to read and type
+const FP_CHILD_DEVICE_PERMS={
+  toddler:{chores:'View only',calendar:'No access',wishlist:'No access',meals:'No access'},
+  child:{chores:'Contribute',calendar:'View only',wishlist:'Contribute',meals:'View only'},
+  teen:{chores:'Contribute',calendar:'View only',wishlist:'Contribute',meals:'Contribute'}
+};
+function fpMakeChildCode(){let out='';while(out.length<12){for(const x of crypto.getRandomValues(new Uint8Array(16))){if(x<248&&out.length<12)out+=FP_CODE_ALPHABET[x%31];}}return out;}
+function fpFormatChildCode(c){return String(c).replace(/(.{4})(?=.)/g,'$1-');}
+function fpChildInviteMessage(name,code){return `Hi ${name}! Open ${location.origin+location.pathname} on your phone, tap “Child joining a family?” and enter this code: ${fpFormatChildCode(code)}. It works once and expires in 24 hours. I'll approve your phone when you ask.`;}
+async function fpShareText(text,method){
   if(method==='whatsapp'){window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank','noopener');return;}
   if(method==='sms'){window.location.href='sms:?body='+encodeURIComponent(text);return;}
-  if(navigator.share){try{await navigator.share({title:'Join our family on FamilyPlan',text});}catch(e){if(e.name!=='AbortError')showToast('Could not open sharing options');}return;}
-  try{await navigator.clipboard.writeText(text);showToast('Invitation copied. Paste it into a text or WhatsApp message.');}catch(e){showToast('Use this code: '+fpHouseholdId);}
+  if(method!=='copy'&&navigator.share){try{await navigator.share({title:'Join our family on FamilyPlan',text});}catch(e){if(e.name!=='AbortError')showToast('Could not open sharing options');}return;}
+  try{await navigator.clipboard.writeText(text);showToast('Message copied. Paste it into a text or WhatsApp message.');}catch(e){showToast('Could not copy. Select the code and copy it by hand.');}
 }
-window.fpShareChildJoinCode=fpShareChildJoinCode;
+async function fpCreateChildInvite(childId){
+  if(!fpIsOwnerOrParent()||!fpHouseholdId)return;
+  const child=fpHouseholdChildren.find(c=>c.id===childId&&c.profileType==='managed'); if(!child)return;
+  if(fpHouseholdMembers.some(m=>m.childId===childId))return showToast(`${child.name} already has a device. Remove it first to set up another.`);
+  const out=document.getElementById('child-invite-result');
+  try{
+    const code=fpMakeChildCode(), hash=await fpSha256Hex(code);
+    const type=['toddler','child','teen'].includes(child.type)?child.type:'child';
+    await firebaseDb.collection('childInvites').doc(hash).set({
+      householdId:fpHouseholdId,childId,childName:child.name,type,permissions:FP_CHILD_DEVICE_PERMS[type],status:'pending',
+      createdBy:firebaseUser.uid,createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+      expiresAt:firebase.firestore.Timestamp.fromMillis(Date.now()+24*60*60*1000)});
+    const text=fpChildInviteMessage(child.name,code);
+    out.textContent='';
+    const note=document.createElement('p');note.className='tool-note';note.textContent=`Code for ${child.name}. It works once, expires in 24 hours, and is shown only once.`;
+    const big=document.createElement('code');big.textContent=fpFormatChildCode(code);
+    big.style.cssText='display:block;font-size:1.5rem;font-weight:800;letter-spacing:.08em;text-align:center;padding:12px;border-radius:12px;background:var(--surface-2,#eef4f2);margin:6px 0;user-select:all;';
+    const row=document.createElement('div');row.className='account-actions';
+    [['Copy message','copy'],['Share',''],['Text message','sms'],['WhatsApp','whatsapp']].forEach(([label,method])=>{const b=document.createElement('button');b.type='button';b.className='tool-btn secondary';b.textContent=label;b.onclick=()=>fpShareText(text,method);row.appendChild(b);});
+    out.append(note,big,row);
+  }catch(e){console.error(e);showToast('Could not create the code. Please try again.');}
+}
+window.fpCreateChildInvite=fpCreateChildInvite;
 async function fpCreateManagedChild(){
   const name=String(document.getElementById('managed-child-name')?.value||'').replace(/\s+/g,' ').trim();
   const type=document.getElementById('managed-child-type')?.value||'child';
@@ -3760,7 +3782,7 @@ function fpRenderManagedChildren(){
   const el=document.getElementById('managed-children-list');if(!el)return;
   const profiles=fpHouseholdChildren.filter(c=>c.profileType==='managed');
   if(!profiles.length){el.innerHTML='<p class="tool-note">No managed child profiles yet.</p>';return;}
-  el.innerHTML=profiles.map(c=>`<div class="household-member-card"><div class="household-member-top"><strong>${escapeToolText(c.avatar||'🧒')} ${escapeToolText(c.name||'Child')}</strong><span class="badge">No login</span></div><small class="tool-note">${escapeToolText(({toddler:'Toddler',child:'Child',teen:'Teen'})[c.type]||'Child')} · Can be assigned chores and planner items</small><button class="tool-btn secondary" type="button" onclick="fpDeleteManagedChild('${String(c.id).replace(/[^A-Za-z0-9_-]/g,'')}')">Remove profile</button></div>`).join('');
+  el.innerHTML=profiles.map(c=>`<div class="household-member-card"><div class="household-member-top"><strong>${escapeToolText(c.avatar||'🧒')} ${escapeToolText(c.name||'Child')}</strong>${fpHouseholdMembers.some(m=>m.childId===c.id)?'<span class="badge">📱 Own device</span>':'<span class="badge">No login</span>'}</div><small class="tool-note">${escapeToolText(({toddler:'Toddler',child:'Child',teen:'Teen'})[c.type]||'Child')} · Can be assigned chores and planner items</small>${fpHouseholdMembers.some(m=>m.childId===c.id)?'':`<button class="tool-btn" type="button" onclick="fpCreateChildInvite('${fpSafeId(c.id)}')">Set up own device</button>`}<button class="tool-btn secondary" type="button" onclick="fpDeleteManagedChild('${String(c.id).replace(/[^A-Za-z0-9_-]/g,'')}')">Remove profile</button></div>`).join('');
 }
 async function fpDeleteManagedChild(id){
   if(String(fpMemberData?.role||'').toLowerCase()!=='owner'||!id||!(await fpDialog.confirm('Remove this managed child profile? Existing assignments will become unassigned.',{title:'Remove child profile',okLabel:'Remove',danger:true})))return;
@@ -3774,7 +3796,6 @@ function fpShowChildGate(message){
   const account=document.getElementById('auth-account-panel');if(account)account.style.display='none';
   const panel=document.getElementById('child-join-panel');if(panel)panel.classList.add('visible');
   const msg=document.getElementById('child-join-message');if(msg)msg.textContent=message||'';
-  const code=document.getElementById('child-join-code');if(code&&localStorage.getItem('fp_child_household'))code.value=localStorage.getItem('fp_child_household');
 }
 window.fpShowChildGate=fpShowChildGate;
 function fpListenChildRequest(householdId,uid){
@@ -3785,7 +3806,7 @@ function fpListenChildRequest(householdId,uid){
     if(!snap.exists){if(msg)msg.textContent='Request not found. Please submit it again.';return;}
     const data=snap.data();
     if(data.status==='pending'){if(msg)msg.textContent='Request sent. Ask your parent to approve this device.';return;}
-    if(data.status==='denied'){if(msg)msg.textContent='Your request was declined. Ask your parent to check the household code and try again.';return;}
+    if(data.status==='denied'){if(msg)msg.textContent='Your request was declined. Ask your parent to make you a new code.';return;}
     if(data.status==='approved'){
       if(fpJoinRequestUnsub){fpJoinRequestUnsub();fpJoinRequestUnsub=null;}
       localStorage.removeItem('fp_child_household');
@@ -3796,38 +3817,35 @@ function fpListenChildRequest(householdId,uid){
 }
 async function fpSubmitChildJoin(){
   const msg=document.getElementById('child-join-message'),button=document.getElementById('child-join-submit');
-  const name=(document.getElementById('child-join-name')?.value||'').trim();
-  const householdId=(document.getElementById('child-join-code')?.value||'').trim();
-  const type=document.getElementById('child-join-type')?.value||'child';
-  if(!name){if(msg)msg.textContent='Enter your name.';return;}
-  if(!/^[A-Za-z0-9]{12,32}$/.test(householdId)){if(msg)msg.textContent='Enter the household code exactly as your parent shared it.';return;}
-  if(button){button.disabled=true;button.textContent='Sending request…';}
+  const code=(document.getElementById('child-join-code')?.value||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(!/^[ABCDEFGHJKMNPQRSTUVWXYZ23456789]{12}$/.test(code)){if(msg)msg.textContent='Enter the 12-character code exactly as your parent sent it.';return;}
+  if(button){button.disabled=true;button.textContent='Checking…';}
   try{
     if(!firebaseUser){const credential=await firebaseAuth.signInAnonymously();firebaseUser=credential.user;}
     if(!firebaseUser.isAnonymous)throw new Error('Sign out of the adult account before using child access.');
     await fpEnsureUserProfile(firebaseUser);
-    const householdRef=firebaseDb.collection('households').doc(householdId);
     const profile=await firebaseDb.collection('users').doc(firebaseUser.uid).get();
     if(profile.exists&&profile.data().householdId)throw new Error('This device is already linked to a household.');
+    const hash=await fpSha256Hex(code);
+    const inviteRef=firebaseDb.collection('childInvites').doc(hash);
+    let inv=null;try{const snap=await inviteRef.get();inv=snap.exists?snap.data():null;}catch(e){inv=null;}
+    if(!inv)throw new Error('That code is not valid, has expired, or was already used. Ask your parent for a new one.');
+    const householdId=inv.householdId, householdRef=firebaseDb.collection('households').doc(householdId);
     const existing=await householdRef.collection('members').doc(firebaseUser.uid).get();
     if(existing.exists){await fpActivateHousehold(firebaseUser,householdId);return;}
-    const permissions=type==='toddler'?{chores:'View only',calendar:'No access',wishlist:'No access',meals:'No access'}:type==='teen'?{chores:'Contribute',calendar:'View only',wishlist:'Contribute',meals:'Contribute'}:{chores:'Contribute',calendar:'View only',wishlist:'Contribute',meals:'View only'};
     const requestRef=householdRef.collection('joinRequests').doc(firebaseUser.uid);
-    const priorRequest=await requestRef.get();
-    if(priorRequest.exists&&priorRequest.data().status==='pending'){
-      localStorage.setItem('fp_child_household',householdId);
-      if(msg)msg.textContent='A request is already waiting for your parent to approve.';
-      fpListenChildRequest(householdId,firebaseUser.uid);return;
-    }
-    if(priorRequest.exists&&priorRequest.data().status==='approved'){
-      await fpActivateHousehold(firebaseUser,householdId);return;
-    }
-    if(priorRequest.exists)await requestRef.delete();
-    await requestRef.set({uid:firebaseUser.uid,name,email:'',kind:'child',role:'child',type,permissions,status:'pending',requestedAt:firebase.firestore.FieldValue.serverTimestamp()});
+    const prior=await requestRef.get();
+    if(prior.exists&&prior.data().status==='pending'){localStorage.setItem('fp_child_household',householdId);if(msg)msg.textContent='Your request is waiting for your parent to approve.';fpListenChildRequest(householdId,firebaseUser.uid);return;}
+    if(prior.exists&&prior.data().status==='approved'){await fpActivateHousehold(firebaseUser,householdId);return;}
+    if(prior.exists)await requestRef.delete();
+    const ts=firebase.firestore.FieldValue.serverTimestamp(), batch=firebaseDb.batch();
+    batch.set(requestRef,{uid:firebaseUser.uid,name:inv.childName,email:'',kind:'child',role:'child',type:inv.type,permissions:inv.permissions,childId:inv.childId,inviteHash:hash,status:'pending',requestedAt:ts});
+    batch.update(inviteRef,{status:'claimed',claimedBy:firebaseUser.uid,claimedAt:ts});
+    await batch.commit();
     localStorage.setItem('fp_child_household',householdId);
-    if(msg)msg.textContent='Request sent. Ask your parent to approve this device.';
+    if(msg)msg.textContent=`Hi ${inv.childName}! Ask your parent to approve your phone.`;
     fpListenChildRequest(householdId,firebaseUser.uid);
-  }catch(e){console.error('Child join failed:',e);if(msg)msg.textContent=(e&&e.code==='permission-denied')?'That household code was not accepted. Check it with your parent and try again.':(e.message||'Could not send your request. Please try again.');}
+  }catch(e){console.error('Child join failed:',e);if(msg)msg.textContent=(e&&e.code==='permission-denied')?'That code was not accepted. Ask your parent for a new one.':(e.message||'Could not send your request. Please try again.');}
   finally{if(button){button.disabled=false;button.textContent='Request access';}}
 }
 window.fpSubmitChildJoin=fpSubmitChildJoin;
@@ -4159,13 +4177,15 @@ async function fpApproveJoinRequest(uid,approve){
         const data=request.data();
         if(isChild){
           if(data.status!=='pending' || data.uid!==uid || !['toddler','child','teen'].includes(data.type))throw new Error('This child request is invalid.');
+          if(!data.inviteHash || !data.childId)throw new Error('This request did not come from a child code, so it cannot be approved.');
           const allowed=['chores','calendar','wishlist','meals'];
           const permissions={};
           allowed.forEach(k=>{permissions[k]=['No access','View only','Contribute'].includes(data.permissions?.[k])?data.permissions[k]:'No access';});
-          transaction.set(memberRef,{uid,role:'child',name:data.name||'Child',email:'',type:data.type,permissions,joinedAt:firebase.firestore.FieldValue.serverTimestamp()});
+          transaction.set(memberRef,{uid,role:'child',name:data.name||'Child',email:'',type:data.type,permissions,childId:data.childId,joinedAt:firebase.firestore.FieldValue.serverTimestamp()});
           transaction.update(profileRef,{householdId:fpHouseholdId,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
           transaction.update(requestRef,{status:'approved',reviewedAt:firebase.firestore.FieldValue.serverTimestamp(),reviewedBy:firebaseUser.uid});
           transaction.update(householdRef,{memberCount:count+1,...(String(fpMemberData.role).toLowerCase()==='parent'?{lastChildJoinUid:uid}:{})});
+          transaction.update(firebaseDb.collection('childInvites').doc(data.inviteHash),{status:'used',usedAt:firebase.firestore.FieldValue.serverTimestamp()});
         }else{
           if(!data.inviteHash)throw new Error('This adult request did not come from an invitation.');
           transaction.set(memberRef,{uid,role:'member',name:data.name||data.email||'Member',email:data.email||'',permissions:fpDefaultPermissions(),joinedAt:firebase.firestore.FieldValue.serverTimestamp()});
@@ -4177,7 +4197,7 @@ async function fpApproveJoinRequest(uid,approve){
       });
     }else{
       await requestRef.update({status:'denied',reviewedAt:firebase.firestore.FieldValue.serverTimestamp(),reviewedBy:firebaseUser.uid});
-      if(requestData.inviteHash)await householdRef.collection('invites').doc(requestData.inviteHash).update({status:'declined'}).catch(()=>{});
+      if(requestData.inviteHash)await (isChild?firebaseDb.collection('childInvites'):householdRef.collection('invites')).doc(requestData.inviteHash).update({status:'declined'}).catch(()=>{});
     }
     showToast(approve?(isChild?'Child device approved':'Member approved'):'Request declined');
   }catch(error){console.error(error);showToast(error.message||'Could not update join request');}
@@ -4238,6 +4258,7 @@ window.fpCloseJoinRequestModal=fpCloseJoinRequestModal;
 let fpHouseholdChildren = [];
 
 function fpRenderMembers(snapshot) {
+  setTimeout(fpRenderManagedChildren,0);
   const el=document.getElementById('household-members-list');if(!el)return;
   el.innerHTML=snapshot.docs.map(doc=>{
     const m=doc.data(),uid=doc.id,role=String(m.role||'member').toLowerCase();
@@ -4492,7 +4513,7 @@ if(user.isAnonymous){
   const profile=await firebaseDb.collection('users').doc(user.uid).get();
   const linkedHousehold=profile.exists?(profile.data().householdId||null):null;
   if(linkedHousehold){await fpActivateHousehold(user,linkedHousehold);await loadPrivateTodos(user.uid);showView('dashboard',document.getElementById('nav-btn-home'));updateHeaderDisplay();renderAllViews();}
-  else{fpShowChildGate('Enter your name and the household code your parent shared.');const pendingHousehold=localStorage.getItem('fp_child_household');if(pendingHousehold)fpListenChildRequest(pendingHousehold,user.uid);}
+  else{fpShowChildGate('Enter the code your parent gave you.');const pendingHousehold=localStorage.getItem('fp_child_household');if(pendingHousehold)fpListenChildRequest(pendingHousehold,user.uid);}
   return;
 }
 const found=await fpFindExistingHousehold(user);
