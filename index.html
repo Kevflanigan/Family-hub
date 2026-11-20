@@ -1891,7 +1891,7 @@ html[data-theme="dark"]{--shadow-raised:0 10px 28px rgba(0,0,0,.38)}
           </form>
           <div class="auth-message" id="auth-message" role="status" aria-live="polite"></div>
           <button class="auth-secondary" type="button" onclick="window.fpShowChildGate()">Child joining a family?</button>
-          <p class="auth-small" id="auth-version-label">Version 2.3 · build 2026-11-16.13</p>
+          <p class="auth-small" id="auth-version-label">Version 2.4 · build 2026-11-20.1</p>
           <p class="auth-small">Each adult or family member has their own account. After signing in and verifying your email, create a household or join one with an invitation link.</p>
         </div>
 
@@ -2461,7 +2461,7 @@ html[data-theme="dark"]{--shadow-raised:0 10px 28px rgba(0,0,0,.38)}
 
     <!-- Account page -->
     <div id="view-account" class="view">
-        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Your profile, household and data.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 2.3 · build 2026-11-16.13</p><button type="button" class="tool-btn secondary" style="margin-top:10px;" onclick="fpSignOut()">Sign out</button></section>
+        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Your profile, household and data.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 2.4 · build 2026-11-20.1</p><button type="button" class="tool-btn secondary" style="margin-top:10px;" onclick="fpSignOut()">Sign out</button></section>
 <div class="calendar-main-tabs" role="tablist" aria-label="Account sections" id="account-tabs">
   <button type="button" class="cal-main-tab" role="tab" data-acct-tab="household" onclick="fpSetAccountTab('household')">🏡 Household <span id="acct-tab-badge" class="req-badge inline" hidden>0</span></button>
   <button type="button" class="cal-main-tab" role="tab" data-acct-tab="me" onclick="fpSetAccountTab('me')">👤 Me</button>
@@ -3299,6 +3299,8 @@ function fpStopSharedListeners(){
   fpUpdateRequestsBadge(null);
   if(window.fpInvitesUnsub){window.fpInvitesUnsub();window.fpInvitesUnsub=null;}
   if(window.fpChildrenUnsub){window.fpChildrenUnsub();window.fpChildrenUnsub=null;}
+  if(window.fpChildInvitesUnsub){window.fpChildInvitesUnsub();window.fpChildInvitesUnsub=null;}
+  fpChildInvites=[];
   fpHouseholdChildren=[];
   const ib=document.getElementById('household-invite-box');if(ib)ib.style.display='none';
   if(fpMemberUnsub){fpMemberUnsub();fpMemberUnsub=null;}
@@ -3322,6 +3324,7 @@ function fpAttachSharedListeners(){
   });
   const householdRef=firebaseDb.collection('households').doc(fpHouseholdId);
 
+  if(fpIsOwnerOrParent())window.fpChildInvitesUnsub=firebaseDb.collection('childInvites').where('householdId','==',fpHouseholdId).onSnapshot(cs=>{fpChildInvites=cs.docs.map(d=>({hash:d.id,...d.data()}));fpRenderManagedChildren();},e=>console.warn('Could not load child codes:',e));
   window.fpChildrenUnsub=householdRef.collection('children').onSnapshot(cs=>{
     fpHouseholdChildren=cs.docs.map(d=>({id:d.id,...d.data()}));
     fpRenderPlanMemberOptions();
@@ -3794,6 +3797,7 @@ async function fpCreateChildInvite(childId){
   if(fpHouseholdMembers.some(m=>m.childId===childId))return showToast(`${child.name} already has a device. Remove it first to set up another.`);
   const out=document.getElementById('child-invite-result');
   try{
+    await Promise.all(fpChildInvites.filter(i=>i.childId===childId&&i.status==='pending').map(i=>firebaseDb.collection('childInvites').doc(i.hash).update({status:'revoked',revokedAt:firebase.firestore.FieldValue.serverTimestamp()}).catch(()=>{})));
     const code=fpMakeChildCode(), hash=await fpSha256Hex(code);
     const type=['toddler','child','teen'].includes(child.type)?child.type:'child';
     await firebaseDb.collection('childInvites').doc(hash).set({
@@ -3831,11 +3835,34 @@ async function fpCreateManagedChild(){
   }catch(e){console.error('Managed child creation failed:',e);if(status)status.textContent=e.message||'Could not add the child profile. Please try again.';}
 }
 window.fpCreateManagedChild=fpCreateManagedChild;
+let fpChildInvites=[];
+function fpChildDeviceHtml(c){
+  const owner=String(fpMemberData?.role||'').toLowerCase()==='owner';
+  const dev=fpHouseholdMembers.find(m=>m.childId===c.id);
+  if(dev)return owner?`<button class="tool-btn secondary" type="button" onclick="fpRemoveChildDevice('${fpSafeId(dev.uid||dev.id)}','${fpSafeId(c.id)}')">Remove device</button>`:'<small class="tool-note">Only the household owner can remove a device.</small>';
+  const mine=fpChildInvites.filter(i=>i.childId===c.id);
+  if(mine.some(i=>i.status==='claimed'))return '<small class="tool-note">Their phone is waiting for your approval. See Join requests.</small>';
+  const pending=mine.find(i=>i.status==='pending'&&i.expiresAt&&i.expiresAt.toMillis&&i.expiresAt.toMillis()>Date.now());
+  const make=`<button class="tool-btn" type="button" onclick="fpCreateChildInvite('${fpSafeId(c.id)}')">${pending?'Make a new code':'Set up own device'}</button>`;
+  if(!pending)return make;
+  const until=pending.expiresAt.toDate().toLocaleString('en-GB',{weekday:'short',hour:'2-digit',minute:'2-digit'});
+  return `<small class="tool-note">A code is active until ${escapeToolText(until)}. <button type="button" class="link-btn" onclick="fpCancelChildCode('${fpSafeId(pending.hash)}')">Cancel it</button></small>${make}`;
+}
+async function fpCancelChildCode(hash){
+  if(!fpIsOwnerOrParent()||!hash)return;
+  try{await firebaseDb.collection('childInvites').doc(hash).update({status:'revoked',revokedAt:firebase.firestore.FieldValue.serverTimestamp()});showToast('Code cancelled');}
+  catch(e){console.error(e);showToast('Could not cancel the code. Please try again.');}
+}
+async function fpRemoveChildDevice(uid,childId){
+  const child=fpHouseholdChildren.find(c=>c.id===childId);
+  await fpRemoveMember(uid,{title:'Remove device',message:`Remove ${child?child.name+"'s":'this'} phone from the household? It will lose access straight away. Their profile stays, and you can make a new code.`});
+}
+window.fpCancelChildCode=fpCancelChildCode;window.fpRemoveChildDevice=fpRemoveChildDevice;
 function fpRenderManagedChildren(){
   const el=document.getElementById('managed-children-list');if(!el)return;
   const profiles=fpHouseholdChildren.filter(c=>c.profileType==='managed');
   if(!profiles.length){el.innerHTML='<p class="tool-note">No managed child profiles yet.</p>';return;}
-  el.innerHTML=profiles.map(c=>`<div class="household-member-card"><div class="household-member-top"><strong>${escapeToolText(c.avatar||'🧒')} ${escapeToolText(c.name||'Child')}</strong>${fpHouseholdMembers.some(m=>m.childId===c.id)?'<span class="badge">📱 Own device</span>':'<span class="badge">No login</span>'}</div><small class="tool-note">${escapeToolText(({toddler:'Toddler',child:'Child',teen:'Teen'})[c.type]||'Child')} · Can be assigned chores and planner items</small>${fpHouseholdMembers.some(m=>m.childId===c.id)?'':`<button class="tool-btn" type="button" onclick="fpCreateChildInvite('${fpSafeId(c.id)}')">Set up own device</button>`}<button class="tool-btn secondary" type="button" onclick="fpDeleteManagedChild('${String(c.id).replace(/[^A-Za-z0-9_-]/g,'')}')">Remove profile</button></div>`).join('');
+  el.innerHTML=profiles.map(c=>`<div class="household-member-card"><div class="household-member-top"><strong>${escapeToolText(c.avatar||'🧒')} ${escapeToolText(c.name||'Child')}</strong>${fpHouseholdMembers.some(m=>m.childId===c.id)?'<span class="badge">📱 Own device</span>':'<span class="badge">No login</span>'}</div><small class="tool-note">${escapeToolText(({toddler:'Toddler',child:'Child',teen:'Teen'})[c.type]||'Child')} · Can be assigned chores and planner items</small>${fpChildDeviceHtml(c)}<button class="tool-btn secondary" type="button" onclick="fpDeleteManagedChild('${String(c.id).replace(/[^A-Za-z0-9_-]/g,'')}')">Remove profile</button></div>`).join('');
 }
 async function fpDeleteManagedChild(id){
   if(String(fpMemberData?.role||'').toLowerCase()!=='owner'||!id||!(await fpDialog.confirm('Remove this managed child profile? Existing assignments will become unassigned.',{title:'Remove child profile',okLabel:'Remove',danger:true})))return;
@@ -4257,6 +4284,8 @@ async function fpApproveJoinRequest(uid,approve){
 }
 window.fpApproveJoinRequest=fpApproveJoinRequest;
 
+const FP_VERSION='2.4',FP_BUILD='2026-11-20.1';
+['auth-version-label','app-version-label'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=`Version ${FP_VERSION} · build ${FP_BUILD}`;});
 function fpA11yPass(){
   document.querySelectorAll('input:not([type=hidden]),textarea,select').forEach(el=>{
     if(el.getAttribute('aria-label')||el.getAttribute('aria-labelledby')||el.closest('label')||(el.id&&document.querySelector('label[for="'+el.id+'"]')))return;
@@ -4382,8 +4411,8 @@ async function fpSetMemberRole(uid,role){
   catch(error){console.error(error);showToast('Could not update member role');}
 }
 window.fpSetMemberRole=fpSetMemberRole;
-async function fpRemoveMember(uid){
-  if(!fpMemberData||fpMemberData.role!=='owner'||!(await fpDialog.confirm('Remove this person from the household? Their private list will not be affected.',{title:'Remove member',okLabel:'Remove',danger:true})))return;
+async function fpRemoveMember(uid,opts){
+  if(!fpMemberData||fpMemberData.role!=='owner'||!(await fpDialog.confirm((opts&&opts.message)||'Remove this person from the household? Their private list will not be affected.',{title:(opts&&opts.title)||'Remove member',okLabel:'Remove',danger:true})))return;
   try{
     const householdRef=firebaseDb.collection('households').doc(fpHouseholdId),memberRef=householdRef.collection('members').doc(uid);
     await fpEnsureHouseholdMemberCount(householdRef);
