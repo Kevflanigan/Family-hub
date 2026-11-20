@@ -1865,6 +1865,15 @@ details.wp-day-card > summary::after{content:"▾";margin-left:auto;color:var(--
 details.wp-day-card[open] > summary::after{transform:rotate(180deg)}
 .wp-day-count{font-size:.75rem;font-weight:700;color:var(--muted)}
 details.wp-day-card:not([open]){opacity:.8}
+
+/* ===== Batch 5: one to-do tab bar, roomier add row ===== */
+[aria-label="Tasks and family ideas"]{display:none!important}
+#todo-main-tabs .cal-main-tab{padding:8px 2px;font-size:.8rem;white-space:nowrap}
+.todo-inline-add{flex-wrap:wrap!important;padding:12px 14px!important;gap:8px!important;align-items:stretch!important}
+#todo-quick-input{flex:1 1 100%!important;min-height:44px;font-size:1rem}
+.todo-inline-actions{flex:1 1 100%!important;justify-content:flex-start;gap:8px!important}
+.todo-add-submit{margin-left:auto;width:auto!important;min-width:96px;padding:0 20px;border-radius:12px!important;font-weight:800;font-size:.95rem!important;background:var(--accent)!important;color:#fff!important}
+html[data-theme="dark"] .todo-add-submit{color:#0f1719!important}
 </style>
 </head>
 <body>
@@ -1889,7 +1898,7 @@ details.wp-day-card:not([open]){opacity:.8}
             <input class="auth-input" id="auth-email" type="email" autocomplete="email" required placeholder="you@example.com">
             <label class="auth-field" for="auth-password">Password</label>
             <div class="password-container">
-                <input class="auth-input" id="auth-password" type="password" autocomplete="current-password" minlength="6" required placeholder="At least 6 characters">
+                <input class="auth-input" id="auth-password" type="password" autocomplete="current-password" required placeholder="Your password">
                 <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility()" title="Show/Hide password">
                     <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -1907,7 +1916,7 @@ details.wp-day-card:not([open]){opacity:.8}
           </form>
           <div class="auth-message" id="auth-message" role="status" aria-live="polite"></div>
           <button class="auth-secondary" type="button" onclick="window.fpShowChildGate()">Child joining a family?</button>
-          <p class="auth-small" id="auth-version-label">Version 2.5 · build 2026-11-20.2</p>
+          <p class="auth-small" id="auth-version-label">Version 2.6 · build 2026-11-20.3</p>
           <p class="auth-small">Each adult or family member has their own account. After signing in and verifying your email, create a household or join one with an invitation link.</p>
         </div>
 
@@ -2385,6 +2394,12 @@ details.wp-day-card:not([open]){opacity:.8}
 
     <!-- VIEW 6: To-Do & Tasks Hub -->
     <div id="view-familyhub" class="view">
+        <div class="calendar-main-tabs" role="group" aria-label="To-do lists and ideas" id="todo-main-tabs" style="display:flex;gap:4px;margin:0 0 14px;">
+            <button type="button" class="cal-main-tab active" id="todo-tab-todo" onclick="fpSetTodoTab('todo')" aria-pressed="true" style="flex:1;">📝 To-Do</button>
+            <button type="button" class="cal-main-tab" id="todo-tab-private" onclick="fpSetTodoTab('private')" aria-pressed="false" style="flex:1;">🔒 Private</button>
+            <button type="button" class="cal-main-tab" id="todo-tab-gift" onclick="fpSetTodoTab('gift')" aria-pressed="false" style="flex:1;">🎁 Gifts</button>
+            <button type="button" class="cal-main-tab" id="todo-tab-ideas" onclick="fpSetTodoTab('ideas')" aria-pressed="false" style="flex:1;">💡 Ideas</button>
+        </div>
         <div class="calendar-main-tabs" role="group" aria-label="Tasks and family ideas" style="display:flex;gap:8px;margin:0 0 14px;background:#e9f0ed;padding:5px;border-radius:14px;">
             <button type="button" id="family-toggle-tasks" class="cal-main-tab active" onclick="setFamilyHubView('tasks')" aria-pressed="true" style="flex:1;">📝 Tasks</button>
             <button type="button" id="family-toggle-ideas" class="cal-main-tab" onclick="setFamilyHubView('ideas')" aria-pressed="false" style="flex:1;">💡 Family ideas</button>
@@ -2404,7 +2419,7 @@ details.wp-day-card:not([open]){opacity:.8}
                     <div class="todo-inline-actions">
                         <button type="button" id="todo-assign-button" class="todo-inline-icon-btn todo-assign-btn" onclick="cycleNewTodoAssignee()" aria-label="Change assignee" title="Change task assignee"><span aria-hidden="true">👤</span><span id="todo-assign-label">Assign</span></button>
                         <button type="button" id="todo-date-button" class="todo-inline-icon-btn" onclick="openTodoDatePicker()" aria-label="Choose task date" title="Choose task date">📅</button>
-                        <button type="button" class="todo-inline-icon-btn todo-add-submit" onclick="addTodoItem()" aria-label="Add task" title="Add task">+</button>
+                        <button type="button" class="todo-inline-icon-btn todo-add-submit" onclick="addTodoItem()" aria-label="Add task" title="Add task">Add</button>
                     </div>
                     <input type="date" id="todo-date-input" class="todo-date-input-hidden" aria-label="Task date" tabindex="-1" onchange="syncTodoDateLabel()">
                 </div>
@@ -2478,7 +2493,7 @@ details.wp-day-card:not([open]){opacity:.8}
 
     <!-- Account page -->
     <div id="view-account" class="view">
-        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Your profile, household and data.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 2.5 · build 2026-11-20.2</p><button type="button" class="tool-btn secondary" style="margin-top:10px;" onclick="fpSignOut()">Sign out</button></section>
+        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Your profile, household and data.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 2.6 · build 2026-11-20.3</p><button type="button" class="tool-btn secondary" style="margin-top:10px;" onclick="fpSignOut()">Sign out</button></section>
 <div class="calendar-main-tabs" role="tablist" aria-label="Account sections" id="account-tabs">
   <button type="button" class="cal-main-tab" role="tab" data-acct-tab="household" onclick="fpSetAccountTab('household')">🏡 Household <span id="acct-tab-badge" class="req-badge inline" hidden>0</span></button>
   <button type="button" class="cal-main-tab" role="tab" data-acct-tab="me" onclick="fpSetAccountTab('me')">👤 Me</button>
@@ -2662,7 +2677,7 @@ function fpSetAuthMode(mode) {
     const pcWrap = document.getElementById('auth-postcode-wrap');
     if (pcWrap) pcWrap.hidden = isSignin || !!sessionStorage.getItem('fp_invite'); // invited people join an existing household
     const password = document.getElementById('auth-password');
-    if (password) password.autocomplete = isSignin ? 'current-password' : 'new-password';
+    if (password) { password.autocomplete = isSignin ? 'current-password' : 'new-password'; password.minLength = isSignin ? 0 : 8; password.placeholder = isSignin ? 'Your password' : 'At least 8 characters'; }
     setAuthMessage('');
 }
 window.fpSetAuthMode = fpSetAuthMode;
@@ -2722,6 +2737,7 @@ document.getElementById('firebase-auth-form').addEventListener('submit', async f
     try {
         if (fpAuthMode === 'signup') {
             if (!name) throw new Error('Please enter your name.');
+            if ((document.getElementById('auth-password')?.value || '').length < 8) throw new Error('Please use at least 8 characters for your password.');
             let examplePostcode = (document.getElementById('auth-postcode')?.value || '').replace(/\s+/g, '').toUpperCase();
             if (examplePostcode) {
                 if (!/^[A-Z]{1,2}\d[A-Z\d]?\d[A-Z]{2}$/.test(examplePostcode)) throw new Error('That postcode does not look right. Check it, or leave it blank.');
@@ -2738,15 +2754,21 @@ document.getElementById('firebase-auth-form').addEventListener('submit', async f
             localStorage.setItem('fam_user_email', email);
 
     } catch (error) {
-const message = error.code === 'auth/invalid-credential' ||
-                error.code === 'auth/wrong-password' ||
-                error.code === 'auth/user-not-found'
-    ? "We couldn't sign you in. Please check your email and password and try again. If you've forgotten your password, you can reset it."
-    : error.code === 'auth/too-many-requests'
-        ? "For your security, sign-in has been temporarily restricted after several unsuccessful attempts. Please wait before trying again."
-        : "We couldn't sign you in. Please try again.";
-
-setAuthMessage(message);
+        const code = error.code || '';
+        const signup = fpAuthMode === 'signup';
+        const known = {
+            'auth/invalid-credential': "We couldn't sign you in. Please check your email and password and try again. If you've forgotten your password, you can reset it.",
+            'auth/wrong-password': "We couldn't sign you in. Please check your email and password and try again. If you've forgotten your password, you can reset it.",
+            'auth/user-not-found': "We couldn't sign you in. Please check your email and password and try again. If you've forgotten your password, you can reset it.",
+            'auth/too-many-requests': 'For your security, sign-in has been temporarily restricted after several unsuccessful attempts. Please wait before trying again.',
+            'auth/email-already-in-use': 'An account with this email already exists. Try signing in, or reset your password.',
+            'auth/invalid-email': "That email address doesn't look right. Please check it and try again.",
+            'auth/weak-password': 'Please choose a stronger password of at least 8 characters.',
+            'auth/network-request-failed': 'No connection. Please check your internet and try again.'
+        };
+        // Plain Errors thrown by our own form checks carry a friendly message; real programming errors do not.
+        const ours = !code && error.message && !(error instanceof TypeError || error instanceof ReferenceError || error instanceof RangeError || error instanceof SyntaxError);
+        setAuthMessage(known[code] || (ours ? error.message : (signup ? "We couldn't create your account. Please try again." : "We couldn't sign you in. Please try again.")));
     } finally {
         submit.disabled = false;
         submit.textContent = fpAuthMode === 'signup' ? 'Create account' : 'Sign in';
@@ -4301,11 +4323,25 @@ async function fpApproveJoinRequest(uid,approve){
 }
 window.fpApproveJoinRequest=fpApproveJoinRequest;
 
-const FP_VERSION='2.5',FP_BUILD='2026-11-20.2';
+const FP_VERSION='2.6',FP_BUILD='2026-11-20.3';
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){
   window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(e=>console.warn('Offline support unavailable:',e));});
 }
 ['auth-version-label','app-version-label'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=`Version ${FP_VERSION} · build ${FP_BUILD}`;});
+function fpSetTodoTab(tab){
+  if(tab==='ideas'){setFamilyHubView('ideas');}
+  else{setFamilyHubView('tasks');setTodoScope(tab==='todo'?'family':tab);}
+}
+function fpSyncTodoTabs(){
+  const ideas=document.getElementById('family-toggle-ideas')?.classList.contains('active');
+  const scope=['family','private','gift'].find(k=>document.getElementById('todo-scope-'+k)?.classList.contains('active'))||'family';
+  const cur=ideas?'ideas':(scope==='family'?'todo':scope);
+  document.querySelectorAll('#todo-main-tabs .cal-main-tab').forEach(b=>{const on=b.id==='todo-tab-'+cur;b.classList.toggle('active',on);b.setAttribute('aria-pressed',on?'true':'false');});
+  const inner=document.getElementById('todo-scope-family')?.parentElement;if(inner)inner.style.display='none';
+}
+(function(){['setFamilyHubView','setTodoScope'].forEach(n=>{const f=window[n];window[n]=function(){const r=f.apply(this,arguments);fpSyncTodoTabs();return r;};});
+  window.addEventListener('load',fpSyncTodoTabs);})();
+window.fpSetTodoTab=fpSetTodoTab;
 function fpA11yPass(){
   document.querySelectorAll('input:not([type=hidden]),textarea,select').forEach(el=>{
     if(el.getAttribute('aria-label')||el.getAttribute('aria-labelledby')||el.closest('label')||(el.id&&document.querySelector('label[for="'+el.id+'"]')))return;
@@ -4755,6 +4791,41 @@ function fpFormatTime(t) {
     h = h % 12 || 12;
     return min === '00' ? `${h}${suffix}` : `${h}:${min}${suffix}`;
 }
+// ---- Add an entry to the phone's own calendar (.ics), with a reminder ----
+function fpIcsEscape(t) { return String(t || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n'); }
+function fpIcsFold(line) {
+    const enc = new TextEncoder(); let out = '', cur = '', bytes = 0;
+    for (const ch of line) { const b = enc.encode(ch).length; if (bytes + b > 73) { out += cur + '\r\n '; cur = ''; bytes = 1; } cur += ch; bytes += b; }
+    return out + cur;
+}
+function fpEventIcs(dateKey, ev) {
+    const p2 = n => String(n).padStart(2, '0'), d = dateKey.replace(/-/g, '');
+    const title = String(ev.title || '').replace(/\s*\[(yearly|birthday)\]\s*/gi, '').trim() || 'FamilyPlan event';
+    const yearly = /\[(yearly|birthday)\]/i.test(ev.title || '');
+    const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+Z$/, 'Z');
+    const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//FamilyPlan//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'BEGIN:VEVENT',
+        `UID:${fpSafeId(ev.eventId || dateKey + '-' + title)}@familyplan`, `DTSTAMP:${stamp}`];
+    if (ev.time) {
+        const [h, m] = ev.time.split(':').map(Number);
+        const end = ev.endTime ? ev.endTime.replace(':', '') + '00' : (h + 1 >= 24 ? '235900' : p2(h + 1) + p2(m) + '00');
+        lines.push(`DTSTART:${d}T${ev.time.replace(':', '')}00`, `DTEND:${d}T${end}`);
+    } else {
+        const next = new Date(dateKey + 'T00:00:00'); next.setDate(next.getDate() + 1);
+        lines.push(`DTSTART;VALUE=DATE:${d}`, `DTEND;VALUE=DATE:${next.getFullYear()}${p2(next.getMonth() + 1)}${p2(next.getDate())}`);
+    }
+    lines.push(`SUMMARY:${fpIcsEscape(title)}`);
+    if (yearly) lines.push('RRULE:FREQ=YEARLY');
+    lines.push('BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${fpIcsEscape(title)}`, ev.time ? 'TRIGGER:-PT30M' : 'TRIGGER;RELATED=START:PT9H', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR');
+    return lines.map(fpIcsFold).join('\r\n') + '\r\n';
+}
+function fpDownloadIcs(dateKey, idx) {
+    const ev = (calendarEvents[dateKey] || [])[idx]; if (!ev) return;
+    const url = URL.createObjectURL(new Blob([fpEventIcs(dateKey, ev)], { type: 'text/calendar;charset=utf-8' }));
+    const a = document.createElement('a'); a.href = url;
+    a.download = (String(ev.title || 'event').replace(/\[[^\]]*\]/g, '').replace(/[^\w\- ]+/g, '').trim().slice(0, 40) || 'event') + '.ics';
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000);
+    showToast('Opening in your calendar app…');
+}
 function fpTimeRange(ev) {
     const a = fpFormatTime(ev && ev.time); if (!a) return '';
     const b = fpFormatTime(ev.endTime); return b ? `${a}–${b}` : a;
@@ -4997,9 +5068,10 @@ function openDayPopover(dateKey, dayNum) {
     } else {
         listCont.innerHTML = events.map((ev, idx) => `
             <div class="bubble-event-item" style="border-left-color: var(--${ev.who});">
-                <div class="bubble-event-title">${ev.time ? `<span class="ev-time">${escapeToolText(fpTimeRange(ev))}</span> ` : ''}${escapeToolText(ev.title)}</div>
+                <div class="bubble-event-title">${ev.time ? `<span class="ev-time">${escapeToolText(fpTimeRange(ev))}</span> ` : ''}${escapeToolText(String(ev.title || '').replace(/\s*\[(yearly|birthday)\]\s*/gi, ' ').trim())}</div>
                 <div style="display:flex; align-items:center; gap:6px;">
               <span class="compact-scoped-tag bg-${fpAssigneeStyle(ev.who)}">${escapeToolText(fpDisplayAssignee(ev.who))}</span>
+                    <button class="action-btn" type="button" title="Add to phone calendar" aria-label="Add ${escapeToolText(ev.title)} to phone calendar" onclick="fpDownloadIcs('${fpSafeId(dateKey)}', ${ev._i})">📲</button>
                     <button class="action-btn delete-btn" onclick="deleteCalEvent('${fpSafeId(dateKey)}', ${ev._i}, '${fpSafeId(ev.eventId)}'); openDayPopover('${fpSafeId(dateKey)}', ${dayNum});">✕</button>
                 </div>
             </div>
