@@ -1,0 +1,23 @@
+// FamilyPlan service worker: lets the app open offline and install on a phone.
+// Bump CACHE whenever you upload a new build so phones drop the old copy.
+const CACHE = 'familyplan-2.5-2026-11-20.2';
+const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', 'familiplan-icon.png'];
+
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => Promise.all(SHELL.map(u => c.add(u).catch(() => {})))).then(() => self.skipWaiting()));
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
+});
+self.addEventListener('fetch', e => {
+  const req = e.request;
+  if (req.method !== 'GET') return;
+  if (new URL(req.url).origin !== self.location.origin) return; // never touch Firebase, maps or fonts
+  if (req.mode === 'navigate') {
+    // Network first so you always get the newest app; fall back to the saved copy when offline.
+    e.respondWith(fetch(req).then(r => { const copy = r.clone(); caches.open(CACHE).then(c => c.put('index.html', copy)); return r; })
+      .catch(() => caches.match('index.html').then(r => r || caches.match('./'))));
+    return;
+  }
+  e.respondWith(caches.match(req).then(hit => hit || fetch(req).then(r => { if (r.ok) { const copy = r.clone(); caches.open(CACHE).then(c => c.put(req, copy)); } return r; })));
+});

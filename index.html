@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FamilyPlan — Plan together. Make memories.</title>
+    <meta name="theme-color" content="#245b67">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="FamilyPlan">
     <!-- Leaflet CSS for Map -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
@@ -1849,6 +1855,16 @@ html[data-theme="dark"]{--shadow-raised:0 10px 28px rgba(0,0,0,.38)}
 .link-btn{padding:12px 4px;margin:-12px -4px}
 #account-tabs .cal-main-tab{white-space:nowrap;padding-left:4px;padding-right:4px}
 .req-badge.inline{margin-left:3px}
+
+/* ===== Batch 4: end times, collapsible planner days ===== */
+#time-row{flex-direction:row!important}
+#time-row .qa-field{width:auto}
+details.wp-day-card > summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:44px}
+details.wp-day-card > summary::-webkit-details-marker{display:none}
+details.wp-day-card > summary::after{content:"▾";margin-left:auto;color:var(--muted);transition:transform .2s}
+details.wp-day-card[open] > summary::after{transform:rotate(180deg)}
+.wp-day-count{font-size:.75rem;font-weight:700;color:var(--muted)}
+details.wp-day-card:not([open]){opacity:.8}
 </style>
 </head>
 <body>
@@ -1891,7 +1907,7 @@ html[data-theme="dark"]{--shadow-raised:0 10px 28px rgba(0,0,0,.38)}
           </form>
           <div class="auth-message" id="auth-message" role="status" aria-live="polite"></div>
           <button class="auth-secondary" type="button" onclick="window.fpShowChildGate()">Child joining a family?</button>
-          <p class="auth-small" id="auth-version-label">Version 2.4 · build 2026-11-20.1</p>
+          <p class="auth-small" id="auth-version-label">Version 2.5 · build 2026-11-20.2</p>
           <p class="auth-small">Each adult or family member has their own account. After signing in and verifying your email, create a household or join one with an invitation link.</p>
         </div>
 
@@ -2047,7 +2063,8 @@ html[data-theme="dark"]{--shadow-raised:0 10px 28px rgba(0,0,0,.38)}
                     <label class="qa-field"><span>End date (optional)</span><input type="date" id="add-end-date" class="form-input"></label>
                 </div>
                 <div class="form-row" id="time-row" style="gap:8px;">
-                    <label class="qa-field"><span>Time (optional)</span><input type="time" id="add-time" class="form-input"></label>
+                    <label class="qa-field"><span>Starts (optional)</span><input type="time" id="add-time" class="form-input"></label>
+                    <label class="qa-field"><span>Ends (optional)</span><input type="time" id="add-end-time" class="form-input"></label>
                 </div>
                 <div class="form-row" id="recurring-row" style="gap:8px;">
                     <select id="add-recurring" class="form-select input-full">
@@ -2461,7 +2478,7 @@ html[data-theme="dark"]{--shadow-raised:0 10px 28px rgba(0,0,0,.38)}
 
     <!-- Account page -->
     <div id="view-account" class="view">
-        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Your profile, household and data.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 2.4 · build 2026-11-20.1</p><button type="button" class="tool-btn secondary" style="margin-top:10px;" onclick="fpSignOut()">Sign out</button></section>
+        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Your profile, household and data.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 2.5 · build 2026-11-20.2</p><button type="button" class="tool-btn secondary" style="margin-top:10px;" onclick="fpSignOut()">Sign out</button></section>
 <div class="calendar-main-tabs" role="tablist" aria-label="Account sections" id="account-tabs">
   <button type="button" class="cal-main-tab" role="tab" data-acct-tab="household" onclick="fpSetAccountTab('household')">🏡 Household <span id="acct-tab-badge" class="req-badge inline" hidden>0</span></button>
   <button type="button" class="cal-main-tab" role="tab" data-acct-tab="me" onclick="fpSetAccountTab('me')">👤 Me</button>
@@ -4284,7 +4301,10 @@ async function fpApproveJoinRequest(uid,approve){
 }
 window.fpApproveJoinRequest=fpApproveJoinRequest;
 
-const FP_VERSION='2.4',FP_BUILD='2026-11-20.1';
+const FP_VERSION='2.5',FP_BUILD='2026-11-20.2';
+if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){
+  window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(e=>console.warn('Offline support unavailable:',e));});
+}
 ['auth-version-label','app-version-label'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=`Version ${FP_VERSION} · build ${FP_BUILD}`;});
 function fpA11yPass(){
   document.querySelectorAll('input:not([type=hidden]),textarea,select').forEach(el=>{
@@ -4735,8 +4755,12 @@ function fpFormatTime(t) {
     h = h % 12 || 12;
     return min === '00' ? `${h}${suffix}` : `${h}:${min}${suffix}`;
 }
+function fpTimeRange(ev) {
+    const a = fpFormatTime(ev && ev.time); if (!a) return '';
+    const b = fpFormatTime(ev.endTime); return b ? `${a}–${b}` : a;
+}
 function fpEvLabel(ev) {
-    const t = fpFormatTime(ev && ev.time);
+    const t = fpTimeRange(ev);
     return (t ? t + ' ' : '') + String((ev && ev.title) || '');
 }
 // All-day entries first, then by time. Sorts in place and returns the array.
@@ -4827,6 +4851,7 @@ function toggleDashboardTask(type, index) {
 }
 
 // ---- Friendly dates and the Home summary ----
+var fpPlannerState = {};
 function fpIsoToday() { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split('T')[0]; }
 function fpFriendlyDate(iso) {
     if (!iso) return '';
@@ -4972,7 +4997,7 @@ function openDayPopover(dateKey, dayNum) {
     } else {
         listCont.innerHTML = events.map((ev, idx) => `
             <div class="bubble-event-item" style="border-left-color: var(--${ev.who});">
-                <div class="bubble-event-title">${ev.time ? `<span class="ev-time">${escapeToolText(fpFormatTime(ev.time))}</span> ` : ''}${escapeToolText(ev.title)}</div>
+                <div class="bubble-event-title">${ev.time ? `<span class="ev-time">${escapeToolText(fpTimeRange(ev))}</span> ` : ''}${escapeToolText(ev.title)}</div>
                 <div style="display:flex; align-items:center; gap:6px;">
               <span class="compact-scoped-tag bg-${fpAssigneeStyle(ev.who)}">${escapeToolText(fpDisplayAssignee(ev.who))}</span>
                     <button class="action-btn delete-btn" onclick="deleteCalEvent('${fpSafeId(dateKey)}', ${ev._i}, '${fpSafeId(ev.eventId)}'); openDayPopover('${fpSafeId(dateKey)}', ${dayNum});">✕</button>
@@ -5894,6 +5919,8 @@ function handleQuickAdd(e) {
     const recurring = document.getElementById('add-recurring').value;
     const postcode = document.getElementById('add-postcode').value.trim();
     const timeVal = (category === 'calendar' || category === 'events') ? document.getElementById('add-time').value : '';
+    const endTimeVal = timeVal ? document.getElementById('add-end-time').value : '';
+    if (endTimeVal && endTimeVal <= timeVal) { showToast('The end time must be after the start time'); return; }
 
     let title = rawTitle;
     if (category === 'birthday' && !title.includes('🎂')) {
@@ -5914,12 +5941,12 @@ function handleQuickAdd(e) {
                 const dd = String(curDate.getDate()).padStart(2, '0');
                 const key = `${yyyy}-${mm}-${dd}`;
                 if (!calendarEvents[key]) calendarEvents[key] = [];
-                calendarEvents[key].push({ eventId, title: finalTitle, who: assignee, quickAdded: true, ...(timeVal ? { time: timeVal } : {}) });
+                calendarEvents[key].push({ eventId, title: finalTitle, who: assignee, quickAdded: true, ...(timeVal ? { time: timeVal, ...(endTimeVal ? { endTime: endTimeVal } : {}) } : {}) });
                 curDate.setDate(curDate.getDate() + 1);
             }
         } else if (dateVal) {
             if (!calendarEvents[dateVal]) calendarEvents[dateVal] = [];
-            calendarEvents[dateVal].push({ eventId, title: finalTitle, who: assignee, quickAdded: true, ...(timeVal ? { time: timeVal } : {}) });
+            calendarEvents[dateVal].push({ eventId, title: finalTitle, who: assignee, quickAdded: true, ...(timeVal ? { time: timeVal, ...(endTimeVal ? { endTime: endTimeVal } : {}) } : {}) });
         }
     } else if (category === 'foodshop') foodShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
     else if (category === 'familyshop') familyShopData.push({ text: finalTitle, who: assignee, done: false, isEditing: false });
@@ -5941,6 +5968,7 @@ function handleQuickAdd(e) {
     document.getElementById('add-title').value = '';
     document.getElementById('add-postcode').value = '';
     document.getElementById('add-time').value = '';
+    document.getElementById('add-end-time').value = '';
     toggleQuickAddModal();
     renderAllViews();
     showToast('Item added successfully!');
@@ -6013,7 +6041,7 @@ const cookName = fpDisplayAssignee(mObj?.cook);
             eventsRemindersHtml += `
                 <div class="wp-item-pill" onclick="openDayPopover('${fpSafeId(key)}', ${d.getDate()})">
                     <span class="wp-pill-icon">${ev.birthday ? '🎂' : '📅'}</span>
-                    <span class="wp-pill-text">${ev.time ? `<span class="ev-time">${escapeToolText(fpFormatTime(ev.time))}</span> ` : ''}${escapeToolText(cleanTitle)} ${fpWhoTagHtml(ev.who)}</span>
+                    <span class="wp-pill-text">${ev.time ? `<span class="ev-time">${escapeToolText(fpTimeRange(ev))}</span> ` : ''}${escapeToolText(cleanTitle)} ${fpWhoTagHtml(ev.who)}</span>
                 </div>
             `;
         });
@@ -6035,8 +6063,8 @@ const cookName = fpDisplayAssignee(mObj?.cook);
         const formattedDateStr = `${day} · ${d.getDate()} ${d.toLocaleDateString('en-GB', { month: 'short' })}`;
 
         return `
-            <div class="wp-day-card cook-border-${cookKey}">
-                <div class="wp-day-header">${formattedDateStr}</div>
+            <details class="wp-day-card cook-border-${cookKey}" ${(fpPlannerState[key] ?? (key >= fpIsoToday())) ? 'open' : ''} ontoggle="fpPlannerState['${fpSafeId(key)}']=this.open">
+                <summary class="wp-day-header"><span>${key === fpIsoToday() ? 'Today · ' : ''}${formattedDateStr}</span><span class="wp-day-count">${dayEvents.length ? dayEvents.length + (dayEvents.length > 1 ? ' events' : ' event') : ''}</span></summary>
                 
                 <div class="wp-section-title">Meals 🧑‍🍳</div>
                 <div class="wp-item-pill wp-meal-pill" onclick="showView('shopping', document.getElementById('nav-btn-shopping'))">
@@ -6050,7 +6078,7 @@ const cookName = fpDisplayAssignee(mObj?.cook);
                 </div>
 
                 <button type="button" class="wp-add-item-btn" onclick="openDayQuickAdd('${fpSafeId(key)}')">Add Item +</button>
-            </div>
+            </details>
         `;
     }).join('');
 
