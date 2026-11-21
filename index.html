@@ -1874,6 +1874,15 @@ details.wp-day-card:not([open]){opacity:.8}
 .todo-inline-actions{flex:1 1 100%!important;justify-content:flex-start;gap:8px!important}
 .todo-add-submit{margin-left:auto;width:auto!important;min-width:96px;padding:0 20px;border-radius:12px!important;font-weight:800;font-size:.95rem!important;background:var(--accent)!important;color:#fff!important}
 html[data-theme="dark"] .todo-add-submit{color:#0f1719!important}
+
+/* ===== Batch 6: heading icons, last touch targets, quieter planner labels ===== */
+.ti{display:inline-flex;width:1.2em;height:1.2em;margin-right:.45em;vertical-align:-.2em;color:var(--accent,#245b67)}
+.ti svg{width:100%;height:100%;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bubble-close-btn{width:44px!important;height:44px!important}
+.modal-add-btn,.tool-btn.wide,.cal-main-tab,.action-btn.delete-btn{min-height:44px!important}
+.action-btn.delete-btn{min-width:44px!important}
+.wp-section-title{font-size:.75rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+html[data-theme="dark"] .wp-section-title{color:var(--muted)!important}
 </style>
 </head>
 <body>
@@ -1916,7 +1925,7 @@ html[data-theme="dark"] .todo-add-submit{color:#0f1719!important}
           </form>
           <div class="auth-message" id="auth-message" role="status" aria-live="polite"></div>
           <button class="auth-secondary" type="button" onclick="window.fpShowChildGate()">Child joining a family?</button>
-          <p class="auth-small" id="auth-version-label">Version 2.6 · build 2026-11-20.3</p>
+          <p class="auth-small" id="auth-version-label">Version 2.7 · build 2026-11-20.4</p>
           <p class="auth-small">Each adult or family member has their own account. After signing in and verifying your email, create a household or join one with an invitation link.</p>
         </div>
 
@@ -2493,7 +2502,7 @@ html[data-theme="dark"] .todo-add-submit{color:#0f1719!important}
 
     <!-- Account page -->
     <div id="view-account" class="view">
-        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Your profile, household and data.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 2.6 · build 2026-11-20.3</p><button type="button" class="tool-btn secondary" style="margin-top:10px;" onclick="fpSignOut()">Sign out</button></section>
+        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Your profile, household and data.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 2.7 · build 2026-11-20.4</p><button type="button" class="tool-btn secondary" style="margin-top:10px;" onclick="fpSignOut()">Sign out</button></section>
 <div class="calendar-main-tabs" role="tablist" aria-label="Account sections" id="account-tabs">
   <button type="button" class="cal-main-tab" role="tab" data-acct-tab="household" onclick="fpSetAccountTab('household')">🏡 Household <span id="acct-tab-badge" class="req-badge inline" hidden>0</span></button>
   <button type="button" class="cal-main-tab" role="tab" data-acct-tab="me" onclick="fpSetAccountTab('me')">👤 Me</button>
@@ -3173,7 +3182,17 @@ function fpGetCategoryItems(category){
   if(category==='chores') return choresData;
   if(category==='wishlist') return wishlistData;
   if(category==='todos') return todosData;
-  if(category==='calendar') return Object.entries(calendarEvents||{}).flatMap(([dateKey,items])=>(Array.isArray(items)?items:[]).map(item=>{item.eventId=item.eventId||item.id||(crypto.randomUUID?crypto.randomUUID():`${Date.now()}_${Math.random().toString(36).slice(2,7)}`);item.id=item.id||item.eventId;return {...item,dateKey};}));
+  if(category==='calendar'){
+    // A multi-day entry shares one eventId (so it can be deleted as a whole), but every day needs its own sync id.
+    // Otherwise the days collapse into a single database record and only one day survives.
+    const seen=new Set();
+    return Object.entries(calendarEvents||{}).flatMap(([dateKey,items])=>(Array.isArray(items)?items:[]).map(item=>{
+      item.eventId=item.eventId||item.id||(crypto.randomUUID?crypto.randomUUID():`${Date.now()}_${Math.random().toString(36).slice(2,7)}`);
+      item.id=item.id||item.eventId;
+      if(seen.has(String(item.id)))item.id=`${item.eventId}__${dateKey}`;
+      seen.add(String(item.id));
+      return {...item,dateKey};}));
+  }
   if(category==='bills') return householdBillsData;
   if(category==='monthlyBudgets') return monthlyBudgetsData;
   if(category==='renewals') return renewalsData;
@@ -4323,7 +4342,7 @@ async function fpApproveJoinRequest(uid,approve){
 }
 window.fpApproveJoinRequest=fpApproveJoinRequest;
 
-const FP_VERSION='2.6',FP_BUILD='2026-11-20.3';
+const FP_VERSION='2.7',FP_BUILD='2026-11-20.4';
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){
   window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(e=>console.warn('Offline support unavailable:',e));});
 }
@@ -4342,6 +4361,19 @@ function fpSyncTodoTabs(){
 (function(){['setFamilyHubView','setTodoScope'].forEach(n=>{const f=window[n];window[n]=function(){const r=f.apply(this,arguments);fpSyncTodoTabs();return r;};});
   window.addEventListener('load',fpSyncTodoTabs);})();
 window.fpSetTodoTab=fpSetTodoTab;
+const FP_HEADING_ICONS={"🍽": "<path d=\"M7 3v8M4 3v5a3 3 0 0 0 6 0V3M7 11v10M17 3c-2 2-3 4.5-3 7 0 1.5 1 2 3 2v9\"/>", "🛒": "<circle cx=\"9\" cy=\"20\" r=\"1.3\"/><circle cx=\"17\" cy=\"20\" r=\"1.3\"/><path d=\"M2.5 3.5h3l2.2 11.2a1.5 1.5 0 0 0 1.5 1.2h7.7a1.5 1.5 0 0 0 1.5-1.1L20.5 7H6.2\"/>", "💷": "<rect x=\"2.5\" y=\"6\" width=\"19\" height=\"12\" rx=\"2\"/><circle cx=\"12\" cy=\"12\" r=\"2.6\"/><path d=\"M6 9v.01M18 15v.01\"/>", "💡": "<path d=\"M9 18h6M10 21h4\"/><path d=\"M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z\"/>", "⚙": "<circle cx=\"12\" cy=\"12\" r=\"3\"/><path d=\"M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1\"/>", "📍": "<path d=\"M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z\"/><circle cx=\"12\" cy=\"9.5\" r=\"2.5\"/>", "📝": "<rect x=\"4\" y=\"3.5\" width=\"16\" height=\"17\" rx=\"2.5\"/><path d=\"m8.5 12 2.3 2.3 4.7-4.8\"/>", "🎂": "<path d=\"M4 20h16v-7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2z\"/><path d=\"M4 16c2 1.5 4 1.5 8 0s6-1.5 8 0M12 11V8M12 8c-1 0-1.5-.8-1.5-1.5S12 4 12 4s1.5 1.8 1.5 2.5S13 8 12 8z\"/>", "🤝": "<path d=\"M7 7h13M16 3l4 4-4 4M17 17H4M8 13l-4 4 4 4\"/>", "🗓": "<rect x=\"3.5\" y=\"5\" width=\"17\" height=\"15.5\" rx=\"2.5\"/><path d=\"M3.5 10h17M8 3v4M16 3v4\"/>", "🛍": "<path d=\"M6 7h12l1 13H5z\"/><path d=\"M9 7V6a3 3 0 0 1 6 0v1\"/>", "🔁": "<path d=\"M4 11V9a3 3 0 0 1 3-3h13l-3-3M20 13v2a3 3 0 0 1-3 3H4l3 3\"/>", "📇": "<rect x=\"4\" y=\"3\" width=\"16\" height=\"18\" rx=\"2\"/><circle cx=\"12\" cy=\"10\" r=\"2.5\"/><path d=\"M7.5 17c.8-2 2.4-3 4.5-3s3.7 1 4.5 3\"/>", "🏡": "<path d=\"M3 10.5 12 3l9 7.5\"/><path d=\"M5 9.5V21h14V9.5\"/><path d=\"M10 21v-6h4v6\"/>", "👤": "<circle cx=\"12\" cy=\"8\" r=\"4\"/><path d=\"M4 21c1-4 4-6 8-6s7 2 8 6\"/>", "🎨": "<path d=\"M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-1 .8-1.8 1.8-1.8H17a4 4 0 0 0 4-4c0-4.4-4-8-9-8z\"/><circle cx=\"7.5\" cy=\"11\" r=\"1\"/><circle cx=\"10.5\" cy=\"7\" r=\"1\"/><circle cx=\"15.5\" cy=\"7.5\" r=\"1\"/>", "🧹": "<path d=\"M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z\"/><path d=\"M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z\"/>", "🔒": "<rect x=\"5\" y=\"11\" width=\"14\" height=\"10\" rx=\"2\"/><path d=\"M8 11V8a4 4 0 0 1 8 0v3\"/>", "⚠": "<path d=\"M12 3 2 20h20z\"/><path d=\"M12 10v5M12 18v.01\"/>", "⭐": "<path d=\"M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z\"/>", "🎁": "<rect x=\"3.5\" y=\"8\" width=\"17\" height=\"4\" rx=\"1\"/><path d=\"M5 12v9h14v-9M12 8v13M12 8c-2-4-6-3-5 0 .7 1.5 3 1 5 0zM12 8c2-4 6-3 5 0-.7 1.5-3 1-5 0z\"/>"};
+function fpIconifyHeadings(){
+  document.querySelectorAll('.card-title,.tool-section > h3').forEach(el=>{
+    if(el.querySelector('.ti'))return;
+    const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);let node=null;
+    while(walker.nextNode()){if(walker.currentNode.nodeValue.trim()){node=walker.currentNode;break;}}
+    if(!node)return;
+    const m=node.nodeValue.match(/^(\s*)(\S)(\uFE0F?)\s*/u); if(!m||!FP_HEADING_ICONS[m[2]])return;
+    const span=document.createElement('span');span.className='ti';span.setAttribute('aria-hidden','true');
+    span.innerHTML='<svg viewBox="0 0 24 24">'+FP_HEADING_ICONS[m[2]]+'</svg>';
+    node.nodeValue=node.nodeValue.slice(m[0].length);node.parentNode.insertBefore(span,node);
+  });
+}
 function fpA11yPass(){
   document.querySelectorAll('input:not([type=hidden]),textarea,select').forEach(el=>{
     if(el.getAttribute('aria-label')||el.getAttribute('aria-labelledby')||el.closest('label')||(el.id&&document.querySelector('label[for="'+el.id+'"]')))return;
@@ -4351,8 +4383,8 @@ function fpA11yPass(){
     if(!el.getAttribute('role'))el.setAttribute('role','button'); if(!el.hasAttribute('tabindex'))el.setAttribute('tabindex','0');});
 }
 document.addEventListener('keydown',e=>{const t=e.target;if((e.key==='Enter'||e.key===' ')&&t&&t.getAttribute&&t.getAttribute('role')==='button'&&t.hasAttribute('onclick')&&!/^(BUTTON|A|INPUT)$/.test(t.tagName)){e.preventDefault();t.click();}});
-(function(){let timer=null;const run=()=>{timer=null;try{fpA11yPass();}catch(e){}};
-  new MutationObserver(()=>{if(!timer)timer=setTimeout(run,250);}).observe(document.body,{childList:true,subtree:true});
+(function(){let timer=null;const run=()=>{timer=null;try{fpA11yPass();fpIconifyHeadings();}catch(e){}};
+  new MutationObserver(()=>{try{fpIconifyHeadings();}catch(e){}if(!timer)timer=setTimeout(run,250);}).observe(document.body,{childList:true,subtree:true});
   window.addEventListener('load',()=>{run();let t='household';try{t=sessionStorage.getItem('fp_acct_tab')||'household';}catch(e){}fpSetAccountTab(t);});})();
 function fpSetAccountTab(tab){
   if(!['household','me','data'].includes(tab))tab='household';
@@ -6138,7 +6170,7 @@ const cookName = fpDisplayAssignee(mObj?.cook);
             <details class="wp-day-card cook-border-${cookKey}" ${(fpPlannerState[key] ?? (key >= fpIsoToday())) ? 'open' : ''} ontoggle="fpPlannerState['${fpSafeId(key)}']=this.open">
                 <summary class="wp-day-header"><span>${key === fpIsoToday() ? 'Today · ' : ''}${formattedDateStr}</span><span class="wp-day-count">${dayEvents.length ? dayEvents.length + (dayEvents.length > 1 ? ' events' : ' event') : ''}</span></summary>
                 
-                <div class="wp-section-title">Meals 🧑‍🍳</div>
+                <div class="wp-section-title">Meals</div>
                 <div class="wp-item-pill wp-meal-pill" onclick="showView('shopping', document.getElementById('nav-btn-shopping'))">
                     <span class="wp-pill-icon">🍽️</span>
                     <span class="wp-pill-text">${meal ? escapeToolText(meal) : 'No meal planned'} ${meal ? fpWhoTagHtml(mObj?.cook) : ''}</span>
