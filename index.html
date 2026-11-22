@@ -1915,6 +1915,9 @@ html[data-theme="dark"] .bottom-nav #nav-btn-todo{--tab-c:#c3a0f0}
 html .bottom-nav .nav-item.active{color:var(--tab-c,var(--accent))!important;background:#edf5f1!important;background:color-mix(in srgb,var(--tab-c,#245b67) 13%,transparent)!important}
 html[data-theme="dark"] .bottom-nav .nav-item.active{background:#2a3d44!important;background:color-mix(in srgb,var(--tab-c,#6fc2c8) 18%,transparent)!important}
 .nav-item > span:not(.nav-icon){font-size:.7rem!important;letter-spacing:-.01em}
+
+/* Dark mode logo: thin light outline so the dark navy parts stay readable (colours unchanged) */
+html[data-theme="dark"] .brand-logo-img,html[data-theme="dark"] .auth-brand-mark{filter:drop-shadow(1px 0 0 #f2f7f6) drop-shadow(-1px 0 0 #f2f7f6) drop-shadow(0 1px 0 #f2f7f6) drop-shadow(0 -1px 0 #f2f7f6)}
 </style>
 </head>
 <body>
@@ -4449,7 +4452,7 @@ async function fpApproveJoinRequest(uid,approve){
 }
 window.fpApproveJoinRequest=fpApproveJoinRequest;
 
-const FP_VERSION='2.11',FP_BUILD='2026-11-22.2';
+const FP_VERSION='2.12',FP_BUILD='2026-11-22.3';
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){
   window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(e=>console.warn('Offline support unavailable:',e));});
 }
