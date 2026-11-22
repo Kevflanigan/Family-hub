@@ -6,7 +6,9 @@
     <title>FamilyPlan — Plan together. Make memories.</title>
     <meta name="theme-color" content="#245b67">
     <link rel="manifest" href="manifest.webmanifest">
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=2">
+    <link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png?v=2">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="FamilyPlan">
@@ -1353,6 +1355,8 @@ html[data-theme="dark"] .brand-logo-img { mix-blend-mode:normal; border-radius:1
 .tool-section.danger-zone { border-color:#efc9c4; background:#fff8f7; }
 .tool-section.danger-zone h3 { color:#b3392d; }
 .todo-divider-content { flex:1 1 auto; min-width:0; }
+.todo-divider-title[role="button"] { cursor:text; }
+.todo-person-name[role="button"] { cursor:pointer; text-decoration:underline dotted; text-underline-offset:3px; }
 .todo-divider-title { display:block; color:var(--text); font-size:0.95rem; line-height:1.35; font-weight:700; overflow-wrap:anywhere; }
 .todo-edit-btn { flex:0 0 34px; width:34px; height:34px; display:grid; place-items:center; border:0; border-radius:0; background:transparent; color:var(--muted); cursor:pointer; font-size:16px; line-height:1; padding:0; }
 .todo-edit-btn:active { transform:scale(.94); }
@@ -1921,6 +1925,26 @@ html[data-theme="dark"] .bottom-nav #nav-btn-todo{--tab-c:#c3a0f0}
 html .bottom-nav .nav-item.active{color:var(--tab-c,var(--accent))!important;background:#edf5f1!important;background:color-mix(in srgb,var(--tab-c,#245b67) 13%,transparent)!important}
 html[data-theme="dark"] .bottom-nav .nav-item.active{background:#2a3d44!important;background:color-mix(in srgb,var(--tab-c,#6fc2c8) 18%,transparent)!important}
 .nav-item > span:not(.nav-icon){font-size:.7rem!important;letter-spacing:-.01em}
+
+/* ===== Fixes: dark-mode focus, shopping row wrapping, coloured assignee icon ===== */
+html[data-theme="dark"] .form-input:focus, html[data-theme="dark"] .form-select:focus, html[data-theme="dark"] .compact-scoped-input:focus,
+html[data-theme="dark"] .wishlist-scoped-input:focus, html[data-theme="dark"] .places-scoped-input:focus, html[data-theme="dark"] .restaurants-scoped-input:focus,
+html[data-theme="dark"] .tool-form input:focus, html[data-theme="dark"] .tool-form select:focus, html[data-theme="dark"] .tool-form textarea:focus,
+html[data-theme="dark"] .auth-input:focus, html[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]):focus,
+html[data-theme="dark"] select:focus, html[data-theme="dark"] textarea:focus {
+    background:#2a3d44; color:var(--text); border-color:#6fc2c8; box-shadow:0 0 0 3px rgba(111,194,200,.22);
+}
+html[data-theme="dark"] input:-webkit-autofill, html[data-theme="dark"] input:-webkit-autofill:focus {
+    -webkit-box-shadow:0 0 0 1000px #223137 inset; -webkit-text-fill-color:var(--text); caret-color:var(--text);
+}
+.shopping-item .assign-tag { display:block; flex:0 1 auto; min-width:0; max-width:5.6rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.shopping-item .assign-tag::before { display:inline-block; margin-right:6px; vertical-align:middle; }
+.shopping-item .item-text-label { word-break:normal; overflow-wrap:break-word; }
+.shopping-item .shop-left { flex:1 1 0; min-width:6rem; }
+.todo-assign-btn .assign-person { flex:0 0 auto; color:var(--assign-colour, var(--accent)); }
+.todo-inline-icon-btn.todo-assign-btn[data-tint] { background:color-mix(in srgb, var(--assign-colour) 16%, transparent); }
+.todo-inline-icon-btn.todo-assign-btn[data-tint] #todo-assign-label { color:var(--assign-colour); }
+html[data-theme="dark"] .todo-inline-icon-btn.todo-assign-btn[data-tint] { background:color-mix(in srgb, var(--assign-colour) 20%, transparent); }
 </style>
 </head>
 <body>
@@ -2489,7 +2513,7 @@ html[data-theme="dark"] .bottom-nav .nav-item.active{background:#2a3d44!importan
                 <div class="todo-inline-add" role="group" aria-label="Add a to-do item">
                     <input type="text" id="todo-quick-input" placeholder="Add task…" aria-label="New task" enterkeyhint="done" onkeydown="if(event.key===\'Enter\') addTodoItem()">
                     <div class="todo-inline-actions">
-                        <button type="button" id="todo-assign-button" class="todo-inline-icon-btn todo-assign-btn" onclick="cycleNewTodoAssignee()" aria-label="Change assignee" title="Change task assignee"><span aria-hidden="true">👤</span><span id="todo-assign-label">Assign</span></button>
+                        <button type="button" id="todo-assign-button" class="todo-inline-icon-btn todo-assign-btn" onclick="cycleNewTodoAssignee()" aria-label="Change assignee" title="Change task assignee"><svg class="assign-person" viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="12" cy="8" r="4.2"/><path d="M3.8 21c0-4.4 3.7-7.2 8.2-7.2s8.2 2.8 8.2 7.2z"/></svg><span id="todo-assign-label">Assign</span></button>
                         <button type="button" id="todo-date-button" class="todo-inline-icon-btn" onclick="openTodoDatePicker()" aria-label="Choose task date" title="Choose task date">📅</button>
                         <button type="button" class="todo-inline-icon-btn todo-add-submit" onclick="addTodoItem()" aria-label="Add task" title="Add task">Add</button>
                     </div>
@@ -4493,7 +4517,7 @@ async function fpApproveJoinRequest(uid,approve){
 }
 window.fpApproveJoinRequest=fpApproveJoinRequest;
 
-const FP_VERSION='2.17',FP_BUILD='2026-11-22.8';
+const FP_VERSION='2.20',FP_BUILD='2026-11-22.11';
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){
   window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(e=>console.warn('Offline support unavailable:',e));});
 }
@@ -5853,19 +5877,42 @@ async function togglePrivateTodo(id, done) {
     }
 }
 
-async function editPrivateTodo(id) {
+var fpEditingPrivateId = null;
+
+function startPrivateEdit(id) {
+    fpEditingPrivateId = id;
+    renderTodos();
+    setTimeout(() => {
+        const input = document.querySelector('.todo-divider-content .edit-inline-input');
+        if (input) { input.focus(); input.select(); }
+    }, 0);
+}
+
+function cancelPrivateEdit() {
+    fpEditingPrivateId = null;
+    renderTodos();
+}
+
+async function savePrivateTodoEdit(id, value) {
+    if (fpEditingPrivateId !== id) return;
+    fpEditingPrivateId = null;
     const item = privateTodosData.find(todo => todo.id === id);
     const collection = privateTodosCollection();
+    const text = String(value || '').trim();
+    renderTodos();
     if (!item || !collection) return;
-    const updatedText = await fpDialog.prompt('Edit private item', { value: item.text || '' });
-    if (updatedText === null || !updatedText.trim()) return;
+    if (!text) { showToast('Item cannot be empty'); return; }
+    if (text === item.text) return;
     try {
-        await collection.doc(id).update({ text: updatedText.trim(), updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+        await collection.doc(id).update({ text, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
     } catch (error) {
         console.error(error);
         showToast('Could not edit private item');
     }
 }
+
+// Kept for any older callers
+function editPrivateTodo(id) { startPrivateEdit(id); }
 
 async function deletePrivateTodo(id) {
     const collection = privateTodosCollection();
@@ -5901,10 +5948,12 @@ function renderPrivateTodos(container) {
         <div class="todo-divider-item ${item.done ? 'completed' : ''}">
             <input type="checkbox" ${item.done ? 'checked' : ''} onchange="togglePrivateTodo('${fpSafeId(item.id)}', this.checked)" aria-label="Mark private item complete">
             <div class="todo-divider-content">
-                <span class="todo-divider-title">${escapeToolText(item.text || '')}</span>
+                ${fpEditingPrivateId === item.id
+                    ? `<input type="text" class="edit-inline-input" value="${escapeToolText(item.text || '')}" maxlength="200" enterkeyhint="done" aria-label="Edit private item" onkeydown="if(event.key==='Enter'){this.blur();}else if(event.key==='Escape'){cancelPrivateEdit();}" onblur="savePrivateTodoEdit('${fpSafeId(item.id)}', this.value)">`
+                    : `<span class="todo-divider-title" role="button" tabindex="0" title="Tap to edit" onclick="startPrivateEdit('${fpSafeId(item.id)}')" onkeydown="if(event.key==='Enter'){startPrivateEdit('${fpSafeId(item.id)}');}">${escapeToolText(item.text || '')}</span>`}
                 <div class="todo-divider-meta">${todoDueHtml(item.date)}<span class="person-dot bg-family" aria-hidden="true"></span><span>Private</span></div>
             </div>
-            <button type="button" class="todo-edit-btn" onclick="editPrivateTodo('${fpSafeId(item.id)}')" aria-label="Edit ${escapeToolText(item.text || 'private item')}" title="Edit item">✏️</button>
+            <button type="button" class="todo-edit-btn" onclick="startPrivateEdit('${fpSafeId(item.id)}')" aria-label="Edit ${escapeToolText(item.text || 'private item')}" title="Edit item">✏️</button>
         </div>
     `).join('');
 }
@@ -5937,6 +5986,9 @@ function syncNewTodoAssignee() {
     const selectedName = newTodoAssignee === 'family' ? 'Family' : (fpDisplayAssignee(newTodoAssignee) || 'Member');
     if (label) label.textContent = newTodoAssignee === 'family' ? 'Family' : (String(selectedName).trim().split(/\s+/)[0] || selectedName);
     if (button) {
+        const nameColour = newTodoAssignee === 'family' ? '' : fpMemberNameColour(newTodoAssignee);
+        if (nameColour) { button.style.setProperty('--assign-colour', nameColour); button.setAttribute('data-tint', '1'); }
+        else { button.style.removeProperty('--assign-colour'); button.removeAttribute('data-tint'); }
         button.style.display = activeTodoScope === 'private' ? 'none' : 'inline-flex';
         button.title = `Assigned to ${selectedName}. Tap to choose the next household member`;
         button.setAttribute('aria-label', `Assigned to ${selectedName}. Tap to cycle through Family and household members`);
@@ -6004,36 +6056,66 @@ function toggleTodoCheck(idx) {
     renderWeeklyPlanner();
 }
 
-async function editTodoItem(idx) {
+function startTodoEdit(idx) {
     const task = todosData[idx];
     if (!task) return;
+    task.isEditing = true;
+    renderTodos();
+    setTimeout(() => {
+        const input = document.querySelector('.todo-divider-content .edit-inline-input');
+        if (input) { input.focus(); input.select(); }
+    }, 0);
+}
 
-    const updatedText = await fpDialog.prompt('Edit task', { value: task.text || '' });
-    if (updatedText === null) return;
-    if (!updatedText.trim()) {
+function cancelTodoEdit(idx) {
+    const task = todosData[idx];
+    if (!task) return;
+    task.isEditing = false;
+    renderTodos();
+}
+
+function saveTodoEdit(idx, value) {
+    const task = todosData[idx];
+    if (!task || !task.isEditing) return;
+    task.isEditing = false;
+    const text = String(value || '').trim();
+    if (!text) {
+        renderTodos();
         showToast('Task cannot be empty');
         return;
     }
+    if (text !== task.text) {
+        task.text = text;
+        saveData();
+        renderDashboard();
+        renderWeeklyPlanner();
+        showToast('Task updated');
+    }
+    renderTodos();
+}
 
+async function changeTodoAssignee(idx) {
+    const task = todosData[idx];
+    if (!task) return;
     const options = fpAssignmentOptions();
     const choices = options.map(value => ({
         value,
         label: value === 'family' ? 'Family (everyone)' : fpDisplayAssignee(value),
         style: value === 'family' ? 'family' : fpAssigneeStyle(value)
     }));
-    const currentAssignee = options.includes(task.who) ? task.who : 'family';
-    const updatedAssignee = await fpDialog.choose('Assign task to', choices, currentAssignee);
-    if (!updatedAssignee) return;
-
-    task.text = updatedText.trim();
-    task.who = updatedAssignee;
-    task.isEditing = false;
+    const current = options.includes(task.who) ? task.who : 'family';
+    const picked = await fpDialog.choose('Assign task to', choices, current);
+    if (!picked || picked === task.who) return;
+    task.who = picked;
     saveData();
     renderTodos();
     renderDashboard();
     renderWeeklyPlanner();
     showToast('Task updated');
 }
+
+// Kept for any older callers
+function editTodoItem(idx) { startTodoEdit(idx); }
 
 async function clearCompletedTodos() {
     if (activeTodoScope === 'private') {
@@ -6131,11 +6213,11 @@ function renderTodos() {
                     <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodoCheck(${idx})" aria-label="Mark task complete">
                     <div class="todo-divider-content">
                         ${t.isEditing
-                            ? `<input type="text" class="edit-inline-input" value="${escapeToolText(t.text || '')}" enterkeyhint="done" onkeydown="if(event.key===\'Enter\') saveTodoEdit(${idx}, this.value)" onblur="saveTodoEdit(${idx}, this.value)" autofocus>`
-                            : `<span class="todo-divider-title">${escapeToolText(t.text || '')}</span>`}
-                        <div class="todo-divider-meta">${todoDueHtml(t.date)}<span class="person-dot bg-${fpAssigneeStyle(t.who)}"${fpNameColourStyle(t.who,true)} aria-hidden="true"></span><span class="todo-person-name who-${fpAssigneeStyle(t.who)}"${fpNameColourStyle(t.who)}>${escapeToolText(displayWho)}</span></div>
+                            ? `<input type="text" class="edit-inline-input" value="${escapeToolText(t.text || '')}" maxlength="200" enterkeyhint="done" aria-label="Edit task" onkeydown="if(event.key==='Enter'){this.blur();}else if(event.key==='Escape'){cancelTodoEdit(${idx});}" onblur="saveTodoEdit(${idx}, this.value)">`
+                            : `<span class="todo-divider-title" role="button" tabindex="0" title="Tap to edit" onclick="startTodoEdit(${idx})" onkeydown="if(event.key==='Enter'){startTodoEdit(${idx});}">${escapeToolText(t.text || '')}</span>`}
+                        <div class="todo-divider-meta">${todoDueHtml(t.date)}<span class="person-dot bg-${fpAssigneeStyle(t.who)}"${fpNameColourStyle(t.who,true)} aria-hidden="true"></span><span class="todo-person-name who-${fpAssigneeStyle(t.who)}" role="button" tabindex="0" title="Change who it's for" onclick="changeTodoAssignee(${idx})" onkeydown="if(event.key==='Enter'){changeTodoAssignee(${idx});}"${fpNameColourStyle(t.who)}>${escapeToolText(displayWho)}</span></div>
                     </div>
-                    ${t.isEditing ? '' : `<button type="button" class="todo-edit-btn" onclick="editTodoItem(${idx})" aria-label="Edit task and assignee: ${escapeToolText(t.text || 'task')}" title="Edit task and assignee">✏️</button>`}
+                    ${t.isEditing ? '' : `<button type="button" class="todo-edit-btn" onclick="startTodoEdit(${idx})" aria-label="Edit task: ${escapeToolText(t.text || 'task')}" title="Edit task">✏️</button>`}
                 </div>`;
         }).join('');
 }
