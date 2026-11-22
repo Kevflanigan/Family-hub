@@ -350,6 +350,11 @@ nav.bottom-nav, .bottom-nav {
     transform: translateX(-50%) translateY(0);
 }
 
+.toast-undo { background:transparent; border:0; color:#9fe3d4; font:inherit; font-weight:700; text-decoration:underline; min-height:36px; padding:0 4px; cursor:pointer; }
+.toast-undo[hidden] { display:none; }
+.fp-net-banner { margin:0 12px 10px; padding:8px 12px; border-radius:10px; background:#fff4d6; color:#6b4a00; font-size:.85rem; font-weight:600; text-align:center; }
+.fp-net-banner[hidden] { display:none; }
+html[data-theme="dark"] .fp-net-banner { background:#3a2f12; color:#f0d9a0; }
 .toast-icon {
     background: #10b981;
     color: #05281d;
@@ -2028,6 +2033,7 @@ html[data-theme="dark"] .bottom-nav .nav-item.active{background:#2a3d44!importan
     <div id="toast-banner" class="toast-notification" role="status" aria-live="polite">
         <span class="toast-icon">✓</span>
         <span id="toast-message">Item added successfully!</span>
+        <button type="button" id="toast-undo" class="toast-undo" hidden>Undo</button>
     </div>
 
     <!-- Day Events Detail Popover Bubble & Backdrop -->
@@ -2149,7 +2155,7 @@ html[data-theme="dark"] .bottom-nav .nav-item.active{background:#2a3d44!importan
                     </select>
                 </div>
                 <div class="form-row" id="postcode-row" style="display:none; gap:8px;">
-                    <input type="text" id="add-postcode" class="form-input input-full" placeholder="Postcode (e.g. YO25 5YR)">
+                    <input autocomplete="postal-code" autocapitalize="characters" type="text" id="add-postcode" class="form-input input-full" placeholder="Postcode (e.g. YO25 5YR)">
                 </div>
                 <button type="submit" class="modal-add-btn">Add to Plan</button>
             </form>
@@ -2209,6 +2215,8 @@ html[data-theme="dark"] .bottom-nav .nav-item.active{background:#2a3d44!importan
     </div>
 </div>
 
+    <div id="fp-net-banner" class="fp-net-banner" role="status" aria-live="polite" hidden>You're offline. Changes will sync when you're back online.</div>
+
     <!-- VIEW 0: HOME DASHBOARD -->
     <div id="view-dashboard" class="view active">
         <section class="card" style="margin-bottom:12px;">
@@ -2257,7 +2265,7 @@ html[data-theme="dark"] .bottom-nav .nav-item.active{background:#2a3d44!importan
                 <h3>🤝 Family handover</h3>
                 <p class="tool-note">A simple shared note for pickups, activities, dinner and things the next person needs to know.</p>
                 <form class="tool-form" onsubmit="saveHandover(event)">
-                    <input id="handover-date" type="date" required>
+                    <label class="field-stack"><span>Handover date</span><input id="handover-date" type="date" required></label>
                     <select id="handover-person" aria-label="Who's taking over?"></select>
                     <textarea id="handover-notes" class="wide" required placeholder="Pickups, times, what to take, dinner or reminders..."></textarea>
                     <button class="tool-btn" type="submit">Add handover note</button>
@@ -2308,7 +2316,7 @@ html[data-theme="dark"] .bottom-nav .nav-item.active{background:#2a3d44!importan
             <section class="card" style="margin-bottom:0.8rem;">
                 <div class="card-header"><div class="card-title">🛒 Food Shopping List</div></div>
                 <div class="inline-add-group">
-                    <input type="text" id="foodshop-quick-input" class="form-input input-full" placeholder="Add food item..." onkeydown="if(event.key==='Enter') addInlineShop('foodshop')">
+                    <input type="text" id="foodshop-quick-input" class="form-input input-full" placeholder="Add food item..." enterkeyhint="done" onkeydown="if(event.key===\'Enter\') addInlineShop('foodshop')">
                     <button class="compact-scoped-add-btn" onclick="addInlineShop('foodshop')" aria-label="Add item">+</button>
                 </div>
                 <div id="foodshop-list-container" class="list-container"></div>
@@ -2316,7 +2324,7 @@ html[data-theme="dark"] .bottom-nav .nav-item.active{background:#2a3d44!importan
             <section class="card">
                 <div class="card-header"><div class="card-title">🛍️ Family Shopping List</div></div>
                 <div class="inline-add-group">
-                    <input type="text" id="familyshop-quick-input" class="form-input input-full" placeholder="Add family item..." onkeydown="if(event.key==='Enter') addInlineShop('familyshop')">
+                    <input type="text" id="familyshop-quick-input" class="form-input input-full" placeholder="Add family item..." enterkeyhint="done" onkeydown="if(event.key===\'Enter\') addInlineShop('familyshop')">
                     <button class="compact-scoped-add-btn" onclick="addInlineShop('familyshop')" aria-label="Add item">+</button>
                 </div>
                 <div id="familyshop-list-container" class="list-container"></div>
@@ -2330,7 +2338,7 @@ html[data-theme="dark"] .bottom-nav .nav-item.active{background:#2a3d44!importan
             <div class="restaurants-scoped-title">🍽️ Restaurants List</div>
             <div class="compact-scoped-add-group">
                 <input type="text" id="restaurants-name-input" class="restaurants-scoped-input" style="flex:2;" placeholder="Restaurant name...">
-                <input type="text" id="restaurants-postcode-input" class="restaurants-scoped-input" style="flex:1.2;" placeholder="Postcode...">
+                <input autocomplete="postal-code" autocapitalize="characters" type="text" id="restaurants-postcode-input" class="restaurants-scoped-input" style="flex:1.2;" placeholder="Postcode...">
                 <button class="restaurants-scoped-add-btn" onclick="addRestaurantItem()">+ Add</button>
             </div>
             <div id="restaurants-dynamic-list-container" style="display:flex; flex-direction:column;"></div>
@@ -2342,7 +2350,7 @@ html[data-theme="dark"] .bottom-nav .nav-item.active{background:#2a3d44!importan
         <section class="compact-scoped-card">
             <div class="watchlist-scoped-title">🎬 Cinema Watchlist</div>
             <div class="compact-scoped-add-group">
-                <input type="text" id="cinema-quick-input" class="compact-scoped-input" placeholder="Add movie..." onkeydown="if(event.key==='Enter') addWatchlistItem('cinema')">
+                <input type="text" id="cinema-quick-input" class="compact-scoped-input" placeholder="Add movie..." enterkeyhint="done" onkeydown="if(event.key===\'Enter\') addWatchlistItem('cinema')">
                 <button class="compact-scoped-add-btn" onclick="addWatchlistItem('cinema')">+</button>
             </div>
             <div id="cinema-list-container" style="display:flex; flex-direction:column;"></div>
@@ -2351,7 +2359,7 @@ html[data-theme="dark"] .bottom-nav .nav-item.active{background:#2a3d44!importan
         <section class="compact-scoped-card">
             <div class="watchlist-scoped-title">📺 Home Watchlist</div>
             <div class="compact-scoped-add-group">
-                <input type="text" id="home-quick-input" class="compact-scoped-input" placeholder="Add TV show..." onkeydown="if(event.key==='Enter') addWatchlistItem('home')">
+                <input type="text" id="home-quick-input" class="compact-scoped-input" placeholder="Add TV show..." enterkeyhint="done" onkeydown="if(event.key===\'Enter\') addWatchlistItem('home')">
                 <button class="compact-scoped-add-btn" onclick="addWatchlistItem('home')">+</button>
             </div>
             <div id="home-list-container" style="display:flex; flex-direction:column;"></div>
@@ -2371,7 +2379,7 @@ html[data-theme="dark"] .bottom-nav .nav-item.active{background:#2a3d44!importan
                 <h3>💷 Monthly household budget</h3>
                 <p class="tool-note">Set one figure for the household each month.</p>
                 <form class="tool-form" onsubmit="saveHouseholdBudget(event)">
-                    <div class="money-field wide"><input id="household-monthly-budget" type="number" min="0" step="0.01" required placeholder="Monthly budget"></div>
+                    <div class="money-field wide"><input id="household-monthly-budget" type="number" inputmode="decimal" min="0" step="0.01" required placeholder="Monthly budget"></div>
                     <button class="tool-btn wide" type="submit">Save monthly budget</button>
                 </form>
                 
@@ -2407,7 +2415,7 @@ html[data-theme="dark"] .bottom-nav .nav-item.active{background:#2a3d44!importan
                 <p class="tool-note">Log any unplanned purchases with a date. The spending so far updates as a running total.</p>
                 <form class="tool-form" onsubmit="addUnplannedSpend(event)">
                     <input id="unplanned-name" required placeholder="Description (e.g. Shopping)">
-                    <input id="unplanned-amount" type="number" min="0" step="0.01" required placeholder="Amount (£)">
+                    <input id="unplanned-amount" type="number" inputmode="decimal" min="0" step="0.01" required placeholder="Amount (£)">
                     <input id="unplanned-date" type="date" required aria-label="Purchase date">
                     <button class="tool-btn wide" type="submit">Add spending entry</button>
                 </form>
@@ -2429,7 +2437,7 @@ html[data-theme="dark"] .bottom-nav .nav-item.active{background:#2a3d44!importan
                 <div class="tool-total" id="bills-monthly-total">£0.00 <span style="font-size:.75rem;font-weight:600">monthly equivalent</span></div>
                 <form class="tool-form" onsubmit="addHouseholdBill(event)">
                     <input id="bill-name" required placeholder="Bill name">
-                    <input id="bill-amount" type="number" min="0" step="0.01" required placeholder="Amount (£)">
+                    <input id="bill-amount" type="number" inputmode="decimal" min="0" step="0.01" required placeholder="Amount (£)">
                     <select id="bill-frequency"><option value="monthly">Monthly</option><option value="weekly">Weekly</option><option value="quarterly">Quarterly</option><option value="yearly">Yearly</option></select>
                     <label class="field-stack"><span>Next payment date</span><input id="bill-due" type="date"></label>
                     <select id="bill-category"><option>Utilities</option><option>Mortgage / Rent</option><option>Insurance</option><option>Vehicle</option><option>Communications</option><option>Subscriptions</option><option>Other</option></select>
@@ -2445,7 +2453,7 @@ html[data-theme="dark"] .bottom-nav .nav-item.active{background:#2a3d44!importan
                 <p class="tool-note">Track annual renewals, memberships, insurance, MOT and cancellation dates.</p>
                 <form class="tool-form" onsubmit="addRenewal(event)">
                     <input id="renewal-name" required placeholder="Renewal name">
-                    <input id="renewal-cost" type="number" min="0" step="0.01" placeholder="Cost (£)">
+                    <input id="renewal-cost" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Cost (£)">
                     <label class="field-stack"><span>Renewal date</span><input id="renewal-date" type="date" required></label>
                     <select id="renewal-frequency"><option>Yearly</option><option>Monthly</option><option>Other</option></select>
                     <button class="tool-btn wide" type="submit">Add renewal</button>
@@ -2478,7 +2486,7 @@ html[data-theme="dark"] .bottom-nav .nav-item.active{background:#2a3d44!importan
             <div id="todo-content-panel">
                 <p id="todo-scope-note" class="tool-note" style="display:none;">Household tasks assigned to you or everyone.</p>
                 <div class="todo-inline-add" role="group" aria-label="Add a to-do item">
-                    <input type="text" id="todo-quick-input" placeholder="Add task…" aria-label="New task" onkeydown="if(event.key==='Enter') addTodoItem()">
+                    <input type="text" id="todo-quick-input" placeholder="Add task…" aria-label="New task" enterkeyhint="done" onkeydown="if(event.key===\'Enter\') addTodoItem()">
                     <div class="todo-inline-actions">
                         <button type="button" id="todo-assign-button" class="todo-inline-icon-btn todo-assign-btn" onclick="cycleNewTodoAssignee()" aria-label="Change assignee" title="Change task assignee"><span aria-hidden="true">👤</span><span id="todo-assign-label">Assign</span></button>
                         <button type="button" id="todo-date-button" class="todo-inline-icon-btn" onclick="openTodoDatePicker()" aria-label="Choose task date" title="Choose task date">📅</button>
@@ -2492,7 +2500,7 @@ html[data-theme="dark"] .bottom-nav .nav-item.active{background:#2a3d44!importan
             <div id="todo-gift-panel" style="display:none;">
                 <div class="todo-scoped-title" style="margin:4px 0 8px;">🎁 Gift Wishlist</div>
                 <div class="compact-scoped-add-group">
-                    <input type="text" id="wishlist-quick-input" class="wishlist-scoped-input" placeholder="Add gift idea..." onkeydown="if(event.key==='Enter') addWishlistItem()">
+                    <input type="text" id="wishlist-quick-input" class="wishlist-scoped-input" placeholder="Add gift idea..." enterkeyhint="done" onkeydown="if(event.key===\'Enter\') addWishlistItem()">
                     <button class="compact-scoped-add-btn" onclick="addWishlistItem()" aria-label="Add gift">+</button>
                 </div>
                 <div id="wishlist-list-container" style="display:flex; flex-direction:column;"></div>
@@ -2531,7 +2539,7 @@ html[data-theme="dark"] .bottom-nav .nav-item.active{background:#2a3d44!importan
                 <form class="tool-form" onsubmit="addAddressBookEntry(event)">
                     <input id="address-book-name" required maxlength="100" placeholder="Name (person or place)">
                     <input id="address-book-address" class="wide" required maxlength="250" placeholder="Street address">
-                    <input id="address-book-postcode" required maxlength="20" placeholder="Postcode">
+                    <input autocomplete="postal-code" autocapitalize="characters" id="address-book-postcode" required maxlength="20" placeholder="Postcode">
                     <button class="tool-btn" type="submit">Add address</button>
                 </form>
                 <div id="address-book-list" class="tool-list"></div>
@@ -2542,7 +2550,7 @@ html[data-theme="dark"] .bottom-nav .nav-item.active{background:#2a3d44!importan
                 <div class="places-scoped-title">📍 Places to Visit</div>
                 <div class="compact-scoped-add-group">
                     <input type="text" id="places-name-input" class="places-scoped-input" style="flex:2;" placeholder="Place name...">
-                    <input type="text" id="places-postcode-input" class="places-scoped-input" style="flex:1.2;" placeholder="Postcode...">
+                    <input autocomplete="postal-code" autocapitalize="characters" type="text" id="places-postcode-input" class="places-scoped-input" style="flex:1.2;" placeholder="Postcode...">
                     <button class="places-scoped-add-btn" onclick="addPlacesItem()">+ Add</button>
                 </div>
                 <div id="places-dynamic-list-container" style="display:flex; flex-direction:column;"></div>
@@ -2602,7 +2610,7 @@ html[data-theme="dark"] .bottom-nav .nav-item.active{background:#2a3d44!importan
             <h3>👤 Profile name</h3>
             <p class="tool-note">Changing your name updates it everywhere it appears: tasks, lists, calendar, meal plan and household members.</p>
             <label class="auth-field" for="profile-name-input">Your name</label>
-            <input type="text" id="profile-name-input" class="form-input input-full" maxlength="60" autocomplete="name" placeholder="Your name" onkeydown="if(event.key==='Enter') fpSaveProfileName()">
+            <input type="text" id="profile-name-input" class="form-input input-full" maxlength="60" autocomplete="name" placeholder="Your name" enterkeyhint="done" onkeydown="if(event.key===\'Enter\') fpSaveProfileName()">
             <div class="account-actions">
                 <button type="button" class="tool-btn" id="profile-name-save" onclick="fpSaveProfileName()">Save name</button>
             </div>
@@ -2999,11 +3007,46 @@ let toastTimer = null;
 function showToast(msg) {
     const toast = document.getElementById('toast-banner');
     document.getElementById('toast-message').textContent = msg;
+    const ub = document.getElementById('toast-undo');
+    if (ub) { ub.hidden = true; ub.onclick = null; }
     toast.classList.add('show');
     if (toastTimer) clearTimeout(toastTimer);
     toastTimer = setTimeout(() => {
         toast.classList.remove('show');
     }, 2500);
+}
+
+function showUndoToast(msg, onUndo) {
+    const toast = document.getElementById('toast-banner');
+    const ub = document.getElementById('toast-undo');
+    document.getElementById('toast-message').textContent = msg;
+    if (ub) {
+        ub.hidden = false;
+        ub.onclick = () => {
+            ub.hidden = true; ub.onclick = null;
+            toast.classList.remove('show');
+            if (toastTimer) clearTimeout(toastTimer);
+            try { onUndo(); } catch (e) { console.error(e); showToast('Could not undo'); }
+        };
+    }
+    toast.classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { toast.classList.remove('show'); if (ub) { ub.hidden = true; ub.onclick = null; } }, 6000);
+}
+
+/* Remove arr[idx] straight away, with an Undo toast that puts it back */
+function fpUndoRemove(getArr, idx, rerender, msg) {
+    const arr = getArr();
+    if (!Array.isArray(arr) || !Number.isInteger(idx) || idx < 0 || idx >= arr.length) return;
+    const item = arr.splice(idx, 1)[0];
+    saveData();
+    rerender();
+    showUndoToast(msg || 'Deleted', () => {
+        const a = getArr();
+        a.splice(Math.min(idx, a.length), 0, item);
+        saveData();
+        rerender();
+    });
 }
 
 function saveData() {
@@ -4449,10 +4492,47 @@ async function fpApproveJoinRequest(uid,approve){
 }
 window.fpApproveJoinRequest=fpApproveJoinRequest;
 
-const FP_VERSION='2.14',FP_BUILD='2026-11-22.5';
+const FP_VERSION='2.15',FP_BUILD='2026-11-22.6';
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){
   window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(e=>console.warn('Offline support unavailable:',e));});
 }
+/* Accessible names for unlabeled fields/buttons, and theme-colour + offline handling */
+(function(){
+  const NAMES={'bill-frequency':'How often','bill-category':'Bill category','renewal-frequency':'How often','idea-category':'Idea category','managed-child-type':'Child type','voice-add-category':'Category','voice-review-category':'Category','voice-review-assignee':'Assign to','add-category':'Category','add-assignee':'Assign to','add-recurring':'Repeats'};
+  function label(){
+    document.querySelectorAll('input,select,textarea,button').forEach(el=>{
+      if(el.type==='hidden'||el.hasAttribute('aria-label')||el.hasAttribute('aria-labelledby'))return;
+      const t=(el.textContent||'').trim();
+      if(el.tagName==='BUTTON'){
+        if(/^[✕×✖]$/.test(t))el.setAttribute('aria-label','Delete');
+        else if(!t&&el.title)el.setAttribute('aria-label',el.title);
+        return;
+      }
+      if((el.labels&&el.labels.length)||el.closest('label'))return;
+      const n=NAMES[el.id]||el.placeholder||el.title||'';
+      if(n)el.setAttribute('aria-label',n);
+    });
+  }
+  let t=null;
+  const queue=()=>{clearTimeout(t);t=setTimeout(label,300);};
+  new MutationObserver(queue).observe(document.body,{childList:true,subtree:true});
+  label();
+  function theme(){
+    const m=document.querySelector('meta[name="theme-color"]');
+    if(m)m.setAttribute('content',document.documentElement.getAttribute('data-theme')==='dark'?'#162126':'#245b67');
+  }
+  new MutationObserver(theme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+  theme();
+  function net(first){
+    const b=document.getElementById('fp-net-banner');
+    if(!b)return;
+    b.hidden=navigator.onLine;
+    if(!first)showToast(navigator.onLine?'Back online':'You are offline');
+  }
+  window.addEventListener('online',()=>net(false));
+  window.addEventListener('offline',()=>net(false));
+  net(true);
+})();
 /* Logo: swap to the transparent, outlined version in dark mode */
 (function(){
   const sel='.brand-logo-img,.auth-brand-mark';
@@ -5271,19 +5351,31 @@ function addEventFromPopover() {
 }
 
 function deleteCalEvent(dateStr, index, eventId) {
+    const removed = [];
     if (eventId) {
         Object.keys(calendarEvents).forEach(d => {
-            calendarEvents[d] = calendarEvents[d].filter(ev => ev.eventId !== eventId);
+            calendarEvents[d] = calendarEvents[d].filter(ev => {
+                if (ev.eventId === eventId) { removed.push([d, ev]); return false; }
+                return true;
+            });
             if (calendarEvents[d].length === 0) delete calendarEvents[d];
         });
     } else if (calendarEvents[dateStr]) {
-        calendarEvents[dateStr].splice(index, 1);
+        const ev = calendarEvents[dateStr].splice(index, 1)[0];
+        if (ev) removed.push([dateStr, ev]);
         if (calendarEvents[dateStr].length === 0) delete calendarEvents[dateStr];
     }
-    saveData();
-    if (calendarPageMode === 'month') renderCalendarMonth();
-    if (calendarPageMode === 'week') renderWeeklyPlanner();
-    renderDashboard();
+    const refresh = () => {
+        saveData();
+        if (calendarPageMode === 'month') renderCalendarMonth();
+        if (calendarPageMode === 'week') renderWeeklyPlanner();
+        renderDashboard();
+    };
+    refresh();
+    if (removed.length) showUndoToast('Event deleted', () => {
+        removed.forEach(([d, ev]) => { (calendarEvents[d] = calendarEvents[d] || []).push(ev); });
+        refresh();
+    });
 }
 
 function navigateCalendar(dir) {
@@ -5421,13 +5513,13 @@ function renderShopping() {
                 <div class="shop-left">
                     <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleShopCheck('foodshop', ${idx})">
                     ${item.isEditing ? 
-                        `<input type="text" class="edit-inline-input" value="${escapeToolText(item.text)}" onkeydown="if(event.key==='Enter') saveShopEdit('foodshop', ${idx}, this.value)" onblur="saveShopEdit('foodshop', ${idx}, this.value)" autofocus>` : 
+                        `<input type="text" class="edit-inline-input" value="${escapeToolText(item.text)}" enterkeyhint="done" onkeydown="if(event.key===\'Enter\') saveShopEdit('foodshop', ${idx}, this.value)" onblur="saveShopEdit('foodshop', ${idx}, this.value)" autofocus>` : 
                         `<span class="item-text-label">${escapeToolText(item.text)}</span>`
                     }
                 </div>
                 <button class="action-btn" onclick="enableShopEdit('foodshop', ${idx})">✏️</button>
            <span class="assign-tag bg-${fpAssigneeStyle(item.who)}"${fpNameColourStyle(item.who)} onclick="cycleAssignee('foodshop', ${idx})">${escapeToolText(displayWho)}</span>
-                <button class="action-btn delete-btn" onclick="foodShopData.splice(${idx},1); saveData(); renderShopping(); renderDashboard();">✕</button>
+                <button class="action-btn delete-btn" onclick="fpUndoRemove(()=>foodShopData,${idx},()=>{renderShopping();renderDashboard();},'Item removed')">✕</button>
             </div>
         `;
     }).join('');
@@ -5441,13 +5533,13 @@ function renderShopping() {
                 <div class="shop-left">
                     <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleShopCheck('familyshop', ${idx})">
                     ${item.isEditing ? 
-                        `<input type="text" class="edit-inline-input" value="${escapeToolText(item.text)}" onkeydown="if(event.key==='Enter') saveShopEdit('familyshop', ${idx}, this.value)" onblur="saveShopEdit('familyshop', ${idx}, this.value)" autofocus>` : 
+                        `<input type="text" class="edit-inline-input" value="${escapeToolText(item.text)}" enterkeyhint="done" onkeydown="if(event.key===\'Enter\') saveShopEdit('familyshop', ${idx}, this.value)" onblur="saveShopEdit('familyshop', ${idx}, this.value)" autofocus>` : 
                         `<span class="item-text-label">${escapeToolText(item.text)}</span>`
                     }
                 </div>
                 <button class="action-btn" onclick="enableShopEdit('familyshop', ${idx})">✏️</button>
          <span class="assign-tag bg-${fpAssigneeStyle(item.who)}"${fpNameColourStyle(item.who)} onclick="cycleAssignee('familyshop', ${idx})">${escapeToolText(displayWho)}</span>
-                <button class="action-btn delete-btn" onclick="familyShopData.splice(${idx},1); saveData(); renderShopping(); renderDashboard();">✕</button>
+                <button class="action-btn delete-btn" onclick="fpUndoRemove(()=>familyShopData,${idx},()=>{renderShopping();renderDashboard();},'Item removed')">✕</button>
             </div>
         `;
     }).join('');
@@ -5511,7 +5603,7 @@ function renderPlacesView() {
                 </div>
                 <div style="display:flex; align-items:center; gap:6px;">
           <span class="compact-scoped-tag bg-${fpAssigneeStyle(item.who)}">${escapeToolText(displayWho)}</span>
-                    <button class="action-btn delete-btn" onclick="destinationsData.places.splice(${idx},1); saveData(); renderPlacesView();">✕</button>
+                    <button class="action-btn delete-btn" onclick="fpUndoRemove(()=>destinationsData.places,${idx},renderPlacesView,'Place removed')">✕</button>
                 </div>
             </div>
         `;
@@ -5632,7 +5724,7 @@ function renderRestaurantsView() {
                 </div>
                 <div style="display:flex; align-items:center; gap:6px;">
            <span class="compact-scoped-tag bg-${fpAssigneeStyle(item.who)}">${escapeToolText(displayWho)}</span>
-                    <button class="action-btn delete-btn" onclick="destinationsData.restaurants.splice(${idx},1); saveData(); renderRestaurantsView();">✕</button>
+                    <button class="action-btn delete-btn" onclick="fpUndoRemove(()=>destinationsData.restaurants,${idx},renderRestaurantsView,'Restaurant removed')">✕</button>
                 </div>
             </div>
         `;
@@ -5756,9 +5848,15 @@ async function editPrivateTodo(id) {
 
 async function deletePrivateTodo(id) {
     const collection = privateTodosCollection();
-    if (!collection || !(await fpDialog.confirm('Delete this private item?', { title: 'Delete item', okLabel: 'Delete', danger: true }))) return;
+    const item = privateTodosData.find(todo => todo.id === id);
+    if (!collection || !item) return;
+    const data = Object.assign({}, item); delete data.id;
     try {
         await collection.doc(id).delete();
+        showUndoToast('Item deleted', async () => {
+            try { await collection.doc(id).set(data); }
+            catch (error) { console.error(error); showToast('Could not restore item'); }
+        });
     } catch (error) {
         console.error(error);
         showToast('Could not delete private item');
@@ -5920,14 +6018,20 @@ async function clearCompletedTodos() {
     if (activeTodoScope === 'private') {
         const completed = privateTodosData.filter(item => item.done);
         if (!completed.length) return;
-        if (!(await fpDialog.confirm(`Clear ${completed.length} completed private item${completed.length === 1 ? '' : 's'}?`, { title: 'Clear completed items', okLabel: 'Clear', danger: true }))) return;
         const collection = privateTodosCollection();
         if (!collection) return;
+        const saved = completed.map(item => { const d = Object.assign({}, item); delete d.id; return { id: item.id, d }; });
         try {
             const batch = firebaseDb.batch();
             completed.forEach(item => batch.delete(collection.doc(item.id)));
             await batch.commit();
-            showToast(`${completed.length} completed item${completed.length === 1 ? '' : 's'} cleared`);
+            showUndoToast(`${completed.length} completed item${completed.length === 1 ? '' : 's'} cleared`, async () => {
+                try {
+                    const b = firebaseDb.batch();
+                    saved.forEach(sv => b.set(collection.doc(sv.id), sv.d));
+                    await b.commit();
+                } catch (error) { console.error(error); showToast('Could not restore items'); }
+            });
         } catch (error) {
             console.error('Could not clear completed private todos:', error);
             showToast('Could not clear completed items');
@@ -5937,13 +6041,13 @@ async function clearCompletedTodos() {
 
     const completed = todosData.filter(task => task.done && filterItem(task.who));
     if (!completed.length) return;
-    if (!(await fpDialog.confirm(`Clear ${completed.length} completed to-do item${completed.length === 1 ? '' : 's'}?`, { title: 'Clear completed items', okLabel: 'Clear', danger: true }))) return;
+    const refresh = () => { saveData(); renderTodos(); renderDashboard(); renderWeeklyPlanner(); };
     todosData = todosData.filter(task => !(task.done && filterItem(task.who)));
-    saveData();
-    renderTodos();
-    renderDashboard();
-    renderWeeklyPlanner();
-    showToast(`${completed.length} completed item${completed.length === 1 ? '' : 's'} cleared`);
+    refresh();
+    showUndoToast(`${completed.length} completed item${completed.length === 1 ? '' : 's'} cleared`, () => {
+        todosData = todosData.concat(completed);
+        refresh();
+    });
 }
 
 function renderTodos() {
@@ -6006,7 +6110,7 @@ function renderTodos() {
                     <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodoCheck(${idx})" aria-label="Mark task complete">
                     <div class="todo-divider-content">
                         ${t.isEditing
-                            ? `<input type="text" class="edit-inline-input" value="${escapeToolText(t.text || '')}" onkeydown="if(event.key==='Enter') saveTodoEdit(${idx}, this.value)" onblur="saveTodoEdit(${idx}, this.value)" autofocus>`
+                            ? `<input type="text" class="edit-inline-input" value="${escapeToolText(t.text || '')}" enterkeyhint="done" onkeydown="if(event.key===\'Enter\') saveTodoEdit(${idx}, this.value)" onblur="saveTodoEdit(${idx}, this.value)" autofocus>`
                             : `<span class="todo-divider-title">${escapeToolText(t.text || '')}</span>`}
                         <div class="todo-divider-meta">${todoDueHtml(t.date)}<span class="person-dot bg-${fpAssigneeStyle(t.who)}"${fpNameColourStyle(t.who,true)} aria-hidden="true"></span><span class="todo-person-name who-${fpAssigneeStyle(t.who)}"${fpNameColourStyle(t.who)}>${escapeToolText(displayWho)}</span></div>
                     </div>
@@ -6041,7 +6145,7 @@ function renderWatchlist() {
                 <span class="compact-scoped-label">🎬 ${escapeToolText(item.title)}</span>
                 <div style="display:flex; align-items:center; gap:6px;">
            <span class="compact-scoped-tag bg-${fpAssigneeStyle(item.who)}" onclick="cycleAssignee('cinema', ${idx})">${escapeToolText(displayWho)}</span>
-                    <button class="action-btn delete-btn" onclick="destinationsData.cinema.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
+                    <button class="action-btn delete-btn" onclick="fpUndoRemove(()=>destinationsData.cinema,${idx},renderWatchlist,'Movie removed')">✕</button>
                 </div>
             </div>
         `;
@@ -6055,7 +6159,7 @@ function renderWatchlist() {
                 <span class="compact-scoped-label">📺 ${escapeToolText(item.title)}</span>
                 <div style="display:flex; align-items:center; gap:6px;">
          <span class="compact-scoped-tag bg-${fpAssigneeStyle(item.who)}" onclick="cycleAssignee('home', ${idx})">${escapeToolText(displayWho)}</span>
-                    <button class="action-btn delete-btn" onclick="destinationsData.home.splice(${idx},1); saveData(); renderWatchlist();">✕</button>
+                    <button class="action-btn delete-btn" onclick="fpUndoRemove(()=>destinationsData.home,${idx},renderWatchlist,'Show removed')">✕</button>
                 </div>
             </div>
         `;
@@ -6082,9 +6186,7 @@ function toggleKidChore(kidIndex, choreIndex) {
 }
 
 function deleteKidChore(kidIndex, choreIndex) {
-    choresData[kidIndex].chores.splice(choreIndex, 1);
-    saveData();
-    renderChores();
+    fpUndoRemove(() => (choresData[kidIndex] || {}).chores, choreIndex, renderChores, 'Chore removed');
 }
 
 function addKid() {
@@ -6099,12 +6201,12 @@ function addKid() {
 }
 
 function renderChores() {
-    const addKidHtml = `<div class="compact-scoped-add-group" style="margin:4px 0 8px;"><input type="text" id="kid-name-input" class="compact-scoped-input" placeholder="Add a child's name..." onkeydown="if(event.key==='Enter') addKid()"><button class="compact-scoped-add-btn" onclick="addKid()" aria-label="Add child">+</button></div>`;
+    const addKidHtml = `<div class="compact-scoped-add-group" style="margin:4px 0 8px;"><input type="text" id="kid-name-input" class="compact-scoped-input" placeholder="Add a child's name..." enterkeyhint="done" onkeydown="if(event.key===\'Enter\') addKid()"><button class="compact-scoped-add-btn" onclick="addKid()" aria-label="Add child">+</button></div>`;
     document.getElementById('chores-list-container').innerHTML = addKidHtml + choresData.map((k, kIdx) => `
         <div class="kid-chore-card">
             <div style="font-weight:800; font-size:0.88rem; margin-bottom:6px;">${escapeToolText(k.kid)}</div>
             <div class="compact-scoped-add-group" style="margin-bottom:6px;">
-                <input type="text" id="chore-input-${kIdx}" class="compact-scoped-input" placeholder="Add chore..." onkeydown="if(event.key==='Enter') addKidChore(${kIdx})">
+                <input type="text" id="chore-input-${kIdx}" class="compact-scoped-input" placeholder="Add chore..." enterkeyhint="done" onkeydown="if(event.key===\'Enter\') addKidChore(${kIdx})">
                 <button class="compact-scoped-add-btn" onclick="addKidChore(${kIdx})">+</button>
             </div>
             <div style="display:flex; flex-direction:column;">
@@ -6145,7 +6247,7 @@ function renderWishlist() {
                 <span class="todo-item-label">🎁 ${escapeToolText(w.title)}</span>
                 <div style="display:flex; align-items:center; gap:6px;">
     <span class="compact-scoped-tag bg-${fpAssigneeStyle(w.who)}" onclick="cycleAssignee('wishlist', ${idx})">${escapeToolText(displayWho)}</span>
-                    <button class="action-btn delete-btn" onclick="wishlistData.splice(${idx},1); saveData(); renderWishlist();">✕</button>
+                    <button class="action-btn delete-btn" onclick="fpUndoRemove(()=>wishlistData,${idx},renderWishlist,'Gift idea removed')">✕</button>
                 </div>
             </div>
         `;
@@ -6390,11 +6492,9 @@ function addUnplannedSpend(e){
 }
 
 function deleteUnplannedSpend(id){
-    unplannedSpendingData = unplannedSpendingData.filter(x=>x.id!==id);
-    saveData();
-    renderUnplannedSpending();
-    renderFinanceOverview();
-    showToast('Entry removed');
+    const idx=unplannedSpendingData.findIndex(x=>x.id===id);
+    if(idx<0)return;
+    fpUndoRemove(()=>unplannedSpendingData,idx,()=>{renderUnplannedSpending();renderFinanceOverview();},'Entry removed');
 }
 
 function renderUnplannedSpending(){
@@ -6471,11 +6571,11 @@ function addRenewal(e){e.preventDefault();renewalsData.push({id:crypto.randomUUI
 function addFamilyIdea(e){e.preventDefault();familyIdeasData.push({id:crypto.randomUUID(),name:document.getElementById('idea-name').value.trim(),category:document.getElementById('idea-category').value,notes:document.getElementById('idea-notes').value.trim(),createdAt:new Date().toISOString()});saveData();e.target.reset();renderEnhancementLists();showToast('Idea saved');}
 function saveHandover(e){e.preventDefault();handoverData.push({id:crypto.randomUUID(),date:document.getElementById('handover-date').value,person:document.getElementById('handover-person').value.trim(),notes:document.getElementById('handover-notes').value.trim()});saveData();e.target.reset();document.getElementById('handover-date').value=new Date().toISOString().slice(0,10);renderEnhancementLists();showToast('Handover note added');}
 function addFamilyOccasion(e){e.preventDefault();occasionsData.push({id:crypto.randomUUID(),name:document.getElementById('occasion-name').value.trim(),date:document.getElementById('occasion-date').value,notes:document.getElementById('occasion-notes').value.trim()});saveData();e.target.reset();renderEnhancementLists();showToast('Occasion added');}
-async function deleteToolItem(type,i){const map={bills:householdBillsData,renewals:renewalsData,ideas:familyIdeasData,handover:handoverData,occasions:occasionsData};if(!map[type]||!(await fpDialog.confirm('Delete this entry?',{title:'Delete entry',okLabel:'Delete',danger:true})))return;map[type].splice(i,1);saveData();renderBills();renderEnhancementLists();}
+function deleteToolItem(type,i){const get=()=>({bills:householdBillsData,renewals:renewalsData,ideas:familyIdeasData,handover:handoverData,occasions:occasionsData})[type];if(!get())return;fpUndoRemove(get,i,()=>{renderBills();renderEnhancementLists();},'Entry deleted');}
 function renderSimpleToolList(id,items,formatter,type,empty){const el=document.getElementById(id);if(!el)return;el.innerHTML=items.length?items.map((item,i)=>`<div class="tool-row"><div>${formatter(item)}</div><button onclick="deleteToolItem('${type}',${i})">✕</button></div>`).join(''):`<p class="tool-note">${empty}</p>`;}
 function addAddressBookEntry(e){e.preventDefault();const name=document.getElementById('address-book-name').value.trim(),address=document.getElementById('address-book-address').value.trim(),postcode=document.getElementById('address-book-postcode').value.trim();if(!name||!address||!postcode)return;addressBookData.push({id:crypto.randomUUID(),name,address,postcode});saveData();e.target.reset();renderAddressBook();showToast('Address saved');}
 async function editAddressBookEntry(i){const entry=addressBookData[i];if(!entry)return;const name=await fpDialog.prompt('Name',{value:entry.name});if(name===null)return;const address=await fpDialog.prompt('Address',{value:entry.address});if(address===null)return;const postcode=await fpDialog.prompt('Postcode',{value:entry.postcode});if(postcode===null)return;if(!name.trim()||!address.trim()||!postcode.trim()){showToast('Please complete all address fields');return;}entry.name=name.trim();entry.address=address.trim();entry.postcode=postcode.trim();saveData();renderAddressBook();}
-async function deleteAddressBookEntry(i){if(!Number.isInteger(i)||i<0||i>=addressBookData.length||!(await fpDialog.confirm('Delete this saved address?',{title:'Delete address',okLabel:'Delete',danger:true})))return;addressBookData.splice(i,1);saveData();renderAddressBook();}
+function deleteAddressBookEntry(i){fpUndoRemove(()=>addressBookData,i,renderAddressBook,'Address deleted');}
 function renderAddressBook(){const list=document.getElementById('address-book-list');if(!list)return;list.innerHTML=addressBookData.length?addressBookData.map((entry,i)=>`<div class="tool-row"><div><strong>${escapeToolText(entry.name)}</strong><small>${escapeToolText(entry.address)}<br>${escapeToolText(entry.postcode)}</small></div><div style="display:flex;gap:6px;flex-shrink:0"><button type="button" onclick="editAddressBookEntry(${i})">Edit</button><button type="button" onclick="deleteAddressBookEntry(${i})">✕</button></div></div>`).join(''):'<p class="tool-note">No saved addresses yet. Add your first key address above.</p>'; }
 function renderEnhancementLists(){renderSimpleToolList('renewals-list',renewalsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${moneyGBP(x.cost)} · ${escapeToolText(x.frequency)} · Renewal: ${dateLabel(x.date)}</small>`,'renewals','No renewals tracked yet.');renderSimpleToolList('family-ideas-list',familyIdeasData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${escapeToolText(x.category)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'ideas','Your saved family ideas will appear here.');renderSimpleToolList('handover-list',handoverData,x=>`<strong>${dateLabel(x.date)}${x.person&&x.person!=='family'?' · '+escapeToolText(fpDisplayAssignee(x.person)==='Unassigned'?x.person:fpDisplayAssignee(x.person)):''}</strong><small>${escapeToolText(x.notes)}</small>`,'handover','No handover notes yet.');renderSimpleToolList('family-occasions-list',occasionsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${dateLabel(x.date)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'occasions','No occasions added yet.');renderAddressBook();renderFinanceOverview();}
 function renderFamilyTools(){renderWeeklyPlanner();renderBills();renderEnhancementLists();}
