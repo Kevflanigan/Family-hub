@@ -1915,9 +1915,6 @@ html[data-theme="dark"] .bottom-nav #nav-btn-todo{--tab-c:#c3a0f0}
 html .bottom-nav .nav-item.active{color:var(--tab-c,var(--accent))!important;background:#edf5f1!important;background:color-mix(in srgb,var(--tab-c,#245b67) 13%,transparent)!important}
 html[data-theme="dark"] .bottom-nav .nav-item.active{background:#2a3d44!important;background:color-mix(in srgb,var(--tab-c,#6fc2c8) 18%,transparent)!important}
 .nav-item > span:not(.nav-icon){font-size:.7rem!important;letter-spacing:-.01em}
-
-/* Dark mode logo: thin light outline so the dark navy parts stay readable (colours unchanged) */
-html[data-theme="dark"] .brand-logo-img,html[data-theme="dark"] .auth-brand-mark{filter:drop-shadow(1px 0 0 #f2f7f6) drop-shadow(-1px 0 0 #f2f7f6) drop-shadow(0 1px 0 #f2f7f6) drop-shadow(0 -1px 0 #f2f7f6)}
 </style>
 </head>
 <body>
@@ -1926,7 +1923,7 @@ html[data-theme="dark"] .brand-logo-img,html[data-theme="dark"] .auth-brand-mark
     <div id="auth-gate">
       <section class="auth-card" aria-labelledby="auth-heading">
         <div class="auth-brand">
-          <img src="familiplan-icon.png" alt="Family Plan logo" class="auth-brand-mark">
+          <img src="familiplan-logo.png" alt="Family Plan logo" class="auth-brand-mark">
         </div>
         <p class="auth-subtitle" id="auth-heading">Your family life, planned together.</p>
 
@@ -2179,7 +2176,7 @@ html[data-theme="dark"] .brand-logo-img,html[data-theme="dark"] .auth-brand-mark
     </div>
 
     <div class="header-center" onclick="showView('dashboard', document.getElementById('nav-btn-home'))">
-        <img src="familiplan-icon.png" alt="FamilyPlan Logo" class="brand-logo-img">
+        <img src="familiplan-logo.png" alt="FamilyPlan Logo" class="brand-logo-img">
     </div>
 
     <div class="header-right" style="position:relative;">
@@ -4452,61 +4449,17 @@ async function fpApproveJoinRequest(uid,approve){
 }
 window.fpApproveJoinRequest=fpApproveJoinRequest;
 
-const FP_VERSION='2.12',FP_BUILD='2026-11-22.3';
+const FP_VERSION='2.14',FP_BUILD='2026-11-22.5';
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){
   window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(e=>console.warn('Offline support unavailable:',e));});
 }
-/* Dark-mode logo: knock the white background out of the logo PNG (colours untouched) */
+/* Logo: swap to the transparent, outlined version in dark mode */
 (function(){
   const sel='.brand-logo-img,.auth-brand-mark';
-  let cache=null;
-  const isDark=()=>document.documentElement.getAttribute('data-theme')==='dark';
-  function build(src){
-    return new Promise(res=>{
-      const im=new Image();
-      im.onload=()=>{
-        try{
-          const w=im.naturalWidth,h=im.naturalHeight,c=document.createElement('canvas');
-          c.width=w;c.height=h;
-          const x=c.getContext('2d');x.drawImage(im,0,0);
-          const d=x.getImageData(0,0,w,h),p=d.data,N=w*h,bg=new Uint8Array(N),st=[];
-          const lite=i=>{const o=i*4;return p[o+3]<10||(p[o]>235&&p[o+1]>235&&p[o+2]>235);};
-          const add=i=>{if(!bg[i]&&lite(i)){bg[i]=1;st.push(i);}};
-          for(let a=0;a<w;a++){add(a);add((h-1)*w+a);}
-          for(let b=0;b<h;b++){add(b*w);add(b*w+w-1);}
-          while(st.length){
-            const i=st.pop(),cx=i%w,cy=(i/w)|0;
-            if(cx>0)add(i-1);if(cx<w-1)add(i+1);if(cy>0)add(i-w);if(cy<h-1)add(i+w);
-          }
-          const near=i=>{const cx=i%w,cy=(i/w)|0;return (cx>0&&bg[i-1])||(cx<w-1&&bg[i+1])||(cy>0&&bg[i-w])||(cy<h-1&&bg[i+w]);};
-          for(let i=0;i<N;i++){
-            const o=i*4;
-            if(bg[i]){p[o+3]=0;continue;}
-            if(near(i)){
-              const m=Math.min(p[o],p[o+1],p[o+2]);
-              if(m>170){
-                const a=Math.max(0.05,Math.min(1,(255-m)/85));
-                for(let k=0;k<3;k++)p[o+k]=Math.max(0,Math.min(255,Math.round((p[o+k]-255*(1-a))/a)));
-                p[o+3]=Math.round(a*(p[o+3]));
-              }
-            }
-          }
-          x.putImageData(d,0,0);
-          res(c.toDataURL('image/png'));
-        }catch(e){res(null);}
-      };
-      im.onerror=()=>res(null);
-      im.src=src;
-    });
-  }
+  const LIGHT='familiplan-logo.png',DARK='familiplan-logo-dark.png';
   function apply(){
-    document.querySelectorAll(sel).forEach(el=>{
-      if(!el.dataset.orig)el.dataset.orig=el.getAttribute('src');
-      if(isDark()){
-        if(!cache)cache=build(el.dataset.orig);
-        cache.then(u=>{if(u&&isDark())el.src=u;});
-      }else{el.src=el.dataset.orig;}
-    });
+    const d=document.documentElement.getAttribute('data-theme')==='dark';
+    document.querySelectorAll(sel).forEach(el=>{const t=d?DARK:LIGHT;if(el.getAttribute('src')!==t)el.setAttribute('src',t);});
   }
   new MutationObserver(apply).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
   apply();
