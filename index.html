@@ -1945,6 +1945,11 @@ html[data-theme="dark"] input:-webkit-autofill, html[data-theme="dark"] input:-w
 .todo-inline-icon-btn.todo-assign-btn[data-tint] { background:color-mix(in srgb, var(--assign-colour) 16%, transparent); }
 .todo-inline-icon-btn.todo-assign-btn[data-tint] #todo-assign-label { color:var(--assign-colour); }
 html[data-theme="dark"] .todo-inline-icon-btn.todo-assign-btn[data-tint] { background:color-mix(in srgb, var(--assign-colour) 20%, transparent); }
+
+.fp-person { width:1.15em; height:1.15em; vertical-align:-.2em; flex:0 0 auto; fill:var(--my-colour, var(--accent)); }
+#opt-my-view .fp-person { width:1.3rem; height:1.3rem; }
+h3.fp-my-heading .ti, h3.fp-my-heading .ti svg { color:var(--my-colour, inherit); }
+h3.fp-my-heading .ti svg { stroke:var(--my-colour, currentColor) !important; }
 </style>
 </head>
 <body>
@@ -2218,7 +2223,7 @@ html[data-theme="dark"] .todo-inline-icon-btn.todo-assign-btn[data-tint] { backg
         </div>
         <div id="user-dropdown" class="user-dropdown-menu" style="left:auto; right:0;">
             <div id="opt-my-view" class="user-dropdown-item" onclick="selectMyView()" style="display:flex;align-items:center;gap:10px;">
-    <span style="font-size:1.1rem;">👤</span>
+    <svg class="fp-person" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4.2"/><path d="M3.8 21c0-4.4 3.7-7.2 8.2-7.2s8.2 2.8 8.2 7.2z"/></svg>
     <span style="display:flex;flex-direction:column;line-height:1.35;">
         <strong id="opt-my-view-label">My account</strong>
         <small style="font-size:.72rem;color:var(--muted);">Just me</small>
@@ -2592,7 +2597,7 @@ html[data-theme="dark"] .todo-inline-icon-btn.todo-assign-btn[data-tint] { backg
         <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Your profile, household and data.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 2.9 · build 2026-11-21.2</p><button type="button" class="tool-btn secondary" style="margin-top:10px;" onclick="fpSignOut()">Sign out</button></section>
 <div class="calendar-main-tabs" role="tablist" aria-label="Account sections" id="account-tabs">
   <button type="button" class="cal-main-tab" role="tab" data-acct-tab="household" onclick="fpSetAccountTab('household')">🏡 Household <span id="acct-tab-badge" class="req-badge inline" hidden>0</span></button>
-  <button type="button" class="cal-main-tab" role="tab" data-acct-tab="me" onclick="fpSetAccountTab('me')">👤 Me</button>
+  <button type="button" class="cal-main-tab" role="tab" data-acct-tab="me" onclick="fpSetAccountTab('me')"><svg class="fp-person" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4.2"/><path d="M3.8 21c0-4.4 3.7-7.2 8.2-7.2s8.2 2.8 8.2 7.2z"/></svg> Me</button>
   <button type="button" class="cal-main-tab" role="tab" data-acct-tab="data" onclick="fpSetAccountTab('data')">⚙️ App & data</button>
 </div>
         <section class="tool-section" id="household-management-section" data-acct="household">
@@ -2632,7 +2637,7 @@ html[data-theme="dark"] .todo-inline-icon-btn.todo-assign-btn[data-tint] { backg
             </div>
         </section>
 <section class="tool-section" id="profile-name-section" data-acct="me">
-            <h3>👤 Profile name</h3>
+            <h3 class="fp-my-heading">👤 Profile name</h3>
             <p class="tool-note">Changing your name updates it everywhere it appears: tasks, lists, calendar, meal plan and household members.</p>
             <label class="auth-field" for="profile-name-input">Your name</label>
             <input type="text" id="profile-name-input" class="form-input input-full" maxlength="60" autocomplete="name" placeholder="Your name" enterkeyhint="done" onkeydown="if(event.key===\'Enter\') fpSaveProfileName()">
@@ -4517,7 +4522,7 @@ async function fpApproveJoinRequest(uid,approve){
 }
 window.fpApproveJoinRequest=fpApproveJoinRequest;
 
-const FP_VERSION='2.20',FP_BUILD='2026-11-22.11';
+const FP_VERSION='2.21',FP_BUILD='2026-11-22.12';
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){
   window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(e=>console.warn('Offline support unavailable:',e));});
 }
@@ -5016,6 +5021,7 @@ function updateHeaderDisplay() {
     if (indicatorEl) { indicatorEl.setAttribute('class', `user-silhouette-icon text-${styleKey}`); indicatorEl.style.color = viewMode === 'family' ? '' : (fpMemberNameColour(currentUser) || ''); }
     if (badgeDotEl) { badgeDotEl.className = `account-avatar-dot bg-${styleKey}`; badgeDotEl.style.backgroundColor = viewMode === 'family' ? '' : (fpMemberNameColour(currentUser) || ''); }
     if (badgeTextEl) badgeTextEl.textContent = viewMode === 'family' ? 'Household' : 'Just me';
+    document.documentElement.style.setProperty('--my-colour', fpMemberNameColour(currentUser) || '');
 }
 
 function filterItem(itemWho) {
