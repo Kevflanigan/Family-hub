@@ -1822,6 +1822,7 @@ html[data-theme="dark"] .auth-user-line button{background:var(--surface-2)!impor
 .hero-title{font-size:1.25rem;font-weight:800;letter-spacing:-.02em;margin:2px 0 12px;color:var(--text)}
 .hero-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
 .hero-chip{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;min-height:36px;border-radius:999px;border:1px solid var(--border,#dce8e2);background:rgba(255,255,255,.7);color:var(--text);font:inherit;font-size:.85rem;font-weight:700;cursor:pointer}
+.hero-scope-btn{display:block;width:100%;margin-top:6px;padding:6px 4px;min-height:32px;background:transparent;border:0;color:var(--muted);font:inherit;font-size:.82rem;font-weight:600;text-align:left;text-decoration:underline;cursor:pointer}
 .hero-chip.warn{color:#b3261e;border-color:rgba(179,38,30,.35);background:rgba(179,38,30,.07)}
 html[data-theme="dark"] .hero-chip{background:var(--surface-2)!important;border-color:var(--border)!important;color:var(--text)!important}
 html[data-theme="dark"] .hero-chip.warn{color:var(--danger-text)!important;background:rgba(255,154,143,.1)!important}
@@ -4492,7 +4493,7 @@ async function fpApproveJoinRequest(uid,approve){
 }
 window.fpApproveJoinRequest=fpApproveJoinRequest;
 
-const FP_VERSION='2.16',FP_BUILD='2026-11-22.7';
+const FP_VERSION='2.17',FP_BUILD='2026-11-22.8';
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){
   window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(e=>console.warn('Offline support unavailable:',e));});
 }
@@ -5194,16 +5195,36 @@ function fpRenderHero() {
     const overdue = open.filter(t => t.date && t.date < today).length;
     const dayName = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][now.getDay()], meal = mealsData.find(m => m.day === dayName);
     const chips = [
-        ['📅', events ? `${events} event${events > 1 ? 's' : ''} today` : 'No events today', "showView('calendar',document.getElementById('nav-btn-calendar'))", ''],
-        ['✅', open.length ? `${open.length} to-do${open.length > 1 ? 's' : ''}` : 'No to-dos', "showView('familyhub',document.getElementById('nav-btn-todo'));setFamilyHubView('tasks')", '']
+        ['📅', events ? `${events} event${events > 1 ? 's' : ''} today` : 'No events today · add one', events ? "showView('calendar',document.getElementById('nav-btn-calendar'))" : 'toggleQuickAddModal()', ''],
+        ['✅', open.length ? `${open.length} to-do${open.length > 1 ? 's' : ''}` : 'No to-dos · add one', open.length ? "showView('familyhub',document.getElementById('nav-btn-todo'));setFamilyHubView('tasks')" : 'toggleQuickAddModal()', '']
     ];
     if (overdue) chips.push(['⚠️', `${overdue} overdue`, "showView('familyhub',document.getElementById('nav-btn-todo'));setFamilyHubView('tasks')", 'warn']);
-    chips.push(['🍽️', meal && meal.meal ? `Tonight: ${meal.meal}` : 'Dinner not planned', "showView('shopping',document.getElementById('nav-btn-shopping'))", '']);
+    chips.push(['🍽️', meal && meal.meal ? `Tonight: ${meal.meal}` : 'Dinner not planned · set it', 'fpPlanTonight()', '']);
     box.textContent = '';
     chips.forEach(([icon, text, action, cls]) => {
         const b = document.createElement('button'); b.type = 'button'; b.className = 'hero-chip ' + cls;
         b.setAttribute('onclick', action); b.textContent = icon + ' ' + text; box.appendChild(b);
     });
+    const scope = (document.getElementById('active-badge-text') || {}).textContent || '';
+    if (scope) {
+        const sb = document.createElement('button'); sb.type = 'button'; sb.className = 'hero-scope-btn';
+        sb.setAttribute('onclick', 'toggleUserDropdown()');
+        sb.textContent = 'Showing: ' + scope + ' · change';
+        box.appendChild(sb);
+    }
+}
+
+async function fpPlanTonight() {
+    const dayName = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][new Date().getDay()];
+    let entry = mealsData.find(m => m.day === dayName);
+    if (!entry) { entry = { day: dayName, meal: '', cook: 'family' }; mealsData.push(entry); }
+    const value = await fpDialog.prompt('Leave it blank to clear tonight\'s dinner.', { value: entry.meal || '', title: 'What\'s for dinner tonight?', okLabel: 'Save' });
+    if (value === null) return;
+    entry.meal = value.trim();
+    saveData();
+    renderDashboard();
+    if (typeof renderMeals === 'function') renderMeals();
+    showToast(entry.meal ? 'Dinner updated' : 'Dinner cleared');
 }
 function renderDashboard() {
     fpRenderHero();
