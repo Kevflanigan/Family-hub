@@ -342,7 +342,7 @@ nav.bottom-nav, .bottom-nav {
     opacity: 0;
     visibility: hidden;
     transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-    z-index: 3000;
+    z-index: 6000;
     white-space: normal;
     width: max-content;
     max-width: calc(100vw - 24px);
@@ -1978,9 +1978,9 @@ html[data-theme="dark"] .meal-input-inline:focus { background:transparent !impor
         <div id="auth-join-panel" style="display:none;">
           <button type="button" class="start-back" onclick="fpShowAuthStart(true)">← Back</button>
           <h2 class="start-title" style="margin-top:6px;">Join a household</h2>
-          <p class="auth-small">Paste the invitation link the household owner sent to your email address.</p>
-          <label class="auth-field" for="auth-join-link">Invitation link</label>
-          <input class="auth-input" id="auth-join-link" autocomplete="off" placeholder="Paste your invitation link">
+          <p class="auth-small">Enter the invitation code the household owner sent you.</p>
+          <label class="auth-field" for="auth-join-link">Invitation code</label>
+          <input class="auth-input" id="auth-join-link" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. K7M2-9QXA">
           <button class="auth-primary" type="button" onclick="fpStartJoinContinue()">Continue</button>
           <div class="auth-message" id="auth-join-message" role="status" aria-live="polite"></div>
           <p class="auth-small">No link yet? Ask the household owner to invite you from Household settings, then Invite an adult.</p>
@@ -2053,9 +2053,9 @@ html[data-theme="dark"] .meal-input-inline:focus { background:transparent !impor
           </div>
           <div class="household-choice">
             <strong>Join an existing household</strong>
-            <p class="auth-small">Paste the invitation link the household owner sent to your email address.</p>
-            <label class="auth-field" for="household-invite">Invitation link</label>
-            <input class="auth-input" id="household-invite" autocomplete="off" placeholder="Paste your invitation link">
+            <p class="auth-small">Enter the invitation code the household owner sent you.</p>
+            <label class="auth-field" for="household-invite">Invitation code</label>
+            <input class="auth-input" id="household-invite" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. K7M2-9QXA">
             <button class="auth-secondary" type="button" onclick="window.fpJoinHousehold()">Request to join</button>
           </div>
           <div class="auth-message" id="household-message" role="status" aria-live="polite"></div>
@@ -4181,8 +4181,8 @@ function fpStartChoice(choice){
 }
 function fpStartJoinContinue(){
   const msg=document.getElementById('auth-join-message'),inv=fpParseInvite(document.getElementById('auth-join-link').value);
-  if(!inv){if(msg)msg.textContent='That does not look like an invitation link. Paste the whole link from the email or message.';return;}
-  sessionStorage.setItem('fp_invite',inv.householdId+'.'+inv.token);
+  if(!inv){if(msg)msg.textContent='That does not look like an invitation code. Enter the 8-character code you were sent.';return;}
+  sessionStorage.setItem('fp_invite',inv.householdId?inv.householdId+'.'+inv.token:inv.code);
   fpAuthShow('account');fpSetAuthMode('signup');
   fpSetAuthHint('Create your account with the email address your invitation was sent to. You will ask to join once it is verified.');
 }
@@ -4222,7 +4222,7 @@ async function fpCheckVerified(){
     await firebaseUser.getIdToken(true); // refresh the email_verified claim used by Firestore rules
     const found=await fpFindExistingHousehold(firebaseUser);
     if(found){showView('dashboard',document.getElementById('nav-btn-home'));updateHeaderDisplay();renderAllViews();}
-    else fpShowHouseholdGate('Create a household, or join one with an invitation link.');
+    else fpShowHouseholdGate('Create a household, or join one with an invitation code.');
   }catch(e){console.error(e);if(msg)msg.textContent='Could not check verification. Please try again.';}
 }
 window.fpCheckVerified=fpCheckVerified;
@@ -4368,8 +4368,17 @@ window.fpCreateHousehold=fpCreateHousehold;
 function fpParseInvite(text){
   const t=String(text||'').trim();
   const m=t.match(/invite=([A-Za-z0-9]{20})\.([A-Za-z0-9_-]{43})/)||t.match(/^([A-Za-z0-9]{20})\.([A-Za-z0-9_-]{43})$/);
-  return m?{householdId:m[1],token:m[2]}:null;
+  if(m)return {householdId:m[1],token:m[2]};
+  const c=t.toUpperCase().replace(/[\s-]/g,'');
+  if(/^[ABCDEFGHJKMNPQRSTUVWXYZ23456789]{8}$/.test(c))return {code:c,token:c};
+  return null;
 }
+function fpNewInviteCode(){
+  let out='';
+  while(out.length<8){const a=crypto.getRandomValues(new Uint8Array(16));for(const b of a){if(b<248&&out.length<8)out+=FP_CODE_ALPHABET[b%31];}}
+  return out;
+}
+function fpFormatCode(c){return String(c).slice(0,4)+'-'+String(c).slice(4);}
 async function fpSha256Hex(text){
   const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text));
   return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
@@ -4379,11 +4388,18 @@ async function fpJoinHousehold(){
   if(!firebaseUser || !firebaseDb)return showToast('Please sign in first');
   if(!firebaseUser.emailVerified){fpShowVerifyGate('Verify your email before joining a household.');return;}
   const invite=fpParseInvite(document.getElementById('household-invite').value);
-  if(!invite)return say('Paste the full invitation link you were sent.');
+  if(!invite)return say('Enter the 8-character invitation code you were sent.');
   try{
     try{await firebaseUser.reload();firebaseUser=firebaseAuth.currentUser;await firebaseUser.getIdToken(true);}catch(e){} // make sure the verified-email claim is current before reading the invitation
     await fpEnsureUserProfile(firebaseUser);
-    const id=invite.householdId, hash=await fpSha256Hex(invite.token);
+    const hash=await fpSha256Hex(invite.token);
+    let id=invite.householdId;
+    if(!id){
+      let codeSnap=null;
+      try{codeSnap=await firebaseDb.collection('inviteCodes').doc(hash).get();}catch(e){console.warn('Invitation code lookup failed:',e&&e.code,e);}
+      if(!codeSnap||!codeSnap.exists||typeof codeSnap.data().householdId!=='string')throw new Error('That invitation code was not recognised. Check it and try again, or ask for a new one.');
+      id=codeSnap.data().householdId;
+    }
     const householdRef=firebaseDb.collection('households').doc(id);
     const inviteRef=householdRef.collection('invites').doc(hash);
     const requestRef=householdRef.collection('joinRequests').doc(firebaseUser.uid);
@@ -4397,7 +4413,7 @@ async function fpJoinHousehold(){
       try{const snap=await inviteRef.get();d=snap.exists?snap.data():null;}catch(e){d=null;readErr=e;console.warn('Invitation read failed:',e&&e.code,e);}
       if(!d){
         if(readErr&&readErr.code==='permission-denied')throw new Error('This invitation could not be opened for '+(firebaseUser.email||'your account')+'. It may have been used, revoked or expired, or it was sent to a different email address. If you have only just verified your email, sign out, sign back in and try again.');
-        throw new Error('This invitation was not found. Ask the household owner for a new invitation link.');
+        throw new Error('This invitation was not found. Ask the household owner for a new invitation code.');
       }
       const ts=firebase.firestore.FieldValue.serverTimestamp();
       const batch=firebaseDb.batch();
@@ -4453,29 +4469,49 @@ async function fpCreateInvite(){
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))return showToast('Enter a valid email address');
   if(fpHouseholdMembers.some(m=>String(m.email||'').toLowerCase()===email))return showToast('That person is already a member');
   try{
-    const token=fpB64Url(crypto.getRandomValues(new Uint8Array(32)));
-    const hash=await fpSha256Hex(token);
-    await firebaseDb.collection('households').doc(fpHouseholdId).collection('invites').doc(hash).set({
+    const invRef=h=>firebaseDb.collection('households').doc(fpHouseholdId).collection('invites').doc(h);
+    const inviteData={
       email,status:'pending',createdBy:firebaseUser.uid,
       createdAt:firebase.firestore.FieldValue.serverTimestamp(),
       expiresAt:firebase.firestore.Timestamp.fromMillis(Date.now()+7*24*60*60*1000)
-    });
-    const link=location.origin+location.pathname+'#invite='+fpHouseholdId+'.'+token;
+    };
+    let token,useCode=false;
+    try{
+      token=fpNewInviteCode();
+      const codeHash=await fpSha256Hex(token);
+      const batch=firebaseDb.batch();
+      batch.set(invRef(codeHash),inviteData);
+      batch.set(firebaseDb.collection('inviteCodes').doc(codeHash),{householdId:fpHouseholdId,createdBy:firebaseUser.uid,createdAt:firebase.firestore.FieldValue.serverTimestamp(),expiresAt:inviteData.expiresAt});
+      await batch.commit();
+      useCode=true;
+    }catch(codeErr){
+      if(!codeErr||codeErr.code!=='permission-denied')throw codeErr;
+      console.warn('Short invitation codes need the inviteCodes Firestore rule; using a long link instead.');
+      token=fpB64Url(crypto.getRandomValues(new Uint8Array(32)));
+      await invRef(await fpSha256Hex(token)).set(inviteData);
+    }
+    const appUrl=location.origin+location.pathname;
+    const shown=useCode?fpFormatCode(token):appUrl+'#invite='+fpHouseholdId+'.'+token;
+    const what=useCode?'code':'link';
     document.getElementById('invite-email').value='';
     out.innerHTML='';
     const note=document.createElement('p');note.className='tool-note';
-    note.textContent='Invitation created for '+email+'. Sending the email…';
-    const box=document.createElement('input');box.className='auth-input';box.readOnly=true;box.value=link;box.onfocus=()=>box.select();
+    note.textContent='Invitation created for '+email+'.';
+    const box=document.createElement('input');box.className='auth-input';box.readOnly=true;box.value=shown;box.onfocus=()=>box.select();
+    if(useCode)box.style.cssText='text-align:center;font-size:1.7rem;font-weight:800;letter-spacing:.14em;';
+    const message=useCode
+      ?"Hi,\n\nI've invited you to our household on FamilyPlan.\n\n1. Open FamilyPlan: "+appUrl+"\n2. Create an account with this email address ("+email+") and verify it.\n3. Choose 'Join a household' and enter this code: "+shown+"\n4. I'll approve you.\n\nThe code works once and expires in 7 days."
+      :"Hi,\n\nI've invited you to our household on FamilyPlan.\n\n1. Open this link: "+shown+"\n2. Create an account with this email address ("+email+") and verify it.\n3. Request to join and I'll approve you.\n\nThe link works once and expires in 7 days.";
     const row=document.createElement('div');row.style.cssText='display:flex;gap:8px;margin-top:6px;';
-    const copy=document.createElement('button');copy.type='button';copy.className='tool-btn';copy.textContent='Copy link';
-    copy.onclick=()=>navigator.clipboard?.writeText(link).then(()=>showToast('Invitation link copied')).catch(()=>box.select());
+    const copy=document.createElement('button');copy.type='button';copy.className='tool-btn';copy.textContent='Copy '+what;
+    copy.onclick=()=>navigator.clipboard?.writeText(shown).then(()=>showToast('Invitation '+what+' copied')).catch(()=>box.select());
     row.appendChild(copy);
     const mail=document.createElement('a');mail.className='tool-btn secondary';mail.textContent='Email it';mail.style.cssText='text-decoration:none;text-align:center;display:inline-block;';
-    mail.href='mailto:'+email+'?subject='+encodeURIComponent('Join our household on FamilyPlan')+'&body='+encodeURIComponent("Hi,\n\nI've invited you to our household on FamilyPlan.\n\n1. Open this link: "+link+"\n2. Create an account with this email address ("+email+") and verify it.\n3. Request to join and I'll approve you.\n\nThe link works once and expires in 7 days.");
+    mail.href='mailto:'+email+'?subject='+encodeURIComponent('Join our household on FamilyPlan')+'&body='+encodeURIComponent(message);
     row.appendChild(mail);
-    if(navigator.share){const sh=document.createElement('button');sh.type='button';sh.className='tool-btn secondary';sh.textContent='Share';sh.onclick=()=>navigator.share({title:'Join our household on FamilyPlan',text:'Join our household on FamilyPlan:',url:link}).catch(()=>{});row.appendChild(sh);}
+    if(navigator.share){const sh=document.createElement('button');sh.type='button';sh.className='tool-btn secondary';sh.textContent='Share';sh.onclick=()=>navigator.share({title:'Join our household on FamilyPlan',text:message}).catch(()=>{});row.appendChild(sh);}
     out.append(note,box,row);
-    const linkNote=' You can also copy the link below. It is shown only once.';
+    const linkNote=' It is shown only once.';
     try{
       if(!FP_EMAIL_FUNCTION_ENABLED||!firebase.functions)throw {code:'functions/not-found'};
       await firebase.app().functions(FP_FUNCTIONS_REGION).httpsCallable('sendInviteEmail')({householdId:fpHouseholdId,token});
@@ -4483,8 +4519,8 @@ async function fpCreateInvite(){
     }catch(err){
       console.warn('Invite email not sent:',err);
       note.textContent=(err&&err.code==='functions/not-found')
-        ?'Invitation created for '+email+'. Tap "Email it" to send it from your own email app, or copy the link. It is shown only once.'
-        :'Invitation created for '+email+', but the email could not be sent ('+((err&&err.message)||'unknown error')+'). Copy the link and send it yourself. It is shown only once.';
+        ?'Invitation created for '+email+'. Tap "Email it" or "Share" to send it, or copy the '+what+'. It is shown only once.'
+        :'Invitation created for '+email+', but the email could not be sent ('+((err&&err.message)||'unknown error')+'). Copy the '+what+' and send it yourself. It is shown only once.';
     }
   }catch(e){console.error(e);showToast('Could not create the invitation. Please try again.');}
 }
@@ -4530,9 +4566,10 @@ async function fpApproveJoinRequest(uid,approve){
         const household=await transaction.get(householdRef);
         const request=await transaction.get(requestRef);
         const existingMember=await transaction.get(memberRef);
+        // The person's profile is private to them (Firestore rules), so the owner must not read it here;
+        // the rules check it server-side when the profile is updated below.
         const profileRef=firebaseDb.collection('users').doc(uid);
-        const profile=await transaction.get(profileRef);
-        if(!request.exists || !profile.exists)throw new Error('Join request or user profile no longer exists.');
+        if(!request.exists)throw new Error('Join request no longer exists.');
         if(existingMember.exists)throw new Error('This person is already a household member.');
         const count=Number(household.data().memberCount)||1;
         if(count>=9)throw new Error('This household has reached its maximum of 9 members.');
@@ -4562,11 +4599,11 @@ async function fpApproveJoinRequest(uid,approve){
       if(requestData.inviteHash)await (isChild?firebaseDb.collection('childInvites'):householdRef.collection('invites')).doc(requestData.inviteHash).update({status:'declined'}).catch(()=>{});
     }
     showToast(approve?(isChild?'Child device approved':'Member approved'):'Request declined');
-  }catch(error){console.error(error);showToast(error.message||'Could not update join request');}
+  }catch(error){console.error('Join request update failed:',error&&error.code,error);showToast('Could not '+(approve?'approve':'decline')+' this request: '+((error&&error.code)?error.code+'. ':'')+((error&&error.message)||'Unknown error'));}
 }
 window.fpApproveJoinRequest=fpApproveJoinRequest;
 
-const FP_VERSION='2.24',FP_BUILD='2026-11-22.15';
+const FP_VERSION='2.27',FP_BUILD='2026-11-22.18';
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){
   window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(e=>console.warn('Offline support unavailable:',e));});
 }
@@ -5009,7 +5046,7 @@ const found=await fpFindExistingHousehold(user);
 await loadPrivateTodos(user.uid);
 if(!found){
   if(!user.emailVerified){fpShowVerifyGate();return;}
-  fpShowHouseholdGate('Create a household, or join one with an invitation link.');
+  fpShowHouseholdGate('Create a household, or join one with an invitation code.');
   fpUpdateHouseholdPanel();
 } else {
   if(!user.emailVerified && !window.fpVerifyNudged){window.fpVerifyNudged=true;showToast('Please verify your email address. Check your inbox.');}
