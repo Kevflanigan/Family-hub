@@ -4492,7 +4492,7 @@ async function fpApproveJoinRequest(uid,approve){
 }
 window.fpApproveJoinRequest=fpApproveJoinRequest;
 
-const FP_VERSION='2.15',FP_BUILD='2026-11-22.6';
+const FP_VERSION='2.16',FP_BUILD='2026-11-22.7';
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){
   window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(e=>console.warn('Offline support unavailable:',e));});
 }
@@ -4613,8 +4613,8 @@ function fpRenderJoinRequests(snapshot){
       <small>${r.kind==='child'?'Child device · '+escapeToolText(({toddler:'Under 5',child:'Age 5–11',teen:'Age 12+'})[r.type]||'Child'):(escapeToolText(r.email||'Adult account'))}</small>
       <small>Requested: ${dateTime}</small>
       <div class="household-request-actions">
-        <button class="tool-btn" type="button" onclick="fpApproveJoinRequest('${doc.id}',true)">Approve</button>
-        <button class="tool-btn secondary" type="button" onclick="fpApproveJoinRequest('${doc.id}',false)">Decline</button>
+        <button class="tool-btn" type="button" onclick="fpApproveJoinRequest('${fpSafeId(doc.id)}',true)">Approve</button>
+        <button class="tool-btn secondary" type="button" onclick="fpApproveJoinRequest('${fpSafeId(doc.id)}',false)">Decline</button>
       </div>
     </div>`;
   }).join('');
@@ -4666,17 +4666,17 @@ function fpRenderMembers(snapshot) {
       permissionHtml='<div class="household-permission-grid">'+allowed.map(c=>{
         const v=(m.permissions||{})[c]||'No access';
         const label={chores:'Chores',calendar:'Calendar',wishlist:'Wishlist',meals:'Meals'}[c];
-        return `<label>${label}<select onchange="fpSetChildPermission('${uid}','${c}',this.value)" ${fpIsOwnerOrParent()?'':'disabled'}><option ${v==='No access'?'selected':''}>No access</option><option ${v==='View only'?'selected':''}>View only</option><option ${v==='Contribute'?'selected':''}>Contribute</option></select></label>`;
+        return `<label>${label}<select onchange="fpSetChildPermission('${fpSafeId(uid)}','${fpSafeId(c)}',this.value)" ${fpIsOwnerOrParent()?'':'disabled'}><option ${v==='No access'?'selected':''}>No access</option><option ${v==='View only'?'selected':''}>View only</option><option ${v==='Contribute'?'selected':''}>Contribute</option></select></label>`;
       }).join('')+'</div>';
     }else if(role!=='owner'){
       permissionHtml='<div class="household-permission-grid">'+Object.entries(FP_SHARED_GROUPS).map(([group,categories])=>{
         const values=categories.map(c=>(m.permissions||{})[c]||'No access');
         const value=values.every(v=>v===values[0])?values[0]:'Mixed';
-        return `<label>${FP_GROUP_LABELS[group]}<select onchange="fpSetMemberPermission('${uid}','${group}',this.value)" ${fpMemberData?.role==='owner'?'':'disabled'}><option ${value==='No access'?'selected':''}>No access</option><option ${value==='View only'?'selected':''}>View only</option><option ${value==='Contribute'?'selected':''}>Contribute</option>${value==='Mixed'?'<option selected disabled>Mixed</option>':''}</select></label>`;
+        return `<label>${FP_GROUP_LABELS[group]}<select onchange="fpSetMemberPermission('${fpSafeId(uid)}','${fpSafeId(group)}',this.value)" ${fpMemberData?.role==='owner'?'':'disabled'}><option ${value==='No access'?'selected':''}>No access</option><option ${value==='View only'?'selected':''}>View only</option><option ${value==='Contribute'?'selected':''}>Contribute</option>${value==='Mixed'?'<option selected disabled>Mixed</option>':''}</select></label>`;
       }).join('')+'</div>';
     }
-    const roleControl=(role!=='owner'&&role!=='child')?`<label class="auth-field">Role<select class="household-role-select" ${fpMemberData?.role==='owner'?'':'disabled'} onchange="fpSetMemberRole('${uid}',this.value)"><option value="member" ${role==='member'?'selected':''}>Member</option><option value="parent" ${role==='parent'?'selected':''}>Parent</option></select></label>`:'';
-    const remove=(uid!==firebaseUser?.uid&&fpMemberData?.role==='owner')?`<button class="tool-btn secondary" type="button" onclick="fpRemoveMember('${uid}')">Remove member</button>`:'';
+    const roleControl=(role!=='owner'&&role!=='child')?`<label class="auth-field">Role<select class="household-role-select" ${fpMemberData?.role==='owner'?'':'disabled'} onchange="fpSetMemberRole('${fpSafeId(uid)}',this.value)"><option value="member" ${role==='member'?'selected':''}>Member</option><option value="parent" ${role==='parent'?'selected':''}>Parent</option></select></label>`:'';
+    const remove=(uid!==firebaseUser?.uid&&fpMemberData?.role==='owner')?`<button class="tool-btn secondary" type="button" onclick="fpRemoveMember('${fpSafeId(uid)}')">Remove member</button>`:'';
     return `<div class="household-member-card"><div class="household-member-top"><strong${fpNameColourStyle(uid)}>${escapeToolText(name)}${uid===firebaseUser?.uid?' (you)':''}</strong><span class="badge">${roleLabel}</span></div>${roleControl}${permissionHtml}${remove}</div>`;
   }).join('')||'<p class="tool-note">No members found.</p>';
 }
@@ -5318,7 +5318,7 @@ function openDayPopover(dateKey, dayNum) {
         listCont.innerHTML = `<div style="font-size:0.85rem; color:var(--muted); text-align:center; padding:12px 0;">No events scheduled for this day.</div>`;
     } else {
         listCont.innerHTML = events.map((ev, idx) => `
-            <div class="bubble-event-item" style="border-left-color: var(--${ev.who});">
+            <div class="bubble-event-item" style="border-left-color: var(--${fpSafeId(ev.who)});">
                 <div class="bubble-event-title">${ev.time ? `<span class="ev-time">${escapeToolText(fpTimeRange(ev))}</span> ` : ''}${escapeToolText(String(ev.title || '').replace(/\s*\[(yearly|birthday)\]\s*/gi, ' ').trim())}</div>
                 <div style="display:flex; align-items:center; gap:6px;">
               <span class="compact-scoped-tag bg-${fpAssigneeStyle(ev.who)}">${escapeToolText(fpDisplayAssignee(ev.who))}</span>
@@ -5713,11 +5713,11 @@ function renderRestaurantsView() {
 
     container.innerHTML = filtered.length === 0 ? `<div class="list-empty" style="font-size:0.85rem; padding:0.8rem;">No restaurants added yet.</div>` : list.map((item, idx) => {
         if (!filterItem(item.who)) return '';
-        const img = item.image || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60';
+        const img = /^https:\/\/[^\s"'<>]+$/i.test(String(item.image || '')) ? item.image : 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&auto=format&fit=crop&q=60';
         const displayWho = fpDisplayAssignee(item.who);
         return `
             <div class="restaurant-card-item">
-                <img src="${img}" alt="${escapeToolText(item.title)}" class="restaurant-thumb">
+                <img src="${escapeToolText(img)}" alt="${escapeToolText(item.title)}" class="restaurant-thumb">
                 <div style="flex:1; min-width:0; padding-left:4px;">
                     <div style="font-weight:700; font-size:0.92rem; color:var(--text);">${escapeToolText(item.title)}</div>
                     ${item.postcode ? `<div style="font-size:0.75rem; color:var(--muted);">Postcode: ${escapeToolText(item.postcode)}</div>` : ''}
@@ -5878,7 +5878,7 @@ function renderPrivateTodos(container) {
     }
     container.innerHTML = privateTodosData.map(item => `
         <div class="todo-divider-item ${item.done ? 'completed' : ''}">
-            <input type="checkbox" ${item.done ? 'checked' : ''} onchange="togglePrivateTodo('${item.id}', this.checked)" aria-label="Mark private item complete">
+            <input type="checkbox" ${item.done ? 'checked' : ''} onchange="togglePrivateTodo('${fpSafeId(item.id)}', this.checked)" aria-label="Mark private item complete">
             <div class="todo-divider-content">
                 <span class="todo-divider-title">${escapeToolText(item.text || '')}</span>
                 <div class="todo-divider-meta">${todoDueHtml(item.date)}<span class="person-dot bg-family" aria-hidden="true"></span><span>Private</span></div>
