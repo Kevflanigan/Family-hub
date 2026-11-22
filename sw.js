@@ -1,6 +1,6 @@
 // FamilyPlan service worker: lets the app open offline and install on a phone.
 // Bump CACHE whenever you upload a new build so phones drop the old copy.
-const CACHE = 'familyplan-2.7-2026-11-20.4';
+const CACHE = 'familyplan-2.9-2026-11-21.2';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', 'familiplan-icon.png'];
 
 self.addEventListener('install', e => {

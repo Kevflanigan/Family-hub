@@ -1883,6 +1883,19 @@ html[data-theme="dark"] .todo-add-submit{color:#0f1719!important}
 .action-btn.delete-btn{min-width:44px!important}
 .wp-section-title{font-size:.75rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 html[data-theme="dark"] .wp-section-title{color:var(--muted)!important}
+
+/* ===== Welcome screen ===== */
+.start-title{font-size:1.25rem;font-weight:800;text-align:center;margin:4px 0 6px;color:var(--text)}
+.start-choice{display:flex;flex-direction:column;align-items:flex-start;gap:4px;width:100%;padding:16px 18px;margin-bottom:12px;border-radius:18px;border:1px solid var(--border,#d8e4df);background:var(--card,#fff);color:var(--text);font:inherit;text-align:left;cursor:pointer;min-height:44px}
+.start-choice strong{font-size:1.05rem;font-weight:800}
+.start-choice span{font-size:.85rem;color:var(--muted)}
+.start-choice.primary{background:var(--accent,#245b67);border-color:transparent;color:#fff}
+.start-choice.primary span{color:rgba(255,255,255,.85)}
+html[data-theme="dark"] .start-choice{background:var(--surface-2)!important;border-color:var(--border)!important;color:var(--text)!important}
+html[data-theme="dark"] .start-choice.primary{background:var(--accent)!important;color:#0f1719!important}
+html[data-theme="dark"] .start-choice.primary span{color:rgba(15,23,25,.8)!important}
+.start-link{display:block;width:100%;min-height:44px;background:none;border:0;font:inherit;font-weight:700;color:var(--accent);text-decoration:underline;cursor:pointer}
+.start-back{background:none;border:0;padding:8px 0;min-height:44px;font:inherit;font-weight:700;color:var(--muted);cursor:pointer}
 </style>
 </head>
 <body>
@@ -1895,7 +1908,29 @@ html[data-theme="dark"] .wp-section-title{color:var(--muted)!important}
         </div>
         <p class="auth-subtitle" id="auth-heading">Your family life, planned together.</p>
 
-        <div id="auth-account-panel">
+        <div id="auth-start-panel">
+          <h2 class="start-title">Welcome</h2>
+          <p class="auth-small" style="text-align:center;margin-bottom:14px;">How would you like to start?</p>
+          <button type="button" class="start-choice primary" onclick="fpStartChoice('create')"><strong>Create a new household</strong><span>For the adult setting up FamilyPlan for their family</span></button>
+          <button type="button" class="start-choice" onclick="fpStartChoice('join')"><strong>Join an existing household</strong><span>You have an invitation from the household owner</span></button>
+          <button type="button" class="start-link" onclick="fpStartChoice('signin')">I already have an account</button>
+          <button type="button" class="start-link" onclick="fpStartChoice('child')">Child joining a family?</button>
+        </div>
+
+        <div id="auth-join-panel" style="display:none;">
+          <button type="button" class="start-back" onclick="fpShowAuthStart(true)">← Back</button>
+          <h2 class="start-title" style="margin-top:6px;">Join a household</h2>
+          <p class="auth-small">Paste the invitation link the household owner sent to your email address.</p>
+          <label class="auth-field" for="auth-join-link">Invitation link</label>
+          <input class="auth-input" id="auth-join-link" autocomplete="off" placeholder="Paste your invitation link">
+          <button class="auth-primary" type="button" onclick="fpStartJoinContinue()">Continue</button>
+          <div class="auth-message" id="auth-join-message" role="status" aria-live="polite"></div>
+          <p class="auth-small">No link yet? Ask the household owner to invite you from Household settings, then Invite an adult.</p>
+        </div>
+
+        <div id="auth-account-panel" style="display:none;">
+          <button type="button" class="start-back" onclick="fpShowAuthStart(true)">← Back</button>
+          <p id="auth-context-hint" class="auth-small" hidden></p>
           <div class="auth-tabs">
             <button type="button" id="auth-signin-tab" class="active" onclick="window.fpSetAuthMode('signin')">Sign in</button>
             <button type="button" id="auth-signup-tab" onclick="window.fpSetAuthMode('signup')">Create account</button>
@@ -1925,12 +1960,12 @@ html[data-theme="dark"] .wp-section-title{color:var(--muted)!important}
           </form>
           <div class="auth-message" id="auth-message" role="status" aria-live="polite"></div>
           <button class="auth-secondary" type="button" onclick="window.fpShowChildGate()">Child joining a family?</button>
-          <p class="auth-small" id="auth-version-label">Version 2.7 · build 2026-11-20.4</p>
+          <p class="auth-small" id="auth-version-label">Version 2.9 · build 2026-11-21.2</p>
           <p class="auth-small">Each adult or family member has their own account. After signing in and verifying your email, create a household or join one with an invitation link.</p>
         </div>
 
         <div id="child-join-panel" class="household-panel">
-          <div class="auth-user-line"><span>Child access</span><button type="button" onclick="document.getElementById('child-join-panel').classList.remove('visible');document.getElementById('auth-account-panel').style.display='block'">Back</button></div>
+          <div class="auth-user-line"><span>Child access</span><button type="button" onclick="fpShowAuthStart(true)">Back</button></div>
           <h2 style="font-size:1.2rem;margin-top:18px;">Join your family</h2>
           <p class="auth-small">Enter the code your parent made for you. It works once. Then your parent has to approve your phone before you can see anything.</p>
           <label class="auth-field" for="child-join-code">Your code</label>
@@ -2502,7 +2537,7 @@ html[data-theme="dark"] .wp-section-title{color:var(--muted)!important}
 
     <!-- Account page -->
     <div id="view-account" class="view">
-        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Your profile, household and data.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 2.7 · build 2026-11-20.4</p><button type="button" class="tool-btn secondary" style="margin-top:10px;" onclick="fpSignOut()">Sign out</button></section>
+        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Your profile, household and data.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 2.9 · build 2026-11-21.2</p><button type="button" class="tool-btn secondary" style="margin-top:10px;" onclick="fpSignOut()">Sign out</button></section>
 <div class="calendar-main-tabs" role="tablist" aria-label="Account sections" id="account-tabs">
   <button type="button" class="cal-main-tab" role="tab" data-acct-tab="household" onclick="fpSetAccountTab('household')">🏡 Household <span id="acct-tab-badge" class="req-badge inline" hidden>0</span></button>
   <button type="button" class="cal-main-tab" role="tab" data-acct-tab="me" onclick="fpSetAccountTab('me')">👤 Me</button>
@@ -2539,6 +2574,10 @@ html[data-theme="dark"] .wp-section-title{color:var(--muted)!important}
                 <h4>Members & permissions</h4><div id="household-members-list" class="household-management-list"><p class="tool-note">Loading members…</p></div>
             </div>
             <p class="tool-note" id="household-member-note">Your private to-do list remains private to your account.</p>
+            <div id="leave-household-box" style="display:none;margin-top:12px;">
+                <button type="button" class="tool-btn secondary" onclick="fpLeaveHousehold()">Leave this household</button>
+                <p class="tool-note">You will lose access to the shared lists. Your private to-dos stay yours, and the owner can invite you again.</p>
+            </div>
         </section>
 <section class="tool-section" id="profile-name-section" data-acct="me">
             <h3>👤 Profile name</h3>
@@ -3155,6 +3194,31 @@ let fpHouseholdConnecting = false;
 let fpHouseholdOwner = false;
 let fpCurrentJoinRequest = null;
 
+// A member who is not the owner leaves by removing their own record and lowering the household count together.
+async function fpLeaveHouseholdCore(householdId,uid){
+  const hRef=firebaseDb.collection('households').doc(householdId), mRef=hRef.collection('members').doc(uid);
+  await firebaseDb.runTransaction(async tx=>{
+    const [h,m]=await Promise.all([tx.get(hRef),tx.get(mRef)]);
+    if(!m.exists)return;
+    if(String(m.data().role||'').toLowerCase()==='owner')throw new Error('The owner cannot leave. Delete the household or hand over ownership first.');
+    tx.delete(mRef);
+    tx.update(hRef,{memberCount:Math.max(1,Number(h.data().memberCount||1)-1)});
+  });
+}
+async function fpLeaveHousehold(){
+  if(!firebaseUser||!fpHouseholdId||!fpMemberData)return;
+  const role=String(fpMemberData.role||'').toLowerCase();
+  if(role==='owner'||role==='child')return;
+  if(!(await fpDialog.confirm('Leave this household? You will lose access to its shared lists. Your private to-dos stay yours.',{title:'Leave household',okLabel:'Leave',danger:true})))return;
+  try{await fpLeaveHouseholdCore(fpHouseholdId,firebaseUser.uid);showToast('You have left the household');}
+  catch(e){console.error(e);showToast(e.message||'Could not leave the household. Please try again.');}
+}
+function fpSyncLeaveBox(){
+  const box=document.getElementById('leave-household-box');if(!box)return;
+  const role=String(fpMemberData?.role||'').toLowerCase();
+  box.style.display=(fpHouseholdId&&(role==='member'||role==='parent'))?'block':'none';
+}
+window.fpLeaveHousehold=fpLeaveHousehold;
 function fpIsOwnerOrParent(){ return !!fpMemberData && ['owner','parent'].includes(String(fpMemberData.role||'').toLowerCase()); }
 function fpCanReadCategory(category){
   if (!fpHouseholdId || !fpMemberData) return false;
@@ -3988,7 +4052,30 @@ async function fpSubmitChildJoin(){
 }
 window.fpSubmitChildJoin=fpSubmitChildJoin;
 
+function fpHideAuthStart(){['auth-start-panel','auth-join-panel'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});}
+function fpAuthShow(which){
+  const ids={start:'auth-start-panel',join:'auth-join-panel',account:'auth-account-panel'};
+  Object.entries(ids).forEach(([k,id])=>{const el=document.getElementById(id);if(el)el.style.display=(k===which)?'block':'none';});
+  ['household-panel','verify-panel','child-join-panel'].forEach(id=>document.getElementById(id)?.classList.remove('visible'));
+}
+function fpShowAuthStart(force){fpAuthShow((!force&&sessionStorage.getItem('fp_invite'))?'account':'start');}
+function fpSetAuthHint(text){const el=document.getElementById('auth-context-hint');if(!el)return;el.textContent=text||'';el.hidden=!text;}
+function fpStartChoice(choice){
+  if(choice==='create'){fpAuthShow('account');fpSetAuthMode('signup');fpSetAuthHint('Step 1 of 2: create your account. Next you will name your household.');}
+  else if(choice==='signin'){fpAuthShow('account');fpSetAuthMode('signin');fpSetAuthHint('');}
+  else if(choice==='join'){fpAuthShow('join');const m=document.getElementById('auth-join-message');if(m)m.textContent='';}
+  else if(choice==='child'){fpAuthShow('account');document.getElementById('auth-account-panel').style.display='none';fpShowChildGate('Enter the code your parent gave you.');}
+}
+function fpStartJoinContinue(){
+  const msg=document.getElementById('auth-join-message'),inv=fpParseInvite(document.getElementById('auth-join-link').value);
+  if(!inv){if(msg)msg.textContent='That does not look like an invitation link. Paste the whole link from the email or message.';return;}
+  sessionStorage.setItem('fp_invite',inv.householdId+'.'+inv.token);
+  fpAuthShow('account');fpSetAuthMode('signup');
+  fpSetAuthHint('Create your account with the email address your invitation was sent to. You will ask to join once it is verified.');
+}
+window.fpStartChoice=fpStartChoice;window.fpStartJoinContinue=fpStartJoinContinue;window.fpShowAuthStart=fpShowAuthStart;
 function fpShowHouseholdGate(message){
+  fpHideAuthStart();
   const gate=document.getElementById('auth-gate'); if(gate)gate.style.display='flex';
   const account=document.getElementById('auth-account-panel'); if(account)account.style.display='none';
   const vp=document.getElementById('verify-panel'); if(vp)vp.classList.remove('visible');
@@ -4000,6 +4087,7 @@ function fpShowHouseholdGate(message){
   const signed=document.getElementById('auth-signed-in-email');if(signed&&firebaseUser)signed.textContent=firebaseUser.email||'';
 }
 function fpShowVerifyGate(message){
+  fpHideAuthStart();
   const gate=document.getElementById('auth-gate'); if(gate)gate.style.display='flex';
   const account=document.getElementById('auth-account-panel'); if(account)account.style.display='none';
   const hp=document.getElementById('household-panel'); if(hp)hp.classList.remove('visible');
@@ -4342,7 +4430,7 @@ async function fpApproveJoinRequest(uid,approve){
 }
 window.fpApproveJoinRequest=fpApproveJoinRequest;
 
-const FP_VERSION='2.7',FP_BUILD='2026-11-20.4';
+const FP_VERSION='2.9',FP_BUILD='2026-11-21.2';
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){
   window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(e=>console.warn('Offline support unavailable:',e));});
 }
@@ -4455,6 +4543,7 @@ let fpHouseholdChildren = [];
 
 function fpRenderMembers(snapshot) {
   setTimeout(fpRenderManagedChildren,0);
+  setTimeout(fpSyncLeaveBox,0);
   const el=document.getElementById('household-members-list');if(!el)return;
   el.innerHTML=snapshot.docs.map(doc=>{
     const m=doc.data(),uid=doc.id,role=String(m.role||'member').toLowerCase();
@@ -4578,6 +4667,21 @@ if (!householdId) {
                 await batch.commit();
             }
         }
+        // A member who is not the owner leaves the household first, then deletes their own account data.
+        if (householdId) {
+            const ownRole = await firebaseDb.collection('households').doc(householdId).collection('members').doc(uid).get();
+            if (ownRole.exists && String(ownRole.data().role || '').toLowerCase() !== 'owner') {
+                setStatus('Leaving the household…');
+                await fpLeaveHouseholdCore(householdId, uid);
+                await deleteCollection(profileRef.collection('privateTodos'));
+                if (profileSnap.exists) await profileRef.delete();
+                setStatus('Deleting sign-in account…');
+                await firebaseUser.delete();
+                Object.keys(localStorage).filter(key => key.startsWith('fam_')).forEach(key => localStorage.removeItem(key));
+                setStatus('Account and associated data deleted.');
+                return;
+            }
+        }
         // Validate the household before deleting any account data.
         if (householdId) {
             const checkRef = firebaseDb.collection('households').doc(householdId);
@@ -4592,7 +4696,7 @@ if (!householdId) {
                 if (members.size !== 1 || !ownMember.exists ||
                     String(ownMember.data().role || '').toLowerCase() !== 'owner' ||
                     Number(checkSnap.data().memberCount) !== 1) {
-                    throw new Error('The household must have you as its sole member and owner before deletion. No data has been deleted.');
+                    throw new Error('Before deleting your account, remove everyone else from the household first, including children’s phones (Household settings, then Members). No data has been deleted.');
                 }
             }
         }
@@ -4616,7 +4720,7 @@ if (!householdId) {
                 if (members.size !== 1 || !ownMember.exists ||
                     String(ownMember.data().role || '').toLowerCase() !== 'owner' ||
                     Number(householdSnap.data().memberCount) !== 1) {
-                    throw new Error('The household must have you as its sole member and owner before it can be deleted. No household data has been deleted.');
+                    throw new Error('Before deleting your account, remove everyone else from the household first, including children’s phones (Household settings, then Members). No data has been deleted.');
                 }
 
                 setStatus('Deleting shared household data…');
@@ -4631,6 +4735,10 @@ if (!householdId) {
                 await deleteCollection(
                     householdRef.collection('joinRequests')
                 );
+                // Child profiles, adult invitations (they hold email addresses) and one-time child codes.
+                await deleteCollection(householdRef.collection('children'));
+                await deleteCollection(householdRef.collection('invites'));
+                await deleteCollection(firebaseDb.collection('childInvites').where('householdId', '==', householdId));
 
                 // Delete membership, household and profile atomically.
                 const batch = firebaseDb.batch();
@@ -4687,7 +4795,7 @@ if(firebaseReady && firebaseAuth){
       if(privateTodosUnsubscribe)privateTodosUnsubscribe();privateTodosUnsubscribe=null;privateTodosData=[];privateTodosLoaded=false;
       localStorage.removeItem('fam_logged_in');
       const gate=document.getElementById('auth-gate');if(gate)gate.style.display='flex';
-      const account=document.getElementById('auth-account-panel');if(account)account.style.display='block';
+      fpShowAuthStart();
       const panel=document.getElementById('household-panel');if(panel)panel.classList.remove('visible');
       const vp=document.getElementById('verify-panel');if(vp)vp.classList.remove('visible');
       const cp=document.getElementById('child-join-panel');if(cp)cp.classList.remove('visible');
