@@ -1953,6 +1953,7 @@ html[data-theme="dark"] .todo-inline-icon-btn.todo-assign-btn[data-tint] { backg
 #opt-my-view .fp-person { width:1.3rem; height:1.3rem; }
 h3.fp-my-heading .ti, h3.fp-my-heading .ti svg { color:var(--my-colour, inherit); }
 h3.fp-my-heading .ti svg { stroke:var(--my-colour, currentColor) !important; }
+html[data-theme="dark"] .meal-input-inline:focus { background:transparent !important; box-shadow:none !important; border-color:transparent !important; border-bottom-color:var(--accent) !important; }
 </style>
 </head>
 <body>
@@ -3546,6 +3547,7 @@ function fpAttachSharedListeners(){
     fpHouseholdChildren=cs.docs.map(d=>({id:d.id,...d.data()}));
     fpRenderPlanMemberOptions();
     fpRenderManagedChildren();
+    fpRefreshAfterPeopleLoad();
   },e=>console.warn('Could not load child profiles:',e));
   fpMembersUnsub=householdRef.collection('members').onSnapshot(s=>{
     fpHouseholdMembers=s.docs.map(doc=>({
@@ -3555,6 +3557,7 @@ function fpAttachSharedListeners(){
 
     fpRenderPlanMemberOptions();
     fpMigrateLegacyAssignments();
+    fpRefreshAfterPeopleLoad();
 
     if(fpIsOwnerOrParent()){
       fpRenderMembers(s);
@@ -3892,6 +3895,21 @@ function fpLegacyKeyForMember(member) {
     if (member.legacyKey === 'dad' || member.legacyKey === 'mom') return member.legacyKey;
 
     return null;
+}
+
+/* Names on meals, lists and tasks depend on household members/children, which load after the first render.
+   Re-draw once they arrive (waiting if you are typing so nothing is lost). */
+function fpRefreshAfterPeopleLoad() {
+    clearTimeout(window.fpPeopleRefreshT);
+    const run = n => {
+        const a = document.activeElement;
+        if (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) {
+            if (n < 10) window.fpPeopleRefreshT = setTimeout(() => run(n + 1), 800);
+            return;
+        }
+        try { renderAllViews(); } catch (e) { console.warn('Refresh after people load skipped:', e); }
+    };
+    window.fpPeopleRefreshT = setTimeout(() => run(0), 150);
 }
 
 function fpMemberForLegacyKey(key) {
@@ -4543,7 +4561,7 @@ async function fpApproveJoinRequest(uid,approve){
 }
 window.fpApproveJoinRequest=fpApproveJoinRequest;
 
-const FP_VERSION='2.22',FP_BUILD='2026-11-22.13';
+const FP_VERSION='2.23',FP_BUILD='2026-11-22.14';
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){
   window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(e=>console.warn('Offline support unavailable:',e));});
 }
