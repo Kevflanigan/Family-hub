@@ -4381,6 +4381,7 @@ async function fpJoinHousehold(){
   const invite=fpParseInvite(document.getElementById('household-invite').value);
   if(!invite)return say('Paste the full invitation link you were sent.');
   try{
+    try{await firebaseUser.reload();firebaseUser=firebaseAuth.currentUser;await firebaseUser.getIdToken(true);}catch(e){} // make sure the verified-email claim is current before reading the invitation
     await fpEnsureUserProfile(firebaseUser);
     const id=invite.householdId, hash=await fpSha256Hex(invite.token);
     const householdRef=firebaseDb.collection('households').doc(id);
@@ -4392,8 +4393,12 @@ async function fpJoinHousehold(){
     if(prior.exists && prior.data().status!=='pending')await requestRef.delete();
     if(!prior.exists || prior.data().status!=='pending'){
       let d=null;
-      try{const snap=await inviteRef.get();d=snap.exists?snap.data():null;}catch(e){d=null;}
-      if(!d)throw new Error('This invitation is invalid, expired, already used, or was sent to a different email address.');
+      let readErr=null;
+      try{const snap=await inviteRef.get();d=snap.exists?snap.data():null;}catch(e){d=null;readErr=e;console.warn('Invitation read failed:',e&&e.code,e);}
+      if(!d){
+        if(readErr&&readErr.code==='permission-denied')throw new Error('This invitation could not be opened for '+(firebaseUser.email||'your account')+'. It may have been used, revoked or expired, or it was sent to a different email address. If you have only just verified your email, sign out, sign back in and try again.');
+        throw new Error('This invitation was not found. Ask the household owner for a new invitation link.');
+      }
       const ts=firebase.firestore.FieldValue.serverTimestamp();
       const batch=firebaseDb.batch();
       batch.set(requestRef,{uid:firebaseUser.uid,name:firebaseUser.displayName||firebaseUser.email||'New member',email:firebaseUser.email||'',status:'pending',inviteHash:hash,requestedAt:ts});
@@ -4561,7 +4566,7 @@ async function fpApproveJoinRequest(uid,approve){
 }
 window.fpApproveJoinRequest=fpApproveJoinRequest;
 
-const FP_VERSION='2.23',FP_BUILD='2026-11-22.14';
+const FP_VERSION='2.24',FP_BUILD='2026-11-22.15';
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){
   window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(e=>console.warn('Offline support unavailable:',e));});
 }
