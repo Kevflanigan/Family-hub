@@ -343,7 +343,10 @@ nav.bottom-nav, .bottom-nav {
     visibility: hidden;
     transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
     z-index: 3000;
-    white-space: nowrap;
+    white-space: normal;
+    width: max-content;
+    max-width: calc(100vw - 24px);
+    text-align: left;
 }
 
 .toast-notification.show {
@@ -4403,7 +4406,25 @@ function fpB64Url(bytes){return btoa(String.fromCharCode(...bytes)).replace(/\+/
 async function fpCreateInvite(){
   if(!fpMemberData || fpMemberData.role!=='owner' || !fpHouseholdId)return;
   if(!firebaseUser.emailVerified){try{await firebaseUser.reload();firebaseUser=firebaseAuth.currentUser;if(firebaseUser.emailVerified)await firebaseUser.getIdToken(true);}catch(e){}
-    if(!firebaseUser.emailVerified){try{await firebaseUser.sendEmailVerification();}catch(e){}return showToast('Verify your own email first. We have just sent you a verification link.');}}
+    if(!firebaseUser.emailVerified){
+      const vOut=document.getElementById('invite-result');
+      const ownEmail=firebaseUser.email||'your account email';
+      const last=Number(sessionStorage.getItem('fp_verify_sent')||0);
+      let state='recent';
+      if(Date.now()-last>120000){
+        try{await firebaseUser.sendEmailVerification();sessionStorage.setItem('fp_verify_sent',String(Date.now()));state='sent';}catch(e){state='failed';}
+      }
+      if(vOut){
+        vOut.innerHTML='';
+        const n=document.createElement('p');n.className='tool-note';
+        n.textContent='Your invitation has not been created yet. Before you can invite anyone, you need to verify your own email address ('+ownEmail+'). '+
+          (state==='failed'?'We could not send the verification email just now, so please try again in a few minutes.'
+            :(state==='sent'?'We have just sent a verification link to that address (not to the person you are inviting). Open it, then come back and tap Create invite again.'
+              :'A verification link was sent to that address a moment ago. Open it, then come back and tap Create invite again.'));
+        vOut.appendChild(n);
+      }
+      return showToast('Verify your own email first');
+    }}
   const out=document.getElementById('invite-result');
   const email=document.getElementById('invite-email').value.trim().toLowerCase();
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))return showToast('Enter a valid email address');
@@ -4522,7 +4543,7 @@ async function fpApproveJoinRequest(uid,approve){
 }
 window.fpApproveJoinRequest=fpApproveJoinRequest;
 
-const FP_VERSION='2.21',FP_BUILD='2026-11-22.12';
+const FP_VERSION='2.22',FP_BUILD='2026-11-22.13';
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){
   window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(e=>console.warn('Offline support unavailable:',e));});
 }

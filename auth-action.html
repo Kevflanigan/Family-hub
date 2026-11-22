@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FamilyPlan</title>
+<meta name="theme-color" content="#245b67">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=2">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
+<style>
+:root{--bg:#f3f8f6;--card:#ffffff;--text:#1d3438;--muted:#5d7478;--accent:#245b67;--accent-text:#ffffff;--border:#d9e6e2;--ok:#26825a;--bad:#b3261e;--input:#f7fbfa}
+@media (prefers-color-scheme: dark){:root{--bg:#10181b;--card:#182328;--text:#e8f1ef;--muted:#a3b8b8;--accent:#6fc2c8;--accent-text:#0d2227;--border:#2b3d43;--ok:#7fd8a8;--bad:#ff9a92;--input:#21313a}}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;align-items:center;justify-content:center;padding:20px;min-height:100vh}
+.card{width:100%;max-width:440px;background:var(--card);border:1px solid var(--border);border-radius:22px;padding:28px 24px;box-shadow:0 10px 30px rgba(0,0,0,.08);text-align:center}
+.logo{display:block;margin:0 auto 18px;max-width:240px;width:70%;height:auto}
+h1{font-size:1.45rem;margin:0 0 10px;line-height:1.25}
+p{margin:0 0 16px;color:var(--muted);line-height:1.5;font-size:1rem}
+.icon{width:64px;height:64px;border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:800;background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
+.icon.bad{background:color-mix(in srgb,var(--bad) 16%,transparent);color:var(--bad)}
+.icon.wait{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent)}
+.btn{display:block;width:100%;min-height:48px;border:0;border-radius:14px;background:var(--accent);color:var(--accent-text);font:inherit;font-weight:700;font-size:1rem;padding:12px 16px;text-decoration:none;cursor:pointer}
+.btn:disabled{opacity:.6}
+form{text-align:left;margin-top:6px}
+label{display:block;font-weight:600;font-size:.92rem;margin:0 0 6px}
+input{width:100%;min-height:48px;border:1px solid var(--border);border-radius:12px;background:var(--input);color:var(--text);font:inherit;padding:10px 14px;margin-bottom:14px}
+input:focus{outline:2px solid var(--accent);outline-offset:1px}
+.msg{min-height:1.2em;font-size:.92rem;color:var(--bad);margin:-4px 0 12px}
+.small{font-size:.85rem;margin-top:16px;margin-bottom:0}
+</style>
+</head>
+<body>
+<main class="card" aria-live="polite">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="familiplan-logo-dark.png">
+    <img class="logo" src="familiplan-logo.png" alt="FamilyPlan">
+  </picture>
+  <div id="icon" class="icon wait" aria-hidden="true">&hellip;</div>
+  <h1 id="title">One moment&hellip;</h1>
+  <p id="text">Checking your link.</p>
+  <form id="reset-form" hidden>
+    <label for="pw1">New password</label>
+    <input id="pw1" type="password" autocomplete="new-password" minlength="8" required>
+    <label for="pw2">Confirm new password</label>
+    <input id="pw2" type="password" autocomplete="new-password" minlength="8" required>
+    <div id="form-msg" class="msg" role="alert"></div>
+    <button id="reset-btn" class="btn" type="submit">Save new password</button>
+  </form>
+  <a id="open-app" class="btn" href="./" hidden>Open FamilyPlan</a>
+  <p class="small" id="small"></p>
+</main>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyAeLviH8AqXY9BdvRwR6g8YhaTarM00v1Y",
+    authDomain: "family-plan-f5168.firebaseapp.com",
+    databaseURL: "https://family-plan-f5168-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "family-plan-f5168",
+    storageBucket: "family-plan-f5168.firebasestorage.app",
+    messagingSenderId: "114463971604",
+    appId: "1:114463971604:web:164a6cec9efddf89f68a01",
+    measurementId: "G-8YVRJNML2Z"
+};
+const $ = id => document.getElementById(id);
+const params = new URLSearchParams(location.search);
+const mode = params.get('mode');
+const code = params.get('oobCode');
+
+function appUrl() {
+  try {
+    const u = new URL(params.get('continueUrl') || './', location.href);
+    if (u.origin === location.origin) return u.href;
+  } catch (e) {}
+  return './';
+}
+function show(kind, title, text, opts) {
+  opts = opts || {};
+  const icon = $('icon');
+  icon.className = 'icon' + (kind === 'ok' ? '' : kind === 'bad' ? ' bad' : ' wait');
+  icon.textContent = kind === 'ok' ? '\u2713' : kind === 'bad' ? '!' : '\u2026';
+  $('title').textContent = title;
+  $('text').textContent = text;
+  $('reset-form').hidden = !opts.form;
+  const open = $('open-app');
+  open.hidden = !opts.button;
+  if (opts.button) { open.textContent = opts.button; open.href = appUrl(); }
+  $('small').textContent = opts.small || '';
+}
+function friendly(err) {
+  const c = err && err.code;
+  if (c === 'auth/expired-action-code') return 'This link has expired. Go back to FamilyPlan and ask for a new one.';
+  if (c === 'auth/invalid-action-code') return 'This link has already been used or is no longer valid. If you have already verified your email, you can just open FamilyPlan.';
+  if (c === 'auth/user-disabled') return 'This account has been disabled.';
+  if (c === 'auth/user-not-found') return 'We could not find an account for this link.';
+  if (c === 'auth/weak-password') return 'Please choose a stronger password.';
+  return 'Something went wrong. Please go back to FamilyPlan and try again.';
+}
+
+(async function () {
+  if (!window.firebase) { show('bad', 'Could not load', 'Please check your connection and try again.'); return; }
+  if (!mode || !code) { show('bad', 'Link not recognised', 'Open the link from your email again, or go back to FamilyPlan.', { button: 'Open FamilyPlan' }); return; }
+  try {
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    if (mode === 'verifyEmail') {
+      show('wait', 'Verifying your email\u2026', 'This only takes a second.');
+      await auth.applyActionCode(code);
+      show('ok', 'Email verified', 'Thanks! Your email address is confirmed. Head back to FamilyPlan and carry on where you left off.', { button: 'Open FamilyPlan', small: 'If FamilyPlan is still open on your phone, switch back to it and try again.' });
+    } else if (mode === 'resetPassword') {
+      const email = await auth.verifyPasswordResetCode(code);
+      show('wait', 'Choose a new password', 'Setting a new password for ' + email + '.', { form: true });
+      $('reset-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const a = $('pw1').value, b = $('pw2').value, msg = $('form-msg'), btn = $('reset-btn');
+        msg.textContent = '';
+        if (a.length < 8) { msg.textContent = 'Use at least 8 characters.'; return; }
+        if (a !== b) { msg.textContent = 'The two passwords do not match.'; return; }
+        btn.disabled = true; btn.textContent = 'Saving\u2026';
+        try {
+          await auth.confirmPasswordReset(code, a);
+          show('ok', 'Password updated', 'Your new password is saved. You can now sign in to FamilyPlan.', { button: 'Sign in to FamilyPlan' });
+        } catch (err) {
+          btn.disabled = false; btn.textContent = 'Save new password';
+          msg.textContent = friendly(err);
+        }
+      });
+    } else if (mode === 'recoverEmail') {
+      const info = await auth.checkActionCode(code);
+      const restored = info && info.data && info.data.email;
+      await auth.applyActionCode(code);
+      show('ok', 'Email address restored', 'Your sign-in email has been changed back' + (restored ? ' to ' + restored : '') + '. If you did not ask for the change, we suggest resetting your password.', { button: 'Open FamilyPlan' });
+    } else {
+      show('bad', 'Link not recognised', 'Open the link from your email again, or go back to FamilyPlan.', { button: 'Open FamilyPlan' });
+    }
+  } catch (err) {
+    console.warn('Auth action failed:', err);
+    show('bad', 'We could not complete that', friendly(err), { button: 'Open FamilyPlan' });
+  }
+})();
+</script>
+</body>
+</html>
