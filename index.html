@@ -1954,6 +1954,19 @@ html[data-theme="dark"] .todo-inline-icon-btn.todo-assign-btn[data-tint] { backg
 h3.fp-my-heading .ti, h3.fp-my-heading .ti svg { color:var(--my-colour, inherit); }
 h3.fp-my-heading .ti svg { stroke:var(--my-colour, currentColor) !important; }
 html[data-theme="dark"] .meal-input-inline:focus { background:transparent !important; box-shadow:none !important; border-color:transparent !important; border-bottom-color:var(--accent) !important; }
+
+/* ===== Labels and 44px tap targets ===== */
+.field-stack select, .field-stack textarea { font-weight:400; }
+.field-stack > span { line-height:1.2; }
+#managed-child-box .field-stack > span, #household-panel .field-stack > span { color:var(--muted); }
+.wp-item-pill, .hero-scope-btn, .places-scoped-input, .places-scoped-add-btn, .auth-input, #managed-child-type { min-height:44px; }
+.cal-main-tab { min-width:44px; }
+.tool-row button { min-width:44px; min-height:44px; }
+.shopping-item .assign-tag { min-height:44px; line-height:44px; padding-top:0; padding-bottom:0; }
+.shopping-item input[type="checkbox"], .compact-scoped-checkbox, .dashboard-task-checkbox, .todo-divider-item > input[type=checkbox] { position:relative; }
+.shopping-item input[type="checkbox"]::before, .compact-scoped-checkbox::before, .dashboard-task-checkbox::before, .todo-divider-item > input[type=checkbox]::before { content:""; position:absolute; top:50%; left:50%; width:44px; height:44px; transform:translate(-50%,-50%); }
+.compact-scoped-tag, .todo-person-name, .todo-divider-title[role="button"] { padding-top:14px; padding-bottom:14px; margin-top:-14px; margin-bottom:-14px; }
+.todo-person-name { min-width:44px; text-align:center; }
 </style>
 </head>
 <body>
@@ -2079,6 +2092,55 @@ html[data-theme="dark"] .meal-input-inline:focus { background:transparent !impor
         </div>
         <div id="bubble-events-list" style="display:flex; flex-direction:column; gap:4px; max-height:220px; overflow-y:auto;"></div>
         <button id="bubble-add-btn" class="modal-add-btn" style="margin-top:10px;" onclick="addEventFromPopover()">+ Add Event to Day</button>
+    </div>
+
+    <!-- Edit Event Modal -->
+    <div id="edit-event-modal" class="modal-overlay" onclick="if(event.target === this) closeEditEvent()">
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="edit-event-heading">
+            <div class="card-header" style="margin-bottom:8px;">
+                <div class="card-title" id="edit-event-heading">Edit event</div>
+                <button type="button" class="bubble-close-btn" aria-label="Close" onclick="closeEditEvent()">✕</button>
+            </div>
+            <form id="edit-event-form" onsubmit="return fpSaveEditedEvent(event)">
+                <label for="edit-event-title" style="display:block;margin-top:4px;">What</label>
+                <input id="edit-event-title" type="text" class="form-input input-full" maxlength="200" required autocomplete="off" enterkeyhint="done">
+                <label for="edit-event-who" style="display:block;margin-top:8px;">Who</label>
+                <select id="edit-event-who" class="form-select input-full"></select>
+                <label for="edit-event-date" style="display:block;margin-top:8px;">Date</label>
+                <input id="edit-event-date" type="date" class="form-input input-full" required>
+                <p id="edit-event-series-note" class="tool-note" hidden>This event runs over several days. Changes to the title, person and times apply to every day. To change the dates, delete it and add it again.</p>
+                <div style="display:flex;gap:8px;margin-top:8px;">
+                    <div style="flex:1;min-width:0;"><label for="edit-event-time" style="display:block;">Start time</label><input id="edit-event-time" type="time" class="form-input input-full"></div>
+                    <div style="flex:1;min-width:0;"><label for="edit-event-end" style="display:block;">End time</label><input id="edit-event-end" type="time" class="form-input input-full"></div>
+                </div>
+                <div style="display:flex;gap:8px;margin-top:14px;">
+                    <button type="button" class="tool-btn secondary" onclick="closeEditEvent()">Cancel</button>
+                    <button type="submit" class="tool-btn wide">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Address Modal -->
+    <div id="edit-address-modal" class="modal-overlay" onclick="if(event.target === this) closeEditAddress()">
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="edit-address-heading">
+            <div class="card-header" style="margin-bottom:8px;">
+                <div class="card-title" id="edit-address-heading">Edit address</div>
+                <button type="button" class="bubble-close-btn" aria-label="Close" onclick="closeEditAddress()">✕</button>
+            </div>
+            <form onsubmit="return fpSaveEditedAddress(event)">
+                <label for="edit-address-name" style="display:block;margin-top:4px;">Name (person or place)</label>
+                <input id="edit-address-name" type="text" class="form-input input-full" maxlength="100" required autocomplete="off">
+                <label for="edit-address-street" style="display:block;margin-top:8px;">Street address</label>
+                <input id="edit-address-street" type="text" class="form-input input-full" maxlength="250" required autocomplete="off">
+                <label for="edit-address-postcode" style="display:block;margin-top:8px;">Postcode</label>
+                <input id="edit-address-postcode" type="text" class="form-input input-full" maxlength="20" required autocomplete="off" autocapitalize="characters" enterkeyhint="done">
+                <div style="display:flex;gap:8px;margin-top:14px;">
+                    <button type="button" class="tool-btn secondary" onclick="closeEditAddress()">Cancel</button>
+                    <button type="submit" class="tool-btn wide">Save changes</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- Quick Add Modal Overlay -->
@@ -2300,8 +2362,8 @@ html[data-theme="dark"] .meal-input-inline:focus { background:transparent !impor
                 <p class="tool-note">A simple shared note for pickups, activities, dinner and things the next person needs to know.</p>
                 <form class="tool-form" onsubmit="saveHandover(event)">
                     <label class="field-stack"><span>Handover date</span><input id="handover-date" type="date" required></label>
-                    <select id="handover-person" aria-label="Who's taking over?"></select>
-                    <textarea id="handover-notes" class="wide" required placeholder="Pickups, times, what to take, dinner or reminders..."></textarea>
+                    <label class="field-stack"><span>Who's taking over?</span><select id="handover-person"></select></label>
+                    <label class="field-stack wide"><span>Handover note</span><textarea id="handover-notes" required placeholder="Pickups, times, what to take, dinner or reminders..."></textarea></label>
                     <button class="tool-btn" type="submit">Add handover note</button>
                 </form>
                 <div id="handover-list" class="tool-list"></div>
@@ -2413,7 +2475,7 @@ html[data-theme="dark"] .meal-input-inline:focus { background:transparent !impor
                 <h3>💷 Monthly household budget</h3>
                 <p class="tool-note">Set one figure for the household each month.</p>
                 <form class="tool-form" onsubmit="saveHouseholdBudget(event)">
-                    <div class="money-field wide"><input id="household-monthly-budget" type="number" inputmode="decimal" min="0" step="0.01" required placeholder="Monthly budget"></div>
+                    <label class="field-stack wide"><span>Monthly budget</span><div class="money-field"><input id="household-monthly-budget" type="number" inputmode="decimal" min="0" step="0.01" required placeholder="e.g. 2500"></div></label>
                     <button class="tool-btn wide" type="submit">Save monthly budget</button>
                 </form>
                 
@@ -2448,9 +2510,9 @@ html[data-theme="dark"] .meal-input-inline:focus { background:transparent !impor
                 </div>
                 <p class="tool-note">Log any unplanned purchases with a date. The spending so far updates as a running total.</p>
                 <form class="tool-form" onsubmit="addUnplannedSpend(event)">
-                    <input id="unplanned-name" required placeholder="Description (e.g. Shopping)">
-                    <input id="unplanned-amount" type="number" inputmode="decimal" min="0" step="0.01" required placeholder="Amount (£)">
-                    <input id="unplanned-date" type="date" required aria-label="Purchase date">
+                    <label class="field-stack"><span>Description</span><input id="unplanned-name" required placeholder="e.g. Shopping"></label>
+                    <label class="field-stack"><span>Amount (£)</span><input id="unplanned-amount" type="number" inputmode="decimal" min="0" step="0.01" required placeholder="0.00"></label>
+                    <label class="field-stack"><span>Purchase date</span><input id="unplanned-date" type="date" required></label>
                     <button class="tool-btn wide" type="submit">Add spending entry</button>
                 </form>
                 <div id="unplanned-spending-list" class="tool-list" style="margin-top:12px;">
@@ -2551,9 +2613,9 @@ html[data-theme="dark"] .meal-input-inline:focus { background:transparent !impor
             <section class="tool-section">
                 <h3>💡 Ideas inbox</h3>
                 <form class="tool-form" onsubmit="addFamilyIdea(event)">
-                    <input id="idea-name" required placeholder="Idea">
-                    <select id="idea-category"><option>Day out</option><option>Restaurant</option><option>Holiday</option><option>Film / TV</option><option>Gift</option><option>Buy</option><option>Other</option></select>
-                    <input id="idea-notes" class="wide" placeholder="Notes (optional)">
+                    <label class="field-stack"><span>Idea</span><input id="idea-name" required placeholder="What's the idea?"></label>
+                    <label class="field-stack"><span>Type</span><select id="idea-category"><option>Day out</option><option>Restaurant</option><option>Holiday</option><option>Film / TV</option><option>Gift</option><option>Buy</option><option>Other</option></select></label>
+                    <label class="field-stack wide"><span>Notes (optional)</span><input id="idea-notes" placeholder="Anything to remember"></label>
                     <button class="tool-btn" type="submit">Save idea</button>
                 </form>
                 <div id="family-ideas-list" class="tool-list"></div>
@@ -2571,9 +2633,9 @@ html[data-theme="dark"] .meal-input-inline:focus { background:transparent !impor
             <section class="card"><div class="card-title">📇 Address Book</div><p class="tool-note">Keep important family addresses together, such as schools, relatives, friends, clubs and regular destinations.</p></section>
             <section class="tool-section" id="address-book-section">
                 <form class="tool-form" onsubmit="addAddressBookEntry(event)">
-                    <input id="address-book-name" required maxlength="100" placeholder="Name (person or place)">
-                    <input id="address-book-address" class="wide" required maxlength="250" placeholder="Street address">
-                    <input autocomplete="postal-code" autocapitalize="characters" id="address-book-postcode" required maxlength="20" placeholder="Postcode">
+                    <label class="field-stack wide"><span>Name (person or place)</span><input id="address-book-name" required maxlength="100" placeholder="e.g. Nan, Oakwood School"></label>
+                    <label class="field-stack wide"><span>Street address</span><input id="address-book-address" required maxlength="250" placeholder="House number and street"></label>
+                    <label class="field-stack"><span>Postcode</span><input autocomplete="postal-code" autocapitalize="characters" id="address-book-postcode" required maxlength="20" placeholder="e.g. LS16 6SP"></label>
                     <button class="tool-btn" type="submit">Add address</button>
                 </form>
                 <div id="address-book-list" class="tool-list"></div>
@@ -2616,9 +2678,9 @@ html[data-theme="dark"] .meal-input-inline:focus { background:transparent !impor
                     <div id="managed-child-box" style="margin-top:16px;">
                         <h4>Add a child without a phone</h4>
                         <p class="tool-note">Create a household profile for a younger child. They do not need an email address, password or login. The profile can be assigned chores and planner items.</p>
-                        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-                            <input class="auth-input" id="managed-child-name" type="text" maxlength="40" placeholder="Child's name" style="flex:1;min-width:130px;">
-                            <select class="auth-input" id="managed-child-type" style="width:auto;min-width:120px;"><option value="toddler">Toddler</option><option value="child" selected>Child</option><option value="teen">Teen</option></select>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;">
+                            <label class="field-stack" style="flex:1;min-width:130px;"><span>Child's name</span><input class="auth-input" id="managed-child-name" type="text" maxlength="40" placeholder="First name"></label>
+                            <label class="field-stack"><span>Age group</span><select class="auth-input" id="managed-child-type" style="width:auto;min-width:120px;"><option value="toddler">Toddler</option><option value="child" selected>Child</option><option value="teen">Teen</option></select></label>
                             <button type="button" class="tool-btn" onclick="fpCreateManagedChild()">Add child</button>
                         </div>
                         <div id="managed-child-status" class="tool-note" aria-live="polite"></div>
@@ -2627,7 +2689,7 @@ html[data-theme="dark"] .meal-input-inline:focus { background:transparent !impor
                     </div>
                     <h4>Invite an adult</h4>
                     <p class="tool-note">Each invitation works once, only for the email address you enter, and expires after 7 days. The person still needs your approval to join.</p>
-                    <div style="display:flex;gap:8px;"><input class="auth-input" id="invite-email" type="email" autocomplete="off" placeholder="their@email.com" style="flex:1;min-width:0;"><button type="button" class="tool-btn" onclick="fpCreateInvite()">Create invite</button></div>
+                    <div style="display:flex;gap:8px;align-items:flex-end;"><label class="field-stack" style="flex:1;min-width:0;"><span>Their email address</span><input class="auth-input" id="invite-email" type="email" autocomplete="off" placeholder="their@email.com"></label><button type="button" class="tool-btn" onclick="fpCreateInvite()">Create invite</button></div>
                     <div id="invite-result" class="tool-note" style="margin-top:8px;"></div>
                     <div id="household-invites-list" class="household-management-list"></div>
                 </div>
@@ -4603,7 +4665,7 @@ async function fpApproveJoinRequest(uid,approve){
 }
 window.fpApproveJoinRequest=fpApproveJoinRequest;
 
-const FP_VERSION='2.27',FP_BUILD='2026-11-22.18';
+const FP_VERSION='2.30',FP_BUILD='2026-11-23.3';
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){
   window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(e=>console.warn('Offline support unavailable:',e));});
 }
@@ -5451,9 +5513,10 @@ function openDayPopover(dateKey, dayNum) {
     } else {
         listCont.innerHTML = events.map((ev, idx) => `
             <div class="bubble-event-item" style="border-left-color: var(--${fpSafeId(ev.who)});">
-                <div class="bubble-event-title">${ev.time ? `<span class="ev-time">${escapeToolText(fpTimeRange(ev))}</span> ` : ''}${escapeToolText(String(ev.title || '').replace(/\s*\[(yearly|birthday)\]\s*/gi, ' ').trim())}</div>
+                <div class="bubble-event-title" ${fpCanWriteCategory('calendar') ? `role="button" tabindex="0" title="Tap to edit" onclick="openEditEvent('${fpSafeId(dateKey)}', ${ev._i})" onkeydown="if(event.key==='Enter'){openEditEvent('${fpSafeId(dateKey)}', ${ev._i});}"` : ''}>${ev.time ? `<span class="ev-time">${escapeToolText(fpTimeRange(ev))}</span> ` : ''}${escapeToolText(String(ev.title || '').replace(/\s*\[(yearly|birthday)\]\s*/gi, ' ').trim())}</div>
                 <div style="display:flex; align-items:center; gap:6px;">
               <span class="compact-scoped-tag bg-${fpAssigneeStyle(ev.who)}">${escapeToolText(fpDisplayAssignee(ev.who))}</span>
+                    ${fpCanWriteCategory('calendar') ? `<button class="action-btn" type="button" title="Edit event" aria-label="Edit ${escapeToolText(ev.title)}" onclick="openEditEvent('${fpSafeId(dateKey)}', ${ev._i})">✏️</button>` : ''}
                     <button class="action-btn" type="button" title="Add to phone calendar" aria-label="Add ${escapeToolText(ev.title)} to phone calendar" onclick="fpDownloadIcs('${fpSafeId(dateKey)}', ${ev._i})">📲</button>
                     <button class="action-btn delete-btn" onclick="deleteCalEvent('${fpSafeId(dateKey)}', ${ev._i}, '${fpSafeId(ev.eventId)}'); openDayPopover('${fpSafeId(dateKey)}', ${dayNum});">✕</button>
                 </div>
@@ -5469,6 +5532,97 @@ function closeDayPopover() {
     document.getElementById('day-popover-backdrop').classList.remove('active');
     document.getElementById('day-detail-bubble').classList.remove('active');
     selectedPopoverDateKey = null;
+}
+
+let fpEditingEvent = null;
+const FP_EVENT_TAG_RE = /\s*\[(yearly|birthday)\]\s*/gi;
+
+function openEditEvent(dateKey, index) {
+    if (!fpCanWriteCategory('calendar')) { showToast('You can view this calendar but not change it'); return; }
+    const ev = (calendarEvents[dateKey] || [])[index];
+    if (!ev) return;
+    const tags = [...String(ev.title || '').matchAll(/\[(yearly|birthday)\]/gi)].map(m => m[0]);
+    const clean = String(ev.title || '').replace(FP_EVENT_TAG_RE, ' ').trim();
+    const series = ev.eventId ? Object.values(calendarEvents).reduce((n, list) => n + (list || []).filter(x => x.eventId === ev.eventId).length, 0) > 1 : false;
+    fpEditingEvent = { dateKey, index, eventId: ev.eventId || '', series, tags };
+    document.getElementById('edit-event-title').value = clean;
+    const who = document.getElementById('edit-event-who');
+    const options = fpAssignmentOptions();
+    if (ev.who && !options.includes(ev.who)) options.push(ev.who);
+    who.innerHTML = '';
+    options.forEach(v => {
+        const o = document.createElement('option');
+        o.value = v; o.textContent = v === 'family' ? 'Family (everyone)' : fpDisplayAssignee(v);
+        who.appendChild(o);
+    });
+    who.value = ev.who || 'family';
+    const date = document.getElementById('edit-event-date');
+    date.value = dateKey; date.disabled = series;
+    document.getElementById('edit-event-series-note').hidden = !series;
+    document.getElementById('edit-event-time').value = ev.time || '';
+    document.getElementById('edit-event-end').value = ev.endTime || '';
+    closeDayPopover();
+    document.getElementById('edit-event-modal').classList.add('active');
+    setTimeout(() => { const t = document.getElementById('edit-event-title'); t.focus(); t.select(); }, 50);
+}
+
+function closeEditEvent(reopen = true) {
+    document.getElementById('edit-event-modal').classList.remove('active');
+    const st = fpEditingEvent;
+    fpEditingEvent = null;
+    if (reopen && st && st.dateKey) openDayPopover(st.dateKey, parseInt(st.dateKey.split('-')[2], 10));
+}
+
+function fpSaveEditedEvent(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const st = fpEditingEvent;
+    if (!st) return false;
+    const base = document.getElementById('edit-event-title').value.trim();
+    const who = document.getElementById('edit-event-who').value;
+    const date = document.getElementById('edit-event-date').value;
+    const time = document.getElementById('edit-event-time').value;
+    const end = document.getElementById('edit-event-end').value;
+    if (!base) { showToast('Please enter a title'); return false; }
+    if (!date) { showToast('Please choose a date'); return false; }
+    if (end && !time) { showToast('Add a start time before an end time'); return false; }
+    if (end && time && end <= time) { showToast('The end time must be after the start time'); return false; }
+    const title = base + (st.tags.length ? ' ' + st.tags.join(' ') : '');
+    const targets = [];
+    if (st.series) {
+        Object.keys(calendarEvents).forEach(d => (calendarEvents[d] || []).forEach(ev => { if (ev.eventId === st.eventId) targets.push([d, ev]); }));
+    } else if (calendarEvents[st.dateKey] && calendarEvents[st.dateKey][st.index]) {
+        targets.push([st.dateKey, calendarEvents[st.dateKey][st.index]]);
+    }
+    if (!targets.length) { closeEditEvent(false); return false; }
+    const originals = targets.map(([d, ev]) => [d, ev, JSON.parse(JSON.stringify(ev))]);
+    targets.forEach(([d, ev]) => {
+        ev.title = title; ev.who = who;
+        if (time) { ev.time = time; if (end) ev.endTime = end; else delete ev.endTime; }
+        else { delete ev.time; delete ev.endTime; }
+    });
+    const moveEvent = (ev, from, to) => {
+        calendarEvents[from] = (calendarEvents[from] || []).filter(x => x !== ev);
+        if (!calendarEvents[from].length) delete calendarEvents[from];
+        (calendarEvents[to] = calendarEvents[to] || []).push(ev);
+    };
+    let moved = false;
+    if (!st.series && date !== st.dateKey) { moveEvent(targets[0][1], st.dateKey, date); moved = true; }
+    const refresh = () => {
+        saveData();
+        if (calendarPageMode === 'month') renderCalendarMonth();
+        if (calendarPageMode === 'week') renderWeeklyPlanner();
+        renderDashboard();
+    };
+    refresh();
+    const reopenKey = st.series ? st.dateKey : date;
+    closeEditEvent(false);
+    openDayPopover(reopenKey, parseInt(reopenKey.split('-')[2], 10));
+    showUndoToast('Event updated', () => {
+        originals.forEach(([d, ev, orig]) => { Object.keys(ev).forEach(k => delete ev[k]); Object.assign(ev, orig); });
+        if (moved) { const ev = originals[0][1]; moveEvent(ev, date, st.dateKey); }
+        refresh();
+    });
+    return false;
 }
 
 function addEventFromPopover() {
@@ -6764,9 +6918,44 @@ function addFamilyOccasion(e){e.preventDefault();occasionsData.push({id:crypto.r
 function deleteToolItem(type,i){const get=()=>({bills:householdBillsData,renewals:renewalsData,ideas:familyIdeasData,handover:handoverData,occasions:occasionsData})[type];if(!get())return;fpUndoRemove(get,i,()=>{renderBills();renderEnhancementLists();},'Entry deleted');}
 function renderSimpleToolList(id,items,formatter,type,empty){const el=document.getElementById(id);if(!el)return;el.innerHTML=items.length?items.map((item,i)=>`<div class="tool-row"><div>${formatter(item)}</div><button onclick="deleteToolItem('${type}',${i})">✕</button></div>`).join(''):`<p class="tool-note">${empty}</p>`;}
 function addAddressBookEntry(e){e.preventDefault();const name=document.getElementById('address-book-name').value.trim(),address=document.getElementById('address-book-address').value.trim(),postcode=document.getElementById('address-book-postcode').value.trim();if(!name||!address||!postcode)return;addressBookData.push({id:crypto.randomUUID(),name,address,postcode});saveData();e.target.reset();renderAddressBook();showToast('Address saved');}
-async function editAddressBookEntry(i){const entry=addressBookData[i];if(!entry)return;const name=await fpDialog.prompt('Name',{value:entry.name});if(name===null)return;const address=await fpDialog.prompt('Address',{value:entry.address});if(address===null)return;const postcode=await fpDialog.prompt('Postcode',{value:entry.postcode});if(postcode===null)return;if(!name.trim()||!address.trim()||!postcode.trim()){showToast('Please complete all address fields');return;}entry.name=name.trim();entry.address=address.trim();entry.postcode=postcode.trim();saveData();renderAddressBook();}
+let fpEditingAddressId = null;
+function editAddressBookEntry(i){
+  const entry=addressBookData[i];if(!entry)return;
+  if(!entry.id)entry.id=crypto.randomUUID();
+  fpEditingAddressId=entry.id;
+  document.getElementById('edit-address-name').value=entry.name||'';
+  document.getElementById('edit-address-street').value=entry.address||'';
+  document.getElementById('edit-address-postcode').value=entry.postcode||'';
+  document.getElementById('edit-address-modal').classList.add('active');
+  setTimeout(()=>{const n=document.getElementById('edit-address-name');n.focus();n.select();},50);
+}
+function closeEditAddress(){
+  document.getElementById('edit-address-modal').classList.remove('active');
+  fpEditingAddressId=null;
+}
+function fpSaveEditedAddress(e){
+  if(e&&e.preventDefault)e.preventDefault();
+  const entry=addressBookData.find(x=>x.id===fpEditingAddressId);
+  if(!entry){closeEditAddress();return false;}
+  const name=document.getElementById('edit-address-name').value.trim();
+  const address=document.getElementById('edit-address-street').value.trim();
+  const postcode=document.getElementById('edit-address-postcode').value.trim();
+  if(!name||!address||!postcode){showToast('Please complete all address fields');return false;}
+  const before={name:entry.name,address:entry.address,postcode:entry.postcode};
+  if(before.name===name&&before.address===address&&before.postcode===postcode){closeEditAddress();return false;}
+  entry.name=name;entry.address=address;entry.postcode=postcode;
+  const id=entry.id;
+  saveData();renderAddressBook();closeEditAddress();
+  showUndoToast('Address updated',()=>{
+    const cur=addressBookData.find(x=>x.id===id);
+    if(!cur)return;
+    cur.name=before.name;cur.address=before.address;cur.postcode=before.postcode;
+    saveData();renderAddressBook();
+  });
+  return false;
+}
 function deleteAddressBookEntry(i){fpUndoRemove(()=>addressBookData,i,renderAddressBook,'Address deleted');}
-function renderAddressBook(){const list=document.getElementById('address-book-list');if(!list)return;list.innerHTML=addressBookData.length?addressBookData.map((entry,i)=>`<div class="tool-row"><div><strong>${escapeToolText(entry.name)}</strong><small>${escapeToolText(entry.address)}<br>${escapeToolText(entry.postcode)}</small></div><div style="display:flex;gap:6px;flex-shrink:0"><button type="button" onclick="editAddressBookEntry(${i})">Edit</button><button type="button" onclick="deleteAddressBookEntry(${i})">✕</button></div></div>`).join(''):'<p class="tool-note">No saved addresses yet. Add your first key address above.</p>'; }
+function renderAddressBook(){const list=document.getElementById('address-book-list');if(!list)return;list.innerHTML=addressBookData.length?addressBookData.map((entry,i)=>`<div class="tool-row"><div role="button" tabindex="0" title="Tap to edit" onclick="editAddressBookEntry(${i})" onkeydown="if(event.key==='Enter'){editAddressBookEntry(${i});}" style="cursor:pointer"><strong>${escapeToolText(entry.name)}</strong><small>${escapeToolText(entry.address)}<br>${escapeToolText(entry.postcode)}</small></div><div style="display:flex;gap:6px;flex-shrink:0"><button type="button" onclick="editAddressBookEntry(${i})">Edit</button><button type="button" onclick="deleteAddressBookEntry(${i})">✕</button></div></div>`).join(''):'<p class="tool-note">No saved addresses yet. Add your first key address above.</p>'; }
 function renderEnhancementLists(){renderSimpleToolList('renewals-list',renewalsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${moneyGBP(x.cost)} · ${escapeToolText(x.frequency)} · Renewal: ${dateLabel(x.date)}</small>`,'renewals','No renewals tracked yet.');renderSimpleToolList('family-ideas-list',familyIdeasData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${escapeToolText(x.category)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'ideas','Your saved family ideas will appear here.');renderSimpleToolList('handover-list',handoverData,x=>`<strong>${dateLabel(x.date)}${x.person&&x.person!=='family'?' · '+escapeToolText(fpDisplayAssignee(x.person)==='Unassigned'?x.person:fpDisplayAssignee(x.person)):''}</strong><small>${escapeToolText(x.notes)}</small>`,'handover','No handover notes yet.');renderSimpleToolList('family-occasions-list',occasionsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${dateLabel(x.date)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'occasions','No occasions added yet.');renderAddressBook();renderFinanceOverview();}
 function renderFamilyTools(){renderWeeklyPlanner();renderBills();renderEnhancementLists();}
 
