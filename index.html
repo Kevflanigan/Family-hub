@@ -20,7 +20,7 @@
     --card: #ffffff;
     --border: #e2e9e6;
     --text: #202d35;
-    --muted: #718087;
+    --muted:#5a6b6e;
     --accent: #245b67;
     --mom: #c65d87;
     --dad: #159b75;
@@ -1995,6 +1995,19 @@ html[data-theme="dark"] .meal-input-inline:focus { background:transparent !impor
 .household-settings-box h4{margin:18px 0 6px;padding-top:16px;border-top:1px solid var(--border,#dfe9e4);font-size:1rem}
 .household-settings-box > h4:first-child,.household-settings-box > div:first-child + h4,#household-invite-box > h4:first-child{border-top:0;padding-top:0;margin-top:10px}
 .household-settings-box .tool-note{margin:0 0 8px}
+
+/* ===== Setup checklist, problem log, calendar link ===== */
+.setup-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px}
+.setup-head .card-title{margin:0!important}
+.setup-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--border,#e1ebe6);flex-wrap:wrap}
+.setup-tick{width:22px;height:22px;border-radius:50%;border:2px solid var(--muted,#7a8b88);flex:none;display:inline-flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:#fff}
+.setup-row.done .setup-tick{background:var(--accent,#245b67);border-color:var(--accent,#245b67)}
+html[data-theme="dark"] .setup-row.done .setup-tick{color:#0f1719}
+.setup-label{flex:1;min-width:0;font-weight:700}
+.setup-row.done .setup-label{color:var(--muted);text-decoration:line-through}
+.problem-row{padding:8px 0;border-top:1px solid var(--border,#e1ebe6);display:flex;flex-direction:column;gap:2px}
+.problem-row small{color:var(--muted);overflow-wrap:anywhere}
+#calendar-feed-box input{width:100%;margin:8px 0}
 </style>
 </head>
 <body>
@@ -2064,7 +2077,7 @@ html[data-theme="dark"] .meal-input-inline:focus { background:transparent !impor
           </form>
           <div class="auth-message" id="auth-message" role="status" aria-live="polite"></div>
           <button class="auth-secondary" type="button" onclick="window.fpShowChildGate()">Child joining a family?</button>
-          <p class="auth-small" id="auth-version-label">Version 2.35 · build 2026-11-24.2</p>
+          <p class="auth-small" id="auth-version-label">Version 2.36 · build 2026-11-24.3</p>
           <p class="auth-small">Each adult or family member has their own account. Signing in with Google or Microsoft skips the email check. If you use an email and password instead, verify your email first. Then create a household or join one with an invitation code.</p>
         </div>
 
@@ -2372,6 +2385,7 @@ html[data-theme="dark"] .meal-input-inline:focus { background:transparent !impor
             <div id="family-week-summary" class="hero-chips"></div>
             <button class="tool-btn secondary" onclick="showView('calendar',document.getElementById('nav-btn-calendar'))">Open calendar</button>
         </section>
+        <section class="card" id="setup-card" style="display:none;margin-bottom:12px;"></section>
         <section class="card">
             <div class="card-title">
                 <span>📍 Today's Schedule & Locations</span>
@@ -2712,7 +2726,7 @@ html[data-theme="dark"] .meal-input-inline:focus { background:transparent !impor
     <!-- Account page -->
     <div id="view-account" class="view">
         <section class="card acct-head">
-            <div class="acct-head-text"><div class="card-title">⚙️ Account</div><p class="tool-note" id="app-version-label">Version 2.35 · build 2026-11-24.2</p></div>
+            <div class="acct-head-text"><div class="card-title">⚙️ Account</div><p class="tool-note" id="app-version-label">Version 2.36 · build 2026-11-24.3</p></div>
             <button type="button" class="tool-btn secondary acct-signout" onclick="fpSignOut()">Sign out</button>
         </section>
 <div class="calendar-main-tabs" role="tablist" aria-label="Account sections" id="account-tabs">
@@ -2779,6 +2793,15 @@ html[data-theme="dark"] .meal-input-inline:focus { background:transparent !impor
                 <button type="button" class="cal-main-tab" data-theme-choice="dark" onclick="fpSetTheme('dark')">🌙 Dark</button>
                 <button type="button" class="cal-main-tab" data-theme-choice="auto" onclick="fpSetTheme('auto')">Auto</button>
             </div>
+        </section>
+        <section class="tool-section" id="calendar-feed-section" data-acct="data">
+            <h3>🗓️ Phone calendar &amp; reminders</h3>
+            <p class="tool-note">Keep events, bills, renewals and dinners in your phone's own calendar, with reminders. It updates by itself.</p>
+            <div id="calendar-feed-box"></div>
+        </section>
+        <section class="tool-section" id="problem-log-section" data-acct="data">
+            <h3>⚠️ Problem log</h3>
+            <div id="problem-log-box"></div>
         </section>
         <section class="tool-section" id="reassign-section" data-acct="data">
             <h3>🧹 Tidy up unassigned items</h3>
@@ -3681,7 +3704,7 @@ function fpStopSharedListeners(){
   if(window.fpInvitesUnsub){window.fpInvitesUnsub();window.fpInvitesUnsub=null;}
   if(window.fpChildrenUnsub){window.fpChildrenUnsub();window.fpChildrenUnsub=null;}
   if(window.fpChildInvitesUnsub){window.fpChildInvitesUnsub();window.fpChildInvitesUnsub=null;}
-  fpChildInvites=[];
+  fpChildInvites=[];fpFeedToken=null;window.fpInviteTotal=0;
   fpHouseholdChildren=[];
   const ib=document.getElementById('household-invite-box');if(ib)ib.style.display='none';
   if(fpMemberUnsub){fpMemberUnsub();fpMemberUnsub=null;}
@@ -3705,6 +3728,7 @@ function fpAttachSharedListeners(){
   });
   const householdRef=firebaseDb.collection('households').doc(fpHouseholdId);
 
+  if(fpIsOwnerOrParent())fpLoadFeed();
   if(fpIsOwnerOrParent())window.fpChildInvitesUnsub=firebaseDb.collection('childInvites').where('householdId','==',fpHouseholdId).onSnapshot(cs=>{fpChildInvites=cs.docs.map(d=>({hash:d.id,...d.data()}));fpRenderManagedChildren();},e=>console.warn('Could not load child codes:',e));
   window.fpChildrenUnsub=householdRef.collection('children').onSnapshot(cs=>{
     fpHouseholdChildren=cs.docs.map(d=>({id:d.id,...d.data()}));
@@ -4257,6 +4281,7 @@ async function fpRemoveChildDevice(uid,childId){
 }
 window.fpCancelChildCode=fpCancelChildCode;window.fpRemoveChildDevice=fpRemoveChildDevice;
 function fpRenderManagedChildren(){
+  setTimeout(fpRenderSetupCard,0);
   const el=document.getElementById('managed-children-list');if(!el)return;
   const profiles=fpHouseholdChildren.filter(c=>c.profileType==='managed');
   if(!profiles.length){el.innerHTML='<p class="tool-note">No managed child profiles yet.</p>';return;}
@@ -4701,6 +4726,7 @@ async function fpCreateInvite(){
 }
 window.fpCreateInvite=fpCreateInvite;
 function fpRenderInvites(snapshot){
+  window.fpInviteTotal=snapshot.docs.length;setTimeout(fpRenderSetupCard,0);
   const el=document.getElementById('household-invites-list');if(!el)return;
   const docs=snapshot.docs.filter(d=>['pending','requested'].includes(d.data().status));
   el.innerHTML=docs.length?docs.map(d=>{
@@ -4778,7 +4804,197 @@ async function fpApproveJoinRequest(uid,approve){
 }
 window.fpApproveJoinRequest=fpApproveJoinRequest;
 
-const FP_VERSION='2.35',FP_BUILD='2026-11-24.2';
+const FP_VERSION='2.36',FP_BUILD='2026-11-24.3';
+// ================= Problem log =================
+// Keeps the last 50 problems on this phone. Adults also send a short note (error text and screen name only,
+// never lists, names of entries or email addresses) so the household owner can see what is going wrong.
+const FP_LOG_KEY='fam_error_log', FP_LOG_MAX=50;
+let fpLogSessionCount=0;
+function fpScrub(t){return String(t==null?'':t).replace(/[\w.+-]+@[\w-]+\.[\w.-]+/g,'[email]').replace(/\s+/g,' ').slice(0,300);}
+function fpReadLog(){try{return JSON.parse(localStorage.getItem(FP_LOG_KEY)||'[]');}catch(e){return [];}}
+function fpLogProblem(context,err){
+  try{
+    const message=fpScrub(err&&err.message?err.message:(typeof err==='string'?err:''));
+    if(!message||/ResizeObserver|^Script error/i.test(message))return;
+    const entry={at:Date.now(),context:fpScrub(context).slice(0,60),message,code:fpScrub(err&&err.code||'').slice(0,60),view:fpScrub((document.querySelector('.view.active')||{}).id||'').slice(0,60),version:(FP_VERSION+' '+FP_BUILD).slice(0,60)};
+    const list=fpReadLog(),last=list[list.length-1];
+    const repeat=last&&last.message===entry.message&&last.context===entry.context&&entry.at-last.at<60000;
+    if(repeat){last.count=(last.count||1)+1;last.at=entry.at;}else list.push(entry);
+    localStorage.setItem(FP_LOG_KEY,JSON.stringify(list.slice(-FP_LOG_MAX)));
+    if(!repeat)fpShareProblem(entry); // a repeat within a minute is counted locally but not re-sent
+  }catch(e){}
+}
+function fpShareProblem(entry){
+  try{
+    if(typeof firebaseDb==='undefined'||!firebaseDb||!firebaseUser||!fpHouseholdId||!fpMemberData)return;
+    if(!['owner','parent','member'].includes(String(fpMemberData.role||'').toLowerCase()))return; // never from children's phones
+    if(!navigator.onLine||fpLogSessionCount>=15)return; fpLogSessionCount++;
+    firebaseDb.collection('households').doc(fpHouseholdId).collection('errorLogs').add({uid:firebaseUser.uid,name:fpScrub(firebaseUser.displayName||'').slice(0,40),context:entry.context,message:entry.message,code:entry.code,view:entry.view,version:entry.version,at:firebase.firestore.FieldValue.serverTimestamp()}).catch(()=>{});
+  }catch(e){}
+}
+window.addEventListener('error',e=>fpLogProblem('error',e.error||e.message));
+window.addEventListener('unhandledrejection',e=>fpLogProblem('promise',e.reason));
+['error','warn'].forEach(level=>{const orig=console[level].bind(console);console[level]=function(...args){orig(...args);try{const first=args.find(a=>a instanceof Error)||args.map(a=>typeof a==='string'?a:(a&&a.message)||'').filter(Boolean).join(' ');fpLogProblem('console.'+level,first);}catch(e){}};});
+function fpFmtWhen(ms){return new Date(ms).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});}
+function fpProblemReport(entries){
+  return ['FamilyPlan problem report','Version: '+FP_VERSION+' build '+FP_BUILD,'Phone: '+navigator.userAgent.slice(0,120),''].concat(entries.map(e=>`${fpFmtWhen(e.at)} · ${e.view||'?'} · ${e.context}${e.code?' · '+e.code:''}${e.count>1?' (x'+e.count+')':''}: ${e.message}`)).join('\n');
+}
+async function fpRenderProblemLog(){
+  const box=document.getElementById('problem-log-box');if(!box)return;
+  const mine=fpReadLog().slice().reverse();box.textContent='';
+  const mk=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;};
+  const btn=(label,fn,cls)=>{const b=mk('button',cls||'tool-btn secondary',label);b.type='button';b.onclick=fn;return b;};
+  box.append(mk('p','tool-note',mine.length?`This phone has recorded ${mine.length} problem${mine.length>1?'s':''}. Newest first:`:'No problems recorded on this phone.'));
+  mine.slice(0,6).forEach(e=>{const r=mk('div','problem-row');r.append(mk('strong',null,fpFmtWhen(e.at)+(e.view?' · '+e.view:'')),mk('small',null,e.message));box.append(r);});
+  if(mine.length){const row=mk('div','account-actions');
+    row.append(btn('Copy report',()=>navigator.clipboard.writeText(fpProblemReport(mine)).then(()=>showToast('Report copied. Paste it into a message.')).catch(()=>showToast('Could not copy'))),
+      btn('Clear',()=>{localStorage.removeItem(FP_LOG_KEY);fpRenderProblemLog();}));box.append(row);}
+  if(fpIsOwnerOrParent()&&fpHouseholdId&&firebaseDb){
+    box.append(mk('h4',null,'Reported by your household'));
+    try{
+      const snap=await firebaseDb.collection('households').doc(fpHouseholdId).collection('errorLogs').orderBy('at','desc').limit(30).get();
+      if(snap.empty)box.append(mk('p','tool-note','Nothing reported. Good news.'));
+      snap.docs.forEach(d=>{const x=d.data(),when=x.at&&x.at.toMillis?fpFmtWhen(x.at.toMillis()):'';const r=mk('div','problem-row');r.append(mk('strong',null,`${x.name||'Someone'} · ${when} · ${x.view||'?'}`),mk('small',null,`${x.context}${x.code?' · '+x.code:''}: ${x.message} (${x.version||''})`));box.append(r);});
+      if(!snap.empty)box.append(btn('Clear household reports',async()=>{if(!(await fpDialog.confirm('Delete all reports? This cannot be undone.',{title:'Clear reports',okLabel:'Delete',danger:true})))return;const b=firebaseDb.batch();snap.docs.forEach(d=>b.delete(d.ref));await b.commit();fpRenderProblemLog();}));
+    }catch(e){box.append(mk('p','tool-note','Could not load household reports right now.'));}
+  }
+  box.append(mk('p','tool-note','Reports only contain the error text and the screen name. They never include your lists, entries or email address.'));
+}
+window.fpRenderProblemLog=fpRenderProblemLog;
+
+// ================= Phone calendar link (reminders) =================
+// The app keeps one private calendar file up to date in the database. A small free Cloudflare Worker
+// (see calendar-feed/README.md) serves it at a web address your phone's calendar can subscribe to.
+const FP_CALENDAR_FEED_BASE=''; // e.g. https://familyplan-calendar.your-name.workers.dev  (leave empty until the Worker is set up)
+let fpFeedToken=null,fpFeedHash='',fpFeedTimer=null,fpFeedStamp='';
+const fpIcsDate=d=>`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+function fpFeedUrl(token){return FP_CALENDAR_FEED_BASE.replace(/\/+$/,'')+'/'+token+'.ics';}
+function fpFeedVevent(uid,o){
+  const L=['BEGIN:VEVENT',`UID:${uid}@familyplan`,'DTSTAMP:'+fpFeedStamp];
+  if(o.time)L.push(`DTSTART:${o.date}T${o.time}`,`DTEND:${o.date}T${o.endTime}`);
+  else{const nx=new Date(o.date.slice(0,4)+'-'+o.date.slice(4,6)+'-'+o.date.slice(6,8)+'T00:00:00');nx.setDate(nx.getDate()+1);L.push(`DTSTART;VALUE=DATE:${o.date}`,`DTEND;VALUE=DATE:${fpIcsDate(nx)}`);}
+  L.push('SUMMARY:'+fpIcsEscape(o.summary));if(o.rrule)L.push('RRULE:'+o.rrule);
+  (o.alarms||[]).forEach(t=>L.push('BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+fpIcsEscape(o.summary),t,'END:VALARM'));
+  L.push('END:VEVENT');return L;
+}
+function fpBuildFeedIcs(){
+  fpFeedStamp=new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d+Z$/,'Z');
+  const today=new Date();today.setHours(0,0,0,0);
+  const from=new Date(today);from.setDate(from.getDate()-14);const to=new Date(today);to.setFullYear(to.getFullYear()+1);
+  const inRange=iso=>{const d=new Date(iso+'T00:00:00');return !isNaN(d)&&d>=from&&d<=to;};
+  const out=[];
+  Object.entries(calendarEvents||{}).forEach(([key,list])=>{
+    if(!Array.isArray(list))return;
+    list.forEach((ev,i)=>{
+      const raw=String(ev.title||''),yearly=/\[(yearly|birthday)\]/i.test(raw),title=raw.replace(/\s*\[(yearly|birthday)\]\s*/gi,' ').trim()||'FamilyPlan event';
+      if(!inRange(key)&&!yearly)return;
+      const timed=!!ev.time;let end=null;
+      if(timed){const [h,m]=ev.time.split(':').map(Number);end=ev.endTime?ev.endTime.replace(':','')+'00':(h+1>=24?'235900':String(h+1).padStart(2,'0')+String(m).padStart(2,'0')+'00');}
+      out.push(...fpFeedVevent(`ev-${fpSafeId(ev.eventId||key+'-'+i)}-${key}`,{date:key.replace(/-/g,''),time:timed?ev.time.replace(':','')+'00':null,endTime:end,summary:title,rrule:yearly?'FREQ=YEARLY':'',alarms:[timed?'TRIGGER:-PT30M':'TRIGGER;RELATED=START:PT9H']}));
+    });
+  });
+  const billRule={weekly:'FREQ=WEEKLY',monthly:'FREQ=MONTHLY',quarterly:'FREQ=MONTHLY;INTERVAL=3',yearly:'FREQ=YEARLY'};
+  (householdBillsData||[]).forEach(b=>{
+    if(!b.due)return;const rule=billRule[b.frequency]||'';if(!rule&&!inRange(b.due))return;
+    out.push(...fpFeedVevent('bill-'+fpSafeId(b.id||b.name),{date:b.due.replace(/-/g,''),summary:`Bill due: ${b.name} (${moneyGBP(b.amount)})`,rrule:rule,alarms:['TRIGGER:-PT15H','TRIGGER;RELATED=START:PT9H']}));
+  });
+  (renewalsData||[]).forEach(r=>{
+    if(!r.date)return;const rule={yearly:'FREQ=YEARLY',monthly:'FREQ=MONTHLY'}[String(r.frequency||'').toLowerCase()]||'';if(!rule&&!inRange(r.date))return;
+    out.push(...fpFeedVevent('renewal-'+fpSafeId(r.id||r.name),{date:r.date.replace(/-/g,''),summary:`Renewal: ${r.name} (${moneyGBP(r.cost)})`,rrule:rule,alarms:['TRIGGER:-P6DT15H','TRIGGER:-PT15H']}));
+  });
+  const names=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  for(let i=0;i<14;i++){
+    const d=new Date(today);d.setDate(d.getDate()+i);const m=(mealsData||[]).find(x=>x.day===names[d.getDay()]);
+    if(!m||!String(m.meal||'').trim())continue;
+    const cook=m.cook&&m.cook!=='family'?fpDisplayAssignee(m.cook):'';
+    out.push(...fpFeedVevent('dinner-'+fpIcsDate(d),{date:fpIcsDate(d),time:'173000',endTime:'183000',summary:`Dinner: ${String(m.meal).trim()}${cook?' (cook: '+cook+')':''}`,alarms:['TRIGGER:-PT90M']}));
+  }
+  const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//FamilyPlan//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-CALNAME:FamilyPlan','REFRESH-INTERVAL;VALUE=DURATION:PT1H','X-PUBLISHED-TTL:PT1H',...out,'END:VCALENDAR'];
+  return lines.map(fpIcsFold).join('\r\n')+'\r\n';
+}
+async function fpSyncFeed(force){
+  if(!fpFeedToken||!fpIsOwnerOrParent()||!firebaseDb)return;
+  const ics=fpBuildFeedIcs(),key=ics.replace(/DTSTAMP:[^\r\n]*/g,'');
+  if(!force&&key===fpFeedHash)return;
+  if(ics.length>600000){fpLogProblem('calendar feed','Calendar file is too large to publish');return;}
+  try{await firebaseDb.collection('calendarFeeds').doc(fpFeedToken).update({ics,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});fpFeedHash=key;}
+  catch(e){console.warn('Calendar link not updated:',e);}
+}
+function fpScheduleFeedSync(){if(!fpFeedToken||fpFeedTimer)return;fpFeedTimer=setTimeout(()=>{fpFeedTimer=null;fpSyncFeed(false);},8000);}
+function fpNewFeedToken(){return btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(24)))).replace(/\+/g,'-').replace(/\//g,'_');}
+async function fpLoadFeed(){
+  if(!fpIsOwnerOrParent()||!fpHouseholdId||!firebaseDb)return;
+  try{const s=await firebaseDb.collection('calendarFeeds').where('householdId','==',fpHouseholdId).limit(1).get();fpFeedToken=s.empty?null:s.docs[0].id;fpFeedHash='';fpRenderFeedBox();if(fpFeedToken)fpScheduleFeedSync();}
+  catch(e){console.warn('Could not check the calendar link:',e);}
+}
+async function fpEnableFeed(){
+  if(!FP_CALENDAR_FEED_BASE||!fpIsOwnerOrParent())return;
+  const token=fpNewFeedToken();
+  try{await firebaseDb.collection('calendarFeeds').doc(token).set({householdId:fpHouseholdId,ics:fpBuildFeedIcs(),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),createdBy:firebaseUser.uid});fpFeedToken=token;fpFeedHash='';fpRenderFeedBox();showToast('Calendar link created');}
+  catch(e){console.error('Could not create the calendar link:',e);showToast('Could not create the calendar link. Please try again.');}
+}
+async function fpDisableFeed(thenReset){
+  const msg=thenReset?'Make a new link? The old link stops working, so anyone using it (including your own phones) will need the new one.':'Turn off the calendar link? Phones using it will stop receiving updates.';
+  if(!(await fpDialog.confirm(msg,{title:thenReset?'New link':'Turn off',okLabel:thenReset?'Make new link':'Turn off',danger:true})))return;
+  try{await firebaseDb.collection('calendarFeeds').doc(fpFeedToken).delete();fpFeedToken=null;if(thenReset)await fpEnableFeed();else{fpRenderFeedBox();showToast('Calendar link turned off');}}
+  catch(e){console.error(e);showToast('Could not change the calendar link');}
+}
+function fpRenderFeedBox(){
+  const box=document.getElementById('calendar-feed-box');if(!box)return;box.textContent='';
+  const mk=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;};
+  const btn=(label,fn,cls)=>{const b=mk('button',cls||'tool-btn secondary',label);b.type='button';b.onclick=fn;return b;};
+  if(!fpHouseholdId){box.append(mk('p','tool-note','Join or create a household first.'));return;}
+  if(!fpIsOwnerOrParent()){box.append(mk('p','tool-note','Only the household owner or a parent can turn this on.'));return;}
+  if(!FP_CALENDAR_FEED_BASE){box.append(mk('p','tool-note','This needs a one-time free setup (about 10 minutes). The steps are in calendar-feed/README.md. Once the address is added to the app, a button appears here.'));return;}
+  if(!fpFeedToken){box.append(btn('Turn on calendar link',fpEnableFeed,'tool-btn'));return;}
+  const url=fpFeedUrl(fpFeedToken),input=mk('input','auth-input');input.readOnly=true;input.value=url;input.setAttribute('aria-label','Calendar link');input.onfocus=()=>input.select();
+  const row=mk('div','account-actions');
+  const add=mk('a','tool-btn',  'Add to my phone calendar');add.href=url.replace(/^https?:/,'webcal:');add.style.cssText='text-decoration:none;text-align:center;display:inline-block;';
+  row.append(add,btn('Copy link',()=>navigator.clipboard.writeText(url).then(()=>showToast('Link copied')).catch(()=>input.select())));
+  box.append(mk('p','tool-note','Calendar link is on. Reminders: events 30 minutes before, bills the morning before and on the day, renewals a week before, dinner at 4pm.'),input,row,
+    mk('p','tool-note','Google Calendar: on a computer open calendar.google.com, choose Other calendars, then From URL, and paste the link. iPhone: tap Add to my phone calendar. Anyone with this link can see your calendar, so keep it private.'));
+  const row2=mk('div','account-actions');row2.append(btn('Make a new link',()=>fpDisableFeed(true)),btn('Turn off',()=>fpDisableFeed(false)));box.append(row2);
+}
+window.fpEnableFeed=fpEnableFeed;
+
+// ================= First-time setup checklist =================
+function fpSetupSkipped(){try{return JSON.parse(localStorage.getItem('fp_setup_skip_'+fpHouseholdId)||'[]');}catch(e){return [];}}
+function fpGoToAccount(tab,focusId){showView('account',null);fpSetAccountTab(tab);setTimeout(()=>{const el=document.getElementById(focusId);if(el){el.scrollIntoView({block:'center'});el.focus();}},250);}
+function fpSetupItems(){
+  const skipped=fpSetupSkipped();
+  const people=(fpHouseholdMembers||[]).filter(m=>String(m.role||'').toLowerCase()!=='child').length;
+  return [
+    {id:'children',label:'Add your children',done:(fpHouseholdChildren||[]).length>0,go:()=>fpGoToAccount('household','managed-child-name')},
+    {id:'partner',label:'Invite your partner',done:people>1||(window.fpInviteTotal||0)>0,go:()=>fpGoToAccount('household','invite-email')},
+    {id:'meal',label:"Plan this week's dinners",done:(mealsData||[]).some(m=>String(m.meal||'').trim()),go:()=>showView('shopping',document.getElementById('nav-btn-shopping'))},
+    {id:'event',label:'Add your first event',done:Object.values(calendarEvents||{}).some(a=>Array.isArray(a)&&a.length),go:()=>toggleQuickAddModal()}
+  ].map(i=>({...i,skipped:skipped.includes(i.id)}));
+}
+function fpRenderSetupCard(){
+  const card=document.getElementById('setup-card');if(!card)return;
+  const hideKey='fp_setup_hidden_'+fpHouseholdId;
+  if(!fpHouseholdId||!fpIsOwnerOrParent()||localStorage.getItem(hideKey)){card.style.display='none';return;}
+  const items=fpSetupItems(),finished=items.filter(i=>i.done||i.skipped).length;
+  if(finished===items.length){try{localStorage.setItem(hideKey,'1');}catch(e){}card.style.display='none';return;}
+  card.style.display='';card.textContent='';
+  const mk=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;};
+  const head=mk('div','setup-head');head.append(mk('div','card-title','Get your household set up'),mk('small','tool-note',`${finished} of ${items.length} done`));
+  const bar=mk('div','budget-progress');bar.setAttribute('role','progressbar');bar.setAttribute('aria-valuenow',String(Math.round(finished/items.length*100)));bar.setAttribute('aria-label','Setup progress');const fill=mk('div');fill.style.width=Math.round(finished/items.length*100)+'%';bar.append(fill);
+  card.append(head,bar);
+  items.forEach(i=>{
+    const row=mk('div','setup-row'+(i.done||i.skipped?' done':''));
+    row.append(mk('span','setup-tick',i.done?'✓':''),mk('span','setup-label',i.label));
+    if(!i.done&&!i.skipped){
+      const go=mk('button','tool-btn','Do it');go.type='button';go.onclick=i.go;
+      const skip=mk('button','link-btn','Skip');skip.type='button';skip.onclick=()=>{const k='fp_setup_skip_'+fpHouseholdId;localStorage.setItem(k,JSON.stringify([...fpSetupSkipped(),i.id]));fpRenderSetupCard();};
+      row.append(go,skip);
+    }
+    card.append(row);
+  });
+  const hide=mk('button','link-btn','Hide this');hide.type='button';hide.style.marginTop='8px';hide.onclick=()=>{try{localStorage.setItem(hideKey,'1');}catch(e){}fpRenderSetupCard();};card.append(hide);
+}
+window.fpRenderSetupCard=fpRenderSetupCard;
+
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){
   window.addEventListener('load',()=>{
     navigator.serviceWorker.register('sw.js').then(reg=>{
@@ -4933,6 +5149,7 @@ function fpSetAccountTab(tab){
   document.querySelectorAll('#view-account [data-acct]').forEach(el=>{el.style.display=el.dataset.acct===tab?'':'none';});
   document.querySelectorAll('#account-tabs [data-acct-tab]').forEach(b=>{const on=b.dataset.acctTab===tab;b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false');});
   try{sessionStorage.setItem('fp_acct_tab',tab);}catch(e){}
+  if(tab==='data'){try{fpRenderFeedBox();fpRenderProblemLog();}catch(e){}}
 }
 function fpOpenRequests(){showView('account',null);fpSetAccountTab('household');}
 window.fpSetAccountTab=fpSetAccountTab;window.fpOpenRequests=fpOpenRequests;
@@ -4998,6 +5215,7 @@ let fpHouseholdChildren = [];
 function fpRenderMembers(snapshot) {
   setTimeout(fpRenderManagedChildren,0);
   setTimeout(fpSyncLeaveBox,0);
+  setTimeout(fpRenderSetupCard,0);
   const el=document.getElementById('household-members-list');if(!el)return;
   el.innerHTML=snapshot.docs.map(doc=>{
     const m=doc.data(),uid=doc.id,role=String(m.role||'member').toLowerCase();
@@ -5193,6 +5411,8 @@ if (!householdId) {
                 await deleteCollection(householdRef.collection('children'));
                 await deleteCollection(householdRef.collection('invites'));
                 await deleteCollection(firebaseDb.collection('childInvites').where('householdId', '==', householdId));
+                await deleteCollection(firebaseDb.collection('calendarFeeds').where('householdId', '==', householdId));
+                await deleteCollection(householdRef.collection('errorLogs'));
 
                 // Delete membership, household and profile atomically.
                 const batch = firebaseDb.batch();
@@ -5571,6 +5791,7 @@ async function fpPlanTonight() {
 }
 function renderDashboard() {
     fpRenderHero();
+    fpRenderSetupCard();
     const todayStr = fpIsoToday();
     const schedCont = document.getElementById('dash-schedule');
     const todayEvents = fpSortEvents((calendarEvents[todayStr] || []).filter(ev => filterItem(ev.who)));
@@ -7225,6 +7446,7 @@ function exportFamilyPlanData(){const keys=Object.keys(localStorage).filter(k=>k
 async function importFamilyPlanData(e){const file=e.target.files?.[0];if(!file)return;try{const payload=JSON.parse(await file.text());if(payload.app!=='Family Plan'||!payload.data||typeof payload.data!=='object')throw new Error('This does not look like a Family Plan backup.');if(!(await fpDialog.confirm('Importing will update matching Family Plan data in this browser. Existing data keys not included in the backup will be kept. Export a backup first.',{title:'Import backup',okLabel:'Import'})))return;Object.entries(payload.data).forEach(([key,value])=>{if(/^fam_[a-z0-9_]+$/i.test(key))localStorage.setItem(key,typeof value==='string'?value:JSON.stringify(value));});mealsData=fpSafeParse(localStorage.getItem('fam_meals'))||mealsData;foodShopData=fpSafeParse(localStorage.getItem('fam_foodshop'))||[];familyShopData=fpSafeParse(localStorage.getItem('fam_familyshop'))||[];destinationsData=fpSafeParse(localStorage.getItem('fam_destinations'))||destinationsData;choresData=fpSafeParse(localStorage.getItem('fam_chores'))||[];wishlistData=fpSafeParse(localStorage.getItem('fam_wishlist'))||[];todosData=fpSafeParse(localStorage.getItem('fam_todos'))||[];calendarEvents=fpSafeParse(localStorage.getItem('fam_calendar'))||{};householdBillsData=fpSafeParse(localStorage.getItem('fam_bills'))||[];monthlyBudgetsData=fpSafeParse(localStorage.getItem('fam_monthly_budgets'))||[];renewalsData=fpSafeParse(localStorage.getItem('fam_renewals'))||[];familyIdeasData=fpSafeParse(localStorage.getItem('fam_ideas'))||[];handoverData=fpSafeParse(localStorage.getItem('fam_handover'))||[];occasionsData=fpSafeParse(localStorage.getItem('fam_occasions'))||[];addressBookData=fpSafeParse(localStorage.getItem('fam_address_book'))||[];unplannedSpendingData=fpSafeParse(localStorage.getItem('fam_unplanned_spending'))||[];householdMonthlyBudget=Number(localStorage.getItem('fam_household_monthly_budget'))||1500;saveData();renderAllViews();renderFamilyTools();document.getElementById('backup-status').textContent='Backup imported. Matching data keys were updated; data keys not included in the backup were kept.';showToast('Family Plan backup restored');}catch(err){document.getElementById('backup-status').textContent='Import failed: '+(err&&err.message?err.message:'Unknown error');}finally{e.target.value='';}}
 
 function renderAllViews() {
+    fpScheduleFeedSync();
     setCalendarPage(calendarPageMode);
     renderMeals();
     renderShopping();
