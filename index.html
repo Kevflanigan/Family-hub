@@ -1984,6 +1984,17 @@ html[data-theme="dark"] .meal-input-inline:focus { background:transparent !impor
 .fp-update-banner { position:fixed; left:50%; transform:translateX(-50%); bottom:calc(150px + env(safe-area-inset-bottom, 0px)); z-index:5500; display:flex; align-items:center; gap:12px; background:#244c50; color:#fff; padding:8px 8px 8px 16px; border-radius:999px; font-weight:600; box-shadow:var(--shadow-raised); max-width:calc(100vw - 24px); }
 .fp-update-banner[hidden] { display:none; }
 .fp-update-banner button { min-height:44px; min-width:44px; border:0; border-radius:999px; background:#9fe3d4; color:#10282b; font:inherit; font-weight:800; padding:0 16px; cursor:pointer; }
+
+/* ===== Account page tidy-up ===== */
+.acct-head{display:flex!important;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px!important}
+.acct-head .card-title{margin:0!important}
+.acct-head .tool-note{margin:2px 0 0!important;font-size:.75rem;font-weight:600}
+.acct-signout{margin:0!important;white-space:nowrap;flex-shrink:0}
+#household-management-section{padding-top:14px}
+.household-settings-box{padding:4px 14px 14px}
+.household-settings-box h4{margin:18px 0 6px;padding-top:16px;border-top:1px solid var(--border,#dfe9e4);font-size:1rem}
+.household-settings-box > h4:first-child,.household-settings-box > div:first-child + h4,#household-invite-box > h4:first-child{border-top:0;padding-top:0;margin-top:10px}
+.household-settings-box .tool-note{margin:0 0 8px}
 </style>
 </head>
 <body>
@@ -2053,7 +2064,7 @@ html[data-theme="dark"] .meal-input-inline:focus { background:transparent !impor
           </form>
           <div class="auth-message" id="auth-message" role="status" aria-live="polite"></div>
           <button class="auth-secondary" type="button" onclick="window.fpShowChildGate()">Child joining a family?</button>
-          <p class="auth-small" id="auth-version-label">Version 2.9 · build 2026-11-21.2</p>
+          <p class="auth-small" id="auth-version-label">Version 2.35 · build 2026-11-24.2</p>
           <p class="auth-small">Each adult or family member has their own account. Signing in with Google or Microsoft skips the email check. If you use an email and password instead, verify your email first. Then create a household or join one with an invitation code.</p>
         </div>
 
@@ -2700,7 +2711,10 @@ html[data-theme="dark"] .meal-input-inline:focus { background:transparent !impor
 
     <!-- Account page -->
     <div id="view-account" class="view">
-        <section class="card"><div class="card-title">⚙️ Account</div><p class="tool-note">Your profile, household and data.</p><p class="tool-note" id="app-version-label" style="margin-top:8px;font-weight:700;">Version 2.9 · build 2026-11-21.2</p><button type="button" class="tool-btn secondary" style="margin-top:10px;" onclick="fpSignOut()">Sign out</button></section>
+        <section class="card acct-head">
+            <div class="acct-head-text"><div class="card-title">⚙️ Account</div><p class="tool-note" id="app-version-label">Version 2.35 · build 2026-11-24.2</p></div>
+            <button type="button" class="tool-btn secondary acct-signout" onclick="fpSignOut()">Sign out</button>
+        </section>
 <div class="calendar-main-tabs" role="tablist" aria-label="Account sections" id="account-tabs">
   <button type="button" class="cal-main-tab" role="tab" data-acct-tab="household" onclick="fpSetAccountTab('household')">🏡 Household <span id="acct-tab-badge" class="req-badge inline" hidden>0</span></button>
   <button type="button" class="cal-main-tab" role="tab" data-acct-tab="me" onclick="fpSetAccountTab('me')"><svg class="fp-person" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4.2"/><path d="M3.8 21c0-4.4 3.7-7.2 8.2-7.2s8.2 2.8 8.2 7.2z"/></svg> Me</button>
@@ -2714,10 +2728,9 @@ html[data-theme="dark"] .meal-input-inline:focus { background:transparent !impor
                 
                 <div id="household-invite-box" style="display:none;">
                     <h4>Children</h4>
-                    <p class="tool-note">Children never need an email or password. Add a profile for each child. If a child has their own phone, tap “Set up own device” on their profile to make a one-time code.</p>
-                    <div id="managed-child-box" style="margin-top:16px;">
-                        <h4>Add a child without a phone</h4>
-                        <p class="tool-note">Create a household profile for a younger child. They do not need an email address, password or login. The profile can be assigned chores and planner items.</p>
+                    <p class="tool-note">Children never need an email or password. A child with their own phone gets a one-time code from their profile.</p>
+                    <div id="managed-child-box" style="margin-top:8px;">
+                        
                         <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;">
                             <label class="field-stack" style="flex:1;min-width:130px;"><span>Child's name</span><input class="auth-input" id="managed-child-name" type="text" maxlength="40" placeholder="First name"></label>
                             <label class="field-stack"><span>Age group</span><select class="auth-input" id="managed-child-type" style="width:auto;min-width:120px;"><option value="toddler">Toddler</option><option value="child" selected>Child</option><option value="teen">Teen</option></select></label>
@@ -2728,7 +2741,7 @@ html[data-theme="dark"] .meal-input-inline:focus { background:transparent !impor
                         <div id="managed-children-list" class="household-management-list"></div>
                     </div>
                     <h4>Invite an adult</h4>
-                    <p class="tool-note">Each invitation works once, only for the email address you enter, and expires after 7 days. The person still needs your approval to join.</p>
+                    <p class="tool-note">Works once, only for that email address, and expires in 7 days. You approve them before they join.</p>
                     <div style="display:flex;gap:8px;align-items:flex-end;"><label class="field-stack" style="flex:1;min-width:0;"><span>Their email address</span><input class="auth-input" id="invite-email" type="email" autocomplete="off" placeholder="their@email.com"></label><button type="button" class="tool-btn" onclick="fpCreateInvite()">Create invite</button></div>
                     <div id="invite-result" class="tool-note" style="margin-top:8px;"></div>
                     <div id="household-invites-list" class="household-management-list"></div>
@@ -4765,7 +4778,7 @@ async function fpApproveJoinRequest(uid,approve){
 }
 window.fpApproveJoinRequest=fpApproveJoinRequest;
 
-const FP_VERSION='2.34',FP_BUILD='2026-11-24.1';
+const FP_VERSION='2.35',FP_BUILD='2026-11-24.2';
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){
   window.addEventListener('load',()=>{
     navigator.serviceWorker.register('sw.js').then(reg=>{
@@ -7043,7 +7056,7 @@ function renderFinanceOverview(){
 
     const upcoming=document.getElementById('finance-upcoming-list');
     if(upcoming){
-        const items=[...householdBillsData.filter(x=>x.due).map(x=>({name:x.name,date:x.due,detail:`Payment · ${moneyGBP(x.amount)} · ${x.frequency}`})),...renewalsData.filter(x=>x.date).map(x=>({name:x.date,date:x.date,detail:`Renewal · ${moneyGBP(x.cost)} · ${x.frequency}`}))].filter(x=>x.date>=fpIsoToday()).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,6);
+        const items=[...householdBillsData.filter(x=>x.due).map(x=>({name:x.name,date:x.due,detail:`Payment · ${moneyGBP(x.amount)} · ${x.frequency}`})),...renewalsData.filter(x=>x.date).map(x=>({name:x.name||'Renewal',date:x.date,detail:`Renewal · ${moneyGBP(x.cost)} · ${x.frequency}`}))].filter(x=>x.date>=fpIsoToday()).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,6);
         upcoming.innerHTML=items.length?items.map(x=>`<div class="tool-row"><div><strong>${escapeToolText(x.name)}</strong><small>${dateLabel(x.date)} · ${escapeToolText(x.detail)}</small></div></div>`).join(''):'<p class="tool-note">No upcoming payments recorded yet.</p>';
     }
 }
