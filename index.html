@@ -1980,6 +1980,10 @@ html[data-theme="dark"] .meal-input-inline:focus { background:transparent !impor
 .auth-social-btn:disabled { opacity:.6; }
 .auth-or { display:flex; align-items:center; gap:10px; color:var(--muted); font-size:.85rem; margin:2px 0 4px; }
 .auth-or::before, .auth-or::after { content:""; flex:1; height:1px; background:var(--border); }
+
+.fp-update-banner { position:fixed; left:50%; transform:translateX(-50%); bottom:calc(150px + env(safe-area-inset-bottom, 0px)); z-index:5500; display:flex; align-items:center; gap:12px; background:#244c50; color:#fff; padding:8px 8px 8px 16px; border-radius:999px; font-weight:600; box-shadow:var(--shadow-raised); max-width:calc(100vw - 24px); }
+.fp-update-banner[hidden] { display:none; }
+.fp-update-banner button { min-height:44px; min-width:44px; border:0; border-radius:999px; background:#9fe3d4; color:#10282b; font:inherit; font-weight:800; padding:0 16px; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -2346,6 +2350,7 @@ html[data-theme="dark"] .meal-input-inline:focus { background:transparent !impor
     </div>
 </div>
 
+    <div id="fp-update-banner" class="fp-update-banner" role="status" hidden><span>A new version is ready.</span><button type="button" id="fp-update-btn">Refresh</button></div>
     <div id="fp-net-banner" class="fp-net-banner" role="status" aria-live="polite" hidden>You're offline. Changes will sync when you're back online.</div>
 
     <!-- VIEW 0: HOME DASHBOARD -->
@@ -3397,9 +3402,9 @@ function toggleQuickAddModal() {
     const modal = document.getElementById('quick-add-modal');
     modal.classList.toggle('active');
     if (modal.classList.contains('active')) {
-        document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
+        document.getElementById('add-date').value = fpIsoToday();
         document.getElementById('add-end-date').value = '';
-        if(document.getElementById('handover-date')) document.getElementById('handover-date').value = new Date().toISOString().slice(0,10);
+        if(document.getElementById('handover-date')) document.getElementById('handover-date').value = fpIsoToday();
     }
 }
 // ---------------------------------------------------------------------------
@@ -4760,10 +4765,67 @@ async function fpApproveJoinRequest(uid,approve){
 }
 window.fpApproveJoinRequest=fpApproveJoinRequest;
 
-const FP_VERSION='2.33',FP_BUILD='2026-11-23.6';
+const FP_VERSION='2.34',FP_BUILD='2026-11-24.1';
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){
-  window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(e=>console.warn('Offline support unavailable:',e));});
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js').then(reg=>{
+      const offer=worker=>{
+        const bar=document.getElementById('fp-update-banner');if(!bar||!bar.hidden)return;
+        bar.hidden=false;
+        document.getElementById('fp-update-btn').onclick=()=>{
+          let reloaded=false;const go=()=>{if(!reloaded){reloaded=true;location.reload();}};
+          navigator.serviceWorker.addEventListener('controllerchange',go);
+          try{worker.postMessage({type:'SKIP_WAITING'});}catch(e){}
+          setTimeout(go,1500);
+        };
+      };
+      if(reg.waiting&&navigator.serviceWorker.controller)offer(reg.waiting);
+      reg.addEventListener('updatefound',()=>{
+        const nw=reg.installing;if(!nw)return;
+        nw.addEventListener('statechange',()=>{if(nw.state==='installed'&&navigator.serviceWorker.controller)offer(nw);});
+      });
+      document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')reg.update().catch(()=>{});});
+      setInterval(()=>reg.update().catch(()=>{}),30*60*1000);
+    }).catch(e=>console.warn('Offline support unavailable:',e));
+  });
 }
+/* Modals: Escape closes, Tab stays inside, focus goes back to what opened it */
+(function(){
+  const closers={
+    'day-detail-bubble':()=>closeDayPopover(),
+    'edit-event-modal':()=>closeEditEvent(),
+    'edit-address-modal':()=>closeEditAddress(),
+    'edit-item-modal':()=>closeEditToolItem(),
+    'quick-add-modal':()=>toggleQuickAddModal(),
+    'join-request-modal':()=>fpCloseJoinRequestModal()
+  };
+  const stack=[];
+  const FOCUSABLE='a[href],button:not([disabled]),input:not([disabled]):not([type=hidden]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+  const visible=el=>el.getClientRects().length>0;
+  function onOpen(el){
+    if(stack.some(x=>x.el===el))return;
+    stack.push({el,opener:document.activeElement});
+    setTimeout(()=>{if(!el.contains(document.activeElement)){const f=[...el.querySelectorAll(FOCUSABLE)].filter(visible)[0];if(f)f.focus();}},80);
+  }
+  function onClose(el){
+    const i=stack.findIndex(x=>x.el===el);if(i<0)return;
+    const opener=stack.splice(i,1)[0].opener;
+    if(opener&&opener!==document.body&&document.contains(opener)&&visible(opener)){try{opener.focus();}catch(e){}}
+  }
+  const obs=new MutationObserver(list=>list.forEach(m=>{const el=m.target;if(!closers[el.id])return;el.classList.contains('active')?onOpen(el):onClose(el);}));
+  Object.keys(closers).forEach(id=>{const el=document.getElementById(id);if(el)obs.observe(el,{attributes:true,attributeFilter:['class']});});
+  document.addEventListener('keydown',e=>{
+    const top=stack[stack.length-1];
+    if(!top||document.querySelector('.fp-dialog-backdrop'))return;
+    if(e.key==='Escape'){e.preventDefault();closers[top.el.id]();return;}
+    if(e.key==='Tab'){
+      const f=[...top.el.querySelectorAll(FOCUSABLE)].filter(visible);if(!f.length)return;
+      const first=f[0],last=f[f.length-1],inside=top.el.contains(document.activeElement);
+      if(e.shiftKey&&(!inside||document.activeElement===first)){e.preventDefault();last.focus();}
+      else if(!e.shiftKey&&(!inside||document.activeElement===last)){e.preventDefault();first.focus();}
+    }
+  });
+})();
 /* Accessible names for unlabeled fields/buttons, and theme-colour + offline handling */
 (function(){
   const NAMES={'bill-frequency':'How often','bill-category':'Bill category','renewal-frequency':'How often','idea-category':'Idea category','managed-child-type':'Child type','voice-add-category':'Category','voice-review-category':'Category','voice-review-assignee':'Assign to','add-category':'Category','add-assignee':'Assign to','add-recurring':'Repeats'};
@@ -5496,7 +5558,7 @@ async function fpPlanTonight() {
 }
 function renderDashboard() {
     fpRenderHero();
-    const todayStr = new Date().toISOString().split('T')[0];
+    const todayStr = fpIsoToday();
     const schedCont = document.getElementById('dash-schedule');
     const todayEvents = fpSortEvents((calendarEvents[todayStr] || []).filter(ev => filterItem(ev.who)));
     if (todayEvents.length === 0) {
@@ -6924,7 +6986,7 @@ function addUnplannedSpend(e){
     unplannedSpendingData.sort((a,b)=>a.date.localeCompare(b.date));
     saveData();
     e.target.reset();
-    document.getElementById('unplanned-date').value = new Date().toISOString().slice(0,10);
+    document.getElementById('unplanned-date').value = fpIsoToday();
     renderUnplannedSpending();
     renderFinanceOverview();
     showToast('Spending entry added');
@@ -6981,7 +7043,7 @@ function renderFinanceOverview(){
 
     const upcoming=document.getElementById('finance-upcoming-list');
     if(upcoming){
-        const items=[...householdBillsData.filter(x=>x.due).map(x=>({name:x.name,date:x.due,detail:`Payment · ${moneyGBP(x.amount)} · ${x.frequency}`})),...renewalsData.filter(x=>x.date).map(x=>({name:x.date,date:x.date,detail:`Renewal · ${moneyGBP(x.cost)} · ${x.frequency}`}))].filter(x=>x.date>=new Date().toISOString().slice(0,10)).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,6);
+        const items=[...householdBillsData.filter(x=>x.due).map(x=>({name:x.name,date:x.due,detail:`Payment · ${moneyGBP(x.amount)} · ${x.frequency}`})),...renewalsData.filter(x=>x.date).map(x=>({name:x.date,date:x.date,detail:`Renewal · ${moneyGBP(x.cost)} · ${x.frequency}`}))].filter(x=>x.date>=fpIsoToday()).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,6);
         upcoming.innerHTML=items.length?items.map(x=>`<div class="tool-row"><div><strong>${escapeToolText(x.name)}</strong><small>${dateLabel(x.date)} · ${escapeToolText(x.detail)}</small></div></div>`).join(''):'<p class="tool-note">No upcoming payments recorded yet.</p>';
     }
 }
@@ -7009,7 +7071,7 @@ function renderBills(){
 function addHouseholdBill(e){e.preventDefault();const name=document.getElementById('bill-name').value.trim();const amount=Number(document.getElementById('bill-amount').value);if(!name||!Number.isFinite(amount)||amount<0)return;householdBillsData.push({id:crypto.randomUUID(),name,amount,frequency:document.getElementById('bill-frequency').value,due:document.getElementById('bill-due').value,category:document.getElementById('bill-category').value});saveData();e.target.reset();renderBills();showToast('Household bill added');}
 function addRenewal(e){e.preventDefault();renewalsData.push({id:crypto.randomUUID(),name:document.getElementById('renewal-name').value.trim(),cost:Number(document.getElementById('renewal-cost').value)||0,date:document.getElementById('renewal-date').value,frequency:document.getElementById('renewal-frequency').value});saveData();e.target.reset();renderEnhancementLists();showToast('Renewal added');}
 function addFamilyIdea(e){e.preventDefault();familyIdeasData.push({id:crypto.randomUUID(),name:document.getElementById('idea-name').value.trim(),category:document.getElementById('idea-category').value,notes:document.getElementById('idea-notes').value.trim(),createdAt:new Date().toISOString()});saveData();e.target.reset();renderEnhancementLists();showToast('Idea saved');}
-function saveHandover(e){e.preventDefault();handoverData.push({id:crypto.randomUUID(),date:document.getElementById('handover-date').value,person:document.getElementById('handover-person').value.trim(),notes:document.getElementById('handover-notes').value.trim()});saveData();e.target.reset();document.getElementById('handover-date').value=new Date().toISOString().slice(0,10);renderEnhancementLists();showToast('Handover note added');}
+function saveHandover(e){e.preventDefault();handoverData.push({id:crypto.randomUUID(),date:document.getElementById('handover-date').value,person:document.getElementById('handover-person').value.trim(),notes:document.getElementById('handover-notes').value.trim()});saveData();e.target.reset();document.getElementById('handover-date').value=fpIsoToday();renderEnhancementLists();showToast('Handover note added');}
 function addFamilyOccasion(e){e.preventDefault();occasionsData.push({id:crypto.randomUUID(),name:document.getElementById('occasion-name').value.trim(),date:document.getElementById('occasion-date').value,notes:document.getElementById('occasion-notes').value.trim()});saveData();e.target.reset();renderEnhancementLists();showToast('Occasion added');}
 const FP_TOOL_EDIT={
   bills:{title:'Edit bill or payment',arr:()=>householdBillsData,after:()=>renderBills(),fields:[
@@ -7146,7 +7208,7 @@ function renderAddressBook(){const list=document.getElementById('address-book-li
 function renderEnhancementLists(){renderSimpleToolList('renewals-list',renewalsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${moneyGBP(x.cost)} · ${escapeToolText(x.frequency)} · Renewal: ${dateLabel(x.date)}</small>`,'renewals','No renewals tracked yet.');renderSimpleToolList('family-ideas-list',familyIdeasData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${escapeToolText(x.category)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'ideas','Your saved family ideas will appear here.');renderSimpleToolList('handover-list',handoverData,x=>`<strong>${dateLabel(x.date)}${x.person&&x.person!=='family'?' · '+escapeToolText(fpDisplayAssignee(x.person)==='Unassigned'?x.person:fpDisplayAssignee(x.person)):''}</strong><small>${escapeToolText(x.notes)}</small>`,'handover','No handover notes yet.');renderSimpleToolList('family-occasions-list',occasionsData,x=>`<strong>${escapeToolText(x.name)}</strong><small>${dateLabel(x.date)}${x.notes?' · '+escapeToolText(x.notes):''}</small>`,'occasions','No occasions added yet.');renderAddressBook();renderFinanceOverview();}
 function renderFamilyTools(){renderWeeklyPlanner();renderBills();renderEnhancementLists();}
 
-function exportFamilyPlanData(){const keys=Object.keys(localStorage).filter(k=>k.startsWith('fam_')).sort();const payload={app:'Family Plan',formatVersion:2,exportedAt:new Date().toISOString(),data:{}};keys.forEach(k=>{const raw=localStorage.getItem(k);if(raw!==null){try{payload.data[k]=JSON.parse(raw)}catch{payload.data[k]=raw}}});const addressCount=Array.isArray(payload.data.fam_address_book)?payload.data.fam_address_book.length:0;const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.getElementById('a');a.href=url;a.download=`family-plan-backup-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);document.getElementById('backup-status').textContent=`Backup exported: ${keys.length} data/settings items, including ${addressCount} saved address(es). Keep this file somewhere safe.`}
+function exportFamilyPlanData(){const keys=Object.keys(localStorage).filter(k=>k.startsWith('fam_')).sort();const payload={app:'Family Plan',formatVersion:2,exportedAt:new Date().toISOString(),data:{}};keys.forEach(k=>{const raw=localStorage.getItem(k);if(raw!==null){try{payload.data[k]=JSON.parse(raw)}catch{payload.data[k]=raw}}});const addressCount=Array.isArray(payload.data.fam_address_book)?payload.data.fam_address_book.length:0;const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.getElementById('a');a.href=url;a.download=`family-plan-backup-${fpIsoToday()}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);document.getElementById('backup-status').textContent=`Backup exported: ${keys.length} data/settings items, including ${addressCount} saved address(es). Keep this file somewhere safe.`}
 async function importFamilyPlanData(e){const file=e.target.files?.[0];if(!file)return;try{const payload=JSON.parse(await file.text());if(payload.app!=='Family Plan'||!payload.data||typeof payload.data!=='object')throw new Error('This does not look like a Family Plan backup.');if(!(await fpDialog.confirm('Importing will update matching Family Plan data in this browser. Existing data keys not included in the backup will be kept. Export a backup first.',{title:'Import backup',okLabel:'Import'})))return;Object.entries(payload.data).forEach(([key,value])=>{if(/^fam_[a-z0-9_]+$/i.test(key))localStorage.setItem(key,typeof value==='string'?value:JSON.stringify(value));});mealsData=fpSafeParse(localStorage.getItem('fam_meals'))||mealsData;foodShopData=fpSafeParse(localStorage.getItem('fam_foodshop'))||[];familyShopData=fpSafeParse(localStorage.getItem('fam_familyshop'))||[];destinationsData=fpSafeParse(localStorage.getItem('fam_destinations'))||destinationsData;choresData=fpSafeParse(localStorage.getItem('fam_chores'))||[];wishlistData=fpSafeParse(localStorage.getItem('fam_wishlist'))||[];todosData=fpSafeParse(localStorage.getItem('fam_todos'))||[];calendarEvents=fpSafeParse(localStorage.getItem('fam_calendar'))||{};householdBillsData=fpSafeParse(localStorage.getItem('fam_bills'))||[];monthlyBudgetsData=fpSafeParse(localStorage.getItem('fam_monthly_budgets'))||[];renewalsData=fpSafeParse(localStorage.getItem('fam_renewals'))||[];familyIdeasData=fpSafeParse(localStorage.getItem('fam_ideas'))||[];handoverData=fpSafeParse(localStorage.getItem('fam_handover'))||[];occasionsData=fpSafeParse(localStorage.getItem('fam_occasions'))||[];addressBookData=fpSafeParse(localStorage.getItem('fam_address_book'))||[];unplannedSpendingData=fpSafeParse(localStorage.getItem('fam_unplanned_spending'))||[];householdMonthlyBudget=Number(localStorage.getItem('fam_household_monthly_budget'))||1500;saveData();renderAllViews();renderFamilyTools();document.getElementById('backup-status').textContent='Backup imported. Matching data keys were updated; data keys not included in the backup were kept.';showToast('Family Plan backup restored');}catch(err){document.getElementById('backup-status').textContent='Import failed: '+(err&&err.message?err.message:'Unknown error');}finally{e.target.value='';}}
 
 function renderAllViews() {
@@ -7164,9 +7226,9 @@ function renderAllViews() {
     renderUnplannedSpending();
 }
 
-document.getElementById('add-date').value = new Date().toISOString().split('T')[0];
-if(document.getElementById('handover-date')) document.getElementById('handover-date').value = new Date().toISOString().slice(0,10);
-if(document.getElementById('unplanned-date')) document.getElementById('unplanned-date').value = new Date().toISOString().slice(0,10);
+document.getElementById('add-date').value = fpIsoToday();
+if(document.getElementById('handover-date')) document.getElementById('handover-date').value = fpIsoToday();
+if(document.getElementById('unplanned-date')) document.getElementById('unplanned-date').value = fpIsoToday();
 
 updateHeaderDisplay();
 setTodoScope('family');
