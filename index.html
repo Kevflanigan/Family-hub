@@ -1967,6 +1967,13 @@ html[data-theme="dark"] .meal-input-inline:focus { background:transparent !impor
 .shopping-item input[type="checkbox"]::before, .compact-scoped-checkbox::before, .dashboard-task-checkbox::before, .todo-divider-item > input[type=checkbox]::before { content:""; position:absolute; top:50%; left:50%; width:44px; height:44px; transform:translate(-50%,-50%); }
 .compact-scoped-tag, .todo-person-name, .todo-divider-title[role="button"] { padding-top:14px; padding-bottom:14px; margin-top:-14px; margin-bottom:-14px; }
 .todo-person-name { min-width:44px; text-align:center; }
+
+/* Day popup: title gets the full width, tag and buttons sit on a row beneath */
+.bubble-event-item { flex-wrap:wrap; }
+.bubble-event-title { flex:1 1 100%; min-width:0; word-break:normal; overflow-wrap:anywhere; }
+.bubble-event-item > div:last-child { flex:1 1 100%; justify-content:flex-end; }
+.bubble-event-item > div:last-child .compact-scoped-tag { margin:0 auto 0 0; padding:5px 12px; min-height:0; }
+#bubble-events-list { max-height:min(52vh, 380px) !important; }
 </style>
 </head>
 <body>
@@ -2115,7 +2122,7 @@ html[data-theme="dark"] .meal-input-inline:focus { background:transparent !impor
                 </div>
                 <div style="display:flex;gap:8px;margin-top:14px;">
                     <button type="button" class="tool-btn secondary" onclick="closeEditEvent()">Cancel</button>
-                    <button type="submit" class="tool-btn wide">Save changes</button>
+                    <button type="submit" class="tool-btn wide" style="flex:1;">Save changes</button>
                 </div>
             </form>
         </div>
@@ -2137,7 +2144,24 @@ html[data-theme="dark"] .meal-input-inline:focus { background:transparent !impor
                 <input id="edit-address-postcode" type="text" class="form-input input-full" maxlength="20" required autocomplete="off" autocapitalize="characters" enterkeyhint="done">
                 <div style="display:flex;gap:8px;margin-top:14px;">
                     <button type="button" class="tool-btn secondary" onclick="closeEditAddress()">Cancel</button>
-                    <button type="submit" class="tool-btn wide">Save changes</button>
+                    <button type="submit" class="tool-btn wide" style="flex:1;">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Item Modal (bills, renewals, ideas, handover notes, occasions) -->
+    <div id="edit-item-modal" class="modal-overlay" onclick="if(event.target === this) closeEditToolItem()">
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="edit-item-heading">
+            <div class="card-header" style="margin-bottom:8px;">
+                <div class="card-title" id="edit-item-heading">Edit entry</div>
+                <button type="button" class="bubble-close-btn" aria-label="Close" onclick="closeEditToolItem()">✕</button>
+            </div>
+            <form onsubmit="return fpSaveEditedToolItem(event)">
+                <div id="edit-item-fields" style="display:flex;flex-direction:column;gap:10px;"></div>
+                <div style="display:flex;gap:8px;margin-top:14px;">
+                    <button type="button" class="tool-btn secondary" onclick="closeEditToolItem()">Cancel</button>
+                    <button type="submit" class="tool-btn wide" style="flex:1;">Save changes</button>
                 </div>
             </form>
         </div>
@@ -4665,7 +4689,7 @@ async function fpApproveJoinRequest(uid,approve){
 }
 window.fpApproveJoinRequest=fpApproveJoinRequest;
 
-const FP_VERSION='2.30',FP_BUILD='2026-11-23.3';
+const FP_VERSION='2.32',FP_BUILD='2026-11-23.5';
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){
   window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(e=>console.warn('Offline support unavailable:',e));});
 }
@@ -6898,12 +6922,13 @@ function renderBills(){
     document.getElementById('bills-monthly-total').innerHTML=`${moneyGBP(total)} <span style="font-size:.75rem;font-weight:600">monthly equivalent</span>`;
     list.innerHTML=householdBillsData.length?householdBillsData.map((b,i)=>`
         <div class="tool-row">
-            <div>
+            <div role="button" tabindex="0" title="Tap to edit" style="cursor:pointer" onclick="openEditToolItem('bills',${i})" onkeydown="if(event.key==='Enter'){openEditToolItem('bills',${i});}">
                 <strong>${escapeToolText(b.name)}</strong>
                 <small>${escapeToolText(b.category)} · ${moneyGBP(b.amount)} ${escapeToolText(b.frequency)} · Next: ${dateLabel(b.due)}</small>
             </div>
-            <div>
-                <button onclick="deleteToolItem('bills',${i})">✕</button>
+            <div style="display:flex;gap:4px;">
+                <button type="button" aria-label="Edit ${escapeToolText(b.name)}" title="Edit" onclick="openEditToolItem('bills',${i})">✏️</button>
+                <button type="button" aria-label="Delete ${escapeToolText(b.name)}" onclick="deleteToolItem('bills',${i})">✕</button>
             </div>
         </div>
     `).join(''):'<p class="tool-note">No household bills added yet.</p>';
@@ -6915,8 +6940,99 @@ function addRenewal(e){e.preventDefault();renewalsData.push({id:crypto.randomUUI
 function addFamilyIdea(e){e.preventDefault();familyIdeasData.push({id:crypto.randomUUID(),name:document.getElementById('idea-name').value.trim(),category:document.getElementById('idea-category').value,notes:document.getElementById('idea-notes').value.trim(),createdAt:new Date().toISOString()});saveData();e.target.reset();renderEnhancementLists();showToast('Idea saved');}
 function saveHandover(e){e.preventDefault();handoverData.push({id:crypto.randomUUID(),date:document.getElementById('handover-date').value,person:document.getElementById('handover-person').value.trim(),notes:document.getElementById('handover-notes').value.trim()});saveData();e.target.reset();document.getElementById('handover-date').value=new Date().toISOString().slice(0,10);renderEnhancementLists();showToast('Handover note added');}
 function addFamilyOccasion(e){e.preventDefault();occasionsData.push({id:crypto.randomUUID(),name:document.getElementById('occasion-name').value.trim(),date:document.getElementById('occasion-date').value,notes:document.getElementById('occasion-notes').value.trim()});saveData();e.target.reset();renderEnhancementLists();showToast('Occasion added');}
+const FP_TOOL_EDIT={
+  bills:{title:'Edit bill or payment',arr:()=>householdBillsData,after:()=>renderBills(),fields:[
+    {k:'name',label:'Bill name',type:'text',req:true,max:100},
+    {k:'amount',label:'Amount (£)',type:'number',req:true},
+    {k:'frequency',label:'How often',type:'select',options:[['monthly','Monthly'],['weekly','Weekly'],['quarterly','Quarterly'],['yearly','Yearly']]},
+    {k:'due',label:'Next payment date',type:'date'},
+    {k:'category',label:'Category',type:'select',options:['Utilities','Mortgage / Rent','Insurance','Vehicle','Communications','Subscriptions','Other']}]},
+  renewals:{title:'Edit renewal',arr:()=>renewalsData,after:()=>renderEnhancementLists(),fields:[
+    {k:'name',label:'Renewal name',type:'text',req:true,max:100},
+    {k:'cost',label:'Cost (£)',type:'number'},
+    {k:'date',label:'Renewal date',type:'date',req:true},
+    {k:'frequency',label:'How often',type:'select',options:['Yearly','Monthly','Other']}]},
+  ideas:{title:'Edit idea',arr:()=>familyIdeasData,after:()=>renderEnhancementLists(),fields:[
+    {k:'name',label:'Idea',type:'text',req:true,max:150},
+    {k:'category',label:'Type',type:'select',options:['Day out','Restaurant','Holiday','Film / TV','Gift','Buy','Other']},
+    {k:'notes',label:'Notes (optional)',type:'text',max:300}]},
+  handover:{title:'Edit handover note',arr:()=>handoverData,after:()=>renderEnhancementLists(),fields:[
+    {k:'date',label:'Handover date',type:'date',req:true},
+    {k:'person',label:"Who's taking over?",type:'person'},
+    {k:'notes',label:'Handover note',type:'textarea',req:true,max:1000}]},
+  occasions:{title:'Edit occasion',arr:()=>occasionsData,after:()=>renderEnhancementLists(),fields:[
+    {k:'name',label:'Occasion',type:'text',req:true,max:100},
+    {k:'date',label:'Date',type:'date',req:true},
+    {k:'notes',label:'Notes (optional)',type:'text',max:300}]}
+};
+let fpEditingTool=null;
+function openEditToolItem(type,i){
+  const cfg=FP_TOOL_EDIT[type];if(!cfg)return;
+  const item=cfg.arr()[i];if(!item)return;
+  if(!item.id)item.id=crypto.randomUUID();
+  fpEditingTool={type,id:item.id};
+  document.getElementById('edit-item-heading').textContent=cfg.title;
+  const box=document.getElementById('edit-item-fields');box.innerHTML='';
+  cfg.fields.forEach(f=>{
+    const wrap=document.createElement('label');wrap.className='field-stack';
+    const sp=document.createElement('span');sp.textContent=f.label;wrap.appendChild(sp);
+    let el;
+    if(f.type==='select'||f.type==='person'){
+      el=document.createElement('select');el.className='form-select input-full';
+      let opts=f.type==='person'?fpAssignmentOptions().map(v=>[v,v==='family'?'Family (everyone)':fpDisplayAssignee(v)]):f.options.map(o=>Array.isArray(o)?o:[o,o]);
+      const cur=item[f.k];
+      if(cur!==undefined&&cur!==''&&!opts.some(o=>o[0]===cur))opts=opts.concat([[cur,f.type==='person'?(fpDisplayAssignee(cur)||String(cur)):String(cur)]]);
+      opts.forEach(([v,l])=>{const o=document.createElement('option');o.value=v;o.textContent=l;el.appendChild(o);});
+      el.value=cur!==undefined&&cur!==''?cur:opts[0][0];
+    }else if(f.type==='textarea'){
+      el=document.createElement('textarea');el.className='form-input input-full';el.rows=4;el.value=item[f.k]||'';
+    }else{
+      el=document.createElement('input');el.type=f.type;el.className='form-input input-full';
+      if(f.type==='number'){el.inputMode='decimal';el.min='0';el.step='0.01';}
+      el.value=item[f.k]===undefined||item[f.k]===null?'':item[f.k];
+    }
+    if(f.max)el.maxLength=f.max;
+    if(f.req)el.required=true;
+    el.id='edit-item-f-'+f.k;el.autocomplete='off';
+    wrap.appendChild(el);box.appendChild(wrap);
+  });
+  document.getElementById('edit-item-modal').classList.add('active');
+  setTimeout(()=>{const first=box.querySelector('input,textarea,select');if(first){first.focus();if(first.select)first.select();}},50);
+}
+function closeEditToolItem(){document.getElementById('edit-item-modal').classList.remove('active');fpEditingTool=null;}
+function fpSaveEditedToolItem(e){
+  if(e&&e.preventDefault)e.preventDefault();
+  const st=fpEditingTool;if(!st)return false;
+  const cfg=FP_TOOL_EDIT[st.type];
+  const item=cfg.arr().find(x=>x.id===st.id);
+  if(!item){closeEditToolItem();return false;}
+  const values={};
+  for(const f of cfg.fields){
+    const el=document.getElementById('edit-item-f-'+f.k);
+    let v=el.value;
+    if(f.type==='text'||f.type==='textarea')v=v.trim();
+    if(f.type==='number'){
+      if(v===''){if(f.req){showToast('Please enter '+f.label);return false;}v=0;}
+      else{v=Number(v);if(!Number.isFinite(v)||v<0){showToast('Please enter a valid '+f.label);return false;}}
+    }
+    if(f.req&&(v===''||v===null)){showToast('Please complete '+f.label);return false;}
+    values[f.k]=v;
+  }
+  const before=JSON.parse(JSON.stringify(item));
+  const id=item.id;
+  Object.assign(item,values);
+  if(JSON.stringify(before)===JSON.stringify(item)){closeEditToolItem();return false;}
+  saveData();cfg.after();closeEditToolItem();
+  showUndoToast('Entry updated',()=>{
+    const cur=cfg.arr().find(x=>x.id===id);if(!cur)return;
+    Object.keys(cur).forEach(k=>{if(!(k in before))delete cur[k];});
+    Object.assign(cur,before);
+    saveData();cfg.after();
+  });
+  return false;
+}
 function deleteToolItem(type,i){const get=()=>({bills:householdBillsData,renewals:renewalsData,ideas:familyIdeasData,handover:handoverData,occasions:occasionsData})[type];if(!get())return;fpUndoRemove(get,i,()=>{renderBills();renderEnhancementLists();},'Entry deleted');}
-function renderSimpleToolList(id,items,formatter,type,empty){const el=document.getElementById(id);if(!el)return;el.innerHTML=items.length?items.map((item,i)=>`<div class="tool-row"><div>${formatter(item)}</div><button onclick="deleteToolItem('${type}',${i})">✕</button></div>`).join(''):`<p class="tool-note">${empty}</p>`;}
+function renderSimpleToolList(id,items,formatter,type,empty){const el=document.getElementById(id);if(!el)return;el.innerHTML=items.length?items.map((item,i)=>`<div class="tool-row"><div role="button" tabindex="0" title="Tap to edit" style="cursor:pointer" onclick="openEditToolItem('${type}',${i})" onkeydown="if(event.key==='Enter'){openEditToolItem('${type}',${i});}">${formatter(item)}</div><div style="display:flex;gap:4px;"><button type="button" aria-label="Edit entry" title="Edit" onclick="openEditToolItem('${type}',${i})">✏️</button><button type="button" aria-label="Delete entry" onclick="deleteToolItem('${type}',${i})">✕</button></div></div>`).join(''):`<p class="tool-note">${empty}</p>`;}
 function addAddressBookEntry(e){e.preventDefault();const name=document.getElementById('address-book-name').value.trim(),address=document.getElementById('address-book-address').value.trim(),postcode=document.getElementById('address-book-postcode').value.trim();if(!name||!address||!postcode)return;addressBookData.push({id:crypto.randomUUID(),name,address,postcode});saveData();e.target.reset();renderAddressBook();showToast('Address saved');}
 let fpEditingAddressId = null;
 function editAddressBookEntry(i){
