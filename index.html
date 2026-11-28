@@ -2037,7 +2037,7 @@ html[data-theme="dark"] .setup-row.done .setup-tick{color:#0f1719}
           <input class="auth-input" id="auth-join-link" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. K7M2-9QXA">
           <button class="auth-primary" type="button" onclick="fpStartJoinContinue()">Continue</button>
           <div class="auth-message" id="auth-join-message" role="status" aria-live="polite"></div>
-          <p class="auth-small">No link yet? Ask the household owner to invite you from Household settings, then Invite an adult.</p>
+          <p class="auth-small">No code yet? Ask the household owner to invite you from Household settings, then Invite an adult.</p>
         </div>
 
         <div id="auth-account-panel" style="display:none;">
@@ -2049,7 +2049,6 @@ html[data-theme="dark"] .setup-row.done .setup-tick{color:#0f1719}
           </div>
           <div class="auth-social" id="auth-social">
             <button type="button" class="auth-social-btn" id="auth-google-btn" onclick="fpSocialSignIn('google')"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.5 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7c-.5-1.5-.8-3-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C.9 16.4 0 20.100 0 24s.9 7.600 2.600 10.800l7.900-6.100z"/><path fill="#34A853" d="M24 48c6.500 0 11.900-2.100 15.900-5.800l-7.500-5.800c-2.100 1.400-4.800 2.300-8.400 2.300-6.300 0-11.600-4-13.500-9.700l-7.900 6.100C6.500 42.600 14.600 48 24 48z"/></svg> <span>Continue with Google</span></button>
-            <button type="button" class="auth-social-btn" id="auth-microsoft-btn" onclick="fpSocialSignIn('microsoft')"><svg width="20" height="20" viewBox="0 0 23 23" aria-hidden="true"><path fill="#F25022" d="M1 1h10v10H1z"/><path fill="#7FBA00" d="M12 1h10v10H12z"/><path fill="#00A4EF" d="M1 12h10v10H1z"/><path fill="#FFB900" d="M12 12h10v10H12z"/></svg> <span>Continue with Microsoft</span></button>
             <div class="auth-or"><span>or use your email</span></div>
           </div>
           <form id="firebase-auth-form">
@@ -2077,8 +2076,8 @@ html[data-theme="dark"] .setup-row.done .setup-tick{color:#0f1719}
           </form>
           <div class="auth-message" id="auth-message" role="status" aria-live="polite"></div>
           <button class="auth-secondary" type="button" onclick="window.fpShowChildGate()">Child joining a family?</button>
-          <p class="auth-small" id="auth-version-label">Version 2.36 · build 2026-11-24.3</p>
-          <p class="auth-small">Each adult or family member has their own account. Signing in with Google or Microsoft skips the email check. If you use an email and password instead, verify your email first. Then create a household or join one with an invitation code.</p>
+          <p class="auth-small" id="auth-version-label">Version 2.37 · build 2026-11-24.4</p>
+          <p class="auth-small">Each adult or family member has their own account. Signing in with Google skips the email check. If you use an email and password instead, verify your email first. Then create a household or join one with an invitation code.</p>
         </div>
 
         <div id="child-join-panel" class="household-panel">
@@ -2477,7 +2476,7 @@ html[data-theme="dark"] .setup-row.done .setup-tick{color:#0f1719}
             <section class="card" style="margin-bottom:0.8rem;">
                 <div class="card-header"><div class="card-title">🛒 Food Shopping List</div></div>
                 <div class="inline-add-group">
-                    <input type="text" id="foodshop-quick-input" class="form-input input-full" placeholder="Add food item..." enterkeyhint="done" onkeydown="if(event.key===\'Enter\') addInlineShop('foodshop')">
+                    <input type="text" id="foodshop-quick-input" class="form-input input-full" placeholder="Add food item..." enterkeyhint="done" onkeydown="if(event.key==='Enter') addInlineShop('foodshop')">
                     <button class="compact-scoped-add-btn" onclick="addInlineShop('foodshop')" aria-label="Add item">+</button>
                 </div>
                 <div id="foodshop-list-container" class="list-container"></div>
@@ -2485,7 +2484,7 @@ html[data-theme="dark"] .setup-row.done .setup-tick{color:#0f1719}
             <section class="card">
                 <div class="card-header"><div class="card-title">🛍️ Family Shopping List</div></div>
                 <div class="inline-add-group">
-                    <input type="text" id="familyshop-quick-input" class="form-input input-full" placeholder="Add family item..." enterkeyhint="done" onkeydown="if(event.key===\'Enter\') addInlineShop('familyshop')">
+                    <input type="text" id="familyshop-quick-input" class="form-input input-full" placeholder="Add family item..." enterkeyhint="done" onkeydown="if(event.key==='Enter') addInlineShop('familyshop')">
                     <button class="compact-scoped-add-btn" onclick="addInlineShop('familyshop')" aria-label="Add item">+</button>
                 </div>
                 <div id="familyshop-list-container" class="list-container"></div>
@@ -2511,7 +2510,7 @@ html[data-theme="dark"] .setup-row.done .setup-tick{color:#0f1719}
         <section class="compact-scoped-card">
             <div class="watchlist-scoped-title">🎬 Cinema Watchlist</div>
             <div class="compact-scoped-add-group">
-                <input type="text" id="cinema-quick-input" class="compact-scoped-input" placeholder="Add movie..." enterkeyhint="done" onkeydown="if(event.key===\'Enter\') addWatchlistItem('cinema')">
+                <input type="text" id="cinema-quick-input" class="compact-scoped-input" placeholder="Add movie..." enterkeyhint="done" onkeydown="if(event.key==='Enter') addWatchlistItem('cinema')">
                 <button class="compact-scoped-add-btn" onclick="addWatchlistItem('cinema')">+</button>
             </div>
             <div id="cinema-list-container" style="display:flex; flex-direction:column;"></div>
@@ -2520,7 +2519,7 @@ html[data-theme="dark"] .setup-row.done .setup-tick{color:#0f1719}
         <section class="compact-scoped-card">
             <div class="watchlist-scoped-title">📺 Home Watchlist</div>
             <div class="compact-scoped-add-group">
-                <input type="text" id="home-quick-input" class="compact-scoped-input" placeholder="Add TV show..." enterkeyhint="done" onkeydown="if(event.key===\'Enter\') addWatchlistItem('home')">
+                <input type="text" id="home-quick-input" class="compact-scoped-input" placeholder="Add TV show..." enterkeyhint="done" onkeydown="if(event.key==='Enter') addWatchlistItem('home')">
                 <button class="compact-scoped-add-btn" onclick="addWatchlistItem('home')">+</button>
             </div>
             <div id="home-list-container" style="display:flex; flex-direction:column;"></div>
@@ -2647,7 +2646,7 @@ html[data-theme="dark"] .setup-row.done .setup-tick{color:#0f1719}
             <div id="todo-content-panel">
                 <p id="todo-scope-note" class="tool-note" style="display:none;">Household tasks assigned to you or everyone.</p>
                 <div class="todo-inline-add" role="group" aria-label="Add a to-do item">
-                    <input type="text" id="todo-quick-input" placeholder="Add task…" aria-label="New task" enterkeyhint="done" onkeydown="if(event.key===\'Enter\') addTodoItem()">
+                    <input type="text" id="todo-quick-input" placeholder="Add task…" aria-label="New task" enterkeyhint="done" onkeydown="if(event.key==='Enter') addTodoItem()">
                     <div class="todo-inline-actions">
                         <button type="button" id="todo-assign-button" class="todo-inline-icon-btn todo-assign-btn" onclick="cycleNewTodoAssignee()" aria-label="Change assignee" title="Change task assignee"><svg class="assign-person" viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="12" cy="8" r="4.2"/><path d="M3.8 21c0-4.4 3.7-7.2 8.2-7.2s8.2 2.8 8.2 7.2z"/></svg><span id="todo-assign-label">Assign</span></button>
                         <button type="button" id="todo-date-button" class="todo-inline-icon-btn" onclick="openTodoDatePicker()" aria-label="Choose task date" title="Choose task date">📅</button>
@@ -2661,7 +2660,7 @@ html[data-theme="dark"] .setup-row.done .setup-tick{color:#0f1719}
             <div id="todo-gift-panel" style="display:none;">
                 <div class="todo-scoped-title" style="margin:4px 0 8px;">🎁 Gift Wishlist</div>
                 <div class="compact-scoped-add-group">
-                    <input type="text" id="wishlist-quick-input" class="wishlist-scoped-input" placeholder="Add gift idea..." enterkeyhint="done" onkeydown="if(event.key===\'Enter\') addWishlistItem()">
+                    <input type="text" id="wishlist-quick-input" class="wishlist-scoped-input" placeholder="Add gift idea..." enterkeyhint="done" onkeydown="if(event.key==='Enter') addWishlistItem()">
                     <button class="compact-scoped-add-btn" onclick="addWishlistItem()" aria-label="Add gift">+</button>
                 </div>
                 <div id="wishlist-list-container" style="display:flex; flex-direction:column;"></div>
@@ -2726,7 +2725,7 @@ html[data-theme="dark"] .setup-row.done .setup-tick{color:#0f1719}
     <!-- Account page -->
     <div id="view-account" class="view">
         <section class="card acct-head">
-            <div class="acct-head-text"><div class="card-title">⚙️ Account</div><p class="tool-note" id="app-version-label">Version 2.36 · build 2026-11-24.3</p></div>
+            <div class="acct-head-text"><div class="card-title">⚙️ Account</div><p class="tool-note" id="app-version-label">Version 2.37 · build 2026-11-24.4</p></div>
             <button type="button" class="tool-btn secondary acct-signout" onclick="fpSignOut()">Sign out</button>
         </section>
 <div class="calendar-main-tabs" role="tablist" aria-label="Account sections" id="account-tabs">
@@ -2773,7 +2772,7 @@ html[data-theme="dark"] .setup-row.done .setup-tick{color:#0f1719}
             <h3 class="fp-my-heading">👤 Profile name</h3>
             <p class="tool-note">Changing your name updates it everywhere it appears: tasks, lists, calendar, meal plan and household members.</p>
             <label class="auth-field" for="profile-name-input">Your name</label>
-            <input type="text" id="profile-name-input" class="form-input input-full" maxlength="60" autocomplete="name" placeholder="Your name" enterkeyhint="done" onkeydown="if(event.key===\'Enter\') fpSaveProfileName()">
+            <input type="text" id="profile-name-input" class="form-input input-full" maxlength="60" autocomplete="name" placeholder="Your name" enterkeyhint="done" onkeydown="if(event.key==='Enter') fpSaveProfileName()">
             <div class="account-actions">
                 <button type="button" class="tool-btn" id="profile-name-save" onclick="fpSaveProfileName()">Save name</button>
             </div>
@@ -2796,7 +2795,7 @@ html[data-theme="dark"] .setup-row.done .setup-tick{color:#0f1719}
         </section>
         <section class="tool-section" id="calendar-feed-section" data-acct="data">
             <h3>🗓️ Phone calendar &amp; reminders</h3>
-            <p class="tool-note">Keep events, bills, renewals and dinners in your phone's own calendar, with reminders. It updates by itself.</p>
+            <p class="tool-note">Keep events, bills, renewals and dinners in your phone's own calendar, with reminders. Download them as a calendar file.</p>
             <div id="calendar-feed-box"></div>
         </section>
         <section class="tool-section" id="problem-log-section" data-acct="data">
@@ -2859,7 +2858,6 @@ html[data-theme="dark"] .setup-row.done .setup-tick{color:#0f1719}
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-functions-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-check-compat.js"></script>
 <script>
 // Firebase initialisation. The web API key identifies the project; access is controlled by Firebase Auth and Firestore Rules.
@@ -3021,53 +3019,47 @@ document.getElementById('firebase-auth-form').addEventListener('submit', async f
         submit.textContent = fpAuthMode === 'signup' ? 'Create account' : 'Sign in';
     }
 });
-/* Google / Microsoft sign-in. Switch a provider off here if it has not been enabled in Firebase yet. */
-const FP_SOCIAL_SIGNIN = { google: true, microsoft: true };
-(function(){
-    const g=document.getElementById('auth-google-btn'), m=document.getElementById('auth-microsoft-btn'), box=document.getElementById('auth-social');
-    if(g&&!FP_SOCIAL_SIGNIN.google)g.style.display='none';
-    if(m&&!FP_SOCIAL_SIGNIN.microsoft)m.style.display='none';
-    if(box&&!FP_SOCIAL_SIGNIN.google&&!FP_SOCIAL_SIGNIN.microsoft)box.style.display='none';
-})();
+/* Google sign-in. Firebase itself checks that this website address is on the Authorized domains list. */
 function fpSocialError(error, label) {
     const code = (error && error.code) || '';
     if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request' || code === 'auth/user-cancelled') return;
+    const host = window.location.hostname || '(unknown)';
     const known = {
         'auth/operation-not-allowed': label + ' sign-in has not been switched on yet. Use your email and password for now.',
-        'auth/unauthorized-domain': 'This website address is not approved for ' + label + ' sign-in yet.',
+        'auth/unauthorized-domain': 'This website address (' + host + ') is not on Firebase\'s approved list. In the Firebase Console open Authentication, then Settings, then Authorized domains, add ' + host + ', and try again.',
         'auth/account-exists-with-different-credential': 'You already have an account with this email address. Sign in with your email and password first, or use Forgot password.',
         'auth/network-request-failed': 'No connection. Please check your internet and try again.',
         'auth/popup-blocked': 'Your browser blocked the sign-in window. Please allow pop-ups and try again.',
         'auth/user-disabled': 'This account has been disabled.'
     };
     setAuthMessage(known[code] || ("We couldn't sign you in with " + label + '. Please try again.'));
-    console.warn(label + ' sign-in failed:', code, error);
+    console.warn(label + ' sign-in failed:', code, 'host=' + host, error);
 }
-async function fpSocialSignIn(kind) {
-    const label = kind === 'google' ? 'Google' : 'Microsoft';
-    const btn = document.getElementById(kind === 'google' ? 'auth-google-btn' : 'auth-microsoft-btn');
+async function fpSocialSignIn() {
+    const btn = document.getElementById('auth-google-btn');
     setAuthMessage('');
     try {
-        const provider = kind === 'google' ? new firebase.auth.GoogleAuthProvider() : new firebase.auth.OAuthProvider('microsoft.com');
+        const provider = new firebase.auth.GoogleAuthProvider();
         provider.setCustomParameters({ prompt: 'select_account' });
         if (btn) btn.disabled = true;
         try {
             await firebaseAuth.signInWithPopup(provider);
         } catch (e) {
-            if (e && (e.code === 'auth/popup-blocked' || e.code === 'auth/operation-not-supported-in-this-environment')) {
+            // On phones the pop-up often cannot open: fall back to a full-page redirect.
+            if (e && (e.code === 'auth/popup-blocked' || e.code === 'auth/operation-not-supported-in-this-environment' || e.code === 'auth/web-storage-unsupported')) {
                 await firebaseAuth.signInWithRedirect(provider);
                 return;
             }
             throw e;
         }
     } catch (error) {
-        fpSocialError(error, label);
+        fpSocialError(error, 'Google');
     } finally {
         if (btn) btn.disabled = false;
     }
 }
 if (typeof firebaseReady !== 'undefined' && firebaseReady && firebaseAuth) {
-    firebaseAuth.getRedirectResult().catch(e => fpSocialError(e, 'your account'));
+    firebaseAuth.getRedirectResult().catch(e => fpSocialError(e, 'Google'));
 }
 function togglePasswordVisibility() {
     const passwordInput = document.getElementById('auth-password');
@@ -3704,7 +3696,7 @@ function fpStopSharedListeners(){
   if(window.fpInvitesUnsub){window.fpInvitesUnsub();window.fpInvitesUnsub=null;}
   if(window.fpChildrenUnsub){window.fpChildrenUnsub();window.fpChildrenUnsub=null;}
   if(window.fpChildInvitesUnsub){window.fpChildInvitesUnsub();window.fpChildInvitesUnsub=null;}
-  fpChildInvites=[];fpFeedToken=null;window.fpInviteTotal=0;
+  fpChildInvites=[];window.fpInviteTotal=0;
   fpHouseholdChildren=[];
   const ib=document.getElementById('household-invite-box');if(ib)ib.style.display='none';
   if(fpMemberUnsub){fpMemberUnsub();fpMemberUnsub=null;}
@@ -3728,7 +3720,6 @@ function fpAttachSharedListeners(){
   });
   const householdRef=firebaseDb.collection('households').doc(fpHouseholdId);
 
-  if(fpIsOwnerOrParent())fpLoadFeed();
   if(fpIsOwnerOrParent())window.fpChildInvitesUnsub=firebaseDb.collection('childInvites').where('householdId','==',fpHouseholdId).onSnapshot(cs=>{fpChildInvites=cs.docs.map(d=>({hash:d.id,...d.data()}));fpRenderManagedChildren();},e=>console.warn('Could not load child codes:',e));
   window.fpChildrenUnsub=householdRef.collection('children').onSnapshot(cs=>{
     fpHouseholdChildren=cs.docs.map(d=>({id:d.id,...d.data()}));
@@ -4370,7 +4361,7 @@ function fpStartChoice(choice){
 function fpStartJoinContinue(){
   const msg=document.getElementById('auth-join-message'),inv=fpParseInvite(document.getElementById('auth-join-link').value);
   if(!inv){if(msg)msg.textContent='That does not look like an invitation code. Enter the 8-character code you were sent.';return;}
-  sessionStorage.setItem('fp_invite',inv.householdId?inv.householdId+'.'+inv.token:inv.code);
+  sessionStorage.setItem('fp_invite',inv.code);
   fpAuthShow('account');fpSetAuthMode('signup');
   fpSetAuthHint('Create your account with the email address your invitation was sent to. You will ask to join once it is verified.');
 }
@@ -4414,14 +4405,6 @@ async function fpCheckVerified(){
   }catch(e){console.error(e);if(msg)msg.textContent='Could not check verification. Please try again.';}
 }
 window.fpCheckVerified=fpCheckVerified;
-// Invitation links arrive as #invite=<householdId>.<token>. Keep the token out of the address bar and history.
-(function(){
-  const m=location.hash.match(/invite=([A-Za-z0-9_.-]+)/);
-  if(!m)return;
-  sessionStorage.setItem('fp_invite',m[1]);
-  history.replaceState(null,'',location.pathname+location.search);
-  try{fpSetAuthMode('signup');setAuthMessage('You have been invited to a household. Create your account, or sign in, using the email address the invitation was sent to.',true);}catch(e){}
-})();
 async function fpEnsureUserProfile(user){
   const ref=firebaseDb.collection('users').doc(user.uid);
   const snap=await ref.get();
@@ -4554,12 +4537,8 @@ async function fpCreateHousehold(){
 }
 window.fpCreateHousehold=fpCreateHousehold;
 function fpParseInvite(text){
-  const t=String(text||'').trim();
-  const m=t.match(/invite=([A-Za-z0-9]{20})\.([A-Za-z0-9_-]{43})/)||t.match(/^([A-Za-z0-9]{20})\.([A-Za-z0-9_-]{43})$/);
-  if(m)return {householdId:m[1],token:m[2]};
-  const c=t.toUpperCase().replace(/[\s-]/g,'');
-  if(/^[ABCDEFGHJKMNPQRSTUVWXYZ23456789]{8}$/.test(c))return {code:c,token:c};
-  return null;
+  const c=String(text||'').toUpperCase().replace(/[\s-]/g,'');
+  return /^[ABCDEFGHJKMNPQRSTUVWXYZ23456789]{8}$/.test(c)?{code:c,token:c}:null;
 }
 function fpNewInviteCode(){
   let out='';
@@ -4581,13 +4560,10 @@ async function fpJoinHousehold(){
     try{await firebaseUser.reload();firebaseUser=firebaseAuth.currentUser;await firebaseUser.getIdToken(true);}catch(e){} // make sure the verified-email claim is current before reading the invitation
     await fpEnsureUserProfile(firebaseUser);
     const hash=await fpSha256Hex(invite.token);
-    let id=invite.householdId;
-    if(!id){
-      let codeSnap=null;
-      try{codeSnap=await firebaseDb.collection('inviteCodes').doc(hash).get();}catch(e){console.warn('Invitation code lookup failed:',e&&e.code,e);}
-      if(!codeSnap||!codeSnap.exists||typeof codeSnap.data().householdId!=='string')throw new Error('That invitation code was not recognised. Check it and try again, or ask for a new one.');
-      id=codeSnap.data().householdId;
-    }
+    let codeSnap=null;
+    try{codeSnap=await firebaseDb.collection('inviteCodes').doc(hash).get();}catch(e){console.warn('Invitation code lookup failed:',e&&e.code,e);}
+    if(!codeSnap||!codeSnap.exists||typeof codeSnap.data().householdId!=='string')throw new Error('That code was not recognised for '+(firebaseUser.email||'your account')+'. Check it, make sure you are signed in with the email address the invitation was sent to, or ask the owner for a new code.');
+    const id=codeSnap.data().householdId;
     const householdRef=firebaseDb.collection('households').doc(id);
     const inviteRef=householdRef.collection('invites').doc(hash);
     const requestRef=householdRef.collection('joinRequests').doc(firebaseUser.uid);
@@ -4627,12 +4603,6 @@ async function fpJoinHousehold(){
 window.fpJoinHousehold=fpJoinHousehold;
 
 // ---- Owner: invitations -------------------------------------------------
-/* Automatic invite emails: put your Cloudflare Worker address here once it is deployed (see invite-worker/README.md).
-   Leave it empty to keep using the Email it / Share buttons. */
-const FP_MAIL_WORKER_URL='';
-const FP_FUNCTIONS_REGION='europe-west2'; // must match the region in functions/index.js
-const FP_EMAIL_FUNCTION_ENABLED=false; // leave false: automatic invite emails need Cloud Functions (paid Blaze plan). Invites work without it.
-function fpB64Url(bytes){return btoa(String.fromCharCode(...bytes)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
 async function fpCreateInvite(){
   if(!fpMemberData || fpMemberData.role!=='owner' || !fpHouseholdId)return;
   if(!firebaseUser.emailVerified){try{await firebaseUser.reload();firebaseUser=firebaseAuth.currentUser;if(firebaseUser.emailVerified)await firebaseUser.getIdToken(true);}catch(e){}
@@ -4660,69 +4630,27 @@ async function fpCreateInvite(){
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))return showToast('Enter a valid email address');
   if(fpHouseholdMembers.some(m=>String(m.email||'').toLowerCase()===email))return showToast('That person is already a member');
   try{
-    const invRef=h=>firebaseDb.collection('households').doc(fpHouseholdId).collection('invites').doc(h);
-    const inviteData={
-      email,status:'pending',createdBy:firebaseUser.uid,
-      createdAt:firebase.firestore.FieldValue.serverTimestamp(),
-      expiresAt:firebase.firestore.Timestamp.fromMillis(Date.now()+7*24*60*60*1000)
-    };
-    let token,useCode=false;
-    try{
-      token=fpNewInviteCode();
-      const codeHash=await fpSha256Hex(token);
-      const batch=firebaseDb.batch();
-      batch.set(invRef(codeHash),inviteData);
-      batch.set(firebaseDb.collection('inviteCodes').doc(codeHash),{householdId:fpHouseholdId,createdBy:firebaseUser.uid,createdAt:firebase.firestore.FieldValue.serverTimestamp(),expiresAt:inviteData.expiresAt});
-      await batch.commit();
-      useCode=true;
-    }catch(codeErr){
-      if(!codeErr||codeErr.code!=='permission-denied')throw codeErr;
-      console.warn('Short invitation codes need the inviteCodes Firestore rule; using a long link instead.');
-      token=fpB64Url(crypto.getRandomValues(new Uint8Array(32)));
-      await invRef(await fpSha256Hex(token)).set(inviteData);
-    }
-    const appUrl=location.origin+location.pathname;
-    const shown=useCode?fpFormatCode(token):appUrl+'#invite='+fpHouseholdId+'.'+token;
-    const what=useCode?'code':'link';
+    const code=fpNewInviteCode(),hash=await fpSha256Hex(code);
+    const ts=firebase.firestore.FieldValue.serverTimestamp(),expiresAt=firebase.firestore.Timestamp.fromMillis(Date.now()+7*24*60*60*1000);
+    const batch=firebaseDb.batch();
+    batch.set(firebaseDb.collection('households').doc(fpHouseholdId).collection('invites').doc(hash),{email,status:'pending',createdBy:firebaseUser.uid,createdAt:ts,expiresAt});
+    batch.set(firebaseDb.collection('inviteCodes').doc(hash),{householdId:fpHouseholdId,email,createdBy:firebaseUser.uid,createdAt:ts,expiresAt});
+    await batch.commit();
+    const shown=fpFormatCode(code),appUrl=location.origin+location.pathname;
     document.getElementById('invite-email').value='';
-    out.innerHTML='';
+    out.textContent='';
     const note=document.createElement('p');note.className='tool-note';
-    note.textContent='Invitation created for '+email+'.';
-    const box=document.createElement('input');box.className='auth-input';box.readOnly=true;box.value=shown;box.onfocus=()=>box.select();
-    if(useCode)box.style.cssText='text-align:center;font-size:1.7rem;font-weight:800;letter-spacing:.14em;';
-    const message=useCode
-      ?"Hi,\n\nI've invited you to our household on FamilyPlan.\n\n1. Open FamilyPlan: "+appUrl+"\n2. Create an account with this email address ("+email+") and verify it.\n3. Choose 'Join a household' and enter this code: "+shown+"\n4. I'll approve you.\n\nThe code works once and expires in 7 days."
-      :"Hi,\n\nI've invited you to our household on FamilyPlan.\n\n1. Open this link: "+shown+"\n2. Create an account with this email address ("+email+") and verify it.\n3. Request to join and I'll approve you.\n\nThe link works once and expires in 7 days.";
+    note.textContent='Invitation code created for '+email+'. Send it to them. It works once, only with that email address, and expires in 7 days. It is shown only once.';
+    const box=document.createElement('input');box.className='auth-input';box.readOnly=true;box.value=shown;box.setAttribute('aria-label','Invitation code');box.onfocus=()=>box.select();
+    box.style.cssText='text-align:center;font-size:1.7rem;font-weight:800;letter-spacing:.14em;';
+    const message="Hi,\n\nI've invited you to our household on FamilyPlan.\n\n1. Open FamilyPlan: "+appUrl+"\n2. Create an account with this email address ("+email+") and verify it.\n3. Choose 'Join an existing household' and enter this code: "+shown+"\n4. I'll approve you.\n\nThe code works once and expires in 7 days.";
     const row=document.createElement('div');row.style.cssText='display:flex;gap:8px;margin-top:6px;';
-    const copy=document.createElement('button');copy.type='button';copy.className='tool-btn';copy.textContent='Copy '+what;
-    copy.onclick=()=>navigator.clipboard?.writeText(shown).then(()=>showToast('Invitation '+what+' copied')).catch(()=>box.select());
+    const copy=document.createElement('button');copy.type='button';copy.className='tool-btn';copy.textContent='Copy code';
+    copy.onclick=()=>navigator.clipboard?.writeText(shown).then(()=>showToast('Invitation code copied')).catch(()=>box.select());
     row.appendChild(copy);
-    const mail=document.createElement('a');mail.className='tool-btn secondary';mail.textContent='Email it';mail.style.cssText='text-decoration:none;text-align:center;display:inline-block;';
-    mail.href='mailto:'+email+'?subject='+encodeURIComponent('Join our household on FamilyPlan')+'&body='+encodeURIComponent(message);
-    row.appendChild(mail);
     if(navigator.share){const sh=document.createElement('button');sh.type='button';sh.className='tool-btn secondary';sh.textContent='Share';sh.onclick=()=>navigator.share({title:'Join our household on FamilyPlan',text:message}).catch(()=>{});row.appendChild(sh);}
     out.append(note,box,row);
-    const linkNote=' It is shown only once.';
-    try{
-      if(FP_MAIL_WORKER_URL&&useCode){
-        note.textContent='Sending the invitation email to '+email+'…';
-        const idToken=await firebaseUser.getIdToken();
-        const resp=await fetch(FP_MAIL_WORKER_URL.replace(/\/$/,'')+'/send-invite',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+idToken},body:JSON.stringify({householdId:fpHouseholdId,code:token})});
-        let data={};try{data=await resp.json();}catch(e){}
-        if(!resp.ok)throw new Error(data.error||('The email service returned '+resp.status));
-        note.textContent='Invitation emailed to '+email+'. You can also copy the code below. It is shown only once.';
-        return;
-      }
-      if(!FP_EMAIL_FUNCTION_ENABLED||!firebase.functions)throw {code:'functions/not-found'};
-      await firebase.app().functions(FP_FUNCTIONS_REGION).httpsCallable('sendInviteEmail')({householdId:fpHouseholdId,token});
-      note.textContent='Invitation emailed to '+email+'.'+linkNote;
-    }catch(err){
-      console.warn('Invite email not sent:',err);
-      note.textContent=(err&&err.code==='functions/not-found')
-        ?'Invitation created for '+email+'. Tap "Email it" or "Share" to send it, or copy the '+what+'. It is shown only once.'
-        :'Invitation created for '+email+', but the email could not be sent ('+((err&&err.message)||'unknown error')+'). Copy the '+what+' and send it yourself. It is shown only once.';
-    }
-  }catch(e){console.error(e);showToast('Could not create the invitation. Please try again.');}
+  }catch(e){console.error('Could not create the invitation:',e);showToast('Could not create the invitation. Please try again.');}
 }
 window.fpCreateInvite=fpCreateInvite;
 function fpRenderInvites(snapshot){
@@ -4737,8 +4665,11 @@ function fpRenderInvites(snapshot){
 }
 async function fpRevokeInvite(hash){
   if(!fpMemberData || fpMemberData.role!=='owner')return;
-  try{await firebaseDb.collection('households').doc(fpHouseholdId).collection('invites').doc(hash).update({status:'revoked',revokedAt:firebase.firestore.FieldValue.serverTimestamp()});showToast('Invitation revoked');}
-  catch(e){console.error(e);showToast('Could not revoke the invitation');}
+  try{
+    await firebaseDb.collection('households').doc(fpHouseholdId).collection('invites').doc(hash).update({status:'revoked',revokedAt:firebase.firestore.FieldValue.serverTimestamp()});
+    firebaseDb.collection('inviteCodes').doc(hash).delete().catch(()=>{});
+    showToast('Invitation revoked');
+  }catch(e){console.error(e);showToast('Could not revoke the invitation');}
 }
 window.fpRevokeInvite=fpRevokeInvite;
 async function fpEnsureHouseholdMemberCount(householdRef){
@@ -4804,7 +4735,7 @@ async function fpApproveJoinRequest(uid,approve){
 }
 window.fpApproveJoinRequest=fpApproveJoinRequest;
 
-const FP_VERSION='2.36',FP_BUILD='2026-11-24.3';
+const FP_VERSION='2.37',FP_BUILD='2026-11-24.4';
 // ================= Problem log =================
 // Keeps the last 50 problems on this phone. Adults also send a short note (error text and screen name only,
 // never lists, names of entries or email addresses) so the household owner can see what is going wrong.
@@ -4848,7 +4779,7 @@ async function fpRenderProblemLog(){
   mine.slice(0,6).forEach(e=>{const r=mk('div','problem-row');r.append(mk('strong',null,fpFmtWhen(e.at)+(e.view?' · '+e.view:'')),mk('small',null,e.message));box.append(r);});
   if(mine.length){const row=mk('div','account-actions');
     row.append(btn('Copy report',()=>navigator.clipboard.writeText(fpProblemReport(mine)).then(()=>showToast('Report copied. Paste it into a message.')).catch(()=>showToast('Could not copy'))),
-      btn('Clear',()=>{localStorage.removeItem(FP_LOG_KEY);fpRenderProblemLog();}));box.append(row);}
+      btn('Clear log',()=>{localStorage.removeItem(FP_LOG_KEY);showToast('Log cleared');fpRenderProblemLog();}));box.append(row);}
   if(fpIsOwnerOrParent()&&fpHouseholdId&&firebaseDb){
     box.append(mk('h4',null,'Reported by your household'));
     try{
@@ -4862,13 +4793,11 @@ async function fpRenderProblemLog(){
 }
 window.fpRenderProblemLog=fpRenderProblemLog;
 
-// ================= Phone calendar link (reminders) =================
-// The app keeps one private calendar file up to date in the database. A small free Cloudflare Worker
-// (see calendar-feed/README.md) serves it at a web address your phone's calendar can subscribe to.
-const FP_CALENDAR_FEED_BASE=''; // e.g. https://familyplan-calendar.your-name.workers.dev  (leave empty until the Worker is set up)
-let fpFeedToken=null,fpFeedHash='',fpFeedTimer=null,fpFeedStamp='';
+// ================= Download everything as a calendar file =================
+// No server is needed: the app builds one .ics file on the phone. Opening it adds the entries to the phone's
+// own calendar, with reminders. Entries have fixed IDs, so downloading again updates them instead of duplicating.
+let fpFeedStamp='';
 const fpIcsDate=d=>`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
-function fpFeedUrl(token){return FP_CALENDAR_FEED_BASE.replace(/\/+$/,'')+'/'+token+'.ics';}
 function fpFeedVevent(uid,o){
   const L=['BEGIN:VEVENT',`UID:${uid}@familyplan`,'DTSTAMP:'+fpFeedStamp];
   if(o.time)L.push(`DTSTART:${o.date}T${o.time}`,`DTEND:${o.date}T${o.endTime}`);
@@ -4912,50 +4841,21 @@ function fpBuildFeedIcs(){
   const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//FamilyPlan//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-CALNAME:FamilyPlan','REFRESH-INTERVAL;VALUE=DURATION:PT1H','X-PUBLISHED-TTL:PT1H',...out,'END:VCALENDAR'];
   return lines.map(fpIcsFold).join('\r\n')+'\r\n';
 }
-async function fpSyncFeed(force){
-  if(!fpFeedToken||!fpIsOwnerOrParent()||!firebaseDb)return;
-  const ics=fpBuildFeedIcs(),key=ics.replace(/DTSTAMP:[^\r\n]*/g,'');
-  if(!force&&key===fpFeedHash)return;
-  if(ics.length>600000){fpLogProblem('calendar feed','Calendar file is too large to publish');return;}
-  try{await firebaseDb.collection('calendarFeeds').doc(fpFeedToken).update({ics,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});fpFeedHash=key;}
-  catch(e){console.warn('Calendar link not updated:',e);}
-}
-function fpScheduleFeedSync(){if(!fpFeedToken||fpFeedTimer)return;fpFeedTimer=setTimeout(()=>{fpFeedTimer=null;fpSyncFeed(false);},8000);}
-function fpNewFeedToken(){return btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(24)))).replace(/\+/g,'-').replace(/\//g,'_');}
-async function fpLoadFeed(){
-  if(!fpIsOwnerOrParent()||!fpHouseholdId||!firebaseDb)return;
-  try{const s=await firebaseDb.collection('calendarFeeds').where('householdId','==',fpHouseholdId).limit(1).get();fpFeedToken=s.empty?null:s.docs[0].id;fpFeedHash='';fpRenderFeedBox();if(fpFeedToken)fpScheduleFeedSync();}
-  catch(e){console.warn('Could not check the calendar link:',e);}
-}
-async function fpEnableFeed(){
-  if(!FP_CALENDAR_FEED_BASE||!fpIsOwnerOrParent())return;
-  const token=fpNewFeedToken();
-  try{await firebaseDb.collection('calendarFeeds').doc(token).set({householdId:fpHouseholdId,ics:fpBuildFeedIcs(),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),createdBy:firebaseUser.uid});fpFeedToken=token;fpFeedHash='';fpRenderFeedBox();showToast('Calendar link created');}
-  catch(e){console.error('Could not create the calendar link:',e);showToast('Could not create the calendar link. Please try again.');}
-}
-async function fpDisableFeed(thenReset){
-  const msg=thenReset?'Make a new link? The old link stops working, so anyone using it (including your own phones) will need the new one.':'Turn off the calendar link? Phones using it will stop receiving updates.';
-  if(!(await fpDialog.confirm(msg,{title:thenReset?'New link':'Turn off',okLabel:thenReset?'Make new link':'Turn off',danger:true})))return;
-  try{await firebaseDb.collection('calendarFeeds').doc(fpFeedToken).delete();fpFeedToken=null;if(thenReset)await fpEnableFeed();else{fpRenderFeedBox();showToast('Calendar link turned off');}}
-  catch(e){console.error(e);showToast('Could not change the calendar link');}
+function fpDownloadCalendarFile(){
+  const ics=fpBuildFeedIcs(),n=(ics.match(/BEGIN:VEVENT/g)||[]).length;
+  const url=URL.createObjectURL(new Blob([ics],{type:'text/calendar;charset=utf-8'}));
+  const a=document.createElement('a');a.href=url;a.download='familyplan-calendar.ics';document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),4000);
+  showToast(n?`Calendar file ready (${n} entries). Open it to add them to your phone.`:'Nothing to add yet.');
 }
 function fpRenderFeedBox(){
   const box=document.getElementById('calendar-feed-box');if(!box)return;box.textContent='';
   const mk=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;};
-  const btn=(label,fn,cls)=>{const b=mk('button',cls||'tool-btn secondary',label);b.type='button';b.onclick=fn;return b;};
-  if(!fpHouseholdId){box.append(mk('p','tool-note','Join or create a household first.'));return;}
-  if(!fpIsOwnerOrParent()){box.append(mk('p','tool-note','Only the household owner or a parent can turn this on.'));return;}
-  if(!FP_CALENDAR_FEED_BASE){box.append(mk('p','tool-note','This needs a one-time free setup (about 10 minutes). The steps are in calendar-feed/README.md. Once the address is added to the app, a button appears here.'));return;}
-  if(!fpFeedToken){box.append(btn('Turn on calendar link',fpEnableFeed,'tool-btn'));return;}
-  const url=fpFeedUrl(fpFeedToken),input=mk('input','auth-input');input.readOnly=true;input.value=url;input.setAttribute('aria-label','Calendar link');input.onfocus=()=>input.select();
-  const row=mk('div','account-actions');
-  const add=mk('a','tool-btn',  'Add to my phone calendar');add.href=url.replace(/^https?:/,'webcal:');add.style.cssText='text-decoration:none;text-align:center;display:inline-block;';
-  row.append(add,btn('Copy link',()=>navigator.clipboard.writeText(url).then(()=>showToast('Link copied')).catch(()=>input.select())));
-  box.append(mk('p','tool-note','Calendar link is on. Reminders: events 30 minutes before, bills the morning before and on the day, renewals a week before, dinner at 4pm.'),input,row,
-    mk('p','tool-note','Google Calendar: on a computer open calendar.google.com, choose Other calendars, then From URL, and paste the link. iPhone: tap Add to my phone calendar. Anyone with this link can see your calendar, so keep it private.'));
-  const row2=mk('div','account-actions');row2.append(btn('Make a new link',()=>fpDisableFeed(true)),btn('Turn off',()=>fpDisableFeed(false)));box.append(row2);
+  const b=mk('button','tool-btn','Download calendar file');b.type='button';b.onclick=fpDownloadCalendarFile;
+  box.append(mk('p','tool-note','One file with your upcoming events, bills, renewals and the next two weeks of dinners. Open it on your phone to add them to your calendar. Reminders: events 30 minutes before, bills the morning before and on the day, renewals a week before, dinner at 4pm.'),b,
+    mk('p','tool-note','It is a snapshot, so download it again after big changes. For a single entry, tap 📲 on it in the calendar.'));
 }
-window.fpEnableFeed=fpEnableFeed;
+window.fpDownloadCalendarFile=fpDownloadCalendarFile;
 
 // ================= First-time setup checklist =================
 function fpSetupSkipped(){try{return JSON.parse(localStorage.getItem('fp_setup_skip_'+fpHouseholdId)||'[]');}catch(e){return [];}}
@@ -5411,7 +5311,7 @@ if (!householdId) {
                 await deleteCollection(householdRef.collection('children'));
                 await deleteCollection(householdRef.collection('invites'));
                 await deleteCollection(firebaseDb.collection('childInvites').where('householdId', '==', householdId));
-                await deleteCollection(firebaseDb.collection('calendarFeeds').where('householdId', '==', householdId));
+                await deleteCollection(firebaseDb.collection('inviteCodes').where('householdId', '==', householdId));
                 await deleteCollection(householdRef.collection('errorLogs'));
 
                 // Delete membership, household and profile atomically.
@@ -6190,7 +6090,7 @@ function renderShopping() {
                 <div class="shop-left">
                     <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleShopCheck('foodshop', ${idx})">
                     ${item.isEditing ? 
-                        `<input type="text" class="edit-inline-input" value="${escapeToolText(item.text)}" enterkeyhint="done" onkeydown="if(event.key===\'Enter\') saveShopEdit('foodshop', ${idx}, this.value)" onblur="saveShopEdit('foodshop', ${idx}, this.value)" autofocus>` : 
+                        `<input type="text" class="edit-inline-input" value="${escapeToolText(item.text)}" enterkeyhint="done" onkeydown="if(event.key==='Enter') saveShopEdit('foodshop', ${idx}, this.value)" onblur="saveShopEdit('foodshop', ${idx}, this.value)" autofocus>` : 
                         `<span class="item-text-label">${escapeToolText(item.text)}</span>`
                     }
                 </div>
@@ -6210,7 +6110,7 @@ function renderShopping() {
                 <div class="shop-left">
                     <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleShopCheck('familyshop', ${idx})">
                     ${item.isEditing ? 
-                        `<input type="text" class="edit-inline-input" value="${escapeToolText(item.text)}" enterkeyhint="done" onkeydown="if(event.key===\'Enter\') saveShopEdit('familyshop', ${idx}, this.value)" onblur="saveShopEdit('familyshop', ${idx}, this.value)" autofocus>` : 
+                        `<input type="text" class="edit-inline-input" value="${escapeToolText(item.text)}" enterkeyhint="done" onkeydown="if(event.key==='Enter') saveShopEdit('familyshop', ${idx}, this.value)" onblur="saveShopEdit('familyshop', ${idx}, this.value)" autofocus>` : 
                         `<span class="item-text-label">${escapeToolText(item.text)}</span>`
                     }
                 </div>
@@ -6936,12 +6836,12 @@ function addKid() {
 }
 
 function renderChores() {
-    const addKidHtml = `<div class="compact-scoped-add-group" style="margin:4px 0 8px;"><input type="text" id="kid-name-input" class="compact-scoped-input" placeholder="Add a child's name..." enterkeyhint="done" onkeydown="if(event.key===\'Enter\') addKid()"><button class="compact-scoped-add-btn" onclick="addKid()" aria-label="Add child">+</button></div>`;
+    const addKidHtml = `<div class="compact-scoped-add-group" style="margin:4px 0 8px;"><input type="text" id="kid-name-input" class="compact-scoped-input" placeholder="Add a child's name..." enterkeyhint="done" onkeydown="if(event.key==='Enter') addKid()"><button class="compact-scoped-add-btn" onclick="addKid()" aria-label="Add child">+</button></div>`;
     document.getElementById('chores-list-container').innerHTML = addKidHtml + choresData.map((k, kIdx) => `
         <div class="kid-chore-card">
             <div style="font-weight:800; font-size:0.88rem; margin-bottom:6px;">${escapeToolText(k.kid)}</div>
             <div class="compact-scoped-add-group" style="margin-bottom:6px;">
-                <input type="text" id="chore-input-${kIdx}" class="compact-scoped-input" placeholder="Add chore..." enterkeyhint="done" onkeydown="if(event.key===\'Enter\') addKidChore(${kIdx})">
+                <input type="text" id="chore-input-${kIdx}" class="compact-scoped-input" placeholder="Add chore..." enterkeyhint="done" onkeydown="if(event.key==='Enter') addKidChore(${kIdx})">
                 <button class="compact-scoped-add-btn" onclick="addKidChore(${kIdx})">+</button>
             </div>
             <div style="display:flex; flex-direction:column;">
@@ -7446,7 +7346,6 @@ function exportFamilyPlanData(){const keys=Object.keys(localStorage).filter(k=>k
 async function importFamilyPlanData(e){const file=e.target.files?.[0];if(!file)return;try{const payload=JSON.parse(await file.text());if(payload.app!=='Family Plan'||!payload.data||typeof payload.data!=='object')throw new Error('This does not look like a Family Plan backup.');if(!(await fpDialog.confirm('Importing will update matching Family Plan data in this browser. Existing data keys not included in the backup will be kept. Export a backup first.',{title:'Import backup',okLabel:'Import'})))return;Object.entries(payload.data).forEach(([key,value])=>{if(/^fam_[a-z0-9_]+$/i.test(key))localStorage.setItem(key,typeof value==='string'?value:JSON.stringify(value));});mealsData=fpSafeParse(localStorage.getItem('fam_meals'))||mealsData;foodShopData=fpSafeParse(localStorage.getItem('fam_foodshop'))||[];familyShopData=fpSafeParse(localStorage.getItem('fam_familyshop'))||[];destinationsData=fpSafeParse(localStorage.getItem('fam_destinations'))||destinationsData;choresData=fpSafeParse(localStorage.getItem('fam_chores'))||[];wishlistData=fpSafeParse(localStorage.getItem('fam_wishlist'))||[];todosData=fpSafeParse(localStorage.getItem('fam_todos'))||[];calendarEvents=fpSafeParse(localStorage.getItem('fam_calendar'))||{};householdBillsData=fpSafeParse(localStorage.getItem('fam_bills'))||[];monthlyBudgetsData=fpSafeParse(localStorage.getItem('fam_monthly_budgets'))||[];renewalsData=fpSafeParse(localStorage.getItem('fam_renewals'))||[];familyIdeasData=fpSafeParse(localStorage.getItem('fam_ideas'))||[];handoverData=fpSafeParse(localStorage.getItem('fam_handover'))||[];occasionsData=fpSafeParse(localStorage.getItem('fam_occasions'))||[];addressBookData=fpSafeParse(localStorage.getItem('fam_address_book'))||[];unplannedSpendingData=fpSafeParse(localStorage.getItem('fam_unplanned_spending'))||[];householdMonthlyBudget=Number(localStorage.getItem('fam_household_monthly_budget'))||1500;saveData();renderAllViews();renderFamilyTools();document.getElementById('backup-status').textContent='Backup imported. Matching data keys were updated; data keys not included in the backup were kept.';showToast('Family Plan backup restored');}catch(err){document.getElementById('backup-status').textContent='Import failed: '+(err&&err.message?err.message:'Unknown error');}finally{e.target.value='';}}
 
 function renderAllViews() {
-    fpScheduleFeedSync();
     setCalendarPage(calendarPageMode);
     renderMeals();
     renderShopping();
